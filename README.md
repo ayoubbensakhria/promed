@@ -1,6 +1,6 @@
-# DockerLAMPStack
+# Promed DELUXE HMS
 
-A Complete LAMP stack using docker-compose
+A Complete HMS based on LAMP stack using docker-compose
 
 ## Usage
 
