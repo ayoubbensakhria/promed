@@ -26,7 +26,7 @@
         <style type="text/css">
             .col-md-offset-3 { margin-left: 29%;}
             .loginbg {
-                background: #39f;
+                background: #f5f5f5;
                 max-height: 480px;
                 box-shadow:0 10px 18px 0 rgba(62, 57, 107, 0.2);
                 border-radius: 4px;
@@ -95,7 +95,7 @@
                                     }
                                     ?>
                                     <div class="form-top-left">
-                                        <img src="<?php echo $logo_image; ?>" style="height: 30px;">    
+                                        <img src="<?php echo $logo_image; ?>" width="150">    
                                     </div>
                                     <div class="form-top-right">
                                         <i class="fa fa-key"></i>
@@ -103,7 +103,7 @@
                                 </div>
 
                                 <div class="form-bottom">
-                                    <h3 class="font-white bolds"><?php echo $this->lang->line('admin_login'); ?></h3>
+                                    <h3><?php echo $this->lang->line('admin_login'); ?></h3>
                                     <?php
                                     if (isset($error_message)) {
                                         echo "<div class='alert alert-danger'>" . $error_message . "</div>";
@@ -117,6 +117,10 @@
 
                                     <form action="<?php echo site_url('site/login') ?>" method="post">
                                         <?php echo $this->customlib->getCSRF(); ?>
+                                        <div class="form-group">                                            
+                                            <input type="text" name="username" placeholder="<?php echo $this->lang->line('username'); ?>" value="" class="form-username form-control" id="email">
+                                            <span class="text-danger"><?php echo form_error('username'); ?></span>
+                                        </div>
                                         <div class="form-group">                                            
                                             <input type="text" name="username" placeholder="<?php echo $this->lang->line('username'); ?>" value="" class="form-username form-control" id="email">
                                             <span class="text-danger"><?php echo form_error('username'); ?></span>

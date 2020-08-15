@@ -85,6 +85,7 @@ class Front_Controller extends CI_Controller {
     function __construct() {
 
         parent::__construct();
+        // load language to communicate dring the login
         $this->load->helper('language');
         $this->check_installation();
         if ($this->config->item('installed') == true) {
@@ -92,7 +93,6 @@ class Front_Controller extends CI_Controller {
         }
 
         $this->school_details = $this->setting_model->getSchoolDetail();
-
 
         $this->load->model('frontcms_setting_model');
         $this->front_setting = $this->frontcms_setting_model->get();
