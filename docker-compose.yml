@@ -20,7 +20,6 @@ services:
     links:
       - mysql
     container_name: APACHE
-
   php:
     build: 
       context: './php/'
