@@ -5,7 +5,7 @@
 
 
 
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET SQL_MODE = "";
 SET time_zone = "+00:00";
 
 
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Table structure for table `ambulance_call`
+-- Table structure for table `ambulance_call` 
 --
 
 CREATE TABLE `ambulance_call` (
