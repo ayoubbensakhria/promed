@@ -59,7 +59,11 @@
 .skin-blue .main-header .logo {
     background-color: whitesmoke;
     color: #fff;
-    border-bottom: 0 solid transparent
+    border-bottom: 0 solid transparent;
+    position: absolute;
+    margin-bottom: 30px;
+    margin-top: 5px;
+    border-radius: 0 30px 30px 30px;
 }
 
 .skin-blue .main-header .logo:hover {
