@@ -6,7 +6,7 @@ services:
       context: './apache/'
     restart: always
     ports:
-      - "80:80"
+      - "8080:80"
       - "443:443"
     networks: 
       - frontend
@@ -40,7 +40,7 @@ services:
     networks:
       - backend
     ports:
-      - "3306:3306"
+      - "3304:3306"
     volumes:
       - data:/var/lib/mysql
 # The default MySQL installation only creates the "root" administrative account
@@ -59,7 +59,7 @@ services:
     image: phpmyadmin/phpmyadmin
     restart: always
     ports:
-      - "8081:80"
+      - "8084:80"
     environment:
       PMA_HOST: mysql
       MYSQL_USERNAME: "${DB_USERNAME}"
