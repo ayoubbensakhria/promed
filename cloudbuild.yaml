@@ -3,6 +3,7 @@ steps:
   args: ['up', '-d']
   env:
   - 'PROJECT_ID=$PROJECT_ID'
-- name: 'gcr.io/cloud-builders/promed-288214'
-  args: ['tag', 'promed-288214:latest', 'gcr.io/$PROJECT_ID/$REPO_NAME:$COMMIT_SHA']
-images: ['gcr.io/$PROJECT_ID/$REPO_NAME:$COMMIT_SHA']
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['tag', 'gcr.io/$PROJECT_ID/docker:19.03.8', 'gcr.io/$PROJECT_ID/docker']
+  wait_for: ['19.03.8']
+  id: 'latest'
