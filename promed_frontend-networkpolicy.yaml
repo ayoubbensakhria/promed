@@ -1,0 +1,14 @@
+apiVersion: extensions/v1beta1
+kind: NetworkPolicy
+metadata:
+  creationTimestamp: null
+  name: promed_frontend
+spec:
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          io.kompose.network/promed_frontend: "true"
+  podSelector:
+    matchLabels:
+      io.kompose.network/promed_frontend: "true"

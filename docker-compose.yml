@@ -1,9 +1,10 @@
-version: '3.7'
+version: '2'
 
 services:
   apache:
     build: 
       context: './apache/'
+    image: ayoubbensakhria/apache
     restart: always
     ports:
       - "8090:80"
@@ -19,10 +20,11 @@ services:
       - mysql
     links:
       - mysql
-    container_name: APACHE
+    container_name: APACH
   php:
     build: 
       context: './php/'
+    image: ayoubbensakhria/php
     restart: always
     networks: 
       - backend
@@ -35,6 +37,7 @@ services:
   mysql:
     build: 
       context: './mysql/'
+    image: ayoubbensakhria/mysql
     command: --default-authentication-plugin=mysql_native_password 
     restart: always
     networks:
@@ -56,7 +59,7 @@ services:
       - mysql
     links:
       - mysql
-    image: phpmyadmin/phpmyadmin
+    image: ayoubbensakhria/phpmyadmin
     restart: always
     ports:
       - "8084:80"

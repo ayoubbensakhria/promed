@@ -15,5 +15,57 @@ sudo docker-compose up
 ### mySQL
 - if you are using phpMyAdmin then change the "sql_mode" setting as mentionedthe in below screenshot. phpmyadmn > variables > sql_mode = ''
 
+## 
+
+## K8S
+### Kompose
+We need kompose to translate docker-compose.yml to K8S yaml resource files.
+```bash
+curl -L https://github.com/kubernetes/kompose/releases/download/v1.21.0/kompose-linux-amd64 -o kompose
+```
+```bash
+kompose up
+```
+### Docker login (if not setup)
+```bash
+sudo groupadd docker
+sudo usermod -aG docker $USER
+```
+Reboot
+```bash
+newgrp docker
+Docker login
+```
+
+### Install minikube
+Minikube is a tool that runs a single-node Kubernetes cluster in a virtual machine on your personal computer.
+```bash
+curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64 \
+  && chmod +x minikube
+  ```
+  ```bash
+sudo mkdir -p /usr/local/bin/
+sudo install minikube /usr/local/bin/
+```
+  ```bash
+minikube start
+  ```
+
+### Covert docker-compose.yml to yaml resources
+Run the kompose up command to deploy to Kubernetes directly, or skip to the next step instead to generate a file to use with kubectl.
+ ```bash
+kompose up
+ ```
+ Or without building docker images
+  ```bash
+ kompose up --build none
+  ```
+  ```bash
+kompose convert
+ ```
+   ```bash
+ kubectl apply -f apache-service.yaml,mysql-service.yaml,phpmyadmin-service.yaml,apache-deployment.yaml,apache-claim0-persistentvolumeclaim.yaml,apache-claim1-persistentvolumeclaim.yaml,promed_frontend-networkpolicy.yaml,promed_backend-networkpolicy.yaml,mysql-deployment.yaml,data-persistentvolumeclaim.yaml,promed_backend-networkpolicy.yaml,php-deployment.yaml,php-claim0-persistentvolumeclaim.yaml,php-claim1-persistentvolumeclaim.yaml,promed_backend-networkpolicy.yaml,phpmyadmin-deployment.yaml,phpmyadmin-claim0-persistentvolumeclaim.yaml,promed_backend-networkpolicy.yaml
+    ```
+
 --> Navigate to localhost or 127.0.0.1
 

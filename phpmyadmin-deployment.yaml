@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.21.0 (992df58d8)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: phpmyadmin
+  name: phpmyadmin
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: phpmyadmin
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.21.0 (992df58d8)
+      creationTimestamp: null
+      labels:
+        io.kompose.network/promed_backend: "true"
+        io.kompose.service: phpmyadmin
+    spec:
+      containers:
+      - env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: root
+        - name: MYSQL_USERNAME
+          value: root
+        - name: PMA_HOST
+          value: mysql
+        image: ayoubbensakhria/phpmyadmin
+        imagePullPolicy: ""
+        name: phpmyadmin
+        ports:
+        - containerPort: 80
+        resources: {}
+        volumeMounts:
+        - mountPath: /sessions
+          name: phpmyadmin-claim0
+      restartPolicy: Always
+      serviceAccountName: ""
+      volumes:
+      - name: phpmyadmin-claim0
+        persistentVolumeClaim:
+          claimName: phpmyadmin-claim0
+status: {}
