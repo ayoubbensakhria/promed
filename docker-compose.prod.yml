@@ -1,10 +1,10 @@
-version: '3.7'
+version: '2'
 
 services:
   apache:
     build: 
       context: '.'
-    image: ayoubbensakhria/promedserver
+    image: ayoubbensakhria/apache
     restart: always
     ports:
       - "80:80"
@@ -13,7 +13,7 @@ services:
       - frontend
       - backend
     volumes:
-      - ${PROJECT_ROOT}:/var/www/public_html
+      #- ${PROJECT_ROOT}:/var/www/
       - ./cert/:/usr/local/apache2/cert/
     depends_on:
       - mysql
@@ -24,7 +24,7 @@ services:
   mysql:
     build: 
       context: './mysql/'
-    image: ayoubbensakhria/promedmysql
+    image: ayoubbensakhria/mysql
     restart: always
     command: --default-authentication-plugin=mysql_native_password 
     networks:

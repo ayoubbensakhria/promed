@@ -61,11 +61,11 @@ kompose up
  kompose up --build none
   ```
   ```bash
-kompose convert
+kompose convert -f docker-compose.prod.yml -o kubemanifests.yaml
  ```
    ```bash
- kubectl apply -f apache-service.yaml,mysql-service.yaml,phpmyadmin-service.yaml,apache-deployment.yaml,apache-claim0-persistentvolumeclaim.yaml,apache-claim1-persistentvolumeclaim.yaml,promed_frontend-networkpolicy.yaml,promed_backend-networkpolicy.yaml,mysql-deployment.yaml,data-persistentvolumeclaim.yaml,promed_backend-networkpolicy.yaml,php-deployment.yaml,php-claim0-persistentvolumeclaim.yaml,php-claim1-persistentvolumeclaim.yaml,promed_backend-networkpolicy.yaml,phpmyadmin-deployment.yaml,phpmyadmin-claim0-persistentvolumeclaim.yaml,promed_backend-networkpolicy.yaml
-    ```
+ kubectl apply -f kubemanifests.yaml
+```
 
 --> Navigate to localhost or 127.0.0.1
 

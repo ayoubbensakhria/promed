@@ -1,0 +1,355 @@
+apiVersion: v1
+items:
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kompose.cmd: kompose convert -f docker-compose.prod.yml -o kubemanifests.yaml
+      kompose.version: 1.21.0 (992df58d8)
+    creationTimestamp: null
+    labels:
+      io.kompose.service: apache
+    name: apache
+  spec:
+    type: NodePort
+    ports:
+    - name: "80"
+      port: 80
+      targetPort: 80
+      nodePort: 30008
+    - name: "443"
+      port: 443
+      targetPort: 443
+    selector:
+      io.kompose.service: apache
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kompose.cmd: kompose convert -f docker-compose.prod.yml -o kubemanifests.yaml
+      kompose.version: 1.21.0 (992df58d8)
+    creationTimestamp: null
+    labels:
+      io.kompose.service: mysql
+    name: mysql
+  spec:
+    ports:
+    - name: "3306"
+      port: 3306
+      targetPort: 3306
+    selector:
+      io.kompose.service: mysql
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kompose.cmd: kompose convert -f docker-compose.prod.yml -o kubemanifests.yaml
+      kompose.version: 1.21.0 (992df58d8)
+    creationTimestamp: null
+    labels:
+      io.kompose.service: phpmyadmin
+    name: phpmyadmin
+  spec:
+    ports:
+    - name: "8081"
+      port: 8081
+      targetPort: 80
+    selector:
+      io.kompose.service: phpmyadmin
+  status:
+    loadBalancer: {}
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      kompose.cmd: kompose convert -f docker-compose.prod.yml -o kubemanifests.yaml
+      kompose.version: 1.21.0 (992df58d8)
+    creationTimestamp: null
+    labels:
+      io.kompose.service: apache
+    name: apache
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        io.kompose.service: apache
+    strategy:
+      type: Recreate
+    template:
+      metadata:
+        annotations:
+          kompose.cmd: kompose convert -f docker-compose.prod.yml -o kubemanifests.yaml
+          kompose.version: 1.21.0 (992df58d8)
+        creationTimestamp: null
+        labels:
+          io.kompose.network/dockerlampwpkbctl_backend: "true"
+          io.kompose.network/dockerlampwpkbctl_frontend: "true"
+          io.kompose.service: apache
+      spec:
+        containers:
+        - image: ayoubbensakhria/apache
+          imagePullPolicy: Always
+          name: apache
+          ports:
+          - containerPort: 80
+          - containerPort: 443
+          resources: {}
+          volumeMounts:
+          - mountPath: /var/www
+            name: apache-claim0
+          - mountPath: /usr/local/apache2/cert/
+            name: apache-claim1
+        restartPolicy: Always
+        serviceAccountName: ""
+        volumes:
+        - name: apache-claim0
+          persistentVolumeClaim:
+            claimName: apache-claim0
+        - name: apache-claim1
+          persistentVolumeClaim:
+            claimName: apache-claim1
+  status: {}
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    creationTimestamp: null
+    labels:
+      io.kompose.service: apache-claim0
+    name: apache-claim0
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 100Mi
+  status: {}
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    creationTimestamp: null
+    labels:
+      io.kompose.service: apache-claim1
+    name: apache-claim1
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 100Mi
+  status: {}
+- apiVersion: extensions/v1beta1
+  kind: NetworkPolicy
+  metadata:
+    creationTimestamp: null
+    name: dockerlampwpkbctl_frontend
+  spec:
+    ingress:
+    - from:
+      - podSelector:
+          matchLabels:
+            io.kompose.network/dockerlampwpkbctl_frontend: "true"
+    podSelector:
+      matchLabels:
+        io.kompose.network/dockerlampwpkbctl_frontend: "true"
+- apiVersion: extensions/v1beta1
+  kind: NetworkPolicy
+  metadata:
+    creationTimestamp: null
+    name: dockerlampwpkbctl_backend
+  spec:
+    ingress:
+    - from:
+      - podSelector:
+          matchLabels:
+            io.kompose.network/dockerlampwpkbctl_backend: "true"
+    podSelector:
+      matchLabels:
+        io.kompose.network/dockerlampwpkbctl_backend: "true"
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      kompose.cmd: kompose convert -f docker-compose.prod.yml -o kubemanifests.yaml
+      kompose.version: 1.21.0 (992df58d8)
+    creationTimestamp: null
+    labels:
+      io.kompose.service: mysql
+    name: mysql
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        io.kompose.service: mysql
+    strategy:
+      type: Recreate
+    template:
+      metadata:
+        annotations:
+          kompose.cmd: kompose convert -f docker-compose.prod.yml -o kubemanifests.yaml
+          kompose.version: 1.21.0 (992df58d8)
+        creationTimestamp: null
+        labels:
+          io.kompose.network/dockerlampwpkbctl_backend: "true"
+          io.kompose.service: mysql
+      spec:
+        containers:
+        - args:
+          - --default-authentication-plugin=mysql_native_password
+          env:
+          - name: MYSQL_DATABASE
+            value: db
+          - name: MYSQL_PASSWORD
+            value: root
+          - name: MYSQL_ROOT_PASSWORD
+            value: root
+          - name: MYSQL_USER
+            value: root
+          image: ayoubbensakhria/mysql
+          imagePullPolicy: ""
+          name: mysql
+          ports:
+          - containerPort: 3306
+          resources: {}
+          volumeMounts:
+          - mountPath: /var/lib/mysql
+            name: data
+          - mountPath: /etc/mysql/conf.d/
+            name: config
+        restartPolicy: Always
+        serviceAccountName: ""
+        volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: data
+        - name: config
+          persistentVolumeClaim:
+            claimName: config
+  status: {}
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    creationTimestamp: null
+    labels:
+      io.kompose.service: data
+    name: data
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 100Mi
+  status: {}
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    creationTimestamp: null
+    labels:
+      io.kompose.service: config
+    name: config
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 100Mi
+  status: {}
+- apiVersion: extensions/v1beta1
+  kind: NetworkPolicy
+  metadata:
+    creationTimestamp: null
+    name: dockerlampwpkbctl_backend
+  spec:
+    ingress:
+    - from:
+      - podSelector:
+          matchLabels:
+            io.kompose.network/dockerlampwpkbctl_backend: "true"
+    podSelector:
+      matchLabels:
+        io.kompose.network/dockerlampwpkbctl_backend: "true"
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      kompose.cmd: kompose convert -f docker-compose.prod.yml -o kubemanifests.yaml
+      kompose.version: 1.21.0 (992df58d8)
+    creationTimestamp: null
+    labels:
+      io.kompose.service: phpmyadmin
+    name: phpmyadmin
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        io.kompose.service: phpmyadmin
+    strategy:
+      type: Recreate
+    template:
+      metadata:
+        annotations:
+          kompose.cmd: kompose convert -f docker-compose.prod.yml -o kubemanifests.yaml
+          kompose.version: 1.21.0 (992df58d8)
+        creationTimestamp: null
+        labels:
+          io.kompose.network/dockerlampwpkbctl_backend: "true"
+          io.kompose.service: phpmyadmin
+      spec:
+        containers:
+        - env:
+          - name: MYSQL_ROOT_PASSWORD
+            value: root
+          - name: MYSQL_USERNAME
+            value: root
+          - name: PMA_HOST
+            value: mysql
+          image: ayoubbensakhria/phpmyadmin
+          imagePullPolicy: ""
+          name: phpmyadmin
+          ports:
+          - containerPort: 80
+          resources: {}
+          volumeMounts:
+          - mountPath: /sessions
+            name: phpmyadmin-claim0
+        restartPolicy: Always
+        serviceAccountName: ""
+        volumes:
+        - name: phpmyadmin-claim0
+          persistentVolumeClaim:
+            claimName: phpmyadmin-claim0
+  status: {}
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    creationTimestamp: null
+    labels:
+      io.kompose.service: phpmyadmin-claim0
+    name: phpmyadmin-claim0
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 100Mi
+  status: {}
+- apiVersion: extensions/v1beta1
+  kind: NetworkPolicy
+  metadata:
+    creationTimestamp: null
+    name: dockerlampwpkbctl_backend
+  spec:
+    ingress:
+    - from:
+      - podSelector:
+          matchLabels:
+            io.kompose.network/dockerlampwpkbctl_backend: "true"
+    podSelector:
+      matchLabels:
+        io.kompose.network/dockerlampwpkbctl_backend: "true"
+kind: List
+metadata: {}
+
