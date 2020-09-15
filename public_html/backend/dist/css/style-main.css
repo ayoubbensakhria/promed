@@ -2160,7 +2160,7 @@ a:focus {
 .box-header .box-title {
     display: inline-block;
     font-size: 18px;
-    margin: 0;
+    margin: 20px;
     line-height: 1
 }
 
@@ -5757,7 +5757,7 @@ input.form-control.search-form.search-form3 {
     }
 
     span.logo-lg img {
-        width: 250px !important;
+        width: 150px !important;
     }
 
     .sidebar-session {

@@ -121,10 +121,6 @@
                                             <input type="text" name="username" placeholder="<?php echo $this->lang->line('username'); ?>" value="" class="form-username form-control" id="email">
                                             <span class="text-danger"><?php echo form_error('username'); ?></span>
                                         </div>
-                                        <div class="form-group">                                            
-                                            <input type="text" name="username" placeholder="<?php echo $this->lang->line('username'); ?>" value="" class="form-username form-control" id="email">
-                                            <span class="text-danger"><?php echo form_error('username'); ?></span>
-                                        </div>
                                         <div class="form-group">                                           
                                             <input type="password" value="" name="password" placeholder="<?php echo $this->lang->line('password'); ?>" class="form-password form-control" id="password">
                                             <span class="text-danger"><?php echo form_error('password'); ?></span>
