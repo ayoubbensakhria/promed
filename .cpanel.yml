@@ -2,4 +2,4 @@
 deployment:
  tasks:
   - export DEPLOYPATH=/home/yoctobe58/public_html/promed/
-  - /bin/cp /public_html/* $DEPLOYPATH
+  - /bin/cp -R * $DEPLOYPATH
