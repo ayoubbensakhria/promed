@@ -1,4 +1,4 @@
-# Promed DELUXE HMS
+# Promed DELUXE HMS v2.1
 
 A Complete HMS based on LAMP stack using docker-compose
 
