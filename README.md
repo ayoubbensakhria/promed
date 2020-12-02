@@ -5,7 +5,6 @@ A Complete HMS based on LAMP stack using docker-compose
 ## Usage
 
 ```bash
-sudo docker-compose up -d
 sudo docker-compose up
 ```
 
