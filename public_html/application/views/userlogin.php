@@ -207,7 +207,7 @@
                                     </form>
                                     <br>
                                     <p><a href="<?php echo site_url('site/ufpassword') ?>"  class="forgot"> <i class="fa fa-key"></i> <?php echo $this->lang->line('forgot_password'); ?></a> | 
-                                    <a a href="<?php echo site_url('site/login') ?>"><?php echo $this->lang->line('admin_login'); ?></a> </p> 
+                                    <a href="<?php echo site_url('site/login') ?>"><?php echo $this->lang->line('admin_login'); ?></a> </p> 
                                 </div>
                             </div>  
                         </div>
