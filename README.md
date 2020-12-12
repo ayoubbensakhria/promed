@@ -69,3 +69,9 @@ kompose convert -f docker-compose.prod.yml -o kubemanifests.yaml
 
 --> Navigate to localhost or 127.0.0.1
 
+## Instruction in case of deploying on a Shared Hosting
+
+Create a MySQL database
+Import promed.sql
+Edit public_html/application/config/database.php file
+
