@@ -1,11 +1,10 @@
-# Promed DELUXE HMS v2.1
+# Promed DELUXE HMS v2.2
 
 A Complete HMS based on LAMP stack using docker-compose
 
 ## Usage
 
 ```bash
-sudo docker-compose up -d
 sudo docker-compose up
 ```
 
