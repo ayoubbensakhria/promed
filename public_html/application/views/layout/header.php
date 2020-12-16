@@ -79,16 +79,16 @@
     <body class="hold-transition skin-blue fixed sidebar-mini">
         <?php
         if ($this->config->item('SHLK') == "") {
-            ?>
+           /* ?>
             <div class="topaleart">
                 <div class="slidealert">
                     <div class="alert alert-dismissible topaleart-inside">
                         <!-- <button type="button" class="close" data-dismiss="alert" aria-label="close">&times;</button> -->
-                        <p class="palert">Alerte ! Vous utilisez une version d'essai de Promed DELUXE. Veuillez nous contacter pour acheter une licence.</p>
+                        <p class="palert">Alerte ! Vous utilisez une version d'essai de <strong>Promed DELUXE 3.0</strong> . Veuillez nous contacter pour acheter une licence.</p>
                     </div></div>
             </div>
             <?php
-        }
+        }*/
         ?>
         <script type="text/javascript">
 
