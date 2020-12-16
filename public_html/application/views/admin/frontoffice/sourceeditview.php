@@ -76,7 +76,6 @@
                                         <?php
                                     } else {
                                         foreach ($source_list as $key => $value) {
-                                            //print_r($value);
                                             ?>
                                             <tr>
 

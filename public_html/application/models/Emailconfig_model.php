@@ -28,7 +28,6 @@ class Emailconfig_model extends CI_Model {
             'smtp_username' => $this->input->post('smtp_username'),
             'smtp_password' => $this->input->post('smtp_password')
         );
-
         $this->db->where('email_type', $email_type);
         $this->db->update('email_config', $data);
     }

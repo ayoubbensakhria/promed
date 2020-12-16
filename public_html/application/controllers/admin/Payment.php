@@ -15,7 +15,8 @@ class Payment extends Admin_Controller {
         $this->load->library('mailsmsconf');
 
 
-        $this->charge_type = $this->config->item('charge_type');
+       // $this->charge_type = $this->config->item('charge_type');
+         $this->charge_type = $this->customlib->getChargeMaster();
         $data["charge_type"] = $this->charge_type;
     }
 
@@ -81,7 +82,7 @@ class Payment extends Admin_Controller {
     }
 
     function addOPDPayment() {
-        if (!empty($_FILES['document']['name'])) {
+      /*  if (!empty($_FILES['document']['name'])) {
             $config['upload_path'] = 'uploads/payment_document/';
             $config['allowed_types'] = 'jpg|jpeg|png';
             $config['file_name'] = $_FILES['document']['name'];
@@ -96,6 +97,8 @@ class Payment extends Admin_Controller {
         } else {
             $picture = '';
         }
+            */
+
         $this->form_validation->set_rules('amount', $this->lang->line('amount'), 'trim|required|xss_clean');
         $this->form_validation->set_rules('payment_date', $this->lang->line('payment') . " " . $this->lang->line('date'), 'trim|required|xss_clean');
 
@@ -128,10 +131,21 @@ class Payment extends Admin_Controller {
                 'payment_mode' => $this->input->post('payment_mode'),
                 'note' => $this->input->post('note'),
                 'date' => $payment_date,
-                'document' => $picture,
+                
             );
 
-            $this->payment_model->addOPDPayment($data);
+            $insert_id = $this->payment_model->addOPDPayment($data);
+
+
+
+            if (isset($_FILES["document"]) && !empty($_FILES['document']['name'])) {
+                $fileInfo = pathinfo($_FILES["document"]["name"]);
+                $img_name = $insert_id . '.' . $fileInfo['extension'];
+                move_uploaded_file($_FILES["document"]["tmp_name"], "./uploads/payment_document/" . $img_name);
+                $data_img = array('id' => $insert_id, 'document' => $img_name );
+                $this->payment_model->addOPDPayment($data_img);
+            }
+
             $array = array('status' => 'success', 'error' => '', 'message' => 'Record Saved Successfully');
         }
 
@@ -188,6 +202,11 @@ class Payment extends Admin_Controller {
         $paymentDetails = $this->payment_model->opdPaymentDetails($id, $opdid);
         $paid_amount = $this->payment_model->getOPDPaidTotal($id, $opdid);
         $balance_amount = $this->payment_model->getOPDBalanceTotal($id);
+
+            $billstatus = $this->patient_model->getBillstatus($id, $opdid);
+            $data["billstatus"] = $billstatus;
+            
+         
         $data["paid_amount"] = $paid_amount["paid_amount"];
         $data["balance_amount"] = $balance_amount["balance_amount"];
         $data["payment_details"] = $paymentDetails;
@@ -276,7 +295,12 @@ class Payment extends Admin_Controller {
                 'generated_by' => $this->session->userdata('hospitaladmin')['id'],
                 'status' => 'paid'
             );
+            $opd_data = array('patient_id' => $this->input->post('patient_id'),
+                'id' => $this->input->post('opd_id'),
+                'discharged' => 'yes'
+            );
             $this->payment_model->add_opdbill($data);
+            $this->patient_model->add_opd($opd_data);
             $array = array('status' => 'success', 'error' => '', 'message' => 'Record Saved Successfully');
         }
 

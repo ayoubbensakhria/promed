@@ -30,6 +30,32 @@ class Mailgateway {
         }
     }
 
+    function sentLiveconsultMail($id, $send_to, $conference_id) {
+
+        if (!empty($this->_CI->mail_config) && $send_to != "") {
+            $subject = "Live Consultation";
+            $msg = $this->getPatientLiveConsultContent($id, $conference_id);
+            $this->_CI->mailer->send_mail($send_to, $subject, $msg);
+        }
+    }
+
+    function sentOnlineMeetingStaffMail($detail) {
+        // print_r($detail);
+        // exit();
+        if (!empty($this->_CI->mail_config)) {
+
+            foreach ($detail as $staff_key => $staff_value) {
+                $send_to = $staff_key;
+                
+                 if ($send_to != "") {
+                     $msg = $this->getOnlineMeetingStaffContent($staff_value);
+
+                     $subject = "Live Meeting";
+                     $this->_CI->mailer->send_mail($send_to, $subject, $msg);
+                 }
+            }
+        }
+    }
 
     function sentDischargedMail($id, $ipd_id) {
 
@@ -144,7 +170,12 @@ class Mailgateway {
         return $msg;
     }
 
+     public function getPatientLiveConsultContent($id,$conference_id) {
 
+        $conference = $this->_CI->conference_model->getconference($conference_id);
+        $msg   = "Dear patient, your live consultaion ". $conference->title." has been scheduled on ". date($this->_CI->customlib->getSchoolDateFormat(true, true), strtotime($conference->date)) ." for the duration of ".$conference->duration." minute, please do not share the link to any body.";
+        return $msg;
+    }
 
     public function getPatientDischargedContent($id, $ipd_id) {
 
@@ -174,6 +205,13 @@ class Mailgateway {
         $contact = $patient['mobileno'];
         $array = array('msg' => $msg, 'email' => $email, 'contact' => $contact,);
         return $array;
+    }
+
+     public function getOnlineMeetingStaffContent($staff_detail) {
+   
+        $msg   = "Dear staff, your live meeting ". $staff_detail['title']." has been scheduled on ".date($this->_CI->customlib->getSchoolDateFormat(true, true), strtotime($staff_detail['date']))." for the duration of ".$staff_detail['duration']." minute, please do not share the link to any body.";
+     
+        return $msg;
     }
 
     public function getLoginCredentialContent($credential_for, $sender_details) {

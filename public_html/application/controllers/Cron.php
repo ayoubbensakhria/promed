@@ -11,7 +11,6 @@ class Cron extends CI_Controller {
 
     public function index($key = "") {
         if ($key != "" && $this->cron_key == $key) {
-
             $this->autobackup($key);
             $this->expMedicineNotification($key);
             $this->outofStockMedicineNotification($key);
@@ -23,9 +22,7 @@ class Cron extends CI_Controller {
     }
 
     public function autobackup($key = '') {
-
         if ($this->cron_key == $key) {
-
             $this->load->dbutil();
             $filename = "db-" . date("Y-m-d_H-i-s") . ".sql";
             $prefs = array(
@@ -41,13 +38,11 @@ class Cron extends CI_Controller {
             write_file('./backup/database_backup/' . $filename, $backup);
             echo "success";
         } else {
-
             echo "Please pass Cron Secret Key or passed Cron Secret Key is not valid";
         }
     }
 
     public function expMedicineNotification($key = '') {
-
         if (($key == "") || ($this->cron_key != $key)) {
             echo "Invalid Key or Direct access is not allowed";
             return;
@@ -91,8 +86,6 @@ class Cron extends CI_Controller {
                             'visible_parent' => 'No',
                             'publish_date' => date('Y-m-d'),
                         );
-
-
                         $this->notification_model->insertBatch($send_data, $staff_roles);
                     }
                 }
@@ -103,8 +96,6 @@ class Cron extends CI_Controller {
     }
 
     public function outofStockMedicineNotification($key = "") {
-
-
         if (($key == "") || ($this->cron_key != $key)) {
             echo "Invalid Key or Direct access is not allowed";
             return;
@@ -129,18 +120,14 @@ class Cron extends CI_Controller {
                 } else if ($totalAvailableQty <= $reorder_level) {
                     
                 }
-
                 $i++;
             }
 
             $roleresult = $this->staff_model->getStaffbyrole($id = 7);
-
             if (!empty($roleresult)) {
                 $staff_roles[] = array('role_id' => 7, 'send_notification_id' => '');
-
                 foreach ($roleresult as $key => $value) {
                     for ($i = 0; $i < sizeof($medicine_data); $i++) {
-
                         $notification_data = array('notification_title' => 'Medicine Out of Stock Alert',
                             'notification_desc' => 'Medicine ' . $medicine_data[$i] . ' Out of Stock Alert',
                             'notification_for' => 'Super Admin',
@@ -161,7 +148,6 @@ class Cron extends CI_Controller {
                             'publish_date' => date('Y-m-d'),
                         );
 
-
                         $this->notification_model->insertBatch($send_data, $staff_roles);
                     }
                 }
@@ -170,8 +156,6 @@ class Cron extends CI_Controller {
     }
 
     public function lowStockMedicineNotification($key = "") {
-
-
         if (($key == "") || ($this->cron_key != $key)) {
             echo "Invalid Key or Direct access is not allowed";
             return;
@@ -190,12 +174,9 @@ class Cron extends CI_Controller {
                 $available_qty = $this->pharmacy_model->totalQuantity($pharmacy_id);
                 $totalAvailableQty = $available_qty['total_qty'];
                 $resultlist[$i]["total_qty"] = $totalAvailableQty;
-
-
                 if ($totalAvailableQty <= 0) {
                     
                 } elseif ($totalAvailableQty <= $min_level) {
-
                     $medicine_data[] = $medicine_name;
                 } else if ($totalAvailableQty <= $reorder_level) {
                     
@@ -203,18 +184,11 @@ class Cron extends CI_Controller {
 
                 $i++;
             }
-
             $roleresult = $this->staff_model->getStaffbyrole($id = 7);
-
-
             if (!empty($roleresult)) {
-
                 $staff_roles[] = array('role_id' => 7, 'send_notification_id' => '');
-
                 foreach ($roleresult as $key => $value) {
-
                     for ($i = 0; $i < sizeof($medicine_data); $i++) {
-
                         $notification_data = array('notification_title' => 'Low Medicine Stock Alert',
                             'notification_desc' => 'Medicine ' . $medicine_data[$i] . ' low stock Alert',
                             'notification_for' => 'Super Admin',
@@ -222,8 +196,6 @@ class Cron extends CI_Controller {
                             'date' => date("Y-m-d H:i:s"),
                             'is_active' => 'yes',
                         );
-
-
 
                         $send_data = array(
                             'message' => 'Low Medicine Stock Alert',
@@ -236,8 +208,6 @@ class Cron extends CI_Controller {
                             'visible_parent' => 'No',
                             'publish_date' => date('Y-m-d'),
                         );
-
-
                         $this->notification_model->insertBatch($send_data, $staff_roles);
                     }
                 }

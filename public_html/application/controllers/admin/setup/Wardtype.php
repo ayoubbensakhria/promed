@@ -32,11 +32,8 @@ class Wardtype extends Admin_Controller {
         } else {
 
             $Wardtype = array('name' => $this->input->post('name'));
-
             $this->Wardtype_Model->saveWardtype($Wardtype);
-
             $msg = "Ward Added Successfully";
-
             $array = array('status' => 'success', 'error' => '', 'message' => $msg);
         }
         echo json_encode($array);
@@ -48,10 +45,8 @@ class Wardtype extends Admin_Controller {
     }
 
     function edit($id) {
-
         $this->form_validation->set_rules('name', 'Name', 'trim|required|xss_clean');
         if ($this->form_validation->run() == FALSE) {
-
             $msg = array(
                 'name' => form_error('name'),
             );
@@ -65,9 +60,7 @@ class Wardtype extends Admin_Controller {
             );
 
             $this->Wardtype_Model->saveWardtype($Wardtype);
-
             $msg = "Ward Type Updated Successfully";
-
             $array = array('status' => 'success', 'error' => '', 'message' => $msg);
         }
         echo json_encode($array);

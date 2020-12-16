@@ -13,7 +13,7 @@
                         <h3 class="box-title titlefix"><?php echo $this->lang->line('bed') . " " . $this->lang->line('list'); ?></h3>
                         <div class="box-tools pull-right">
                             <?php if ($this->rbac->hasPrivilege('bed', 'can_add')) { ?>
-                                <a data-toggle="modal" data-target="#myModal" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> <?php echo $this->lang->line('add'); ?></a>  
+                                <a data-toggle="modal" data-target="#myModal" class="btn btn-primary btn-sm addbed"><i class="fa fa-plus"></i> <?php echo $this->lang->line('add'); ?></a>  
                             <?php } ?> 
                         </div><!-- /.box-tools -->
                     </div>                  
@@ -314,9 +314,7 @@
     });
 
     function getRecord(id) {
-
         $('#myModalEdit').modal('show');
-
         $.ajax({
             url: '<?php echo base_url(); ?>admin/setup/bed/get/' + id,
             type: "POST",
@@ -334,6 +332,9 @@
             }
 
         })
-
     }
+	
+$(".addbed").click(function(){
+	$('#addbed').trigger("reset");		
+});
 </script>

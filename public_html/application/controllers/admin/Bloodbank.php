@@ -14,7 +14,7 @@ class Bloodbank extends Admin_Controller {
         $this->payment_mode = $this->config->item('payment_mode');
         $this->search_type = $this->config->item('search_type');
         $this->blood_group = $this->config->item('bloodgroup');
-        $this->charge_type = $this->config->item('charge_type');
+         $this->charge_type = $this->customlib->getChargeMaster();
         $data["charge_type"] = $this->charge_type;
         $this->patient_login_prefix = "pat";
     }
@@ -78,7 +78,6 @@ class Bloodbank extends Admin_Controller {
         }
         $id = $this->input->post("blood_donor_id");
         $result = $this->blooddonor_model->getDetails($id);
-
         echo json_encode($result);
     }
 
@@ -122,7 +121,6 @@ class Bloodbank extends Admin_Controller {
         }
         if (!empty($id)) {
             $this->blooddonor_model->deleteBloodDonor($id);
-
             $array = array('status' => 'success', 'error' => '', 'message' => 'Record Deleted Successfully.');
         } else {
             $array = array('status' => 'fail', 'error' => '', 'message' => '');
@@ -145,7 +143,6 @@ class Bloodbank extends Admin_Controller {
         }
         $this->form_validation->set_rules('date_of_issue', $this->lang->line('issue') . " " . $this->lang->line('date'), 'required');
         $this->form_validation->set_rules('recieve_to', $this->lang->line('patient'), 'required');
-
         $this->form_validation->set_rules('doctor', $this->lang->line('doctor') . " " . $this->lang->line('name'), 'required');
         $this->form_validation->set_rules('amount', $this->lang->line('amount'), 'required|numeric');
         if ($this->form_validation->run() == FALSE) {
@@ -205,7 +202,7 @@ class Bloodbank extends Admin_Controller {
     }
 
     public function getBillDetails($id) {
-        if (!$this->rbac->hasPrivilege('bloodissue bill', 'can_view')) {
+        if (!$this->rbac->hasPrivilege('blood_issue', 'can_view')) {
             access_denied();
         }
         $data['id'] = $id;
@@ -239,7 +236,6 @@ class Bloodbank extends Admin_Controller {
         }
         $this->form_validation->set_rules('date_of_issue', $this->lang->line('issue') . " " . $this->lang->line('date'), 'required');
         $this->form_validation->set_rules('recieve_to', $this->lang->line('receive') . " " . $this->lang->line('to'), 'required');
-
         $this->form_validation->set_rules('doctor', $this->lang->line('doctor') . " " . $this->lang->line('name'), 'required');
         $this->form_validation->set_rules('amount', $this->lang->line('amount'), 'required');
         $this->form_validation->set_rules('donor_name', $this->lang->line('donor') . " " . $this->lang->line('name'), 'required');
@@ -281,7 +277,6 @@ class Bloodbank extends Admin_Controller {
             access_denied();
         }
         if (!empty($id)) {
-
             $this->bloodissue_model->delete($id);
             $array = array('status' => 'success', 'error' => '', 'message' => '');
         } else {
@@ -344,17 +339,16 @@ class Bloodbank extends Admin_Controller {
     }
 
     public function bloodDonorReport() {
-        if (!$this->rbac->hasPrivilege('blood_donor', 'can_view')) {
+        if (!$this->rbac->hasPrivilege('blood_donor_report', 'can_view')) {
             access_denied();
         }
         $this->session->set_userdata('top_menu', 'Reports');
         $this->session->set_userdata('sub_menu', 'admin/bloodbank/blooddonorreport');
-        $select = 'blood_donor_cycle.*,blood_donor.id as bdid,blood_donor.donor_name,blood_donor.age,blood_donor.blood_group,blood_donor.gender';
+        $select = 'blood_donor_cycle.*,blood_donor.id as bdid,blood_donor.donor_name,blood_donor.age,blood_donor.blood_group,blood_donor.gender,blood_donor.created_at as createdat';
         $join = array(
             'LEFT JOIN blood_donor_cycle ON blood_donor_cycle.blood_donor_id =blood_donor.id',
         );
         $table_name = "blood_donor";
-
         $search_type = $this->input->post("search_type");
         if (isset($search_type)) {
             $search_type = $this->input->post("search_type");
@@ -366,7 +360,6 @@ class Bloodbank extends Admin_Controller {
             $search_type = "";
             $resultlist = $this->report_model->getReport($select, $join, $table_name, $where = array());
         } else {
-
             $search_table = "blood_donor";
             $search_column = "created_at";
             $resultlist = $this->report_model->searchReport($select, $join, $table_name, $search_type, $search_table, $search_column, $where = array());
@@ -389,7 +382,6 @@ class Bloodbank extends Admin_Controller {
         $select = 'blood_issue.*,patients.patient_name,patients.gender,patients.blood_group,blood_donor.donor_name';
         $join = array('JOIN patients ON patients.id =blood_issue.recieve_to', 'JOIN blood_donor ON blood_donor.id =blood_issue.donor_name');
         $table_name = "blood_issue";
-
         $search_type = $this->input->post("search_type");
         if (isset($search_type)) {
             $search_type = $this->input->post("search_type");
@@ -401,7 +393,6 @@ class Bloodbank extends Admin_Controller {
             $search_type = "";
             $resultlist = $this->report_model->getReport($select, $join, $table_name, $where = array());
         } else {
-
             $search_table = "blood_issue";
             $search_column = "created_at";
             $resultlist = $this->report_model->searchReport($select, $join, $table_name, $search_type, $search_table, $search_column, $where = array());
@@ -429,5 +420,4 @@ class Bloodbank extends Admin_Controller {
         $result = $this->blooddonor_model->getDonorBloodgroup($donor_id);
         echo json_encode($result);
     }
-
 }

@@ -1,6 +1,5 @@
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->
-
     <!-- Main content -->
     <section class="content">
         <div class="row">
@@ -37,13 +36,9 @@
                                         $this->lang->line('appointment') . " " . $this->lang->line('approved') => $this->lang->line('appointment_message')
                                     );
 
-
-
                                     $last_key = count($notificationMethods);
                                     $i = 1;
                                     foreach ($notificationMethods as $note_key => $note_value) {
-
-
                                         $mail_checked = "";
                                         $sms_checked = "";
                                         $post_back = checkExists($notificationlist, $note_key);
@@ -51,14 +46,11 @@
                                             $mail_checked = ($post_back['is_mail']) ? "checked=checked" : "";
                                             $sms_checked = ($post_back['is_sms']) ? "checked=checked" : "";
                                         }
-
                                         $hr = "";
-
                                         if ($i != $last_key) {
                                             $hr = "<hr>";
                                         }
                                         ?>
-
                                         <tr><td>
                                                 <?php echo $note_value; ?>
                                             </td>
@@ -73,13 +65,8 @@
                                                     echo $content[$note_value];
                                                 }
                                                 ?> <input type="hidden" name="key_array[]" value="<?php echo $note_key ?>"></td>
-                                        </tr>     
-
-
-
-
+                                        </tr> 
                                         <?php
-                                        // echo $hr;
                                         $i++;
                                     }
                                     ?>
@@ -91,17 +78,12 @@
                         </div>   
                 </form>                 
             </div>
-
         </div>
 </div><!--./wrapper-->
-
 </section><!-- /.content -->
 </div>
-
 <?php
-
 function checkExists($notificationlist, $key) {
-
     foreach ($notificationlist as $not_key => $not_value) {
         if ($not_value->type == $key) {
             return array(

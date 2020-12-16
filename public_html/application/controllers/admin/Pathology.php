@@ -14,8 +14,7 @@ class Pathology extends Admin_Controller {
         $this->payment_mode = $this->config->item('payment_mode');
         $this->search_type = $this->config->item('search_type');
         $this->blood_group = $this->config->item('bloodgroup');
-
-        $this->charge_type = $this->config->item('charge_type');
+        $this->charge_type = $this->customlib->getChargeMaster();
         $data["charge_type"] = $this->charge_type;
         $this->patient_login_prefix = "pat";
     }
@@ -31,6 +30,7 @@ class Pathology extends Admin_Controller {
         if (!$this->rbac->hasPrivilege('pathology test', 'can_add')) {
             access_denied();
         }
+        $this->form_validation->set_rules('parameter_name[]', $this->lang->line('parameter') . " " . $this->lang->line('name'), 'required');
         $this->form_validation->set_rules('test_name', $this->lang->line('test') . " " . $this->lang->line('name'), 'required');
         $this->form_validation->set_rules('short_name', $this->lang->line('short') . " " . $this->lang->line('name'), 'required');
         $this->form_validation->set_rules('test_type', $this->lang->line('test') . " " . $this->lang->line('type'), 'required');
@@ -43,37 +43,54 @@ class Pathology extends Admin_Controller {
                 'test_name' => form_error('test_name'),
                 'short_name' => form_error('short_name'),
                 'test_type' => form_error('test_type'),
-                'pathology_category_id' => form_error('pathology_category_id'),
+                'parameter_name[]' => form_error('parameter_name[]'),
                 'charge_category_id' => form_error('charge_category_id'),
                 'code' => form_error('code'),
                 'standard_charge' => form_error('standard_charge'),
             );
             $array = array('status' => 'fail', 'error' => $msg, 'message' => '');
         } else {
+            $parameter_id = $this->input->post('parameter_name');
             $pathology = array(
                 'test_name' => $this->input->post('test_name'),
                 'short_name' => $this->input->post('short_name'),
                 'test_type' => $this->input->post('test_type'),
                 'pathology_category_id' => $this->input->post('pathology_category_id'),
-                'unit' => $this->input->post('unit'),
                 'sub_category' => $this->input->post('sub_category'),
                 'report_days' => $this->input->post('report_days'),
                 'method' => $this->input->post('method'),
                 'charge_id' => $this->input->post('code')
             );
-            $this->pathology_model->add($pathology);
+          
+
+            $insert_id = $this->pathology_model->add($pathology);
+         
+                $i = 0;
+                foreach ($parameter_id as $key => $value) {
+                    $detail = array(
+                        'pathology_id' => $insert_id,
+                        'parameter_id' => $parameter_id[$i],
+                    );
+                    $data[]= $detail;
+
+                $i++;
+            } 
+
+           
+        
+            $this->pathology_model->addparameter($data);
+           
             $array = array('status' => 'success', 'error' => '', 'message' => $this->lang->line('success_message'));
         }
         echo json_encode($array);
     }
 
     public function addpatient() {
-        if (!$this->rbac->hasPrivilege('patient', 'can_add')) {
+        if (!$this->rbac->hasPrivilege('pathology test', 'can_add')) {
             access_denied();
         }
 
         $this->form_validation->set_rules('name', $this->lang->line('name'), 'trim|required|xss_clean');
-
 
         if ($this->form_validation->run() == FALSE) {
             $msg = array(
@@ -129,6 +146,7 @@ class Pathology extends Admin_Controller {
     }
 
     public function search() {
+
         if (!$this->rbac->hasPrivilege('pathology test', 'can_view')) {
             access_denied();
         }
@@ -136,34 +154,86 @@ class Pathology extends Admin_Controller {
         $categoryName = $this->pathology_category_model->getcategoryName();
         $data["categoryName"] = $categoryName;
 
-        $data["title"] = 'pathology';
+        $parametername = $this->pathology_category_model->getpathoparameter();
+        $data["parametername"] = $parametername;
 
+        $data["title"] = 'pathology';
         $data['charge_category'] = $this->pathology_model->getChargeCategory();
         $doctors = $this->staff_model->getStaffbyrole(3);
         $data["doctors"] = $doctors;
-
         $patients = $this->patient_model->getPatientListall();
         $data["patients"] = $patients;
+        $resultlist = $this->pathology_model->searchFullText();
+        $data['resultlist'] = $resultlist;  
 
-        $data['resultlist'] = $this->pathology_model->searchFullText();
         $result = $this->pathology_model->getPathology();
-        $data['result'] = $result;
-
+        $data['result'] = $result;     
         $this->load->view('layout/header');
-        $this->load->view('admin/pathology/search.php', $data);
+        $this->load->view('admin/pathology/search', $data);    
         $this->load->view('layout/footer');
+    }
+
+     public function editparameter($id) {
+        // if (!$this->rbac->hasPrivilege('pathology parameter', 'can_view')) {
+        //     access_denied();
+        // }
+         $parametername = $this->pathology_category_model->getpathoparameter();
+        $data["parametername"] = $parametername;
+
+        $detail = $this->pathology_category_model->getparameterDetails($id);
+        $data['detail'] = $detail;
+        // print_r($detail);
+        // exit();
+        $this->load->view("admin/pathology/editparameter", $data);
+    }
+
+      public function parameterview($id,$value_id='') {
+        // if (!$this->rbac->hasPrivilege('pathology parameter', 'can_view')) {
+        //     access_denied();
+        // }
+        $parametername = $this->pathology_category_model->getpathoparameter();
+        $data["parametername"] = $parametername;
+       
+        $detail = $this->pathology_category_model->getparameterDetails($id,$value_id);
+        $data['detail'] = $detail;
+
+        $this->load->view("admin/pathology/parameterview", $data);
+    }
+
+      public function parameterdetails($id,$value_id='') {
+        // if (!$this->rbac->hasPrivilege('pathology parameter', 'can_view')) {
+        //     access_denied();
+        // }
+        $parametername = $this->pathology_category_model->getpathoparameter();
+        $data["parametername"] = $parametername;
+        
+        $detail = $this->pathology_category_model->getparameterDetailsforpatient($value_id);
+       // print_r($detail);
+
+        $data['detail'] = $detail;
+      
+        $this->load->view("admin/pathology/parameterdetails", $data);
+    }
+
+    public function getparameterdetails() {
+        $id = $this->input->get_post('id');
+        $result = $this->pathology_category_model->getpathoparameter($id);
+        echo json_encode($result);
     }
 
     public function getDetails() {
         if (!$this->rbac->hasPrivilege('pathology test', 'can_view')) {
             access_denied();
-        }
+        }   
         $id = $this->input->post("pathology_id");
         $result = $this->pathology_model->getDetails($id);
         echo json_encode($result);
     }
 
     public function update() {
+
+       
+
         if (!$this->rbac->hasPrivilege('pathology test', 'can_edit')) {
             access_denied();
         }
@@ -185,25 +255,108 @@ class Pathology extends Admin_Controller {
             );
             $array = array('status' => 'fail', 'error' => $msg, 'message' => '');
         } else {
+
+           //  print_r($_POST);
             $id = $this->input->post('id');
             $charge_category_id = $this->input->post('charge_category_id');
+            $pre_pathology_parameter_id = $this->input->post("previous_pathology_parameter_id[]");
+            $pre_pathology_id = $this->input->post("previous_pathology_id");
+
+            $pre_parameter_id = $this->input->post("previous_parameter_id[]");
+
+             $new_parameter_id = $this->input->post("new_parameter_id[]");
+
+            // print_r($new_parameter_id);
+
+            // print_r($pre_parameter_id);
+          //   exit();
+
+            $parameter_id = $this->input->post("parameter_name[]");
+          //  print_r($parameter_id);
+           // $rowcount = $this->input->post("rowcount[]");
+          //$count = count($pre_pathology_parameter_id);
+           $insert_data = array();
             $pathology = array(
                 'id' => $id,
                 'test_name' => $this->input->post('test_name'),
                 'short_name' => $this->input->post('short_name'),
                 'test_type' => $this->input->post('test_type'),
                 'pathology_category_id' => $this->input->post('pathology_category_id'),
-                'unit' => $this->input->post('unit'),
+                // 'pathology_parameter_id' => $this->input->post('pathology_parameter_id'),
+                // 'unit' => $this->input->post('unit'),
                 'sub_category' => $this->input->post('sub_category'),
                 'report_days' => $this->input->post('report_days'),
                 'method' => $this->input->post('method'),
                 'charge_id' => $this->input->post('code')
             );
+        
 
-            $this->pathology_model->update($pathology);
-            $array = array('status' => 'success', 'error' => '', 'message' => $this->lang->line('success_message'));
+    //  print_r($parameter_id);
+
+
+            $i = 0; $j=0; 
+                foreach ($parameter_id as $key => $value) {
+                    if (array_key_exists($i,$pre_pathology_parameter_id))
+                  {
+                  $detail = array(
+                        'parameter_id' => $parameter_id[$i],
+                        'id' => $pre_pathology_parameter_id[$i],
+                    );
+                    $data[] = $detail;
+                    }
+                    else
+                      { $j++;
+                         $insert_detail = array(
+                        'pathology_id' => $id,
+                        'parameter_id' => $parameter_id[$i],
+                    );
+                    $insert_data[]=$insert_detail;
+              }
+                $i++;
+            }
+         
+           // echo "<pre>"; print_r($data); echo "</pre>";die;
+            $k = $i-$j;
+            $s=1; 
+            $condition="";
+            foreach ($data as $key => $value) {
+                if($s == $k){           
+                    $coma='';
+                }else{
+                    $coma=',';
+                }
+                $condition.="(".$value['parameter_id'].",".$value['id'].")".$coma; 
+                 $s++;
+            }
+
+            // print_r($condition);
+            // print_r($insert_data);
+            //exit();
+         $delete_arr = array();
+            foreach ($pre_parameter_id as $pkey => $pvalue) {
+                if (in_array($pvalue, $new_parameter_id)) {
+                    
+                } else {
+                    $delete_arr[] = array('id' => $pvalue,);
+                }
+            }
+
+        $this->pathology_model->updateparameter($condition);
+        
+        if(!empty($insert_data)){
+            $this->pathology_model->addparameter($insert_data);
         }
-        echo json_encode($array);
+
+         if (!empty($delete_arr)) {
+                $this->pathology_model->delete_parameter($delete_arr);
+            }
+        
+        $this->pathology_model->update($pathology);
+            
+         $array = array('status' => 'success', 'error' => '', 'message' => $this->lang->line('success_message'));
+         echo json_encode($array);
+        }
+      
     }
 
     public function delete($id) {
@@ -235,6 +388,16 @@ class Pathology extends Admin_Controller {
         }
         $id = $this->input->post('id');
         $result = $this->pathology_model->getPathologyReport($id);
+        $result['reporting_date'] = date($this->customlib->getSchoolDateFormat(), strtotime($result['reporting_date']));
+        echo json_encode($result);
+    }
+
+     public function getPathologyparameterReport() {
+        if (!$this->rbac->hasPrivilege('pathology test', 'can_view')) {
+            access_denied();
+        }
+        $id = $this->input->post('id');
+        $result = $this->pathology_model->getPathologyparameterReport($id);
         $result['reporting_date'] = date($this->customlib->getSchoolDateFormat(), strtotime($result['reporting_date']));
         echo json_encode($result);
     }
@@ -295,6 +458,93 @@ class Pathology extends Admin_Controller {
         echo json_encode($array);
     }
 
+      public function parameteraddvalue() {
+        if (!$this->rbac->hasPrivilege('pathology test', 'can_edit')) {
+            access_denied();
+        }
+      
+        $this->form_validation->set_rules('id', $this->lang->line('id'), 'required');
+       
+        if ($this->form_validation->run() == FALSE) {
+            $msg = array(
+                'id' => form_error('id'),
+             
+            );
+            $array = array('status' => 'fail', 'error' => $msg, 'message' => '');
+        } else {
+          
+            $id = $this->input->post('id');
+          //  print_r($id);
+          //  exit();
+            $reporting_date = $this->input->post("reporting_date");
+             $report_batch = array(
+               'id' => $id,
+                //'patient_name' => $this->input->post('patient_name'),
+
+                'patient_id' => $this->input->post('patient_id_patho'),
+                'consultant_doctor' => $this->input->post('consultant_doctor'),
+                'reporting_date' => date('Y-m-d', $this->customlib->datetostrtotime($reporting_date)),
+                'description' => $this->input->post('description'),
+                'apply_charge' => $this->input->post('apply_charge'),
+            );
+      
+            $parameter_id = $this->input->post('parameter_id[]');
+            $parameter_value = $this->input->post('parameter_value[]');
+            $par_id = $this->input->post('parid[]');
+            $pathology_id = $this->input->post('pathologyid');
+
+      //   print_r($parameter_id);
+              $update_id = $this->input->post('update_id[]');
+                $preport_id = $this->input->post('preport_id[]');
+
+            $i= 0;
+            $parameter_array = array();
+            foreach ($update_id as $pkey => $pvalue) {
+                $parameter_value_arr = array(
+                'id' => $pvalue,
+                'pathology_report_id' => $preport_id[$i],
+                'pathology_report_value' => $parameter_value[$i],
+              //  'pathology_id' => $pathology_id
+                    );
+          
+                $this->pathology_model->addparametervalue($parameter_value_arr);
+ 
+                $i++;
+              }
+            
+
+            
+            if (!empty($_FILES['pathology_report']['name'])) {
+            $config['upload_path'] = 'uploads/pathology_report/';
+            $config['allowed_types'] = 'jpg|jpeg|png|pdf|doc|docx|xls|xlsx';
+            $config['file_name'] = $_FILES['pathology_report']['name'];
+              $fileInfo = pathinfo($_FILES["pathology_report"]["name"]);
+                $img_name = $id . '.' . $fileInfo['extension'];
+              
+           
+            $this->load->library('upload', $config);
+            $this->upload->initialize($config);
+           /* if ($this->upload->do_upload('pathology_report')) {
+                $uploadData = $this->upload->data();
+                $picture = $uploadData['file_name'];
+            }else{
+                $picture = "";
+            }*/
+
+              move_uploaded_file($_FILES["pathology_report"]["tmp_name"], "./uploads/pathology_report/" . $img_name);
+              
+
+            $data_img  = array('id' => $id ,'pathology_report' =>$img_name );
+              $this->pathology_model->updateTestReport($data_img);
+        }
+
+        $this->pathology_model->updateTestReport($report_batch);
+       
+        $array = array('status' => 'success', 'error' => '', 'message' => $this->lang->line('success_message'));
+        }
+        echo json_encode($array);
+    }
+
     public function testReportBatch() {
         if (!$this->rbac->hasPrivilege('pathology test', 'can_add')) {
             access_denied();
@@ -340,7 +590,25 @@ class Pathology extends Admin_Controller {
                 'generated_by' => $this->session->userdata('hospitaladmin')['id'],
                 'pathology_report' => ''
             );
+            // print_r($report_batch);
+            // exit();
             $insert_id = $this->pathology_model->testReportBatch($report_batch);
+
+            $paramet_details = $this->pathology_model->getparameterBypathology($id);
+
+            foreach ($paramet_details as $pkey => $pvalue) {
+                # code...
+
+                $paramet_insert_array  = array('pathology_report_id' => $insert_id, 
+                                                'parameter_id' => $pvalue["parameter_id"]
+
+                                                );
+
+                $insert_into_parameter = $this->pathology_model->addParameterforPatient($paramet_insert_array);
+
+            }
+
+           // exit();
             // if (isset($_FILES["pathology_report"]) && !empty($_FILES['pathology_report']['name'])) {
             //     $fileInfo = pathinfo($_FILES["pathology_report"]["name"]);
             //     $img_name = $insert_id . '.' . $fileInfo['extension'];
@@ -411,16 +679,15 @@ class Pathology extends Admin_Controller {
         $data["patients"] = $patients;
         $result = $this->pathology_model->getTestReportBatch($id);
         $data["result"] = $result;
+      
         $this->load->view('layout/header');
         $this->load->view('admin/pathology/reportDetail', $data);
         $this->load->view('layout/footer');
     }
 
-    public function getBillDetails($id) {
+    public function getBillDetails($id,$parameter_id) {
 
-        if (!$this->rbac->hasPrivilege('pathology test', 'can_view')) {
-            access_denied();
-        }
+       
 
         $print_details = $this->printing_model->get('', 'pathology');
         $data['print_details'] = $print_details;
@@ -435,7 +702,39 @@ class Pathology extends Admin_Controller {
         $data['result'] = $result;
         $detail = $this->pathology_model->getAllBillDetails($id);
         $data['detail'] = $detail;
+
+        $parametername = $this->pathology_category_model->getpathoparameter();
+        $data["parametername"] = $parametername;
+        
+        $parameterdetails = $this->pathology_category_model->getparameterDetailsforpatient($id);
+        $data['parameterdetails'] = $parameterdetails;
+        
         $this->load->view('admin/pathology/printBill', $data);
+    }
+
+     public function getReportDetails($id,$parameter_id) {
+
+       
+
+        $print_details = $this->printing_model->get('', 'pathology');
+        $data['print_details'] = $print_details;
+        $data['id'] = $id;
+        if (isset($_POST['print'])) {
+            $data["print"] = 'yes';
+        } else {
+            $data["print"] = 'no';
+        }
+
+        $result = $this->pathology_model->getBillDetails($id);
+        $data['result'] = $result;
+        $detail = $this->pathology_model->getAllBillDetails($id);
+        $data['detail'] = $detail;
+        $parametername = $this->pathology_category_model->getpathoparameter();
+        $data["parametername"] = $parametername;
+        $parameterdetails = $this->pathology_category_model->getparameterDetailsforpatient($id);
+        $data['parameterdetails'] = $parameterdetails;
+        
+        $this->load->view('admin/pathology/printReport', $data);
     }
 
     public function download($doc) {
@@ -465,7 +764,7 @@ class Pathology extends Admin_Controller {
             'JOIN charges ON charges.id = pathology.charge_id', 'JOIN patients ON patients.id = pathology_report.patient_id'
         );
         $table_name = "pathology_report";
-
+        //$where = "";    
         $search_type = $this->input->post("search_type");
         if (isset($search_type)) {
             $search_type = $this->input->post("search_type");

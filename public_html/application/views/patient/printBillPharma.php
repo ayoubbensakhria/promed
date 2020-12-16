@@ -39,16 +39,16 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                     <table class="printablea4" cellspacing="0" cellpadding="0" width="100%">
                         <tr>
                             <th width="20%"><?php echo $this->lang->line('name'); ?></th>
-                            <td width="25%"><?php echo $result["customer_name"]; ?></td>
+                            <td width="25%"><?php echo $result["patient_name"]; ?></td>
                             <th width="25%"><?php echo $this->lang->line('doctor'); ?></th>
                             <td width="30%" align="left"><?php echo $result["doctor_name"]; ?></td>
                         </tr>
-                        <tr>
+                       <!--  <tr>   
                             <th width="20%"><?php echo $this->lang->line('customer') . " " . $this->lang->line('type'); ?></th>
                             <td width="25%"><?php echo $this->lang->line($result["customer_type"]); ?></td>
                             <th width="25%"><?php echo $this->lang->line('opd_ipd_no'); ?></th>
                             <td width="30%" align="left"><?php echo $result['opd_ipd_no']; ?></td> 
-                        </tr> 
+                        </tr>  -->
                     </table>
                     <hr style="height: 1px; clear: both;margin-bottom: 10px; margin-top: 10px">
                     <table class="printablea4" id="testreport" width="100%">
@@ -67,8 +67,8 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                             ?>
                             <tr>
                                 <td width="20%"><?php echo $bill["medicine_name"]; ?></td>
-                                <td><?php echo $bill["batch_no"]; ?></td>
                                 <td><?php echo $bill["unit"]; ?></td>
+                                <td><?php echo $bill["batch_no"]; ?></td>
                                 <td><?php echo $bill['expire_date']; ?></td>
                                 <td><?php echo $bill["quantity"]; ?></td>
                                 <td align="right"><?php echo $bill["sale_price"]; ?></td>

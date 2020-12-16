@@ -2,13 +2,6 @@
 $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
 $genderList = $this->customlib->getGender();
 ?>
-<style type="text/css">
-
-    #easySelectable {/*display: flex; flex-wrap: wrap;*/}
-    #easySelectable li {}
-    #easySelectable li.es-selected {background: #2196F3; color: #fff;}
-    .easySelectable {-webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;}
-</style>
 <div class="content-wrapper">
     <!-- Main content -->
     <section class="content">
@@ -19,23 +12,15 @@ $genderList = $this->customlib->getGender();
                         <h3 class="box-title titlefix"> <?php echo $this->lang->line('tpa_management'); ?></h3>
                         <div class="box-tools pull-right">
                             <?php if ($this->rbac->hasPrivilege('organisation', 'can_add')) { ?>
-                                <a data-toggle="modal" data-target="#myModal" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> <?php echo $this->lang->line('add') . " " . $this->lang->line('organisation'); ?></a> 
+                                <a data-toggle="modal" data-target="#myModal" class="btn btn-primary btn-sm organisation"><i class="fa fa-plus"></i> <?php echo $this->lang->line('add') . " " . $this->lang->line('organisation'); ?></a> 
                             <?php } ?>
-
-
                         </div>    
                     </div><!-- /.box-header -->
-
                     <?php
                     if (isset($resultlist)) {
                         ?>
                         <div class="box-body">
-
-
-
-
                             <div class="download_label"><?php echo $title; ?></div>
-
                             <table class="table table-striped table-bordered table-hover example" cellspacing="0" width="100%">
                                 <thead>
                                     <tr>
@@ -51,17 +36,13 @@ $genderList = $this->customlib->getGender();
                                     <?php
                                     if (empty($resultlist)) {
                                         ?>
-                                                                        <!-- <tr>
-                                                                            <td colspan="12" class="text-danger text-center"><?php echo $this->lang->line('no_record_found'); ?></td>
-                                                                        </tr> -->
+                                                                        
                                         <?php
                                     } else {
                                         $count = 1;
                                         foreach ($resultlist as $org) {
-                                            //print_r($org['id']);
                                             ?>
                                             <tr class="">
-
                                                 <td>
                                                     <?php echo $org['organisation_name']; ?>
                                                     <div class="rowoptionview">
@@ -79,11 +60,8 @@ $genderList = $this->customlib->getGender();
                                                                 <i class="fa fa-trash"></i>
                                                             </a>
                                                         <?php } ?>
-
-
                                                     </div>  
                                                 </td>
-
                                                 <td><?php echo $org['code']; ?></td>
                                                 <td><?php echo $org['contact_no']; ?></td>
                                                 <td><?php echo $org['address']; ?></td>
@@ -119,21 +97,18 @@ $genderList = $this->customlib->getGender();
                                     <div class="form-group">
                                         <label><?php echo $this->lang->line('name'); ?></label><small class="req"> *</small> 
                                         <input id="name" name="name" placeholder="" type="text" class="form-control"   autocomplete="off" />
-
                                     </div>
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label><?php echo $this->lang->line('code'); ?></label><small class="req"> *</small> 
                                         <input id="code" name="code" placeholder="" type="text" class="form-control"   autocomplete="off" />
-
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label><?php echo $this->lang->line('contact_no'); ?></label><small class="req"> *</small> 
                                         <input id="name" name="contact_number" placeholder="" type="text" class="form-control"   autocomplete="off" />
-
                                     </div>
                                 </div>
                                 <div class="col-sm-12">
@@ -146,7 +121,6 @@ $genderList = $this->customlib->getGender();
                                     <div class="form-group">
                                         <label><?php echo $this->lang->line('contact_person_name'); ?> </label>
                                         <input id="name" name="contact_person_name" placeholder="" type="text" class="form-control"   autocomplete="off" />
-
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -185,21 +159,18 @@ $genderList = $this->customlib->getGender();
                                     <div class="form-group">
                                         <label><?php echo $this->lang->line('name'); ?></label><small class="req"> *</small> 
                                         <input id="ename" name="ename" placeholder="" type="text" class="form-control"  value="<?php echo set_value('name'); ?>" autocomplete="off" />
-
                                     </div>
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label><?php echo $this->lang->line('code'); ?></label><small class="req"> *</small> 
                                         <input id="ecode" name="ecode" placeholder="" type="text" class="form-control"  value="<?php echo set_value('code'); ?>" autocomplete="off" />
-
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label><?php echo $this->lang->line('contact_no'); ?></label><small class="req"> *</small> 
                                         <input id="econtact_number" name="econtact_number" placeholder="" type="text" class="form-control"  value="<?php echo set_value('name'); ?>" autocomplete="off" />
-
                                     </div>
                                 </div>
                                 <div class="col-sm-12">
@@ -221,8 +192,7 @@ $genderList = $this->customlib->getGender();
                                         <input id="econtact_persion_phone" name="econtact_persion_phone" placeholder="" type="text" class="form-control"   autocomplete="off" />
                                     </div>
                                 </div>
-                            </div><!--./row-->   
-
+                            </div><!--./row-->  
                     </div><!--./col-md-12-->       
                 </div>
             </div>
@@ -236,7 +206,6 @@ $genderList = $this->customlib->getGender();
     </div> 
 </div>
 <script type="text/javascript">
-
     function get_orgdata(id) {
         $('#editModal').modal('show')
         $.ajax({
@@ -251,30 +220,15 @@ $genderList = $this->customlib->getGender();
                 $('#eaddress').val(res.eaddress);
                 $('#econtact_persion_name').val(res.econtact_persion_name);
                 $('#econtact_persion_phone').val(res.econtact_persion_phone);
-
             }
-
-
-
         });
-        //alert(id);
-        /* [ename] => 
-         [ecode] => 
-         [econtact_number] => 
-         [eaddress] => 
-         [econtact_persion_name] => 
-         [econtact_persion_phone] => */
     }
     $(function () {
         $('#easySelectable').easySelectable();
-//stopPropagation();
-    })
 
+    })
 </script>
-<script type="text/javascript">
-            /*
-             Author: mee4dy@gmail.com
-             */
+<script type="text/javascript">            
                     (function ($) {
                         //selectable html elements
                         $.fn.easySelectable = function (options) {
@@ -343,7 +297,6 @@ $genderList = $this->customlib->getGender();
                             }
                         };
                     })(jQuery);
-
 </script>
 <script type="text/javascript">
             $(document).ready(function (e) {
@@ -359,17 +312,13 @@ $genderList = $this->customlib->getGender();
                         cache: false,
                         processData: false,
                         success: function (data) {
-
                             if (data.status == "fail") {
-
                                 var message = "";
                                 $.each(data.error, function (index, value) {
-
                                     message += value;
                                 });
                                 errorMsg(message);
                             } else {
-
                                 successMsg(data.message);
                                 window.location.reload(true);
                             }
@@ -379,10 +328,8 @@ $genderList = $this->customlib->getGender();
                             //  alert("Fail")
                         }
                     });
-
                 }));
             });
-
 
             $(document).ready(function (e) {
                 $("#formedit").on('submit', (function (e) {
@@ -397,17 +344,13 @@ $genderList = $this->customlib->getGender();
                         cache: false,
                         processData: false,
                         success: function (data) {
-
                             if (data.status == "fail") {
-
                                 var message = "";
                                 $.each(data.error, function (index, value) {
-
                                     message += value;
                                 });
                                 errorMsg(message);
                             } else {
-
                                 successMsg(data.message);
                                 window.location.reload(true);
                             }
@@ -417,9 +360,10 @@ $genderList = $this->customlib->getGender();
                             //  alert("Fail")
                         }
                     });
-
                 }));
-            });
+            });			
+			
+$(".organisation").click(function(){
+	$('#formadd').trigger("reset");
+});
 </script>
-
-

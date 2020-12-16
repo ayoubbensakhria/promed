@@ -22,7 +22,7 @@ $genderList = $this->customlib->getGender();
                         </div> -->
                     </div><!-- /.box-header -->
                     <div class="box-body">
-                        <div class="download_label"><?php echo $this->lang->line('pharmacy') . " " . $this->lang->line('bill'); ?></div>
+                        <div class="download_label"><?php echo $this->lang->line('ambulance') . " " . $this->lang->line('bill'); ?></div>
                         <table class="table table-striped table-bordered table-hover example" cellspacing="0" width="100%">
                             <thead>
                                 <tr>
@@ -30,8 +30,8 @@ $genderList = $this->customlib->getGender();
                                     <th><?php echo $this->lang->line('vehicle_model'); ?></th>
                                     <th><?php echo $this->lang->line('driver_name'); ?></th>
                                     <th><?php echo $this->lang->line('driver_contact'); ?></th>
-                                    <th><?php echo $this->lang->line('amount'); ?></th>
-                                    <th><?php echo $this->lang->line('action'); ?></th>
+                                    <th class="text-right"><?php echo $this->lang->line('amount')." (".$currency_symbol.")"; ?></th>
+                                    <th class="text-right"><?php echo $this->lang->line('action'); ?></th>
 
                                 </tr>
                             </thead>
@@ -52,8 +52,8 @@ $genderList = $this->customlib->getGender();
                                             <td><?php echo $bill['vehicle_model']; ?></td>
                                             <td><?php echo $bill['driver']; ?></td>
                                             <td><?php echo $bill['driver_contact']; ?></td>
-                                            <td class=""><?php echo $bill['amount']; ?></td>
-                                            <td class="">
+                                            <td class="text-right"><?php echo $bill['amount']; ?></td>
+                                            <td class="text-right">
                                                 <a href="#" 
                                                    onclick="viewDetail('<?php echo $bill['id'] ?>')"
                                                    class="btn btn-default btn-xs"  data-toggle="tooltip"

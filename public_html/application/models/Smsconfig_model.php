@@ -33,7 +33,6 @@ class Smsconfig_model extends CI_Model {
     public function add($data) {
         $this->db->where('type', $data['type']);
         $q = $this->db->get('sms_config');
-
         if ($q->num_rows() > 0) {
             $this->db->where('type', $data['type']);
             $this->db->update('sms_config', $data);

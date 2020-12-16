@@ -1,20 +1,21 @@
 <style type="text/css">
-
-
     .modal-dialog2 {margin: 1% auto;}
-
+    .color_box {
+  float: left;
+ width: 10px;
+    height: 10px;
+  margin: 5px;
+  border: 1px solid rgba(0, 0, 0, .2);
 </style>
 <?php
 $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
 $genderList = $this->customlib->getGender();
 ?>
-<div class="content-wrapper" style="min-height: 946px;">    
-
+<div class="content-wrapper" style="min-height: 946px;"> 
     <!-- Main content -->
     <section class="content">
         <div class="row">
             <?php $this->load->view('setting/sidebar.php'); ?>
-
             <div class="col-md-7">
                 <div class="box box-primary">
                     <div class="box-header with-border">
@@ -61,7 +62,6 @@ $genderList = $this->customlib->getGender();
                                         <td><strong><?php echo $this->lang->line('language_rtl_text_mode'); ?></strong></td>
                                         <td class="mailbox-name"> <?php echo ucfirst($settinglist[0]['is_rtl']); ?></td>
                                     </tr>
-
                                     <tr>
                                         <td><strong><?php echo $this->lang->line('timezone'); ?></strong></td>
                                         <td class="mailbox-name"> <?php echo $settinglist[0]['timezone'] ?></td>
@@ -100,15 +100,22 @@ $genderList = $this->customlib->getGender();
                                         <td><strong><?php echo $this->lang->line('currency_symbol'); ?></strong></td>
                                         <td class="mailbox-name"> <?php echo $settinglist[0]['currency_symbol'] ?></td>
                                     </tr>
-
                                     <tr>
                                         <td><strong><?php echo $this->lang->line('credit_limit'); ?></strong></td>
                                         <td class="mailbox-name"> <?php echo $currency_symbol . $settinglist[0]['credit_limit'] ?></td>
                                     </tr>
-                                    <!-- <tr>
-                                        <td><strong><?php //echo $this->lang->line('opd_record_month');   ?></strong></td>
-                                        <td class="mailbox-name"> <?php //echo $settinglist[0]['opd_record_month']   ?></td>
-                                    </tr> -->
+                                     <tr>
+                                        <td><strong><?php echo $this->lang->line('mobile_app_api_url'); ?></strong></td>
+                                        <td class="mailbox-name"> <?php echo $settinglist[0]['mobile_api_url'] ?></td>
+                                    </tr>
+                                     <tr>
+                                        <td><strong><?php echo $this->lang->line('app_primary_color_code'); ?></strong></td>
+                                        <td> <div class="color_box" style="background: <?php echo $settinglist[0]['app_primary_color_code'] ?>"></div><?php echo $settinglist[0]['app_primary_color_code'] ?></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong><?php echo $this->lang->line('app_secondary_color_code'); ?></strong></td>
+                                          <td> <div class="color_box" style="background: <?php echo $settinglist[0]['app_secondary_color_code'] ?>"></div><?php echo $settinglist[0]['app_secondary_color_code'] ?></td>
+                                    </tr>
                                     <tr>
                                         <td><strong><?php echo $this->lang->line('doctor_restriction_mode'); ?></strong></td>
                                         <td class="mailbox-name"><?php echo ucfirst($settinglist[0]['doctor_restriction']) ?></td>
@@ -121,8 +128,7 @@ $genderList = $this->customlib->getGender();
                             </table>
                         </div>
                         <div class="clearfix"></div>
-                        <div class="row">    
-
+                        <div class="row">
                             <hr style="width: 98.9%; margin: 32px auto 20px;" />
                             <div class="col-md-12 col-sm-12">   
                                 <label for="input-type"><?php echo $this->lang->line('current_theme'); ?></label></div>
@@ -136,16 +142,11 @@ $genderList = $this->customlib->getGender();
                             </div>
                             <div class="col-md-3 col-sm-3 col-xs-6">
                                 <img class="<?php echo ($settinglist[0]['theme'] == "blue.jpg") ? "radioactive" : ""; ?> img-responsive radioborder" src="<?php echo base_url(); ?>backend/images/blue.jpg">
-
                             </div>
                             <div class="col-md-3 col-sm-3 col-xs-6">
-
                                 <img class="<?php echo ($settinglist[0]['theme'] == "gray.jpg") ? "radioactive" : ""; ?> img-responsive radioborder" src="<?php echo base_url(); ?>backend/images/gray.jpg">
                             </div>
                         </div>
-
-
-
                     </div>
                 </div>
             </div><!--./col-md-9-->
@@ -184,18 +185,14 @@ $genderList = $this->customlib->getGender();
                         }
                         ?>
                         <?php if ($this->rbac->hasPrivilege('general_setting', 'can_edit')) { ?>
-                            <a href="# role="button" class="btn btn-primary btn-sm upload_minilogo pull-right"  data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> Processing"><i class="fa fa-picture-o"></i> <?php echo $this->lang->line('edit') . " " . $this->lang->line('small') . " " . $this->lang->line('logo'); ?></a>
+                            <a href="#" role="button" class="btn btn-primary btn-sm upload_minilogo pull-right"  data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> Processing"><i class="fa fa-picture-o"></i> <?php echo $this->lang->line('edit') . " " . $this->lang->line('small') . " " . $this->lang->line('logo'); ?></a>
                         <?php } ?>
                     </div>
                 </div>
             </div><!--./col-md-3-->
-
         </div> 
-
     </section>
 </div>
-
-
 
 <div id="schsetting" class="modal fade " role="dialog">
     <div class="modal-dialog modal-dialog2 modal-lg">
@@ -205,59 +202,40 @@ $genderList = $this->customlib->getGender();
                 <h4 class="modal-title"><?php echo $this->lang->line('edit') . " " . $this->lang->line('general_settings'); ?></h4>
             </div>
             <div class="modal-body">
-
                 <div class="row">
                     <form role="form" id="schsetting_form" action="<?php echo site_url('schsettings/ajaxedit') ?>">
                         <input type="hidden" name="sch_id" value="0">
                         <div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-6">
                             <label for="exampleInputEmail1"><?php echo $this->lang->line('hospital') . " " . $this->lang->line('name') ?></label><small class="req"> *</small>
-
                             <input class="form-control" id="name" name="sch_name" placeholder="" type="text"  />
                             <span class="text-danger"><?php echo form_error('name'); ?></span>
-
                         </div>
-
                         <div class="form-group  col-xs-12 col-sm-12 col-md-12 col-lg-6">
                             <label for="exampleInputEmail1"><?php echo $this->lang->line('hospital') . " " . $this->lang->line('code') ?></label>
-
                             <input id="dise_code" name="sch_dise_code" placeholder="" type="text" class="form-control"  />
                             <span class="text-danger"><?php echo form_error('dise_code'); ?></span>
                         </div>
-
                         <div class="form-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
                             <label for="exampleInputEmail1"><?php echo $this->lang->line('address'); ?></label><small class="req"> *</small>
-
                             <textarea class="form-control" style="resize: none;" rows="2" id="address" name="sch_address" placeholder=""></textarea>
                             <span class="text-danger"><?php echo form_error('address'); ?></span>
-
                         </div>
-
                         <div class="clearfix"></div>
-
                         <div class="form-group  col-xs-12 col-sm-12 col-md-12 col-lg-6">
                             <label for="exampleInputEmail1"><?php echo $this->lang->line('phone'); ?></label><small class="req"> *</small>
-
                             <input class="form-control" id="phone" name="sch_phone" placeholder="" type="text"/>
                             <span class="text-danger"><?php echo form_error('phone'); ?></span>
                         </div>
-
                         <div class="form-group  col-xs-12 col-sm-12 col-md-12 col-lg-6">
                             <label for="exampleInputEmail1"><?php echo $this->lang->line('email'); ?></label>
                             <small class="req"> *</small>
                             <input class="form-control" id="email" name="sch_email" placeholder="" type="text"/>
                             <span class="text-danger"><?php echo form_error('email'); ?></span>
                         </div>
-
                         <div class="clearfix"></div>
-
-
-
-
                         <div class="clearfix"></div>
-
                         <div class="form-group  col-xs-12 col-sm-12 col-md-12 col-lg-6">
                             <label for="exampleInputEmail1"><?php echo $this->lang->line('language'); ?></label><small class="req"> *</small>
-
                             <select  id="language_id" name="sch_lang_id" class="form-control" >
                                 <option value=""><?php echo $this->lang->line('select') ?></option>
                                 <?php
@@ -269,9 +247,7 @@ $genderList = $this->customlib->getGender();
                                 ?>
                             </select>
                             <span class="text-danger"><?php echo form_error('language_id'); ?></span>
-                        </div>  
-
-
+                        </div> 
                         <div class="form-group  col-xs-12 col-sm-12 col-md-12 col-lg-6">
                             <label for="IsSmallBusiness"><?php echo $this->lang->line('language_rtl_text_mode'); ?></label>
                             <div class="clearfix"></div>
@@ -282,13 +258,9 @@ $genderList = $this->customlib->getGender();
                                 <input type="radio" name="sch_is_rtl" value="enabled"><?php echo $this->lang->line('enabled'); ?>
                             </label>
                         </div>
-
-                        <div class="clearfix"></div>    
-
-
+                        <div class="clearfix"></div> 
                         <div class="form-group  col-xs-12 col-sm-12 col-md-12 col-lg-6">
                             <label for="exampleInputEmail1"><?php echo $this->lang->line('timezone'); ?></label><small class="req"> *</small>
-
                             <select  id="language_id" name="sch_timezone" class="form-control" >
                                 <option value=""><?php echo $this->lang->line('select') ?></option>
                                 <?php
@@ -301,10 +273,8 @@ $genderList = $this->customlib->getGender();
                             </select>
                             <span class="text-danger"><?php echo form_error('timezone'); ?></span>
                         </div>
-
                         <div class="form-group  col-xs-12 col-sm-12 col-md-12 col-lg-6">
                             <label for="exampleInputEmail1"><?php echo $this->lang->line('date_format'); ?></label><small class="req"> *</small>
-
                             <select  id="date_format" name="sch_date_format" class="form-control" >
                                 <option value=""><?php echo $this->lang->line('select'); ?></option>
                                 <?php
@@ -320,63 +290,58 @@ $genderList = $this->customlib->getGender();
                         <div class="clearfix"></div>
                         <div class="form-group  col-xs-12 col-sm-12 col-md-12 col-lg-6">
                             <label for="exampleInputEmail1"><?php echo $this->lang->line('currency'); ?></label><small class="req"> *</small>
-
-
                             <select  id="currency" name="sch_currency" class="form-control" >
                                 <option value=""><?php echo $this->lang->line('select'); ?></option>
                                 <?php
                                 foreach ($currencyList as $currency) {
                                     ?>
                                     <option value="<?php echo $currency ?>"><?php echo $currency; ?></option>
-
                                     <?php
                                 }
                                 ?>
                             </select>
                             <span class="text-danger"><?php echo form_error('currency'); ?></span>
                         </div>
-
                         <div class="form-group  col-xs-12 col-sm-12 col-md-12 col-lg-6">
                             <label for="exampleInputEmail1"><?php echo $this->lang->line('currency_symbol'); ?></label><small class="req"> *</small>
-
                             <input id="currency_symbol" name="sch_currency_symbol" placeholder="" type="text" class="form-control" />
                             <span class="text-danger"><?php echo form_error('currency_symbol'); ?></span>
                         </div>
                         <div class="form-group  col-xs-12 col-sm-12 col-md-12 col-lg-6">
                             <label for="exampleInputEmail1"><?php echo $this->lang->line('time_format') ?></label><small class="req"> *</small>
-
                             <select  id="time_format" name="time_format" class="form-control" >
                                 <option value=""><?php echo $this->lang->line('select'); ?></option>
                                 <?php
                                 foreach ($timeFormat as $time_k => $time_v) {
                                     ?>
                                     <option value="<?php echo $time_k ?>"><?php echo $time_v; ?></option>
-
                                     <?php
                                 }
                                 ?>
                             </select>
-
                             <span class="text-danger"><?php echo form_error('time_format'); ?></span>
                         </div>
                         <div class="form-group  col-xs-12 col-sm-12 col-md-12 col-lg-6">
                             <label for="exampleInputEmail1"><?php echo $this->lang->line('credit_limit') . " (" . $currency_symbol . ")"; ?></label><small class="req"> *</small>
-                            <input type="text" id="credit_limit" name="credit_limit" id="credit_limit" class="form-control">
+                            <input type="text" id="credit_limit" name="credit_limit" class="form-control">
                             <span class="text-danger"><?php echo form_error('credit_limit'); ?></span>
                         </div>
-                        <!--  <div class="form-group  col-xs-12 col-sm-12 col-md-12 col-lg-6">
-                             <label for="exampleInputEmail1"><?php echo $this->lang->line('opd_record_month') ?></label><small class="req"> *</small>
-                             <!-- <input type="text" id="opd_record_month" name="opd_record_month" id="opd_record_month" class="form-control">
-                             ->
-                             <select name="opd_record_month" id="opd_record_month" class="form-control">
-                                 <option value=""><?php echo $this->lang->line('select'); ?></option>
-                        <?php for ($i = 1; $i <= 12; $i++) {
-                            ?>
-                                             <option value="<?php echo $i ?>"><?php echo $i ?></option>
-                        <?php } ?>
-                             </select>
-                             <span class="text-danger"><?php echo form_error('opd_record_month'); ?></span>
-                         </div> -->
+						<div class="form-group  col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <label for="exampleInputEmail1"><?php echo $this->lang->line('mobile_app_api_url'); ?></label>
+                            <input type="text" name="sch_mobile_api_url" id="mobile_api_url" class="form-control">
+                            <span class="text-danger"><?php echo form_error('mobile_api_url'); ?></span>
+                        </div>
+                        <div class="form-group  col-xs-12 col-sm-12 col-md-12 col-lg-6">
+                            <label for="exampleInputEmail1"><?php echo $this->lang->line('app_primary_color_code'); ?></label>
+                            <input type="text" name="sch_app_primary_color_code" id="app_primary_color_code" class="form-control">
+                            <span class="text-danger"><?php echo form_error('app_primary_color_code'); ?></span>             
+                        </div>
+                        <div class="form-group  col-xs-12 col-sm-12 col-md-12 col-lg-6">
+                            <label for="exampleInputEmail1"><?php echo $this->lang->line('app_secondary_color_code'); ?></label>
+                            <input type="text" name="sch_app_secondary_color_code" id="app_secondary_color_code" class="form-control">
+                            <span class="text-danger"><?php echo form_error('app_secondary_color_code'); ?></span>
+                        </div>
+                        
                         <div class="form-group  col-xs-12 col-sm-12 col-md-12 col-lg-6">
                             <label for="IsSmallBusiness"><?php echo $this->lang->line('doctor_restriction_mode'); ?></label>
                             <div class="clearfix"></div>
@@ -402,7 +367,6 @@ $genderList = $this->customlib->getGender();
                         <div class="form-group">
                             <div class="col-sm-12">
                                 <label for="input-type"><?php echo $this->lang->line('current_theme'); ?></label>
-
                                 <div id="input-type">
                                     <div class="row">
                                         <div class="col-sm-3 col-xs-6">
@@ -413,21 +377,18 @@ $genderList = $this->customlib->getGender();
                                         </div>
                                         <div class="col-sm-3 col-xs-6">
                                             <label class="radio-img">
-
                                                 <input name="theme"  value="red.jpg" type="radio" /> 
                                                 <img src="<?php echo base_url(); ?>backend/images/red.jpg">
                                             </label>
                                         </div>
                                         <div class="col-sm-3 col-xs-6">
                                             <label class="radio-img">
-
                                                 <input name="theme" value="blue.jpg" type="radio" /> 
                                                 <img src="<?php echo base_url(); ?>backend/images/blue.jpg">
                                             </label>
                                         </div>
                                         <div class="col-sm-3 col-xs-6">
                                             <label class="radio-img">
-
                                                 <input name="theme" value="gray.jpg" type="radio" /> 
                                                 <img src="<?php echo base_url(); ?>backend/images/gray.jpg">
                                             </label>
@@ -437,20 +398,15 @@ $genderList = $this->customlib->getGender();
                             </div>
                         </div>
                         <div class="clearfix"></div>
-
                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
                             <button type="button" class="btn btn-primary submit_schsetting pull-right" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> Processing"> <?php echo $this->lang->line('save'); ?></button>
                         </div>
-
-
                     </form>                  
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-
 
 <div class="modal fade" id="modal-uploadfile" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog" role="document">
@@ -460,28 +416,21 @@ $genderList = $this->customlib->getGender();
                 <h4 class="modal-title" id="myModalLabel"><?php echo $this->lang->line('edit_logo'); ?> <span id="imagesize">(182px X 18px)</span></h4>
             </div>
             <div class="modal-body">
-                <!-- ==== -->
                 <form class="box_upload boxupload" id="ajaxlogo" method="post" action="<?php echo site_url('schsettings/ajax_editlogo') ?>" enctype="multipart/form-data">
-
                     <div class="box__input">
                         <i class="fa fa-download box__icon"></i>
-
                         <input class="box__file" type="file" name="file" id="file"/>
                         <input value="<?php echo $settinglist[0]['id'] ?>" type="hidden" name="id" id="id"/>
                         <label for="file"><strong>Choose a file</strong><span class="box__dragndrop"> or drag it here</span>.</label>
                         <button class="box__button" type="submit">Upload</button>
                     </div>
                     <div class="box__uploading">Uploading&hellip;</div>
-
                 </form>
             </div>
-
         </div>
     </div>
 </div>
 
-
-<!-- -->
 <script type="text/javascript">
     var base_url = '<?php echo base_url(); ?>';
     $('.upload_logo').on('click', function (e) {
@@ -497,19 +446,20 @@ $genderList = $this->customlib->getGender();
             keyboard: false
         });
     });
+	
     $('.upload_minilogo').on('click', function (e) {
         e.preventDefault();
         $("#myModalLabel").html('<?php echo $this->lang->line('edit') . " " . $this->lang->line('small') . " " . $this->lang->line('logo') ?> (41px X 25px)');
         $("#imagesize").html(' (41px X 25px)');
         var $this = $(this);
-        $("#ajaxlogo").attr('action', '<?php echo site_url('schsettings/ajax_minilogo') ?>');
-        // $this.button('loading');
+        $("#ajaxlogo").attr('action', '<?php echo site_url('schsettings/ajax_minilogo') ?>');        
         $('#modal-uploadfile').modal({
             show: true,
             backdrop: 'static',
             keyboard: false
         });
     });
+	
 // set focus when modal is opened
     $('#modal-uploadfile').on('shown.bs.modal', function () {
         $('.upload_logo').button('reset');
@@ -517,7 +467,6 @@ $genderList = $this->customlib->getGender();
     $('#modal-minilogo').on('shown.bs.modal', function () {
         $('.upload_minilogo').button('reset');
     });
-
 
     $('.edit_setting').on('click', function (e) {
         e.preventDefault();
@@ -538,6 +487,9 @@ $genderList = $this->customlib->getGender();
                 $('input[name="sch_email"]').val(result.email);
                 $('input[name="fee_due_days"]').val(result.fee_due_days);
                 $('input[name="sch_currency_symbol"]').val(result.currency_symbol);
+                $('input[name="sch_mobile_api_url"]').val(result.mobile_api_url);
+                $('input[name="sch_app_primary_color_code"]').val(result.app_primary_color_code);
+                $('input[name="sch_app_secondary_color_code"]').val(result.app_secondary_color_code);
                 $('textarea[name="sch_address"]').text(result.address);
                 $("input[name=sch_is_rtl][value=" + result.is_rtl + "]").attr('checked', 'checked');
                 $("input[name=doctor_restriction_mode][value=" + result.doctor_restriction + "]").attr('checked', 'checked');
@@ -564,9 +516,7 @@ $genderList = $this->customlib->getGender();
         }).done(function () {
             $this.button('reset');
         });
-
     });
-
 
     $(document).on('click', '.submit_schsetting', function (e) {
         var $this = $(this);
@@ -577,11 +527,9 @@ $genderList = $this->customlib->getGender();
             data: $('#schsetting_form').serialize(),
             dataType: 'json',
             success: function (data) {
-
                 if (data.status == "fail") {
                     var message = "";
                     $.each(data.error, function (index, value) {
-
                         message += value;
                     });
                     errorMsg(message);
@@ -594,11 +542,7 @@ $genderList = $this->customlib->getGender();
             }
         });
     });
-
-
 </script>
-
-
 <script type="text/javascript">
     // feature detection for drag&drop upload
     var isAdvancedUpload = function ()
@@ -606,7 +550,6 @@ $genderList = $this->customlib->getGender();
         var div = document.createElement('div');
         return (('draggable' in div) || ('ondragstart' in div && 'ondrop' in div)) && 'FormData' in window && 'FileReader' in window;
     }();
-
 
     // applying the effect for every form
     // var forms = document.querySelectorAll('.box_upload');
@@ -624,7 +567,6 @@ $genderList = $this->customlib->getGender();
                 },
                 showErrors = function (files)
                 {
-
                     toastr.error(files);
                 },
                 showSuccess = function (msg)
@@ -652,11 +594,7 @@ $genderList = $this->customlib->getGender();
         input.addEventListener('change', function (e)
         {
             showFiles(e.target.files);
-
-
             triggerFormSubmit();
-
-
         });
 
         // drag&drop files if the feature is available
@@ -691,13 +629,9 @@ $genderList = $this->customlib->getGender();
             {
                 droppedFiles = e.dataTransfer.files; // the files that were dropped
                 showFiles(droppedFiles);
-
-
                 triggerFormSubmit();
-
             });
         }
-
 
         // if the form was submitted
         form.addEventListener('submit', function (e)
@@ -712,7 +646,6 @@ $genderList = $this->customlib->getGender();
             if (isAdvancedUpload) // ajax file upload for modern browsers
             {
                 e.preventDefault();
-
                 // gathering the form data
                 var ajaxData = new FormData(form);
                 if (droppedFiles)
@@ -726,7 +659,6 @@ $genderList = $this->customlib->getGender();
                 // ajax request
                 var ajax = new XMLHttpRequest();
                 ajax.open(form.getAttribute('method'), form.getAttribute('action'), true);
-
                 ajax.onload = function ()
                 {
                     form.classList.remove('is-uploading');
@@ -736,12 +668,10 @@ $genderList = $this->customlib->getGender();
                         if (data.success) {
                             var sucmsg = "Record updated Successfully";
                             showSuccess(sucmsg);
-                        }
-                        // form.classList.add( data.success == true ? 'is-success' : 'is-error' );
+                        }                        
                         if (!data.success) {
                             var message = "";
                             $.each(data.error, function (index, value) {
-
                                 message += value;
                             });
                             showErrors(message);
@@ -791,7 +721,6 @@ $genderList = $this->customlib->getGender();
             entry.addEventListener('click', function (e)
             {
                 e.preventDefault();
-                //  form.classList.remove( 'is-error', 'is-success' );
                 input.click();
             });
         });
@@ -805,6 +734,4 @@ $genderList = $this->customlib->getGender();
         });
 
     });
-
-
 </script>

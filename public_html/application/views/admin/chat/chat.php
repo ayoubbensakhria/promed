@@ -1,8 +1,3 @@
-<!-- <style type="text/css">
-    body:not(.form-membership) {
-    overflow: hidden;
-}
-</style> -->
 <!-- Content Wrapper. Contains page content -->
 <link rel="stylesheet" href="<?php echo base_url(); ?>backend/dist/css/chat/main.css"> 
 <div class="content-wrapper">
@@ -12,7 +7,6 @@
             <i class="fa fa-map-o"></i> Chat --r
         </h1>
     </section>
-
     <!-- Main content -->
     <section class="content" style="position: relative;">
         <div class="row">
@@ -20,32 +14,25 @@
                 <!-- general form elements -->
                 <div id="frame">
                     <div class="chatloader"></div>  
-
                     <div id="sidepanel">
                         <input type="hidden" name="chat_connection_id" value="0">
                         <input type="hidden" name="chat_to_user" value="0">
                         <input type="hidden" name="last_chat_id" value="0">
-
                         <div id="search">
                             <label for="">Chat System</label>
-                            <!-- <input type="text" placeholder="Search contacts..." /> -->
                             <div id="bottom-bar">
                                 <button id="addcontact" data-toggle="modal" data-target="#myModal"><i class="fa fa-plus"></i></button>
-
                             </div>
                         </div>
                         <div id="contacts">
-
                             <ul>
                             </ul>
                         </div>
-
                     </div>
                     <div class="chatcontent">
                         <div class="contact-profile">
                             <img src="<?php echo base_url('uploads/student_images/no_image.png'); ?>" alt="" />
                             <p>Select any user to start your chat --r</p>
-
                         </div>
                         <div class="messages">
                             <ul>
@@ -55,37 +42,27 @@
                         <div class="message-input ">
                             <div class="wrap relative">
                                 <input type="text" placeholder="Write your message..." class="chat_input" />
-                                <!-- <i class="fa fa-paperclip attachment" aria-hidden="true"></i> -->
                                 <button class="submit input_submit"><i class="fa fa-paper-plane" aria-hidden="true"></i></button>
                             </div>
                         </div>
                     </div>
                 </div>
-
             </div><!-- /.box-header -->
         </div><!-- /.box-header -->
-
     </section>
-
 </div><!-- /.box-body -->
 </div>
 </div><!--/.col (left) -->
 <!-- right column -->
-
 </div>
-
 </section><!-- /.content -->
 </div><!-- /.content-wrapper -->
-
-
 
 <!-- Modal -->
 <div id="myModal" class="modal fade" role="dialog">
     <div class="modal-dialog">
-
         <!-- Modal content-->
         <form id="addUser" action="<?php echo site_url('admin/chat/adduser') ?>" method="POST">
-
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
@@ -106,12 +83,8 @@
                 </div>
             </div>
         </form>
-
     </div>
 </div>
-
-
-
 
 <script>
     var timestamp = '<?php echo time(); ?>';
@@ -122,8 +95,6 @@
     }
 
     $(document).on('click', '.input_submit', function (e) {
-
-
         message = $(".message-input input").val();
         if ($.trim(message) == '') {
             return false;
@@ -192,7 +163,6 @@
                 dataType: "JSON",
                 beforeSend: function () {
                     $this.addClass('dropdownloading');
-
                 },
                 success: function (data) {
                     $('.usersearchlist').html("").html(data.page);
@@ -208,12 +178,9 @@
         } else if (keyword.length >= 0) {
             $('.usersearchlist').html("")
         }
-
     });
 
-
     $(document).ready(function () {
-
         $.ajax({
             type: "POST",
             url: base_url + 'admin/chat/myuser',
@@ -224,15 +191,11 @@
             },
             success: function (data) {
                 $("#contacts ul").html(data.page);
-
                 if (data.status === "1") {
-
                     clearInterval(intervalchat);
                     intervalchat = setInterval(getChatNotification, 15000);
-
                     clearInterval(intervalchatnew);
                     intervalchat = setInterval(mynewUser, 25000);
-
                 }
             },
             error: function (jqXHR, textStatus, errorThrown) {
@@ -243,6 +206,7 @@
             }
         });
     });
+	
     $(document).on('click', '.contact', function () {
         var chat_connection_id = $(this).data('chatConnectionId');
         var $this = $(this);
@@ -259,12 +223,8 @@
                 $this.addClass('active').siblings().removeClass('active');
             },
             success: function (data) {
-
                 $this.find('span.notification_count').css("display", "none");
-
-
                 $(".messages ul").html(data.page);
-
                 $("input[name='chat_connection_id']").val(data.chat_connection_id);
                 $("input[name='chat_to_user']").val(data.chat_to_user);
                 $("input[name='last_chat_id']").val(data.user_last_chat.id);
@@ -273,8 +233,6 @@
                         );
                 clearInterval(interval);
                 interval = setInterval(getChatsUpdates, 2000);
-
-
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 $('.chatloader').css({display: 'none'});
@@ -283,22 +241,15 @@
                 $('.chatloader').css({display: 'none'});
             }
         })
-
     });
 
-
-
     $(document).on('keydown', '.chat_input', function (e) {
-
         switch (e.which) {
             case 13:
                 newChatMessage();
                 break;
         }
-
-
     });
-
 
     function newChatMessage() {
         message = $(".message-input input").val();
@@ -309,7 +260,6 @@
         var chat_connection_id = $("input[name='chat_connection_id']").val();
         var chat_to_user = $("input[name='chat_to_user']").val();
         if (chat_connection_id > 0 && chat_to_user > 0) {
-
             $.ajax({
                 type: "POST",
                 url: base_url + 'admin/chat/newMessage',
@@ -323,8 +273,6 @@
                     $('<li class="replies"><p>' + message + '</p> <span class="time_date_send"> ' + date_time_temp + '</span></li>').appendTo($('.messages ul'));
                     $('.chat_input').val(null);
                     $('.contact.active .preview').html('<span>You: </span>' + message);
-                    // $(".messages").animate({scrollTop: $(document).height()}, "fast");
-
                     $('.messages').animate({
                         scrollTop: $('.messages')[0].scrollHeight}, "slow");
 
@@ -337,10 +285,8 @@
                 }
             })
         }
-
     }
     ;
-
 
     function getChatsUpdates() {
         var end_reach = false;
@@ -365,7 +311,6 @@
                 if (end_reach) {
                     $('.messages').animate({
                         scrollTop: $('.messages')[0].scrollHeight}, "slow");
-
                 }
             },
             error: function (jqXHR, textStatus, errorThrown) {
@@ -375,14 +320,11 @@
 
             }
         })
-
-
     }
 
     $(document).on('click', '.usersearchlist ul li', function () {
         $this = $(this);
         $this.addClass('active').siblings().removeClass('active');
-
     });
 
     $("#addUser").submit(function (event) {
@@ -393,8 +335,6 @@
         var userType = userrecord.data('userType');
         var $form = $(this),
                 url = $form.attr('action');
-        // var $this = $('.submit_class');
-        // $this.button('loading');
         var $button = $form.find("button[type=submit]:focus");
         $.ajax({
             type: "POST",
@@ -410,23 +350,17 @@
                 if (data.status == 0) {
                     var message = "";
                     $.each(data.error, function (index, value) {
-
                         message += value;
                     });
                     errorMsg(message);
                 } else {
-
                     $("#contacts ul").prepend(newUserLi(data.new_user, data.chat_connection_id)).find('li').addClass('active').siblings().not('li:first').removeClass('active');
-
                     $(".messages ul").html(data.chat_records);
-
                     $("input[name='chat_connection_id']").val(data.chat_connection_id);
                     $("input[name='chat_to_user']").val(data.new_user.chat_user_id);
                     $("input[name='last_chat_id']").val(data.user_last_chat.id);
                     $(".chat_input").val("");
                     console.log(data.new_user);
-
-
                     if (data.new_user.user_type == "patient") {
                         new_user_type = "Patient";
                         img = base_url + data.new_user.image;
@@ -441,9 +375,6 @@
                             );
                     clearInterval(interval);
                     interval = setInterval(getChatsUpdates, 2000);
-
-
-
                     $('#myModal').modal('hide');
                     successMsg(data.message);
                 }
@@ -456,18 +387,13 @@
                 $button.button('reset');
             }
         });
-
     });
     $('#myModal').on('hidden.bs.modal', function (e) {
-
         $('.usersearchlist').html("");
         $('#addUser').trigger("reset");
     });
 
-
-
     function newUserLi(user_array, chat_connection_id) {
-
         var new_user_type = "Staff";
         var img = "";
         if (user_array.user_type == "patient") {
@@ -476,7 +402,6 @@
         } else if (user_array.user_type == "staff") {
             new_user_type = "Staff";
             img = base_url + "uploads/staff_images/" + user_array.image;
-
         }
         var newli = "<li class='contact' data-chat-connection-id='" + chat_connection_id + "'>";
         newli += "<div class='wrap'>";
@@ -489,10 +414,7 @@
         newli += "<span class='chatbadge notification_count' style='display: none;'>0</span>";
         newli += "</li>";
         return newli;
-
     }
-
-
 
     function getChatNotification() {
         $.ajax({
@@ -505,18 +427,13 @@
             },
             success: function (data) {
                 var active_user = $('#contacts').find("ul li.active");
-
                 if (data.notifications.length > 0) {
-
                     $.each(data.notifications, function (index, value) {
                         if (active_user.data('chatConnectionId') != value.chat_connection_id) {
-
                             $('#contacts').find("ul li[data-chat-connection-id='" + value.chat_connection_id + "']").find('span.notification_count').text(value.no_of_notification).css("display", "block");
                         }
-
                     });
                 }
-
             },
             error: function (jqXHR, textStatus, errorThrown) {
 
@@ -526,7 +443,6 @@
             }
         })
     }
-
 
     function js_yyyy_mm_dd_hh_mm_ss(now) {
         var month = [
@@ -554,8 +470,6 @@
         var ampm = hour >= 12 ? 'PM' : 'AM';
         hour = hour % 12;
         hour = hour ? hour : 12; // the hour '0' should be '12'
-        // return year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second;
-
         return day + " " + month + " " + year + ", " + hour + ":" + minute + ":" + ampm;
     }
 
@@ -564,7 +478,6 @@
         $("#contacts ul li").each(function (n) {
             var as = $(this).data('chatConnectionId');
             users_Array.push(as);
-
         });
 
         $.ajax({
@@ -573,7 +486,6 @@
             data: {'users': users_Array},
             dataType: "JSON",
             beforeSend: function () {
-
 
             },
             success: function (data) {
@@ -586,6 +498,5 @@
 
             }
         })
-
     }
 </script>

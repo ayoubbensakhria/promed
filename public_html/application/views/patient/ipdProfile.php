@@ -12,9 +12,8 @@ $genderList = $this->customlib->getGender();
                         echo "<center><h4>" . $this->lang->line("no_record_found") . "</h4></center>";
                     } else {
                         ?>
-                        <div class="box-tools pull-right" style="margin-right: 10px;">
-
-                            <a  href="<?php echo base_url() ?>patient/dashboard/patientipddetails" class="btn btn-primary btn-sm"><i class="fa fa-reorder"></i> <?php echo $this->lang->line('discharged') . " " . $this->lang->line('details'); ?></a> 
+                        <div class="box-tools addmeeting" style="margin-right: 10px;">
+                            <a href="<?php echo base_url() ?>patient/dashboard/patientipddetails" class="btn btn-primary btn-sm pull-right"><i class="fa fa-reorder"></i> <?php echo $this->lang->line('discharged') . " " . $this->lang->line('details'); ?></a> 
                         </div>    
                         <div class="col-lg-2 col-md-2 col-sm-3 text-center">
                             <?php
@@ -29,85 +28,86 @@ $genderList = $this->customlib->getGender();
                             <div class="editviewdelete-icon pt8">
                                 <a class="" href="#" onclick="getRecord('<?php echo $result['id'] ?>', '<?php echo $ipdid ?>')"   data-toggle="tooltip" title="<?php echo $this->lang->line('profile'); ?>"><i class="fa fa-reorder"></i>
                                 </a>
+                                <?php if($result['ipd_discharge'] != 'no' ) { ?>
+                                  <a class="" href="#" onclick="getRecordsummary('<?php echo $result['id'] ?>', '<?php echo $ipdid ?>')"   data-toggle="tooltip" title="<?php echo $this->lang->line('discharged')." ".$this->lang->line('summary'); ?>"><i class="fa fa-file-text"></i>
+                                </a>
+                                 <?php } ?>
                             </div> 
                         </div>
 
                         <div class="col-md-10">
-                            <table class="table table-striped mb0 font13">
-                                <tbody>
-                                    <tr>
-                                        <th class="bozerotop"><?php echo $this->lang->line('name'); ?></th>
-                                        <td class="bozerotop"><?php echo $result['patient_name']; ?></td>
-                                        <th class="bozerotop"><?php echo $this->lang->line('guardian_name'); ?></th>
-                                        <td class="bozerotop"><?php echo $result['guardian_name']; ?></td>
-                                    </tr>
-                                    <tr>
-                                        <th class="bozerotop"><?php echo $this->lang->line('gender'); ?></th>
-                                        <td class="bozerotop"><?php echo $result['gender']; ?></td>
-                                        <th class="bozerotop"><?php echo $this->lang->line('age'); ?></th>
-                                        <td class="bozerotop">
-                                            <?php
-                                            if (!empty($result['age'])) {
-                                                echo $result['age'] . " " . $this->lang->line('year') . " ";
-                                            } if (!empty($result['month'])) {
-                                                echo $result['month'] . " " . $this->lang->line('month');
-                                            }
-                                            ?>   
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th class="bozerotop"><?php echo $this->lang->line('phone'); ?></th>
-                                        <td class="bozerotop"><?php echo $result['mobileno']; ?></td>
-                                        <th class="bozerotop"><?php echo $this->lang->line('credit_limit') . " (" . $currency_symbol . ")";
-                                            ?></th>
-                                        <td class="bozerotop"><?php echo $result['ipdcredit_limit']; ?>
-                                        </td>
-
-                                    </tr>
-                                    <tr>
-                                        <th class="bozerotop"><?php echo $this->lang->line('patient') . " " . $this->lang->line('id'); ?></th>
-                                        <td class="bozerotop"><?php echo $result['patient_unique_id']; ?></td>
-                                        <th class="bozerotop"><?php echo $this->lang->line('ipd_no'); ?></th>
-                                        <td class="bozerotop">
-                                            <?php
-                                            echo $result['ipd_no'];
-                                            if ($result['ipd_discharge'] == 'yes') {
-                                                echo " <span class='label label-warning'>" . $this->lang->line("discharged") . "</span>";
-                                            }
-                                            ?>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th class="bozerotop"><?php echo $this->lang->line('admission_date');
-                                            ?></th>
-                                        <td class="bozerotop"><?php echo date($this->customlib->getSchoolDateFormat(true, true), strtotime($result['date'])); ?>
-                                        </td>
-                                        <th class="bozerotop"><?php echo $this->lang->line('bed');
-                                            ?></th>
-                                        <td class="bozerotop"><?php echo $result['bed_name'] . " - " . $result['bedgroup_name'] . " - " . $result['floor_name']; ?>
-                                        </td>
-
-                                    </tr>   
-                                    <?php if ($result["ipd_discharge"] != "no") { ?>
+                            <div class="table-responsive">
+                                <table class="table table-striped mb0 font13">
+                                    <tbody>
                                         <tr>
-                                            <th class="bozerotop"><?php echo $this->lang->line('discharged') . " " . $this->lang->line('date');
-                                        ?></th>
-                                            <td class="bozerotop"><?php echo date($this->customlib->getSchoolDateFormat($result['discharge_date'])); ?>
-                                            </td>     
-                                        </tr>    
-                                    <?php } ?>          
-                                </tbody>
-                            </table>
+                                            <th class="bozerotop"><?php echo $this->lang->line('name'); ?></th>
+                                            <td class="bozerotop"><?php echo $result['patient_name']; ?></td>
+                                            <th class="bozerotop"><?php echo $this->lang->line('guardian_name'); ?></th>
+                                            <td class="bozerotop"><?php echo $result['guardian_name']; ?></td>
+                                        </tr>
+                                        <tr>
+                                            <th class="bozerotop"><?php echo $this->lang->line('gender'); ?></th>
+                                            <td class="bozerotop"><?php echo $result['gender']; ?></td>
+                                            <th class="bozerotop"><?php echo $this->lang->line('age'); ?></th>
+                                            <td class="bozerotop">
+                                                <?php
+                                                if (!empty($result['age'])) {
+                                                    echo $result['age'] . " " . $this->lang->line('year') . " ";
+                                                } if (!empty($result['month'])) {
+                                                    echo $result['month'] . " " . $this->lang->line('month');
+                                                }
+                                                ?>   
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th class="bozerotop"><?php echo $this->lang->line('phone'); ?></th>
+                                            <td class="bozerotop"><?php echo $result['mobileno']; ?></td>
+                                            <th class="bozerotop"><?php echo $this->lang->line('credit_limit') . " (" . $currency_symbol . ")";
+                                                ?></th>
+                                            <td class="bozerotop"><?php echo $result['ipdcredit_limit']; ?>
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                            <th class="bozerotop"><?php echo $this->lang->line('patient') . " " . $this->lang->line('id'); ?></th>
+                                            <td class="bozerotop"><?php echo $result['patient_unique_id']; ?></td>
+                                            <th class="bozerotop"><?php echo $this->lang->line('ipd_no'); ?></th>
+                                            <td class="bozerotop">
+                                                <?php
+                                                echo $result['ipd_no'];
+                                                if ($result['ipd_discharge'] == 'yes') {
+                                                    echo " <span class='label label-warning font-w-normal'>" . $this->lang->line("discharged") . "</span>";
+                                                }
+                                                ?>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th class="bozerotop"><?php echo $this->lang->line('admission_date');
+                                                ?></th>
+                                            <td class="bozerotop"><?php echo date($this->customlib->getSchoolDateFormat(true, true), strtotime($result['date'])); ?>
+                                            </td>
+                                            <th class="bozerotop"><?php echo $this->lang->line('bed');
+                                                ?></th>
+                                            <td class="bozerotop"><?php echo $result['bed_name'] . " - " . $result['bedgroup_name'] . " - " . $result['floor_name']; ?>
+                                            </td>
+
+                                        </tr>   
+                                        <?php if ($result["ipd_discharge"] != "no") { ?>
+                                            <tr>
+                                                <th class="bozerotop"><?php echo $this->lang->line('discharged') . " " . $this->lang->line('date');
+                                            ?></th>
+                                                <td class="bozerotop"><?php echo date($this->customlib->getSchoolDateFormat($result['discharge_date'])); ?>
+                                                </td>     
+                                            </tr>    
+                                        <?php } ?>          
+                                    </tbody>
+                                </table>
+                            </div>    
                         </div>
                     </div>
                 </div>
-
-
-
                 <div>
-
                     <div class="box border0">
-
                         <div style="background: #dadada; height: 1px; width: 100%; clear: both; margin-top:5px;"></div>
                         <div class="nav-tabs-custom border0" id="tabs">
                             <ul class="nav nav-tabs">
@@ -131,6 +131,9 @@ $genderList = $this->customlib->getGender();
                                 </li>
                                 <li>
                                     <a href="#bill" class="bill" data-toggle="tab" aria-expanded="true"><i class="fas fa-file-invoice-dollar"></i> <?php echo $this->lang->line('bill'); ?></a>
+                                </li>
+                                 <li>
+                                    <a href="#live_consult" class="" data-toggle="tab" aria-expanded="true"><i class="fa fa-video-camera" aria-hidden="true"></i> <?php echo $this->lang->line('live_consult'); ?></a>
                                 </li>
                             </ul>
                             <div class="tab-content">
@@ -186,7 +189,7 @@ $genderList = $this->customlib->getGender();
                                     <div class="table-responsive">
                                         <table class="table table-striped table-bordered table-hover example ">
                                             <thead>
-                                            <th><?php echo $this->lang->line('date'); ?></th>
+                                            <th><?php echo $this->lang->line('applied') . " " .$this->lang->line('date'); ?></th>
                                             <th><?php echo $this->lang->line('doctor'); ?></th>
                                             <th><?php echo $this->lang->line('instruction'); ?></th>
                                             <th><?php echo $this->lang->line('instruction') . " " . $this->lang->line('date'); ?></th>
@@ -198,7 +201,7 @@ $genderList = $this->customlib->getGender();
                                                         ?>
                                                         <tr>
                                                             <td><?php echo date($this->customlib->getSchoolDateFormat(true, true), strtotime($consultant_value["date"])); ?></td>
-                                                            <td><?php echo $consultant_value["name"]; ?></td>
+                                                            <td><?php echo $consultant_value["name"]." ".$consultant_value['surname']; ?></td>
                                                             <td><?php echo $consultant_value["instruction"]; ?></td>
                                                             <td><?php echo date($this->customlib->getSchoolDateFormat(), $this->customlib->dateyyyymmddTodateformat($consultant_value['ins_date'])); ?></td>
                                                         </tr>
@@ -270,7 +273,7 @@ $genderList = $this->customlib->getGender();
                                                             <div class="timeline-item">
 
                                                                 <?php if (!empty($value["document"])) { ?>
-                                                                    <span class="time"><a class="defaults-c text-right" data-toggle="tooltip" title="" href="<?php echo base_url() . "patient/dashboard/report_download/" . $value["id"] . "/" . $value["document"] ?>" data-original-title="Download"><i class="fa fa-download"></i></a></span>
+                                                                    <span class="time"><a class="defaults-c text-right" data-toggle="tooltip" title="" href="<?php echo base_url() . "patient/dashboard/download_patient_timeline/" . $value["id"] . "/" . $value["document"] ?>" data-original-title="Download"><i class="fa fa-download"></i></a></span>
                                                                 <?php } ?>
                                                                 <h3 class="timeline-header text-aqua"> <?php echo $value['title']; ?> </h3>
                                                                 <div class="timeline-body">
@@ -293,6 +296,7 @@ $genderList = $this->customlib->getGender();
                                         <table class="table table-striped table-bordered table-hover">
                                             <thead>
                                             <th><?php echo $this->lang->line('ipd_no') ; ?></th>
+                                            <th><?php echo $this->lang->line('prescription')." ".$this->lang->line('no') ; ?></th>
                                             <th><?php echo $this->lang->line('date'); ?></th>
                                             
                                             <th class="text-right"><?php echo $this->lang->line('action'); ?></th>
@@ -304,6 +308,7 @@ $genderList = $this->customlib->getGender();
                                                         ?>  
                                                         <tr>
                                                             <td><?php echo $result["ipd_no"] ?></td>
+                                                            <td><?php echo $prescription_value["id"] ?></td>
                                                             <td><?php echo date($this->customlib->getSchoolDateFormat(), strtotime($prescription_value['date'])) ?></td>
 
                                                             <td class="text-right">
@@ -329,8 +334,8 @@ $genderList = $this->customlib->getGender();
                                             <th><?php echo $this->lang->line('date'); ?></th>
                                             <th><?php echo $this->lang->line('charge_type'); ?></th>
                                             <th><?php echo $this->lang->line('charge_category'); ?></th>
-                                            <th><?php echo $this->lang->line('standard') . " " . $this->lang->line('charge') . ' (' . $currency_symbol . ')'; ?> </th>
-                                            <th><?php echo $this->lang->line('organisation') . " " . $this->lang->line('charge') . ' (' . $currency_symbol . ')'; ?> </th>
+                                            <th class="text-right"><?php echo $this->lang->line('standard') . " " . $this->lang->line('charge') . ' (' . $currency_symbol . ')'; ?> </th>
+                                            <th class="text-right"><?php echo $this->lang->line('organisation') . " " . $this->lang->line('charge') . ' (' . $currency_symbol . ')'; ?> </th>
                                             <th class="text-right"><?php echo $this->lang->line('apply') . " " . $this->lang->line('charge') . ' (' . $currency_symbol . ')'; ?> </th>
                                             </thead>
                                             <tbody>
@@ -346,8 +351,8 @@ $genderList = $this->customlib->getGender();
                                                             <td><?php echo date($this->customlib->getSchoolDateFormat(), $this->customlib->dateyyyymmddTodateformat($charge["date"])); ?></td>
                                                             <td><?php echo $charge["charge_type"]; ?></td>
                                                             <td><?php echo $charge["charge_category"]; ?></td>
-                                                            <td><?php echo $charge["standard_charge"]; ?></td>
-                                                            <td><?php echo $charge["org_charge"] ?></td>
+                                                            <td class="text-right"><?php echo $charge["standard_charge"]; ?></td>
+                                                            <td class="text-right"><?php echo $charge["org_charge"] ?></td>
                                                             <td class="text-right"><?php echo $charge["apply_charge"] ?></td>
                                                         </tr>
                                                     <?php } ?>
@@ -381,7 +386,7 @@ $genderList = $this->customlib->getGender();
                                                         <tr>
                                                             <td><?php echo $charge["charge_type"]; ?></td>
                                                             <td><?php echo $charge["charge_category"]; ?></td>
-                                                            <td><?php echo date($this->customlib->getSchoolDateFormat(), $this->customlib->dateyyyymmddTodateformat($charge["created_at"])); ?></td>
+                                                            <td><?php echo date($this->customlib->getSchoolDateFormat(), $this->customlib->dateyyyymmddTodateformat($charge["date"])); ?></td>
                                                             <td class="pttright reborder"><?php echo $charge["apply_charge"]; ?></td>
                                                         </tr>
 
@@ -398,7 +403,7 @@ $genderList = $this->customlib->getGender();
                                                         <td></td>
                                                         <td></td>
                                                         <td></td>
-                                                        <td class="text-right"><?php echo $this->lang->line('total') . " : "; ?><?php echo $total; ?></td>
+                                                        <td class="text-right"><?php echo $this->lang->line('total') . " : "; ?><?php echo $currency_symbol." ".$total; ?></td>
 
                                                     </tr>
                                                 </table>
@@ -430,7 +435,7 @@ $genderList = $this->customlib->getGender();
                                                     <tr class="box box-solid total-bg">
                                                         <td></td>
                                                         <td></td>
-                                                        <td class="text-right"><?php echo $this->lang->line('total') . " : "; ?><?php echo $total_paid; ?></td>
+                                                        <td class="text-right"><?php echo $this->lang->line('total') . " : "; ?><?php echo $currency_symbol." ".$total_paid; ?></td>
 
                                                     </tr>
                                                 </table>
@@ -444,7 +449,7 @@ $genderList = $this->customlib->getGender();
                                                         <?php //if ($result['status'] != 'paid') {    ?>
                                                         <tr>
                                                             <th><?php echo $this->lang->line('total') . " " . $this->lang->line('charges') . " (" . $currency_symbol . ")" ?></th>
-                                                            <td class="text-right fontbold20"><?php echo $total; ?></td>
+                                                            <td class="text-right fontbold20"><?php echo number_format($total, 2, '.', '') ; ?></td>
                                                         </tr>
                                                         <tr>
                                                             <th><?php echo $this->lang->line('total') . " " . $this->lang->line('payment') . " (" . $currency_symbol . ")"; ?></th> 
@@ -455,7 +460,7 @@ $genderList = $this->customlib->getGender();
                                                         </tr>
                                                         <tr>
                                                             <th><?php echo $this->lang->line('gross') . " " . $this->lang->line('total') . " (" . $this->lang->line('balance') . " " . $this->lang->line('amount') . ")" . " (" . $currency_symbol . ")"; ?></th>
-                                                            <td class="text-right fontbold20"><?php echo $total - $paid_amount; ?>
+                                                            <td class="text-right fontbold20"><?php  echo number_format(($total - $paid_amount + $result["other_charge"]), 2, '.', '') ; ?>
                                                                 <input type="hidden"  id="gross_total" value="<?php echo $total - $paid_amount ?>" name="gross_total" style="width: 30%; float: right" class="form-control">
                                                             </td>
                                                         </tr>
@@ -466,13 +471,14 @@ $genderList = $this->customlib->getGender();
                                                                 <input type="hidden" name="patient_id" value="<?php echo $result["id"] ?>">
                                                                 <span><?php
                                                                     if (!empty($result["discount"])) {
-                                                                        echo $result["discount"];
+                                                                        echo number_format($result["discount"], 2, '.', '');
                                                                     } else {
                                                                         echo "0";
                                                                     }
                                                                     ?> </span>
                                                                 <input type="hidden" id="discount" value="<?php
                                                                 if (!empty($result["discount"])) {
+
                                                                     echo $result["discount"];
                                                                 } else {
                                                                     echo "0";
@@ -483,7 +489,8 @@ $genderList = $this->customlib->getGender();
                                                          <th><?php echo $this->lang->line('any_other_charges'); ?></th>
                                                             <td class="text-right ipdbilltable fontbold20"><input type="hidden"   id="other_charge" value="<?php
                                                                 if (!empty($result["other_charge"])) {
-                                                                    echo $result["other_charge"];
+                                                                    echo number_format($result["other_charge"], 2, '.', '');
+                                                                    //echo $result["other_charge"];
                                                                 } else {
                                                                     echo "0";
                                                                 }
@@ -512,7 +519,7 @@ $genderList = $this->customlib->getGender();
                                                             </td>
                                                         </tr>
                            <tr>
-                        <th><?php echo $this->lang->line('net_amount'); ?></th>
+                        <th><?php echo $this->lang->line('net_payable') . " " . $this->lang->line('amount') . " (" . $currency_symbol . ")"; ?></th>
                         <td class="text-right ipdbilltable fontbold20"><input type="hidden" readonly name="net_amount" value="<?php
   if (!empty($result["net_amount"])) {
                                           echo $result["net_amount"];
@@ -522,9 +529,10 @@ $genderList = $this->customlib->getGender();
                                       ?>" id="net_amount" style="width: 30%;float: right" class="form-control"><span>
                                         <?php
                                                 if (!empty($result["net_amount"])) {
-                                                    echo $result["net_amount"];
+                                                    //echo $result["net_amount"];
+                                                    echo number_format($result["net_amount"], 2, '.', '');
                                                 } else {
-                                                    echo $total - $paid_amount;
+                                                    echo number_format($total - $paid_amount, 2, '.', ''); 
                                                 }
                                                 ?></span>
                                                             </td>
@@ -539,6 +547,125 @@ $genderList = $this->customlib->getGender();
                                     </div><!--./row--> 
                                     </form>
                                 </div>
+
+                        <div class="tab-pane" id="live_consult">
+                           
+                            <div class="download_label"><?php echo $result['patient_name'] . " " . $this->lang->line('opd') . " " . $this->lang->line('details'); ?></div>
+                            <div class="table-responsive">
+                                <table class="table table-striped table-bordered table-hover example">
+                                    <thead>
+                                    <th><?php echo $this->lang->line('consult').' '.$this->lang->line('title'); ?></th>
+                                        <th><?php echo $this->lang->line('date'); ?></th>
+                                        <th><?php echo $this->lang->line('created_by'); ?> </th>
+                                        <th><?php echo $this->lang->line('created_for'); ?></th>
+                                        <th><?php echo $this->lang->line('patient'); ?></th>
+                                        <th><?php echo $this->lang->line('status'); ?></th>
+                                        <th class="text-right"><?php echo $this->lang->line('action'); ?></th>
+                                    </thead>
+                                    <tbody>
+                                        <?php
+                                    if (empty($ipdconferences)) {
+                                        ?>
+
+                                        <?php
+                                    } else {
+                                        foreach ($ipdconferences as $conference_key => $conference_value) {
+
+                                            $return_response = json_decode($conference_value->return_response);
+                                            ?>
+                                            <tr>
+                                                <td class="mailbox-name">
+                                                    <a href="#" data-toggle="popover" class="detail_popover"><?php echo $conference_value->title; ?></a>
+
+                                                    <div class="fee_detail_popover" style="display: none">
+                                                        <?php
+                                                        if ($conference_value->description == "") {
+                                                            ?>
+                                                            <p class="text text-danger"><?php echo $this->lang->line('no_description'); ?></p>
+                                                            <?php
+                                                        } else {
+                                                            ?>
+                                                            <p class="text text-info"><?php echo $conference_value->description; ?></p>
+                                                            <?php
+                                                        }
+                                                        ?>
+                                                    </div>
+                                                </td>
+
+                                                <td class="mailbox-name">
+                                                <?php echo date($this->customlib->getSchoolDateFormat(true, true), strtotime($conference_value->date))?>
+                                            
+                                                    </td>
+                                                 <td class="mailbox-name">
+
+                                                    <?php
+                                                   
+                                                        $name= ($conference_value->create_by_surname == "") ? $conference_value->create_by_name : $conference_value->create_by_name . " " . $conference_value->create_by_surname;
+                                                        
+        //echo  $name. " (".$conference_value->create_by_role_name." : ".$conference_value->create_by_employee_id.")";
+        if ($name =='Super Admin') {
+             echo  $name;
+            # code...
+        }else{
+             echo  $name. " (".$conference_value->create_by_role_name.": ".$conference_value->create_by_employee_id.")";
+        }
+                                                    
+                                                    ?></td> 
+
+                                                <td class="mailbox-name">
+                                                    <?php
+
+                                                          $name= ($conference_value->create_for_surname == "") ? $conference_value->create_for_name : $conference_value->create_for_name . " " . $conference_value->create_for_surname;
+        echo  $name. " (".$conference_value->create_for_role_name.": ".$conference_value->create_for_employee_id.")";
+
+                                                    ?>
+                                                </td>
+
+                                                <td class="mailbox-name">
+                                                     <?php
+
+                                                          $name= ($conference_value->patient_name == "") ? $conference_value->patient_name : $conference_value->patient_name ;
+        echo  $name. " (".$conference_value->patient_unique_id.")";
+
+
+                                                  
+                                                    ?>
+
+                                                </td>
+                                              <td class="mailbox-name">
+                                                <form class="chgstatus_form"  method="POST" action="<?php echo site_url('admin/conference/chgstatus')?>">
+                                                    <input type="hidden" name="conference_id"  value="<?php echo $conference_value->id;?>">
+                                                 <select class="form-control chgstatus_dropdown" disabled name="chg_status">
+                                                     <option value="0" <?php if($conference_value->status==0) echo "selected='selected'" ?>><?php echo $this->lang->line('awaited'); ?></option>
+                                                     <option value="1" <?php if($conference_value->status==1) echo "selected='selected'" ?>><?php echo $this->lang->line('cancelled'); ?> </option>
+                                                     <option value="2" <?php if($conference_value->status==2) echo "selected='selected'" ?>><?php echo $this->lang->line('finished'); ?> </option>
+                                                 </select>
+                                                </form>
+                                                </td>
+                                                <td class="mailbox-date pull-right">
+                                                    <?php   
+                                        if($conference_value->status == 0){
+                                            ?>
+                                        <a data-placement="left" href="<?php echo $return_response->start_url; ?>" class="btn label-success btn-xs"  target="_blank" >
+                                        <i class="fa fa-sign-in"></i> <?php echo $this->lang->line('join'); ?> </a>
+                                            <?php
+                                        }
+                                                     ?>
+                                                    
+                                                  
+
+                                                </td>
+                                            </tr>
+                                            <?php
+                                        }
+                                    }
+                                    ?>
+
+                                    </tbody>
+                                </table>
+                            </div> 
+                        </div>
+
 
                                 <div class="tab-pane" id="payment">
                                     <div class="download_label"><?php echo $this->lang->line('payment'); ?></div>
@@ -619,114 +746,148 @@ $genderList = $this->customlib->getGender();
             <div class="modal-body pt0 pb0">
                 <div class="row">
                     <div class="col-lg-12 col-md-12 col-sm-12 paddlr">
-                        <form id="formrevisit"   accept-charset="utf-8"  enctype="multipart/form-data" method="post" class="ptt10">
+                        <form id="formrevisit" accept-charset="utf-8" enctype="multipart/form-data" method="post" class="ptt10">
                             <div class="row">
-                                <table class="table mb0 table-striped table-bordered ">
-                                    <tr>
+                                <div class="table-responsive">
+                                    <table class="table mb0 table-striped table-bordered">
+                                        <tr>
+                                            <th width="15%"><?php echo $this->lang->line('patient') . " " . $this->lang->line('name'); ?></th>
+                                            <td width="35%"><span id="patient_name"></span>
+                                            </td>
+                                            <th width="15%"><?php echo $this->lang->line('patient') . " " . $this->lang->line('id'); ?></th>
+                                            <td width="35%"><span id='patients_id'></span></td>
+                                        </tr>
+                                        <tr>
+                                            <th width="15%"><?php echo $this->lang->line('guardian_name'); ?></th>
+                                            <td width="35%"><span id='guardian_name'></span></td>
+                                            <th width="15%"><?php echo $this->lang->line('gender'); ?></th>
+                                            <td width="35%"><span id='gen'></span></td>
+                                        </tr>
+                                        <tr>
+                                            <th width="15%"><?php echo $this->lang->line('marital_status'); ?></th>
+                                            <td width="35%"><span id="marital_status"></span>
+                                            </td>
 
-                                        <th width="15%"><?php echo $this->lang->line('patient') . " " . $this->lang->line('name'); ?></th>
-                                        <td width="35%"><span id="patient_name"></span>
-                                        </td>
-                                        <th width="15%"><?php echo $this->lang->line('patient') . " " . $this->lang->line('id'); ?></th>
-                                        <td width="35%"><span id='patients_id'></span></td>
-                                    </tr>
-                                    <tr>
-                                        <th width="15%"><?php echo $this->lang->line('guardian_name'); ?></th>
-                                        <td width="35%"><span id='guardian_name'></span></td>
-                                        <th width="15%"><?php echo $this->lang->line('gender'); ?></th>
-                                        <td width="35%"><span id='gen'></span></td>
-                                    </tr>
-                                    <tr>
-                                        <th width="15%"><?php echo $this->lang->line('marital_status'); ?></th>
-                                        <td width="35%"><span id="marital_status"></span>
-                                        </td>
+                                            <th width="15%"><?php echo $this->lang->line('phone'); ?></th>
+                                            <td width="35%"><span id="contact"></span>
+                                            </td>
 
-                                        <th width="15%"><?php echo $this->lang->line('phone'); ?></th>
-                                        <td width="35%"><span id="contact"></span>
-                                        </td>
+                                        </tr>
+                                        <tr>
+                                            <th width="15%"><?php echo $this->lang->line('email'); ?></th>
+                                            <td width="35%"><span id='email' style="text-transform: none"></span></td>
+                                            <th width="15%"><?php echo $this->lang->line('address'); ?></th>
+                                            <td width="35%"><span id='patient_address'></span></td>
+                                        </tr>
+                                        <tr>  
+                                            <th width="15%"><?php echo $this->lang->line('age'); ?></th>
+                                            <td width="35%"><span id="age"></span>
+                                            </td>
+                                            <th width="15%"><?php echo $this->lang->line('blood_group'); ?></th>
+                                            <td width="35%"><span id="blood_group"></span>
+                                            </td>
 
-                                    </tr>
-                                    <tr>
-                                        <th width="15%"><?php echo $this->lang->line('email'); ?></th>
-                                        <td width="35%"><span id='email' style="text-transform: none"></span></td>
-                                        <th width="15%"><?php echo $this->lang->line('address'); ?></th>
-                                        <td width="35%"><span id='patient_address'></span></td>
-                                    </tr>
-                                    <tr>  
-                                        <th width="15%"><?php echo $this->lang->line('age'); ?></th>
-                                        <td width="35%"><span id="age"></span>
-                                        </td>
-                                        <th width="15%"><?php echo $this->lang->line('blood_group'); ?></th>
-                                        <td width="35%"><span id="blood_group"></span>
-                                        </td>
+                                        </tr>
+                                        <tr>
+                                            <th width="15%"><?php echo $this->lang->line('height'); ?></th>
+                                            <td width="35%"><span id='height'></span></td>
+                                            <th width="15%"><?php echo $this->lang->line('weight'); ?></th>
+                                            <td width="35%"><span id="weight"></span>
+                                            </td>
+                                        </tr>
 
-                                    </tr>
-                                    <tr>
-                                        <th width="15%"><?php echo $this->lang->line('height'); ?></th>
-                                        <td width="35%"><span id='height'></span></td>
-                                        <th width="15%"><?php echo $this->lang->line('weight'); ?></th>
-                                        <td width="35%"><span id="weight"></span>
-                                        </td>
-                                    </tr>
 
-                                    <tr>
-                                        <th width="15%"><?php echo $this->lang->line('bp'); ?></th>
-                                        <td width="35%"><span id='patient_bp'></span></td>
-                                        <th width="15%"><?php echo $this->lang->line('symptoms'); ?></th>
-                                        <td width="35%"><span id='symptoms'></span></td>
-                                    </tr>
+                                         <tr>
+                                            <th width="15%"><?php echo $this->lang->line('temperature'); ?></th>
+                                            <td width="35%"><span id='temperature'></span></td>
+                                            <th width="15%"><?php echo $this->lang->line('respiration'); ?></th>
+                                            <td width="35%"><span id="respiration"></span>
+                                            </td>
 
-                                    <tr>
-                                        <th width="15%"><?php echo $this->lang->line('known_allergies'); ?></th>
-                                        <td width="35%"><span id="known_allergies"></span>
-                                        </td>
-                                        <th width="15%"><?php echo $this->lang->line('admission') . " " . $this->lang->line('date'); ?></th>
-                                        <td width="35%"><span id="admission_date"></span>
-                                        </td> 
-                                    </tr>
-                                    
-                                    <tr>
-                                        <th width="15%"><?php echo $this->lang->line('case'); ?></th>
-                                        <td width="35%"><span id='case'></span></td>
-                                        <th width="15%"><?php echo $this->lang->line('casualty'); ?></th>
-                                        <td width="35%"><span id="casualty"></span>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th width="15%"><?php echo $this->lang->line('old') . " " . $this->lang->line('patient'); ?></th>
-                                        <td width="35%"><span id='old_patient'></span></td>
-                                        <th width="15%"><?php echo $this->lang->line('organisation'); ?></th>
-                                        <td width="35%"><span id="organisation"></span>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th width="15%"><?php echo $this->lang->line('refference'); ?></th>
-                                        <td width="35%"><span id="refference"></span>
-                                        </td>
-                                        <th width="15%"><?php echo $this->lang->line('consultant') . " " . $this->lang->line('doctor'); ?></th>
-                                        <td width="35%"><span id='doc'></span></td>
-                                    </tr>
-                                    <tr>
-                                        <th width="15%"><?php echo $this->lang->line('bed') . " " . $this->lang->line('group'); ?></th>
-                                        <td width="35%"><span id="bed_group"></span>
-                                        </td>
-                                        <th width="15%"><?php echo $this->lang->line('bed') . " " . $this->lang->line('number'); ?></th>
-                                        <td width="35%"><span id='bed_name'></span></td>
-                                    </tr>
+                                        </tr>
 
-                                </table>
+                                        <tr>
+                                            <th width="15%"><?php echo $this->lang->line('bp'); ?></th>
+                                            <td width="35%"><span id='patient_bp'></span></td>
+                                            <th width="15%"><?php echo $this->lang->line('symptoms'); ?></th>
+                                            <td width="35%"><span id='symptoms'></span></td>
+                                        </tr>
+
+                                        <tr>
+                                            <th width="15%"><?php echo $this->lang->line('known_allergies'); ?></th>
+                                            <td width="35%"><span id="known_allergies"></span>
+                                            </td>
+                                            <th width="15%"><?php echo $this->lang->line('admission') . " " . $this->lang->line('date'); ?></th>
+                                            <td width="35%"><span id="admission_date"></span>
+                                            </td> 
+                                        </tr>
+                                        
+                                        <tr>
+                                            <th width="15%"><?php echo $this->lang->line('case'); ?></th>
+                                            <td width="35%"><span id='case'></span></td>
+                                            <th width="15%"><?php echo $this->lang->line('casualty'); ?></th>
+                                            <td width="35%"><span id="casualty"></span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th width="15%"><?php echo $this->lang->line('old') . " " . $this->lang->line('patient'); ?></th>
+                                            <td width="35%"><span id='old_patient'></span></td>
+                                            <th width="15%"><?php echo $this->lang->line('organisation'); ?></th>
+                                            <td width="35%"><span id="organisation"></span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th width="15%"><?php echo $this->lang->line('refference'); ?></th>
+                                            <td width="35%"><span id="refference"></span>
+                                            </td>
+                                            <th width="15%"><?php echo $this->lang->line('consultant') . " " . $this->lang->line('doctor'); ?></th>
+                                            <td width="35%"><span id='doc'></span></td>
+                                        </tr>
+                                        <tr>
+                                            <th width="15%"><?php echo $this->lang->line('bed') . " " . $this->lang->line('group'); ?></th>
+                                            <td width="35%"><span id="bed_group"></span>
+                                            </td>
+                                            <th width="15%"><?php echo $this->lang->line('bed') . " " . $this->lang->line('number'); ?></th>
+                                            <td width="35%"><span id='bed_name'></span></td>
+                                        </tr>
+
+                                    </table>
+                                </div>    
                             </div>
                         </form>
                     </div>
                 </div>
             </div>    
-        </div></div> </div>
+        </div>
+    </div> 
+</div>
+
+<div class="modal fade" id="viewModalsummary"  role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content modal-media-content">
+            <div class="modal-header modal-media-header">
+                <button type="button" class="close" data-toggle="tooltip" title="<?php echo $this->lang->line('clase'); ?>" data-dismiss="modal">&times;</button>
+                <div class="modalicon"> 
+                    <div id='edit_deletebill'>
+                    </div>
+                </div>
+                <h4 class="box-title"><?php echo $this->lang->line('discharged') . " " . $this->lang->line('summary'); ?></h4> 
+            </div>
+            <div class="modal-body pt0 pb0">
+                <div id="reportdata"></div>
+            </div> </div>
+    </div>    
+</div>
 <!-- -->
 <div class="modal fade" id="prescriptionview" tabindex="-1" role="dialog" aria-labelledby="follow_up">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content modal-media-content">
             <div class="modal-header modal-media-header">
                 <button type="button" class="close"  data-dismiss="modal">&times;</button>
+                 <div class="modalicon"> 
+                    <div id='edit_deleteprescription'>
+                    </div>
+                </div>
                 <h4 class="box-title"><?php echo $this->lang->line('prescription'); ?></h4>
             </div>
             <div class="modal-body pt0 pb0" id="getdetails_prescription"></div>
@@ -804,6 +965,8 @@ $genderList = $this->customlib->getGender();
                 $("#tax").html(data.tax);
                 $("#height").html(data.height);
                 $("#weight").html(data.weight);
+                $("#temperature").html(data.temperature);
+                $("#respiration").html(data.respiration);
                 $("#patient_bp").html(data.bp);
                 $("#blood_group").html(data.blood_group);
                 $("#old_patient").html(data.old_patient);
@@ -821,6 +984,20 @@ $genderList = $this->customlib->getGender();
         });
     }
 
+   function getRecordsummary(id,ipdid) {
+        $.ajax({
+            url: '<?php echo base_url() ?>patient/dashboard/getsummaryDetails',
+            type: "POST",
+            data: {id: id,ipdid:ipdid},
+            success: function (data) {
+                $('#reportdata').html(data);
+                $('#edit_deletebill').html("<a href='#' data-toggle='tooltip' onclick='printData(" + id + ","+ipdid+")'   data-original-title='<?php echo $this->lang->line('print'); ?>'><i class='fa fa-print'></i></a> ");
+                holdModal('viewModalsummary');
+            },
+        });
+    }
+
+    
 
     $(function () {
         var hash = window.location.hash;
@@ -843,9 +1020,24 @@ $genderList = $this->customlib->getGender();
                 alert("Fail")
             }
         });
+
+         $('#edit_deleteprescription').html("<a href='#prescription'' onclick='printprescription(" + id + "," + ipdid + ")'   data-original-title='<?php echo $this->lang->line('print'); ?>'><i class='fa fa-print'></i></a>");
         holdModal('prescriptionview');
     }
 
+  function printprescription(id, opdid) {
+        var base_url = '<?php echo base_url() ?>';
+        $.ajax({
+            url: base_url + 'patient/prescription/getIPDPrescription/' + id + '/' + opdid,
+            type: 'POST',
+            data: {payslipid: id, print: 'yes'},
+            //dataType: "json",
+            success: function (result) {
+                $("#testdata").html(result);
+                popup(result);
+            }
+        });
+    }
 
     function getcharge_category(id) {
         var div_data = "";
@@ -1070,7 +1262,7 @@ $genderList = $this->customlib->getGender();
                     });
                 }
                 if (data.status == 1) {
-                    window.location.href = baseurl + "patient/pay/billpayment";
+                    window.location.href = baseurl + "patient/pay/billpayment/ipd";
                 }
             }
         });

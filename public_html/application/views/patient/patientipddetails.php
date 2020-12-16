@@ -43,7 +43,7 @@ $genderList = $this->customlib->getGender();
                                         <th class="text-right"><?php echo $this->lang->line('charges') . " (" . $currency_symbol . ")"; ?></th>
                                         <th class="text-right"><?php echo $this->lang->line('payment') . " (" . $currency_symbol . ")"; ?></th>
                                         <th class="text-right"><?php echo $this->lang->line('due') . " " . $this->lang->line('payment') . " (" . $currency_symbol . ")"; ?></th>
-                                        <th class="text-right"><?php echo $this->lang->line('credit_limit') . " (" . $currency_symbol . ")"; ?></th>
+                                      <!--   <th class="text-right"><?php echo $this->lang->line('credit_limit') . " (" . $currency_symbol . ")"; ?></th> -->
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -79,8 +79,8 @@ $genderList = $this->customlib->getGender();
                                                 <td><?php echo $student['bed_name'] . " - " . $student['bedgroup_name'] . " - " . $student['floor_name']; ?></td>
                                                 <td class="text-right"><?php echo $student['charges'] ?></td>
                                                 <td class="text-right"><?php echo $student['payment'] ?></td>
-                                                <td class="text-right"><?php echo $student['charges'] - $student['payment'] ?></td>
-                                                <td class="text-right"><?php echo $student['credit_limit'] ?></td>
+                                                <td class="text-right"><?php echo $student['charges'] - $student['payment'] + $student['othercharge']?></td>
+                                              <!--   <td class="text-right"><?php echo $student['credit_limit'] ?></td> -->
                                             </tr>
                                             <?php
                                             $count++;

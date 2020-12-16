@@ -105,7 +105,6 @@
                                         <?php
                                     } else {
                                         foreach ($DispatchList as $key => $value) {
-                                            //print_r($value);
                                             ?>
                                             <tr>
 

@@ -2,7 +2,7 @@
     <div class="row">
         <div class="col-sm-12">
             <div class="form-group">
-                <label for="exampleInputEmail1"><?php echo $this->lang->line('name'); ?></label>
+                <label for="exampleInputEmail1"><?php echo $this->lang->line('name'); ?></label><small class="req"> *</small> 
                 <input  name="name" placeholder="" type="text" class="form-control"  value="<?php echo set_value('name', $bedtype_data['name']); ?>" />
                 <input id="bedtype_id" name="bedtype_id" placeholder="" type="hidden" class="form-control"  value="<?php echo $bedtype_data['id']; ?>" />
 

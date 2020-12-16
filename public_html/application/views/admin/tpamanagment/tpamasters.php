@@ -54,7 +54,6 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                             ?>
 
                     </ul>
-
                     <div class="tab-content">
                         <?php
                         $i = 0;
@@ -126,14 +125,13 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
             </div>
             <div class="modal-body pt0 pb0" >
                 <div class="table-responsive ptt10">
-                    <form id="edit_org_form" method="POST" action="<?php echo base_url(); ?>admin/tpa/edit_org">               			                        
+                    <form id="edit_org_form" method="POST" action="<?php echo base_url(); ?>admin/tpa/edit_org">              			                        
                 </div> 
                 <table class="table table-striped table-bordered">                     
                     <thead>
                     <th><?php echo $this->lang->line('charge') . " " . $this->lang->line('category'); ?></th>
                     <th><?php echo $this->lang->line('code'); ?></th>
                     <th><?php echo $this->lang->line('description'); ?></th>
-
                     <th class="text-right"><?php echo $this->lang->line('standard') . " " . $this->lang->line('charge') . " (" . $currency_symbol . ")"; ?></th>
                     <th class="text-right"><?php echo $this->lang->line('organisation') . " " . $this->lang->line('charge') . " (" . $currency_symbol . ")"; ?></th>       
                     </thead>
@@ -145,7 +143,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                             <td class="text-right" id="standard_charge_data"></td>
                             <td class="text-right">                                                
                                 <input type="text" name="org_charge" id="org_charge_data" class="form-control text-right">
-                                <input type="hidden" name="org_charge_id" id="org_charge_id_data" class="form-control">                                               
+                                <input type="hidden" name="org_charge_id" id="org_charge_id_data" class="form-control">                                              
                             </td>
                         </tr>
                     </tbody>
@@ -217,7 +215,6 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
     });
 
     $(document).ready(function (e) {
-
         $(function () {
             var hash = window.location.hash;
             hash && $('ul.nav-tabs a[href="' + hash + '"]').tab('show');
@@ -229,8 +226,5 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                 $('html,body').scrollTop(scrollmem);
             });
         });
-
-
     });
 </script>
-

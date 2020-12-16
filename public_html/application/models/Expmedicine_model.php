@@ -7,7 +7,6 @@ class Expmedicine_model extends CI_Model {
 
     public function __construct() {
         parent::__construct();
-        $this->current_session = $this->setting_model->getCurrentSession();
     }
 
     public function add($data) {
@@ -75,11 +74,8 @@ class Expmedicine_model extends CI_Model {
     public function getList() {
         $first_date = date('Y-m-01');
         $last_date = date('Y-m-t 23:59:59.993');
-
         $query = $this->db->query("select medicine_batch_details.*,pharmacy.medicine_name,pharmacy.medicine_company,pharmacy.supplier,pharmacy.medicine_group,medicine_category.medicine_category from medicine_batch_details JOIN pharmacy ON medicine_batch_details.pharmacy_id = pharmacy.id JOIN medicine_category ON pharmacy.medicine_category_id = medicine_category.id where medicine_batch_details.expiry_date_format >= '" . $first_date . "' and medicine_batch_details.expiry_date_format<= '" . $last_date . "' and medicine_batch_details.expiry_date_format <= '" . date("Y-m-d") . "' order by expiry_date_format");
         return $query->result_array();
     }
-
 }
-
 ?>

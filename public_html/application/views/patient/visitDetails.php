@@ -33,44 +33,36 @@ $genderList = $this->customlib->getGender();
                         <h3 class="profile-username text-center"><?php echo $result['patient_name']; ?></h3> 
                         <div class="editviewdelete-icon pt8 text-center">
 
-  <!--   <a class="" href="#" onclick="getEditRecord('<?php echo $result['id'] ?>')"   data-toggle="tooltip" title="<?php echo $this->lang->line('edit') . " " . $this->lang->line('profile') ?>">
-        <i class="fa fa-pencil"></i>
-    </a>
-
-
-    <a class="" href="#" onclick="delete_patient('<?php echo $result['id'] ?>')"   data-toggle="tooltip" title="<?php echo $this->lang->line('delete') . " " . $this->lang->line('patient') ?>">
-        <i class="fa fa-trash"></i>
-    </a> -->
+  
 
                         </div>
                         <ul class="list-group list-group-unbordered">
-                            <li class="list-group-item listnoback">
+                            <li class="list-group-item listnobacknews">
                                 <b><?php echo $this->lang->line('patient') . " " . $this->lang->line('id') ?></b> <a class="pull-right text-aqua"><?php echo $result['patient_unique_id']; ?></a>
                             </li>
 
-                            <li class="list-group-item listnoback">
+                            <li class="list-group-item listnobacknews">
                                 <b><?php echo $this->lang->line('phone'); ?></b> <a class="pull-right text-aqua"><?php echo $result['mobileno']; ?></a>
                             </li>
-                            <li class="list-group-item listnoback">
+                            <li class="list-group-item listnobacknews">
                                 <b><?php echo $this->lang->line('email'); ?></b> <a class="pull-right text-aqua"><?php echo $result['email']; ?></a>
                             </li>
-                            <li class="list-group-item listnoback">
+                            <li class="list-group-item listnobacknews">
                                 <b><?php echo $this->lang->line('blood_group'); ?></b> <a class="pull-right text-aqua"><?php echo $result['blood_group']; ?></a>
                             </li>
-                            <li class="list-group-item listnoback">
+                            <li class="list-group-item listnobacknews">
                                 <b><?php echo $this->lang->line('opd_no'); ?></b> <a class="pull-right text-aqua"><?php echo $visit_details['opd_no']; ?></a>
                             </li>
-                            <li class="list-group-item listnoback">
+                            <li class="list-group-item listnobacknews">
                                 <b><?php echo $this->lang->line('appointment') . " " . $this->lang->line('date'); ?></b> <a class="pull-right text-aqua"><?php echo date($this->customlib->getSchoolDateFormat(true, true), strtotime($visit_details['appointment_date'])) ?></a>
-
                             </li>
-                            <li class="list-group-item listnoback">
-                                <b><?php echo $this->lang->line('consultant'); ?></b> <a class="pull-right text-aqua"><?php echo $visit_details['name'] . "" . $visit_details["surname"]; ?></a>
+                            <li class="list-group-item listnobacknews">
+                                <b><?php echo $this->lang->line('consultant'); ?></b> <a class="pull-right text-aqua"><?php echo $visit_details['name'] . " " . $visit_details["surname"]; ?></a>
                             </li>
-                            <li class="list-group-item listnoback">
-                                <b><?php echo $this->lang->line('symptoms'); ?></b> <a class="pull-right text-aqua"><?php echo $visit_details['symptoms']; ?></a>
+                            <li class="list-group-item listnobacknews">
+                                <b><?php echo $this->lang->line('symptoms'); ?></b> <a class="pull-right text-aqua"><?php echo nl2br($visit_details['symptoms']); ?></a>
                             </li>
-                            <li class="list-group-item listnoback">
+                            <li class="list-group-item listnobacknews">
                                 <b><?php echo $this->lang->line('case'); ?></b> <a class="pull-right text-aqua"><?php echo $visit_details['case_type']; ?></a>
                             </li>
                         </ul>
@@ -123,9 +115,9 @@ $genderList = $this->customlib->getGender();
                                                     <tr>
                                                         <td><?php echo $value['opd_no']; ?></td>
                                                         <td><?php echo date($this->customlib->getSchoolDateFormat(true, true), strtotime($value['appointment_date'])) ?></td>
-                                                        <td><?php echo $value["name"] . " " . $value["surname"]; ?></td>
+                                                        <td><?php echo $value["name"] ." ". $value["surname"]; ?></td>
                                                         <td><?php echo $value['refference']; ?></td>
-                                                        <td><?php echo $value['symptoms']; ?></td>
+                                                        <td><?php echo nl2br($value['symptoms']); ?></td>
                                                         <td class="pull-right">
 
 
@@ -175,7 +167,7 @@ $genderList = $this->customlib->getGender();
                                                                 <i class="fas fa-file-prescription"></i>
                                                             </a>
                                                         <?php } ?>
-                                                        <a href="#"  class="btn btn-default btn-xs" data-toggle="tooltip" title="<?php echo $this->lang->line('show'); ?>" onclick="getRecord('<?php echo $result["id"]; ?>', '', '<?php echo $revisit["id"]; ?>')" >
+                                                        <a href="#"  class="btn btn-default btn-xs" data-toggle="tooltip" title="<?php echo $this->lang->line('show'); ?>" onclick="getRecord('<?php echo $result["id"]; ?>', '<?php echo $revisit["opd_id"]; ?>', '<?php echo $revisit["id"]; ?>')" >
                                                             <i class="fa fa-reorder"></i>
                                                         </a>
 
@@ -205,14 +197,12 @@ $genderList = $this->customlib->getGender();
                                     <th><?php echo $this->lang->line('report') . " " . $this->lang->line('type'); ?></th>
                                     <th><?php echo $this->lang->line('report') . " " . $this->lang->line('date'); ?></th>
                                     <th><?php echo $this->lang->line('description'); ?></th>
-                                  <!--  <th class="text-right"><?php echo $this->lang->line('action'); ?></th>-->
                                     </thead>
                                     <tbody>
                                         <?php
                                         if (!empty($diagnosis_detail)) {
                                             foreach ($diagnosis_detail as $diagnosis_key => $diagnosis_value) {
 
-                                                //print_r($value);
                                                 ?>  
                                                 <tr>
                                                     <td><?php echo $diagnosis_value["report_type"] ?></td>
@@ -261,8 +251,7 @@ $genderList = $this->customlib->getGender();
                                         if (!empty($charges_detail)) {
                                             foreach ($charges_detail as $charges_key => $charges_value) {
 
-                                                $total += $charges_value["apply_charge"];
-                                                //print_r($value);
+                                                $total += $charges_value["apply_charge"];                       
                                                 ?>  
                                                 <tr>
                                                     <td><?php echo date($this->customlib->getSchoolDateFormat(), strtotime($charges_value['date'])); ?></td>
@@ -290,11 +279,10 @@ $genderList = $this->customlib->getGender();
                         <!-- -->  
                         <!--payment -->
                         <div class="tab-pane" id="payment">
-
-
-
-
                             <div class="download_label"><?php echo $this->lang->line('payment'); ?></div>
+                             <div class="impbtnview">
+                              <button type="button" class="btn btn-info" data-result_id="<?php echo $visit_id ?>" data-toggle="modal" data-target="#payMoney"><i class="fa fa-plus"></i> <?php echo $this->lang->line('make_payment'); ?></button>
+                            </div>
                             <div class="table-responsive">
                                 <table class="table table-striped table-bordered table-hover example">
                                     <thead>
@@ -355,7 +343,7 @@ $genderList = $this->customlib->getGender();
                                         <ul class="timeline timeline-inverse">
 
                                             <?php
-                                            foreach ($timeline_list as $key => $value) {
+                                            foreach ($timeline_list as $key => $value) { if($value['status'] == 'yes'){
                                                 ?>      
                                                 <li class="time-label">
                                                     <span class="bg-blue">    <?php
@@ -370,18 +358,17 @@ $genderList = $this->customlib->getGender();
 
                                                         <?php if (!empty($value["document"])) { ?>
                                                             <span class="time"><a class="defaults-c text-right" data-toggle="tooltip" title="" href="<?php echo base_url() . "patient/dashboard/report_download/" . $value["id"] . "/" . $value["document"] ?>" data-original-title="<?php echo $this->lang->line('download'); ?>"><i class="fa fa-download"></i></a></span>
-        <?php } ?>
+                                                        <?php } ?>
                                                         <h3 class="timeline-header text-aqua"> <?php echo $value['title']; ?> </h3>
                                                         <div class="timeline-body">
-        <?php echo $value['description']; ?> 
-
+                                                        <?php echo $value['description']; ?> 
                                                         </div>
 
                                                     </div>
                                                 </li>
-                                            <?php } ?> 
+                                            <?php }} ?> 
                                             <li><i class="fa fa-clock-o bg-gray"></i></li> 
-<?php } ?>  
+                                            <?php } ?>  
 
                                     </ul>
                                 </div>
@@ -406,8 +393,6 @@ $genderList = $this->customlib->getGender();
                                         <?php
                                         if (!empty($prescription_detail)) {
                                             foreach ($prescription_detail as $prescription_key => $prescription_value) {
-
-                                                //print_r($value);
                                                 ?>  
                                                 <tr>
                                                     <td><?php echo $prescription_value["opd_id"] ?></td>
@@ -519,10 +504,14 @@ $genderList = $this->customlib->getGender();
                                         <table class="nobordertable table table-striped table-responsive">
                                             <form class="" method="post" id="add_bill" action="#"  enctype="multipart/form-data">
                                                 <input type="hidden" name="status" id="status" value="<?php echo $result["is_active"] ?>">
-<?php if ($paid_amount <= ($total + $visit_charge + $revisit_charge)) { ?> 
+                                                <?php if ($paid_amount <= ($total + $visit_charge + $revisit_charge)) { ?>
+                                                    <tr>
+                                                            <th><?php echo $this->lang->line('consultant') . " " . $this->lang->line('charges') . " (" . $this->lang->line('paid') . ")". " (" . $currency_symbol . ")"; ?></th> 
+                                                            <td class="text-right fontbold20"><?php echo $visit_charge + $revisit_charge ; ?></td>
+                                                        </tr> 
                                                     <tr>
                                                         <th><?php echo $this->lang->line('total') . " " . $this->lang->line('charges') . " (" . $currency_symbol . ")"; ?></th> 
-                                                        <td class="text-right fontbold20"><?php echo $total + $visit_charge + $revisit_charge; ?></td>
+                                                        <td class="text-right fontbold20"><?php echo $total; ?></td>
                                                     </tr>
                                                     <tr>
                                                         <th><?php echo $this->lang->line('total') . " " . $this->lang->line('payment') . " (" . $currency_symbol . ")"; ?></th> 
@@ -533,13 +522,15 @@ $genderList = $this->customlib->getGender();
                                                             } else {
                                                                 echo "0";
                                                             }
-                                                            ?>                                                          <input type="hidden" value="<?php echo $total + $visit_charge + $revisit_charge - $paid_amount ?>" id="total_amount" name="total_amount" style="width: 30%" class="form-control">
+                                                            ?>
+                                                        <input type="hidden" value="<?php echo $total + $visit_charge + $revisit_charge - $paid_amount ?>" id="total_amount" name="total_amount" style="width: 30%" class="form-control">
                                                         </td>
                                                     </tr>
                                                     <tr>
                                                         <th><?php echo $this->lang->line('gross') . " " . $this->lang->line('total') . " (" . $this->lang->line('balance') . " " . $this->lang->line('amount') . ")" . " (" . $currency_symbol . ")"; ?></th> 
-                                                        <td class="text-right fontbold20"><?php echo $total + $visit_charge + $revisit_charge - $paid_amount ?></td>
+                                                        <td class="text-right fontbold20"><?php echo $total  - $paid_amount - $billpaid_amount ?></td>
                                                     </tr>
+
                                                     <tr>
                                                         <td colspan="2"><input type="hidden" id="gross_total" value="<?php echo $total + $visit_charge + $revisit_charge - $paid_amount ?>" name="gross_total" style="width: 30%; float: right" class="form-control"></td>
                                                     </tr>
@@ -548,7 +539,7 @@ $genderList = $this->customlib->getGender();
                                                         <td class="text-right ipdbilltable">
                                                             <input type="hidden" name="patient_id" value="<?php echo $result["id"] ?>">
                                                             <input type="hidden" name="opd_id" value="<?php echo $visit_id ?>">
-                                                            <input type="text" id="discount" value="<?php
+                                                            <input readonly type="text" id="discount" value="<?php
                                                             if (!empty($result["discount"])) {
                                                                 echo $result["discount"];
                                                             } else {
@@ -558,7 +549,7 @@ $genderList = $this->customlib->getGender();
                                                     </tr>
                                                     <tr>
                                                         <th><?php echo $this->lang->line('any_other_charges') . " (" . $currency_symbol . ")"; ?></th> 
-                                                        <td class="text-right ipdbilltable"><input type="text" id="other_charge" value="<?php
+                                                        <td class="text-right ipdbilltable"><input readonly type="text" id="other_charge" value="<?php
                                                             if (!empty($result["other_charge"])) {
                                                                 echo $result["other_charge"];
                                                             } else {
@@ -569,7 +560,7 @@ $genderList = $this->customlib->getGender();
 
                                                     <tr>
                                                         <th><?php echo $this->lang->line('tax') . " (" . $currency_symbol . ")"; ?></th> 
-                                                        <td class="text-right ipdbilltable"><input type="text" name="tax" value="<?php
+                                                        <td class="text-right ipdbilltable"><input readonly type="text" name="tax" value="<?php
                                                             if (!empty($result["tax"])) {
                                                                 echo $result["tax"];
                                                             } else {
@@ -581,7 +572,16 @@ $genderList = $this->customlib->getGender();
                                                         <th><?php echo $this->lang->line('net_payable') . " " . $this->lang->line('amount') . " (" . $currency_symbol . ")"; ?></th> 
                                                         <td class="text-right fontbold20">
 
-                                                            <span id="net_amount_span" class="">0</span><input type="hidden" name="net_amount" value="<?php
+                                                            <span id="net_amount_span" class=""><?php
+                                                            if (!empty($billstatus["net_amount"])) {
+
+                                                                echo $billstatus["net_amount"];
+                                                            } else {
+
+
+                                                            echo $total  - $paid_amount;
+                                                            }
+                                                            ?></span><input readonly type="hidden" name="net_amount" value="<?php
                                                             if (!empty($result["net_amount"])) {
                                                                 echo $result["net_amount"];
                                                             } else {
@@ -750,8 +750,6 @@ $genderList = $this->customlib->getGender();
         </div></div> </div>
 
 <!-- -->
-
-<!-- -->
 <div class="modal fade" id="viewModal" role="dialog">
     <div class="modal-dialog modal-dialog2 modal-lg" role="document">
         <div class="modal-content ">
@@ -910,6 +908,37 @@ $genderList = $this->customlib->getGender();
 
 
 
+<!-- -->
+
+<div id="payMoney" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title"><?php echo $this->lang->line('make_payment') ?></h4>
+            </div>
+            <form class="form-horizontal modal_payment" action="<?php echo site_url('patient/pay'); ?>" method="POST">
+                <div class="modal-body">
+                    <input type="hidden" name="record_id" value="0" id="record_id">
+                    <input type="hidden" name="record_opdid" value="0" id="record_opdid">
+                    <div class="form-group">
+                        <label for="amount" class="col-sm-3 control-label"><?php echo $this->lang->line('payment') . " " . $this->lang->line('amount') ?></label>
+                        <div class="col-sm-7">
+                            <input type="text" class="form-control" name="deposit_amount" id="amount_total_paid" >
+                            <span id="deposit_amount_error" class="text text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-info pull-right"><?php echo $this->lang->line('add') ?></button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>
 <!-- -->
 
 <!-- -->
@@ -1403,7 +1432,7 @@ $genderList = $this->customlib->getGender();
             url: '<?php echo base_url(); ?>patient/prescription/getPrescription/' + id + '/' + opdid + '/' + visitid,
             success: function (res) {
 
-                $("#edit_deleteprescription").html("<a href='#' onclick='print(" + id + "," + opdid + ")' id='print_id' data-toggle='modal' ><i class='fa fa-print'></i></a>");
+                $("#edit_deleteprescription").html("<a href='#' onclick='printprescription(" + id + "," + opdid + "," + visitid + ")' id='print_id' data-toggle='modal' ><i class='fa fa-print'></i></a>");
                 $("#getdetails_prescription").html(res);
 
                 holdModal('prescriptionview');
@@ -1413,6 +1442,62 @@ $genderList = $this->customlib->getGender();
             }
         });
     }
+
+
+
+     $('#payMoney').on('show.bs.modal', function (e) {
+        $("form.modal_payment").trigger("reset");
+        $("span[id$='_error']").text("");
+        var id = $(e.relatedTarget).data('result_id');
+        //alert(id)
+        $("form.modal_payment input[id='record_id']").val(id);
+        // $("form.modal_payment input[id='record_ipdid']").val(ipdid);
+        $.ajax({
+            url: baseurl + 'patient/pay/opdcalculate',
+            type: 'POST',
+            data: {'opdid': id},
+            dataType: 'JSON',
+            success: function (result) {
+
+                $('#amount_total_paid').val(result.amount);
+            }
+        });
+
+    });
+
+
+    // this is the id of the form
+    $("form.modal_payment").submit(function (e) {
+
+
+        var form = $(this);
+        var url = form.attr('action');
+        
+      //  alert(url);
+
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: form.serialize(), // serializes the form's elements.
+            dataType: 'JSON',
+            success: function (data)
+            {
+                if (data.status == 0) {
+
+                    $.each(data.error, function (key, val) {
+
+                        $("#" + key + "_error").text(val);
+                    });
+                }
+                
+                if(data.status == 1) {
+                    window.location.href = baseurl + "patient/pay/billpayment/opd";
+                }
+            }
+        });
+
+        e.preventDefault(); // avoid to execute the actual submit of the form.
+    });
 </script>
 
 <script type="text/javascript">
@@ -1506,10 +1591,11 @@ $genderList = $this->customlib->getGender();
 
     }
 
-    function printprescription(id, opdid) {
+    /*function printprescription(id, opdid) {
+        alert('here');
         var base_url = '<?php echo base_url() ?>';
         $.ajax({
-            url: base_url + 'admin/prescription/getPrescription/' + id + '/' + opdid,
+            url: base_url + 'patient/prescription/getPrescription/' + id + '/' + opdid,
             type: 'POST',
             data: {payslipid: id, print: 'yes'},
             //dataType: "json",
@@ -1518,7 +1604,24 @@ $genderList = $this->customlib->getGender();
                 popup(result);
             }
         });
+    }*/
+
+     function printprescription(id, opdid,visitid) {
+        // $('#print_id').hide();
+        var base_url = '<?php echo base_url() ?>';
+        $.ajax({
+            url: base_url + 'patient/prescription/getPrescription/' + id + '/' + opdid +'/'+ visitid,
+            type: 'POST',
+            data: {payslipid: id},
+            //dataType: "json",
+            success: function (result) {
+                $("#testdata").html(result);
+                popup(result);
+            }
+        });
     }
+
+
     function popup(data) {
         var base_url = '<?php echo base_url() ?>';
         var frame1 = $('<iframe />');
@@ -1718,7 +1821,7 @@ $genderList = $this->customlib->getGender();
             }
 
         }));
-    });
+    }); 
 
     $(document).ready(function (e) {
         $("#add_charges").on('submit', (function (e) {
@@ -1812,6 +1915,7 @@ $genderList = $this->customlib->getGender();
         var discount = $("#discount").val();
         var other_charge = $("#other_charge").val();
         var gross_total = $("#gross_total").val();
+        var visit_id = '<?php echo $visit_id ?>';
         var tax = $("#tax").val();
         var net_amount = $("#net_amount").val();
         var status = $("#status").val();
@@ -1819,7 +1923,7 @@ $genderList = $this->customlib->getGender();
         $.ajax({
             url: base_url + 'patient/dashboard/getOPDBill/',
             type: 'POST',
-            data: {patient_id: patientid, ipdid: ipdid, total_amount: total_amount, discount: discount, other_charge: other_charge, gross_total: gross_total, tax: tax, net_amount: net_amount, status: status},
+            data: {patient_id: patientid, ipdid: ipdid, total_amount: total_amount, discount: discount, other_charge: other_charge, gross_total: gross_total, visit_id : visit_id ,tax: tax, net_amount: net_amount, status: status},
             success: function (result) {
                 $("#testdata").html(result);
                 popup(result);

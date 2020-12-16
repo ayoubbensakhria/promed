@@ -19,6 +19,9 @@
     .list-arrows button {
         margin-bottom: 20px;
     }
+    @media (max-width:767px){
+        .nav-tabs-custom>.nav-tabs.pull-right>li {float: none;}
+    }
 </style>
 
 <link rel="stylesheet" href="<?php echo base_url(); ?>backend/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
@@ -33,24 +36,21 @@
                 <!-- Custom Tabs (Pulled to the right) -->
                 <div class="nav-tabs-custom">
                     <ul class="nav nav-tabs pull-right">
+                        <li class="pull-left header"> <?php echo $this->lang->line('send_email_/_sms'); ?></li>
                         <!--li><a href="#tab_class" data-toggle="tab"><?php //echo $this->lang->line('class');     ?></a></li-->
                         <li><a href="#tab_perticular" data-toggle="tab"><?php echo $this->lang->line('individual'); ?></a></li>
                         <li class="active"><a href="#tab_group" data-toggle="tab"><?php echo $this->lang->line('group'); ?></a></li>
-
-
-                        <li class="pull-left header"> <?php echo $this->lang->line('send_email_/_sms'); ?></li>
+                        
                     </ul>
                     <div class="tab-content">
                         <div class="tab-pane active" id="tab_group">
                             <form action="<?php echo site_url('admin/mailsms/send_group') ?>" method="post" id="group_form">
-
                                 <!-- /.box-header -->
                                 <div class="box-body">
                                     <div class="row">
                                         <div class="col-md-8">
                                             <div class="form-group">
-                                                <label><?php echo $this->lang->line('title'); ?></label><small class="req"
-                                                                                                               > *</small>
+                                                <label><?php echo $this->lang->line('title'); ?></label><small class="req"> *</small>
                                                 <input  class="form-control" name="group_title">
                                             </div>
                                             <div class="form-group">
@@ -61,7 +61,9 @@
                                                 <label class="checkbox-inline">
                                                     <input type="checkbox" value="sms" name="group_send_by[]"><?php echo $this->lang->line('sms'); ?>
                                                 </label>
-
+                                                <label class="checkbox-inline">
+                                                    <input type="checkbox" value="push" name="group_send_by[]"><?php echo $this->lang->line('mobile_app'); ?>
+                                                </label>
                                                 <span class="text-danger"><?php echo form_error('message'); ?></span>
                                             </div>
                                             <div class="form-group">
@@ -72,11 +74,8 @@
 
                                                 <span class="text-muted tot_count_group_msg_text pull-right word_counter"><?php echo $this->lang->line('character_count') ?>: 0</span>
                                             </div> 
-
-
                                         </div>
                                         <div class="col-md-4">
-
                                             <div class="form-group">
                                                 <label for="exampleInputEmail1"><?php echo $this->lang->line('message_to'); ?></label><small class="req"> *</small>
                                                 <div class="well minheight303">
@@ -136,6 +135,9 @@
                                                 <label class="checkbox-inline">
                                                     <input type="checkbox" name="individual_send_by[]" value="sms"><?php echo $this->lang->line('sms'); ?>
                                                 </label>
+                                                 <label class="checkbox-inline">
+                                                    <input type="checkbox" name="individual_send_by[]" value="push"><?php echo $this->lang->line('mobile_app'); ?>
+                                                </label>
 
                                                 <span class="text-danger"><?php echo form_error('message'); ?></span>
                                             </div>
@@ -171,7 +173,7 @@
                                                             ?>
                                                         </ul>
                                                     </div>
-                                                    <input type="text" value="" data-record="" data-email="" data-mobileno="" class="form-control" autocomplete="off" name="text" id="search-query">
+                                                    <input type="text" value=""data-record="" data-email="" data-mobileno="" data-app_key="" class="form-control" autocomplete="off" name="text" id="search-query">
 
                                                     <div id="suggesstion-box"></div>
                                                     <span class="input-group-btn">
@@ -185,7 +187,7 @@
                                                         <div class="col-md-12">
                                                             <div class="input-group">
                                                                 <input type="text" name="SearchDualList" class="form-control" placeholder="<?php echo $this->lang->line('search'); ?>" />
-                                                                <div class="input-group-btn"><span class="btn btn-default input-group-addon bright"><i class="fa fa-search"></i></span></div>
+                                                                <div class="input-group-btn"><span class="btn btn-default input-group-addon bright groupbtn btn-xs"><i class="fa fa-search"></i></span></div>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -312,6 +314,8 @@
             $("#search-query").attr('data-record', "");
             $("#search-query").attr('data-email', "");
             $("#search-query").attr('data-mobileno', "");
+            $("#search-query").attr('data-app_key', "");
+
             $("#suggesstion-box").hide();
             var category_selected = $("input[name='selected_value']").val();
 
@@ -350,6 +354,7 @@
 
                                     var email = obj.email;
                                     var contact = obj.mobileno;
+                                    var app_key = obj.app_key;
                                     var name = obj.patient_name + '(' + obj.patient_unique_id + ')';
                                 }
 
@@ -359,6 +364,7 @@
                                         .attr('record_id', obj.id)
                                         .attr('email', email)
                                         .attr('mobileno', contact)
+                                        .attr('app_key', app_key)
                                         .text(name)
                                         .appendTo(cList);
                             });
@@ -385,10 +391,12 @@
         var record_id = $(this).attr('record_id');
         var email = $(this).attr('email');
         var mobileno = $(this).attr('mobileno');
+       var app_key = $(this).attr('app_key');
         $("#search-query").attr('value', val).val(val);
         $("#search-query").attr('data-record', record_id);
         $("#search-query").attr('data-email', email);
         $("#search-query").attr('data-mobileno', mobileno);
+        $("#search-query").attr('data-app_key', app_key);
         $("#suggesstion-box").hide();
     });
 
@@ -401,7 +409,8 @@
 
         var email = $("#search-query").attr('data-email');
         var mobileno = $("#search-query").attr('data-mobileno');
-        console.log(email);
+        var app_key = $("#search-query").attr('data-app_key');
+        //console.log(email);
 
         var category_selected = $("input[name='selected_value']").val();
         if (record_id != "" || category_selected != "" && value != "") {
@@ -412,9 +421,11 @@
                     'category': category_selected,
                     'record_id': record_id,
                     'email': email,
-                    'mobileno': mobileno
+                    'mobileno': mobileno,
+                    'app_key':app_key
+                    
                 });
-                console.log(arr);
+               // console.log(arr);
                 attr[category_selected + "-" + record_id] = arr;
                 $("#search-query").attr('value', "").val("");
                 $("#search-query").attr('data-record', "");
@@ -423,7 +434,9 @@
                 errorMsg("<?php echo $this->lang->line('record_already_exists'); ?>");
             }
         } else {
-            errorMsg("<?php echo $this->lang->line('incorrect_record'); ?>");
+            //errorMsg("<?php echo $this->lang->line('incorrect_record'); ?>");
+
+            errorMsg('Recipient field is required.')
         }
         getTotalRecord();
     });
@@ -478,6 +491,7 @@
         var $form = $(this),
                 url = $form.attr('action');
         var formData = $(this).serializeArray();
+        console.log(formData);
         var user_list = (!jQuery.isEmptyObject(attr)) ? JSON.stringify(attr) : "";
         formData.push({name: "user_list", value: user_list});
         event.preventDefault();

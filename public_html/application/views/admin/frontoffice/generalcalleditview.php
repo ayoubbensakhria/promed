@@ -121,7 +121,6 @@
                                         <?php
                                     } else {
                                         foreach ($CallList as $key => $value) {
-                                            // print_r($value);
                                             ?>
                                             <tr>
                                                 <td class="mailbox-name"><?php echo $value['name']; ?></td>

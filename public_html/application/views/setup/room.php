@@ -38,7 +38,6 @@
                                         <?php
                                     } else {
                                         foreach ($room_list as $key => $value) {
-                                            // print_r($value);
                                             ?>
                                             <tr>
                                                 <td class="mailbox-name">

@@ -88,17 +88,15 @@ class Timeline extends Admin_Controller {
             if (empty($visible_check)) {
                 $visible = '';
             } else {
-
                 $visible = $visible_check;
             }
             $timeline = array(
                 'title' => $this->input->post('timeline_title'),
-                'timeline_date' => date("Y-m-d", strtotime($timeline_date)),
+                'timeline_date' => date("Y-m-d", $this->customlib->datetostrtotime($timeline_date)),
                 'description' => $this->input->post('timeline_desc'),
                 'status' => $visible,
                 'date' => date('Y-m-d'),
                 'staff_id' => $this->input->post('staff_id'));
-
             $id = $this->timeline_model->add_staff_timeline($timeline);
 
             if (isset($_FILES["timeline_doc"]) && !empty($_FILES['timeline_doc']['name'])) {
@@ -111,6 +109,7 @@ class Timeline extends Admin_Controller {
 
                 $img_name = $id . '.' . $fileInfo['extension'];
                 move_uploaded_file($_FILES["timeline_doc"]["tmp_name"], $uploaddir . $img_name);
+
             } else {
 
                 $document = "";
@@ -123,6 +122,7 @@ class Timeline extends Admin_Controller {
             $array = array('status' => 'success', 'error' => '', 'message' => $msg);
         }
         echo json_encode($array);
+        
     }
 
     public function edit_staff_timeline() {

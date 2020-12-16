@@ -57,56 +57,41 @@ Class Bed_model extends CI_Model {
         $this->db->join('floor', 'floor.id = bed_group.floor','left');
         $this->db->join('ipd_details', 'bed.id = ipd_details.bed', 'left');
         $this->db->join('staff', 'staff.id = ipd_details.cons_doctor', 'left');
-        $this->db->join('patients', 'patients.id = ipd_details.patient_id', 'left');
-       // $this->db->group_by('bed.id',$id);
+        $this->db->join('patients', 'patients.id = ipd_details.patient_id', 'left');      
         $this->db->order_by('bed.id', 'asc');
-
         if ($id) {
-            $this->db->where('bed.id', $id);
-           // $this->db->group_by('bed.id',$id);
+            $this->db->where('bed.id', $id);           
         } else {
             $this->db->order_by('bed.id', 'desc');
         }
         $query = $this->db->get();
-
-      // echo $this->db->last_query();
-       // die;
         if ($id != null) {
             $result = $query->row_array();
         } else {
             $result = $query->result_array();
         }
 
-
          if (!empty($result)) {
             foreach ($result as $key => $value) {
                 if ($value["pid"]) {
                     if (($value['patient_status'] == 'yes') && ($value['ipd_discharged'] == 'no')) {
-                        $data[] = $value;
-                    //print_r($value);
-                   //  exit();
+                        $data[] = $value;                  
                     } elseif (($value['is_active'] == 'yes')) {
                         $val =  $value['bed'];
-                        $data[$val] = $value;
-                       
+                        $data[$val] = $value;                       
                     }
                 } else {
                     $data[] = $value ;
                 } 
             }
         }
-
         
         return $data;
     }
 
-
-   public function bed_active() {
-       
+   public function bed_active() {       
     $query = $this->db->query("SELECT bed.id, bed.name, bed.is_active,patients.id as pid,patients.discharged,patients.is_active as patient_status,patients.patient_unique_id,patients.patient_name,patients.gender,patients.guardian_name,patients.mobileno,ipd_details.bed as bid,ipd_details.discharged as ipd_discharged FROM bed RIGHT JOIN ipd_details ON ipd_details.bed = bed.id RIGHT JOIN patients ON patients.id = ipd_details.patient_id where bed.is_active = 'yes' group by bed.id");
-
-       $result =  $query->result_array();
-        
+       $result =  $query->result_array();        
         return $result;
     }
     public function bed_listsearch($id = null) {
@@ -115,8 +100,6 @@ Class Bed_model extends CI_Model {
         $this->db->join('bed_type', 'bed.bed_type_id = bed_type.id');
         $this->db->join('bed_group', 'bed.bed_group_id = bed_group.id');
         $this->db->join('floor', 'floor.id = bed_group.floor');
-
-
         $this->db->order_by('bed.id', 'asc');
         if ($id != null) {
             $this->db->where('bed.id', $id);
@@ -129,7 +112,6 @@ Class Bed_model extends CI_Model {
         } else {
             $result = $query->result_array();
         }
-
         return $result;
     }
 
@@ -160,11 +142,9 @@ Class Bed_model extends CI_Model {
             $this->db->where('bed.is_active', $active);
         }
         $this->db->where('bed.bed_group_id', $bed_group);
-
         if (!empty($bed_id)) {
             $this->db->or_where('bed.id', $bed_id);
         }
-
         $query = $this->db->get();
         return $query->result_array();
     }

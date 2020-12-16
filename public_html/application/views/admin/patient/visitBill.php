@@ -1,8 +1,5 @@
 <?php
 $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
-//echo "<pre>";
-//print_r($result);
-//exit();
 ?>
 <style type="text/css">
 
@@ -48,7 +45,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                             <th><?php echo $this->lang->line('opd') . " " . $this->lang->line('no'); ?></th>
                             <td><?php echo $result['opd_no']; ?></td> 
                             <th><?php echo $this->lang->line('organisation'); ?></th>
-                            <td align="right"><?php echo $result['organisation_name']; ?></td> 
+                            <td align=""><?php echo $result['organisation_name']; ?></td> 
                         </tr> 
                         <tr>
                            <!-- th><?php echo $this->lang->line('admission') . " " . $this->lang->line('date'); ?></th>
@@ -74,7 +71,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                             <th width="25%"><?php echo $this->lang->line('symptoms') ?></th>
                             <td width="25%"><?php echo $result['symptoms'] ?></td> 
                             <th width="25%"><?php echo $this->lang->line('note') ?></th>
-                            <td width="25%"><?php echo $result["note"] ?></td> 
+                            <td width="25%"><?php echo $result["note_remark"] ?></td> 
                         </tr>
                     </table>
 

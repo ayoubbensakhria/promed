@@ -6,8 +6,7 @@ if (!defined('BASEPATH'))
 class Cms_program_model extends CI_Model {
 
     public function __construct() {
-        parent::__construct();
-        $this->current_session = $this->setting_model->getCurrentSession();
+        parent::__construct();      
     }
 
     /**
@@ -41,9 +40,7 @@ class Cms_program_model extends CI_Model {
         } elseif (!array_key_exists("start", $params) && array_key_exists("limit", $params)) {
             $this->db->limit($params['limit']);
         }
-
-        $query = $this->db->get();
-        // echo $this->db->last_query();
+        $query = $this->db->get();       
         return ($query->num_rows() > 0) ? $query->result_array() : FALSE;
     }
 
@@ -80,7 +77,6 @@ class Cms_program_model extends CI_Model {
         if ($query->num_rows()) {
             $result['page_contents'] = $this->front_cms_program_photos($query->row()->id);
         }
-
         return $result;
     }
 
@@ -121,10 +117,8 @@ class Cms_program_model extends CI_Model {
     public function inst_batch($data, $contents) {
         $this->db->trans_start(); # Starting Transaction
         $this->db->trans_strict(FALSE); # See Note 01. If you wish can remove as well 
-
         $this->db->insert('front_cms_programs', $data);
         $insert_id = $this->db->insert_id();
-
         if (isset($contents) && !empty($contents)) {
             $total_rec = count($contents);
             for ($i = 0; $i < $total_rec; $i++) {
@@ -133,7 +127,6 @@ class Cms_program_model extends CI_Model {
             $this->db->insert_batch('front_cms_program_photos', $contents);
         }
         $this->db->trans_complete(); # Completing transaction
-
         if ($this->db->trans_status() === FALSE) {
             $this->db->trans_rollback();
             return FALSE;
@@ -148,7 +141,6 @@ class Cms_program_model extends CI_Model {
         $this->db->trans_strict(FALSE); # See Note 01. If you wish can remove as well 
         $this->db->where('id', $data['id']);
         $this->db->update('front_cms_programs', $data);
-
         if (!empty($remove_content)) {
             $this->db->where('program_id', $data['id']);
             $this->db->where_in('media_gallery_id', $remove_content);
@@ -161,9 +153,7 @@ class Cms_program_model extends CI_Model {
             }
             $this->db->insert_batch('front_cms_program_photos', $contents);
         }
-
         $this->db->trans_complete(); # Completing transaction
-
         if ($this->db->trans_status() === FALSE) {
             $this->db->trans_rollback();
             return FALSE;
@@ -174,7 +164,6 @@ class Cms_program_model extends CI_Model {
     }
 
     public function addImage($data) {
-
         $this->db->insert('front_cms_program_photos', $data);
         return $this->db->insert_id();
     }
@@ -192,7 +181,6 @@ class Cms_program_model extends CI_Model {
 
     public function banner($banner_content, $data) {
         $this->db->trans_begin();
-
         //===============
         $banner_content_record = $this->getByCategory($banner_content);
         if ($banner_content_record) {
@@ -206,7 +194,6 @@ class Cms_program_model extends CI_Model {
         }
 
         //=======================
-
         $this->db->trans_complete(); # Completing transaction
         if ($this->db->trans_status() === FALSE) {
             $this->db->trans_rollback();
@@ -219,7 +206,6 @@ class Cms_program_model extends CI_Model {
 
     public function bannerDelete($banner_content, $media_gallery_id) {
         $this->db->trans_begin();
-
         //===============
         $banner_content_record = $this->getByCategory($banner_content);
         if ($banner_content_record) {
@@ -229,9 +215,7 @@ class Cms_program_model extends CI_Model {
         } else {
             
         }
-
         //=======================
-
         $this->db->trans_complete(); # Completing transaction
         if ($this->db->trans_status() === FALSE) {
             $this->db->trans_rollback();

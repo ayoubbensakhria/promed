@@ -15,7 +15,7 @@ $genderList = $this->customlib->getGender();
 
                     </div><!-- /.box-header -->
                     <div class="box-body">
-                        <div class="download_label"><?php echo $this->lang->line('pharmacy') . " " . $this->lang->line('bill'); ?></div>
+                        <div class="download_label"><?php echo $this->lang->line('blood_bank') ; ?></div>
                         <table class="table table-striped table-bordered table-hover example" cellspacing="0" width="100%">
                             <thead>
                                 <tr>
@@ -26,7 +26,7 @@ $genderList = $this->customlib->getGender();
                                     <th><?php echo $this->lang->line('donor') . " " . $this->lang->line('name'); ?></th>
                                     <th><?php echo $this->lang->line('bag_no'); ?></th>
                                     <th class="text-right"><?php echo $this->lang->line('amount') . " (" . $currency_symbol . ")"; ?></th>
-                                    <th><?php echo $this->lang->line('action'); ?></th>
+                                    <th class="text-right"><?php echo $this->lang->line('action'); ?></th>
 
                                 </tr>
                             </thead>
@@ -44,16 +44,18 @@ $genderList = $this->customlib->getGender();
                                         ?>
                                         <tr class="">
                                             <td ><?php echo $bill['bill_no']; ?></td>
-                                            <td><?php echo $bill['date_of_issue']; ?></td>
+                                             <td><?php echo date($this->customlib->getSchoolDateFormat(true, true), strtotime($bill['date_of_issue'])) ?> 
+                                            </td>
+                                            
                                             <td><?php echo $bill['patient_name']; ?></td>
                                             <td><?php echo $bill['bloodgroup']; ?></td>
                                             <td><?php echo $bill['donorname']; ?></td>
                                             <td><?php echo $bill['bag_no']; ?></td>
                                             <td class="text-right"><?php echo $bill['amount']; ?></td>
-                                            <td class="">
+                                            <td class="text-right">
                                                 <a href="#" 
                                                    onclick="viewDetail('<?php echo $bill['id'] ?>')"
-                                                   class="btn btn-default btn-xs"  data-toggle="tooltip"
+                                                   class="btn btn-default btn-xs" data-toggle="tooltip"
                                                    title="<?php echo $this->lang->line('print'); ?>" >
                                                     <i class="fa fa-print"></i>
                                                 </a> 

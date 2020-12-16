@@ -81,10 +81,11 @@
 
                                 </div>
                                 <!-- /.box-body -->
-
+                            <?php if ($this->rbac->hasPrivilege('sms_setting', 'can_edit')) { ?>
                                 <div class="box-footer">
                                     <button type="submit" class="btn btn-primary col-md-offset-3"><?php echo $this->lang->line('save'); ?></button>&nbsp;&nbsp;<span class="clickatell_loader"></span>
                                 </div>
+                            <?php } ?>
                             </form>
                         </div>
                         <!-- /.tab-pane -->

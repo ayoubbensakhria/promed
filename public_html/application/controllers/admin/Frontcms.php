@@ -13,15 +13,12 @@ class Frontcms extends Admin_Controller {
     }
 
     function index() {
-        if (!$this->rbac->hasPrivilege('front_cms_setting', 'can_edit')) {
+        if (!$this->rbac->hasPrivilege('front_cms_setting', 'can_view')) {
             access_denied();
         }
         $data['front_themes'] = $this->front_themes;
 
         $frontcmslist = $this->frontcms_setting_model->get();
-
-
-
         $data['title'] = 'Add Front CMS Setting';
         $data['title_list'] = 'Front CMS Settings';
         $this->session->set_userdata('top_menu', 'setup');

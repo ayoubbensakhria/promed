@@ -305,7 +305,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
 
                         <tr>
                             <th width="20%"><?php echo $this->lang->line('gross_salary'); ?>(<?php echo $currency_symbol; ?>)</th> 
-                            <td><?php echo $result["basic"] + $result["total_allowance"] ?></td>
+                            <td><?php echo $result["basic"] + $result["total_allowance"]-$result["total_deduction"]; ?></td>
                         </tr>
                         <?php if (!empty($result["tax"])) { ?>
 

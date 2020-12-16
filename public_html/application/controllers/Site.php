@@ -6,12 +6,9 @@ if (!defined('BASEPATH')) {
 
 class Site extends Public_Controller
 {
-
     public function __construct()
     {
-
         parent::__construct();
-
         $this->check_installation();
         if ($this->config->item('installed') == true) {
             $this->db->reconnect();
@@ -62,12 +59,19 @@ class Site extends Public_Controller
             );
             $setting_result = $this->setting_model->get();
             $result         = $this->staff_model->checkLogin($login_post);
+             if (!empty($result->language_id)) {
+                $lang_array = array('lang_id' => $result->language_id, 'language' => $result->language);
+            } else {
+                $lang_array = array('lang_id' => $setting_result[0]['lang_id'], 'language' => $setting_result[0]['language']);
+            }
+          
             if ($result) {
                 if ($result->is_active) {
                     $setting_result = $this->setting_model->get();
+
                     $session_data   = array(
                         'id'                     => $result->id,
-                        'username'               => $result->name,
+                        'username'               => $result->name.' '.$result->surname,
                         'email'                  => $result->email,
                         'roles'                  => $result->roles,
                         'date_format'            => $setting_result[0]['date_format'],
@@ -76,7 +80,7 @@ class Site extends Public_Controller
                         'school_name'            => $setting_result[0]['name'],
                         'timezone'               => $setting_result[0]['timezone'],
                         'sch_name'               => $setting_result[0]['name'],
-                        'language'               => array('lang_id' => $setting_result[0]['lang_id'], 'language' => $setting_result[0]['language']),
+                        'language'               => $lang_array,
                         'is_rtl'                 => $setting_result[0]['is_rtl'],
                         'doctor_restriction'     => $setting_result[0]['doctor_restriction'],
                         'superadmin_restriction' => $setting_result[0]['superadmin_restriction'],
@@ -92,9 +96,7 @@ class Site extends Public_Controller
                     } else {
                         redirect('admin/admin/dashboard');
                     }
-
                 } else {
-
                     $data['error_message'] = $this->lang->line('administrator_message');
                     $this->load->view('admin/login', $data);
                 }
@@ -127,28 +129,20 @@ class Site extends Public_Controller
             $this->load->view('admin/forgotpassword');
         } else {
             $email = $this->input->post('email');
-
             $result = $this->staff_model->getByEmail($email);
-
             if ($result && $result->email != "") {
-
                 $verification_code = $this->enc_lib->encrypt(uniqid(mt_rand()));
                 $update_record     = array('id' => $result->id, 'verification_code' => $verification_code);
                 $this->staff_model->add($update_record);
                 $name = $result->name;
-
                 $resetPassLink = site_url('admin/resetpassword') . "/" . $verification_code;
-
                 $body       = $this->forgotPasswordBody($name, $resetPassLink);
                 $body_array = json_decode($body);
-
                 if (!empty($this->mail_config)) {
-
                     $result_new = $this->mailer->send_mail($result->email, $body_array->subject, $body_array->body);
                 }
 
                 $this->session->set_flashdata('message', $this->lang->line('recover_message'));
-
                 redirect('site/login', 'refresh');
             } else {
                 $data = array(
@@ -165,20 +159,16 @@ class Site extends Public_Controller
         if (!$verification_code) {
             show_404();
         }
-
         $user = $this->staff_model->getByVerificationCode($verification_code);
-
         if ($user) {
             //if the code is valid then display the password reset form
             $this->form_validation->set_rules('password', $this->lang->line('password'), 'required');
             $this->form_validation->set_rules('confirm_password', $this->lang->line('confirm_password'), 'required|matches[password]');
             if ($this->form_validation->run() == false) {
-
                 $data['verification_code'] = $verification_code;
                 //render
                 $this->load->view('admin/admin_resetpassword', $data);
             } else {
-
                 // finally change the password
                 $password      = $this->input->post('password');
                 $update_record = array(
@@ -218,7 +208,6 @@ class Site extends Public_Controller
             $this->form_validation->set_rules('password', $this->lang->line('password'), 'required');
             $this->form_validation->set_rules('confirm_password', $this->lang->line('confirm_password'), 'required|matches[password]');
             if ($this->form_validation->run() == false) {
-
                 $data['role']              = $role;
                 $data['verification_code'] = $verification_code;
                 //render
@@ -259,11 +248,8 @@ class Site extends Public_Controller
         } else {
             $email    = $this->input->post('username');
             $usertype = $this->input->post('user[]');
-
             $result = $this->user_model->forgotPassword($usertype[0], $email);
-
             if ($result && $result->email != "") {
-
                 $verification_code = $this->enc_lib->encrypt(uniqid(mt_rand()));
                 $update_record     = array('id' => $result->user_tbl_id, 'verification_code' => $verification_code);
                 $this->user_model->updateVerCode($update_record);
@@ -273,14 +259,11 @@ class Site extends Public_Controller
                     $name = $result->name;
                 }
                 $resetPassLink = site_url('user/resetpassword') . '/' . $usertype[0] . "/" . $verification_code;
-
                 $body       = $this->forgotPasswordBody($name, $resetPassLink);
                 $body_array = json_decode($body);
-
                 if (!empty($this->mail_config)) {
                     $result = $this->mailer->send_mail($result->email, $body_array->subject, $body_array->body);
                 }
-
                 $this->session->set_flashdata('message', $this->lang->line('recover_message'));
                 redirect('site/userlogin', 'refresh');
             } else {
@@ -341,19 +324,20 @@ class Site extends Public_Controller
                 'password' => $this->input->post('password'),
             );
             $login_details = $this->user_model->checkLogin($login_post);
-
+			$setting_result = $this->setting_model->get();
             if (isset($login_details) && !empty($login_details)) {
                 $user = $login_details[0];
-
                 if ($user->is_active == "yes") {
-
                     if ($user->role == "patient") {
-
                         $result = $this->user_model->read_user_information($user->id);
-                    }
+                    }                    
+                    if ($result[0]->lang_id!=0) {
+						$lang_array = array('lang_id' => $result['0']->lang_id, 'language' => $result['0']->language);        
+					} else {
+						$lang_array = array('lang_id' => $setting_result[0]['lang_id'], 'language' => $setting_result[0]['language']);
+					}
 
-                    if ($result != false) {
-                        $setting_result = $this->setting_model->get();
+                    if ($result != false) {             
 
                         if ($result[0]->role == "patient") {
                             $session_data = array(
@@ -375,7 +359,6 @@ class Site extends Public_Controller
 
                             $this->session->set_userdata('patient', $session_data);
                             $this->customlib->setUserLog($result[0]->username, $result[0]->role);
-
                             redirect('patient/dashboard/appointment');
                         }
                     } else {
@@ -392,5 +375,4 @@ class Site extends Public_Controller
             }
         }
     }
-
 }

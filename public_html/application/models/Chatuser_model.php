@@ -8,7 +8,6 @@ class Chatuser_model extends CI_Model {
 
     public function __construct() {
         parent::__construct();
-        $this->current_session = $this->setting_model->getCurrentSession();
     }
 
     /**
@@ -22,31 +21,25 @@ class Chatuser_model extends CI_Model {
         if ($user_type == 'staff') {
             $sql = "SELECT staff.id as `staff_id`,Null as `patient_id`,(CASE WHEN staff.surname != '' THEN CONCAT(staff.name, ' ',staff.surname) ELSE staff.name END) as `name`,staff.image FROM `staff` WHERE staff.name LIKE '%" . $keyword . "%' and id NOT IN(SELECT chat_users.staff_id FROM `chat_users` inner JOIN (SELECT chat_connections.id, CASE  WHEN chat_user_one =" . $chat_user_id . " THEN chat_user_two ELSE chat_connections.chat_user_one END as 'chat_user_id' FROM `chat_connections` WHERE  (chat_user_one=" . $chat_user_id . " or chat_user_two=" . $chat_user_id . ")) as chat_connections on chat_connections.chat_user_id=chat_users.id WHERE staff_id IS NOT NULL) and staff.id != " . $login_id . " Union SELECT Null as `staff_id`,patients.id as `patient_id`,patients.patient_name as `name`,patients.image FROM `patients` WHERE (patients.patient_name LIKE '%" . $keyword . "%' ) and patients.id NOT IN(SELECT chat_users.patient_id FROM `chat_users` inner JOIN (SELECT chat_connections.id, CASE  WHEN chat_user_one =" . $chat_user_id . " THEN chat_user_two ELSE chat_connections.chat_user_one END as 'chat_user_id' FROM `chat_connections` WHERE  (chat_user_one=" . $chat_user_id . " or chat_user_two=" . $chat_user_id . ")) as chat_connections on chat_connections.chat_user_id=chat_users.id WHERE patient_id IS NOT NULL)";
         } else if ($user_type == 'patient') {
-
             $sql = "SELECT staff.id as `staff_id`,Null as `patient_id`,(CASE WHEN staff.surname != '' THEN CONCAT(staff.name, ' ',staff.surname) ELSE staff.name END) as `name`,staff.image FROM `staff` WHERE staff.name LIKE '%" . $keyword . "%' and id NOT IN(SELECT chat_users.staff_id FROM `chat_users` inner JOIN (SELECT chat_connections.id, CASE  WHEN chat_user_one =" . $chat_user_id . " THEN chat_user_two ELSE chat_connections.chat_user_one END as 'chat_user_id' FROM `chat_connections` WHERE  (chat_user_one=" . $chat_user_id . " or chat_user_two=" . $chat_user_id . ")) as chat_connections on chat_connections.chat_user_id=chat_users.id WHERE staff_id IS NOT NULL)";
         }
-
         $query = $this->db->query($sql);
         return $query->result();
     }
 
     public function myUser($staff_id, $chat_connection_id, $user_type = 'staff') {
-
         if ($user_type == 'staff') {
-
             $sql = " SELECT * from chat_connections WHERE chat_connections.chat_user_one= (SELECT id FROM `chat_users` WHERE staff_id=" . $staff_id . ") or chat_connections.chat_user_two = (SELECT id FROM `chat_users` WHERE staff_id=" . $staff_id . ") ORDER BY `chat_connections`.`id` DESC";
         } else if ($user_type == 'patient') {
             $sql = " SELECT * from chat_connections WHERE chat_connections.chat_user_one= (SELECT id FROM `chat_users` WHERE patient_id=" . $staff_id . ") or chat_connections.chat_user_two = (SELECT id FROM `chat_users` WHERE patient_id=" . $staff_id . ") ORDER BY `chat_connections`.`id` DESC";
         }
 
         $query = $this->db->query($sql);
-
         $chat_users = $query->result();
         foreach ($chat_users as $chat_users_key => $chat_users_value) {
             $messages = $this->getLastMessages($chat_users_value->id);
             $messages = $this->getLastMessages($chat_users_value->id);
             $chat_users_value->{'messages'} = $messages;
-
             $chat_user_id = $chat_users_value->chat_user_one;
             if ($chat_users_value->chat_user_one == $chat_connection_id) {
                 $chat_user_id = $chat_users_value->chat_user_two;
@@ -58,13 +51,11 @@ class Chatuser_model extends CI_Model {
             'chat_users' => $chat_users,
             'chat_user_notification' => $this->getChatNotification($chat_connection_id),
         );
-
         return json_encode($return_result);
     }
 
     public function getLastMessages($chat_connection_id) {
         $sql = "SELECT * FROM chat_messages WHERE id=(SELECT max(id) FROM `chat_messages` WHERE chat_connection_id=" . $chat_connection_id . ")";
-
         $query = $this->db->query($sql);
         $chat_messages = $query->row();
         return $chat_messages;
@@ -75,7 +66,6 @@ class Chatuser_model extends CI_Model {
 patients.image as `image` FROM patients WHERE patients.id=chat_users.patient_id) ELSE (SELECT staff.image as `image` FROM staff WHERE staff.id=chat_users.staff_id) END) as image FROM `chat_users` WHERE chat_users.id=" . $chat_user_id;
         $query = $this->db->query($sql);
         $chat_user = $query->row();
-
         return $chat_user;
     }
 
@@ -103,7 +93,6 @@ patients.image as `image` FROM patients WHERE patients.id=chat_users.patient_id)
     }
 
     public function getChatNotification($chat_user_id) {
-
         $sql = "SELECT COUNT(*) as `no_of_notification`, chat_connection_id FROM `chat_messages`   WHERE chat_connection_id in (SELECT chat_connections.id FROM `chat_connections` WHERE chat_user_one=" . $chat_user_id . " or chat_user_two=" . $chat_user_id . ") and chat_user_id=" . $chat_user_id . "  and is_read = 0 GROUP by chat_connection_id ORDER BY `chat_connection_id` ASC";
         $query = $this->db->query($sql);
         $chat_notification = $query->result();
@@ -112,11 +101,8 @@ patients.image as `image` FROM patients WHERE patients.id=chat_users.patient_id)
 
     public function getChatConnectionByID($id) {
         $this->db->select()->from('chat_connections');
-
         $this->db->where('id', $id);
-
         $query = $this->db->get();
-
         return $query->row();
     }
 
@@ -130,7 +116,6 @@ patients.image as `image` FROM patients WHERE patients.id=chat_users.patient_id)
         $this->db->where('chat_connection_id', $chat_connection_id);
         $this->db->where('chat_user_id', $chat_user_id);
         $this->db->update('chat_messages', $update_read);
-
         $sql = "SELECT * FROM `chat_messages` WHERE chat_connection_id=" . $chat_connection_id . " and id > " . $last_chat_id . " ORDER BY `chat_messages`.`chat_connection_id` ASC";
         $query = $this->db->query($sql);
         $chat_messages = $query->result();
@@ -138,7 +123,6 @@ patients.image as `image` FROM patients WHERE patients.id=chat_users.patient_id)
     }
 
     public function addNewUser($first_entry, $insert_data, $panel = "staff", $id, $insert_message) {
-
         $chat_connections = array('chat_user_one' => '', 'chat_user_two' => '');
         $this->db->where('staff_id', $first_entry['staff_id']);
         $this->db->where('user_type', $first_entry['user_type']);
@@ -152,7 +136,6 @@ patients.image as `image` FROM patients WHERE patients.id=chat_users.patient_id)
             $this->db->where('user_type', $insert_data['user_type']);
             $q1 = $this->db->get('chat_users');
         }
-
         if ($q->num_rows() > 0 && $q1->num_rows() > 0) {
             $chat_connections['chat_user_one'] = $q->row()->id;
             $chat_connections['chat_user_two'] = $q1->row()->id;
@@ -163,7 +146,6 @@ patients.image as `image` FROM patients WHERE patients.id=chat_users.patient_id)
             $this->db->insert('chat_messages', $insert_message);
             return json_encode(array('new_user_id' => $chat_connections['chat_user_two'], 'new_user_chat_connection_id' => $new_user_chat_connection_id));
         } else if ($q->num_rows() == 0 && $q1->num_rows() > 0) {
-
             $this->db->insert('chat_users', $first_entry);
             $chat_connections['chat_user_one'] = $this->db->insert_id();
             $chat_connections['chat_user_two'] = $q1->row()->id;
@@ -172,7 +154,6 @@ patients.image as `image` FROM patients WHERE patients.id=chat_users.patient_id)
             $insert_message['chat_user_id'] = $chat_connections['chat_user_two'];
             $insert_message['chat_connection_id'] = $new_user_chat_connection_id;
             $this->db->insert('chat_messages', $insert_message);
-
             return json_encode(array('new_user_id' => $chat_connections['chat_user_two'], 'new_user_chat_connection_id' => $new_user_chat_connection_id));
         } else if ($q->num_rows() > 0 && $q1->num_rows() == 0) {
             $chat_connections['chat_user_one'] = $q->row()->id;
@@ -197,11 +178,9 @@ patients.image as `image` FROM patients WHERE patients.id=chat_users.patient_id)
             $chat_connections['chat_user_two'] = $this->db->insert_id();
             $this->db->insert('chat_connections', $chat_connections);
             $new_user_chat_connection_id = $this->db->insert_id();
-
             $insert_message['chat_user_id'] = $chat_connections['chat_user_two'];
             $insert_message['chat_connection_id'] = $new_user_chat_connection_id;
             $this->db->insert('chat_messages', $insert_message);
-
             return json_encode(array('new_user_id' => $chat_connections['chat_user_two'], 'new_user_chat_connection_id' => $new_user_chat_connection_id));
         }
     }
@@ -237,7 +216,6 @@ patients.image as `image` FROM patients WHERE patients.id=chat_users.patient_id)
             $this->db->insert('chat_messages', $insert_message);
             return json_encode(array('new_user_id' => $chat_connections['chat_user_two'], 'new_user_chat_connection_id' => $new_user_chat_connection_id));
         } else if ($q->num_rows() == 0 && $q1->num_rows() > 0) {
-
             $chat_connections['chat_user_two'] = $q1->row()->id;
             $this->db->insert('chat_users', $first_entry);
             $chat_connections['chat_user_one'] = $this->db->insert_id();
@@ -270,7 +248,6 @@ patients.image as `image` FROM patients WHERE patients.id=chat_users.patient_id)
             $ids = join("','", $userlist);
             $ids = " and id NOT IN ('$ids') ";
         }
-
         $sql = "SELECT * FROM `chat_connections` WHERE (chat_user_one =" . $user_id . " or chat_user_two=" . $user_id . ")" . $ids . "ORDER BY `chat_connections`.`id` ASC";
         $query = $this->db->query($sql);
         $chat_users = $query->result();
@@ -278,7 +255,6 @@ patients.image as `image` FROM patients WHERE patients.id=chat_users.patient_id)
             $messages = $this->getLastMessages($chat_users_value->id);
             $messages = $this->getLastMessages($chat_users_value->id);
             $chat_users_value->{'messages'} = $messages;
-
             $chat_user_id = $chat_users_value->chat_user_one;
             if ($chat_users_value->chat_user_one == $user_id) {
                 $chat_user_id = $chat_users_value->chat_user_two;

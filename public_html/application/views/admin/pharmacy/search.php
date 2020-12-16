@@ -1,9 +1,3 @@
-<style type="text/css">
-    #easySelectable {/*display: flex; flex-wrap: wrap;*/}
-    #easySelectable li {}
-    #easySelectable li.es-selected {background: #2196F3; color: #fff;}
-    .easySelectable {-webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;}
-</style>
 <?php
 $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
 ?>
@@ -18,12 +12,12 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                         <div class="box-tools pull-right">
 
                             <?php if ($this->rbac->hasPrivilege('import_medicine', 'can_view')) { ?>                
-                                <a data-toggle="modal" href="<?php echo base_url(); ?>admin/pharmacy/import"  class="btn btn-primary btn-sm"><i class="fa fa-upload"></i> <?php echo $this->lang->line('import_medicine'); ?>
+                                <a data-toggle="modal" href="<?php echo base_url(); ?>admin/pharmacy/import" class="btn btn-primary btn-sm"><i class="fa fa-upload"></i> <?php echo $this->lang->line('import_medicine'); ?>
                                 </a>
                             <?php } ?>
 
                             <?php if ($this->rbac->hasPrivilege('medicine', 'can_add')) { ?>
-                                <a data-toggle="modal" onclick="holdModal('myModal')" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> <?php echo $this->lang->line('add') . " " . $this->lang->line('medicine'); ?></a> 
+                                <a data-toggle="modal" onclick="holdModal('myModal')" class="btn btn-primary btn-sm addmedicine"><i class="fa fa-plus"></i> <?php echo $this->lang->line('add') . " " . $this->lang->line('medicine'); ?></a> 
                             <?php } ?>
 
                             <?php if ($this->rbac->hasPrivilege('medicine_purchase', 'can_view')) { ?>
@@ -32,24 +26,25 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                         </div>
                     </div><!-- /.box-header -->
                     <div class="box-body">
-                        <div class="download_label"><?php echo $this->lang->line('medicines') . " " . $this->lang->line('stock'); ?></div>
-                        <table class="table table-striped table-bordered table-hover test_ajax" cellspacing="0" width="100%">
+                        <div class="download_label"><?php echo $this->lang->line('medicines') . " " .$this->lang->line('stock'); ?></div>
+                      <div class="table-responsive-mobile">   
+                        <table class="table table-striped table-bordered table-hover test_ajax " cellspacing="0" width="100%">
                             <thead>
                                 <tr>
                                     <th><?php echo $this->lang->line('medicine') . " " . $this->lang->line('name'); ?></th>
                                     <th><?php echo $this->lang->line('medicine') . " " . $this->lang->line('company'); ?></th>
                                     <th><?php echo $this->lang->line('medicine') . " " . $this->lang->line('composition'); ?></th>
-                                    <th><?php echo $this->lang->line('medicine') . " " . $this->lang->line('category'); ?></th>                 
-
+                                    <th><?php echo $this->lang->line('medicine') . " " . $this->lang->line('category'); ?></th> 
                                     <th><?php echo $this->lang->line('medicine') . " " . $this->lang->line('group'); ?></th>
                                     <th><?php echo $this->lang->line('unit'); ?></th>
-                                    <th ><?php echo $this->lang->line('available') . " " . $this->lang->line('qty'); ?></th>
+                                    <th><?php echo $this->lang->line('available') . " " . $this->lang->line('qty'); ?></th>
                                 </tr>
                             </thead>
                             <tbody>
                              
                             </tbody>
                         </table>
+                      </div>  
                     </div>
                 </div>                                                    
             </div>                                                                                                                                          
@@ -61,15 +56,13 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content modal-media-content">
             <div class="modal-header modal-media-header">
-                <button type="button" class="close pt4" data-toggle="tooltip" title="<?php echo $this->lang->line('close'); ?>" data-dismiss="modal">&times;</button>
+                <button type="button" class="close" data-toggle="tooltip" title="<?php echo $this->lang->line('close'); ?>" data-dismiss="modal">&times;</button>
                 <h4 class="box-title"><?php echo $this->lang->line('add') . " " . $this->lang->line('medicine') . " " . $this->lang->line('details'); ?></h4> 
             </div>
-            <form id="formadd" accept-charset="utf-8"  method="post" class="ptt10" enctype="multipart/form-data" > 
+            <form id="formadd" accept-charset="utf-8" method="post" class="ptt10" enctype="multipart/form-data"> 
                 <div class="modal-body pt0 pb0">
-
                     <div class="row">
                         <div class="col-lg-12 col-md-12 col-sm-12 paddlr">
-
                             <div class="row">
                                 <div class="col-sm-3">
                                     <div class="form-group">
@@ -409,65 +402,67 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                             <div class="col-lg-1 col-md-2 col-sm-4">
                                 <img id="medicine_image" src="#" style="width:100px;height: 100px;" />
                             </div>    
-                            <div class="col-lg-11 col-md-10 col-sm-8 table-responsive">
-                                <table class="table mb0 table-striped table-bordered examples">
-                                    <tr>
-                                        <th></th>
-                                        <td></td>
-                                        <th width="15%"><?php echo $this->lang->line('medicine') . " " . $this->lang->line('name'); ?></th>
-                                        <td width="35%"><span id='medicine_names'></span></td>
-                                        <th width="15%"><?php echo $this->lang->line('medicine') . " " . $this->lang->line('category'); ?></th>
-                                        <td width="35%"><span id="medicine_category_ids"></span>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th></th>
-                                        <td></td>
-                                        <th width="15%"><?php echo $this->lang->line('medicine') . " " . $this->lang->line('company'); ?></th>
-                                        <td width="35%"><span id='medicine_companys'></span></td>
-                                        <th width="15%"><?php echo $this->lang->line('medicine') . " " . $this->lang->line('composition'); ?></th>
-                                        <td width="35%"><span id="medicine_compositions"></span>
-                                        </td>
+                            <div class="col-lg-11 col-md-10 col-sm-8">
+                                <div class="table-responsive">
+                                    <table class="table mb0 table-striped table-bordered examples">
+                                        <tr>
+                                            <th></th>
+                                            <td></td>
+                                            <th width="15%"><?php echo $this->lang->line('medicine') . " " . $this->lang->line('name'); ?></th>
+                                            <td width="35%"><span id='medicine_names'></span></td>
+                                            <th width="15%"><?php echo $this->lang->line('medicine') . " " . $this->lang->line('category'); ?></th>
+                                            <td width="35%"><span id="medicine_category_ids"></span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th></th>
+                                            <td></td>
+                                            <th width="15%"><?php echo $this->lang->line('medicine') . " " . $this->lang->line('company'); ?></th>
+                                            <td width="35%"><span id='medicine_companys'></span></td>
+                                            <th width="15%"><?php echo $this->lang->line('medicine') . " " . $this->lang->line('composition'); ?></th>
+                                            <td width="35%"><span id="medicine_compositions"></span>
+                                            </td>
 
-                                    </tr>
-                                    <tr>
-                                        <th></th>
-                                        <td></td>
-                                        <th width="15%"><?php echo $this->lang->line('medicine') . " " . $this->lang->line('group'); ?></th>
-                                        <td width="35%"><span id='medicine_groups'></span></td>
-                                        <th width="15%"><?php echo $this->lang->line('unit'); ?></th>
-                                        <td width="35%"><span id="units"></span>
-                                        </td>
+                                        </tr>
+                                        <tr>
+                                            <th></th>
+                                            <td></td>
+                                            <th width="15%"><?php echo $this->lang->line('medicine') . " " . $this->lang->line('group'); ?></th>
+                                            <td width="35%"><span id='medicine_groups'></span></td>
+                                            <th width="15%"><?php echo $this->lang->line('unit'); ?></th>
+                                            <td width="35%"><span id="units"></span>
+                                            </td>
 
-                                    </tr>
-                                    <tr>
-                                        <th></th>
-                                        <td></td>
-                                        <th width="15%"><?php echo $this->lang->line('min_level'); ?></th>
-                                        <td width="35%"><span id='min_levels'></span></td>
-                                        <th width="15%"><?php echo $this->lang->line('re_order_level'); ?></th>
-                                        <td width="35%"><span id="reorder_levels"></span>
-                                        </td>
+                                        </tr>
+                                        <tr>
+                                            <th></th>
+                                            <td></td>
+                                            <th width="15%"><?php echo $this->lang->line('min_level'); ?></th>
+                                            <td width="35%"><span id='min_levels'></span></td>
+                                            <th width="15%"><?php echo $this->lang->line('re_order_level'); ?></th>
+                                            <td width="35%"><span id="reorder_levels"></span>
+                                            </td>
 
-                                    </tr>
-                                    <tr>                                  <th></th>
-                                        <td></td>
-                                        <th width="15%"><?php echo $this->lang->line('vat') . " (%)" ?></th>
-                                        <td width="35%"><span id='vats'></span></td>
-                                        <th width="15%"><?php echo $this->lang->line('unit') . "/" . $this->lang->line('packing'); ?></th>
-                                        <td width="35%"><span id="unit_packings"></span>
-                                        </td>
+                                        </tr>
+                                        <tr>                                  <th></th>
+                                            <td></td>
+                                            <th width="15%"><?php echo $this->lang->line('vat') . " (%)" ?></th>
+                                            <td width="35%"><span id='vats'></span></td>
+                                            <th width="15%"><?php echo $this->lang->line('unit') . "/" . $this->lang->line('packing'); ?></th>
+                                            <td width="35%"><span id="unit_packings"></span>
+                                            </td>
 
-                                    </tr>
-                                    <tr>
-                                        <th></th>
-                                        <td></td>
+                                        </tr>
+                                        <tr>
+                                            <th></th>
+                                            <td></td>
 
-                                        <th width="15%"><?php echo $this->lang->line('vat') . " " . $this->lang->line('a/c'); ?></th>
-                                        <td width="35%"><span id="vat_acs"></span>
-                                        </td>
-                                    </tr>
-                                </table>
+                                            <th width="15%"><?php echo $this->lang->line('vat') . " " . $this->lang->line('a/c'); ?></th>
+                                            <td width="35%"><span id="vat_acs"></span>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>    
                             </div>
                         </form>            
                     </div><!--./col-md-12-->       
@@ -614,7 +609,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                     <div class="form-group">
                                         <label><?php echo $this->lang->line('expire') . " " . $this->lang->line('date'); ?></label>
                                         <small class="req"> *</small> 
-                                        <input type="text" id="batch_expire"  name="expiry_date" id="stockexpiry_date" class="form-control">
+                                        <input type="text" id="batch_expire"  name="expiry_date" id="stockexpiry_date" class="form-control date">
                                         <span class="text-danger"><?php echo form_error('expiry_date'); ?></span>
                                     </div>
                                 </div> 
@@ -919,7 +914,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                 });
             }
             function viewDetail(id) {
-                // alert(id);
+               
                 $.ajax({
                     url: '<?php echo base_url(); ?>admin/pharmacy/getDetails',
                     type: "POST",
@@ -1074,13 +1069,98 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
 
 <script type="text/javascript">
     $(document).ready(function() {
-    $('.test_ajax').DataTable( {
+    $('.test_ajax').DataTable({
         "processing": true,
         "serverSide": true,
         "ajax": {
             "url": base_url+"admin/pharmacy/dt_search",
-            "type": "POST"
-        }
+            "type": "POST",
+              },
+            responsive: 'true',
+            dom: "Bfrtip",
+
+           /* columnDefs: [
+             {
+              
+             className: 'dt-body-hover'
+                }
+             ],*/
+
+         buttons: [
+
+                {
+                    extend: 'copyHtml5',
+                    text: '<i class="fa fa-files-o"></i>',
+                    titleAttr: 'Copy',
+                    title: $('.download_label').html(),
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                },
+
+                {
+                    extend: 'excelHtml5',
+                    text: '<i class="fa fa-file-excel-o"></i>',
+                    titleAttr: 'Excel',
+                   
+                    title: $('.download_label').html(),
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                },
+
+                {
+                    extend: 'csvHtml5',
+                    text: '<i class="fa fa-file-text-o"></i>',
+                    titleAttr: 'CSV',
+                    title: $('.download_label').html(),
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                },
+
+                {
+                    extend: 'pdfHtml5',
+                    text: '<i class="fa fa-file-pdf-o"></i>',
+                    titleAttr: 'PDF',
+                    title: $('.download_label').html(),
+                    exportOptions: {
+                        columns: ':visible'
+                        
+                    }
+                },
+
+                {
+                    extend: 'print',
+                    text: '<i class="fa fa-print"></i>',
+                    titleAttr: 'Print',
+                    title: $('.download_label').html(),
+                        customize: function ( win ) {
+                    $(win.document.body)
+                        .css( 'font-size', '10pt' );
+ 
+                    $(win.document.body).find( 'table' )
+                        .addClass( 'compact' )
+                        .css( 'font-size','inherit');
+                },
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                },
+
+                {
+                    extend: 'colvis',
+                    text: '<i class="fa fa-columns"></i>',
+                    titleAttr: 'Columns',
+                    title: $('.download_label').html(),
+                    postfixButtons: ['colvisRestore']
+                },
+            ]
+        });
     });
+	
+	
+$(".addmedicine").click(function(){
+	$('#formadd').trigger("reset");	
 });
 </script>

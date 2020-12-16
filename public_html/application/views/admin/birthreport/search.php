@@ -2,12 +2,6 @@
 $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
 $genderList = $this->customlib->getGender();
 ?>
-<style type="text/css">
-    #easySelectable {/*display: flex; flex-wrap: wrap;*/}
-    #easySelectable li {}
-    #easySelectable li.es-selected {background: #2196F3; color: #fff;}
-    .easySelectable {-webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;}
-</style>
 <div class="content-wrapper">
     <!-- Main content -->
     <section class="content">
@@ -94,7 +88,7 @@ $genderList = $this->customlib->getGender();
                         </table>
                     </div>
                 </div>                                                    
-            </div>                                                                                                                                          
+            </div>                                                                                                            
         </div>  
     </section>
 </div>
@@ -110,7 +104,6 @@ $genderList = $this->customlib->getGender();
                 <div class="row">
                     <form  id="formadd" method="post" accept-charset="utf-8">
                         <div class="paddlr col-md-12">
-
                             <div class="row">
                                 <div class="col-sm-4">                     
                                     <div class="form-group">
@@ -123,21 +116,18 @@ $genderList = $this->customlib->getGender();
                                     <div class="form-group">
                                         <label for="exampleInputEmail1"><?php echo $this->lang->line('vehicle_model'); ?></label><small class="req"> *</small>
                                         <input name="vehicle_model" placeholder="" type="text" class="form-control" />
-
                                     </div>
                                 </div>
                                 <div class="col-sm-4">
                                     <div class="form-group">
                                         <label for="exampleInputEmail1"><?php echo $this->lang->line('year_made'); ?> </label>
                                         <input  name="manufacture_year" placeholder="" type="text" class="form-control" value="<?php echo set_value('manufacture_year'); ?>" />
-
                                     </div>
                                 </div>
                                 <div class="col-sm-4">
                                     <div class="form-group">
                                         <label for="exampleInputEmail1"><?php echo $this->lang->line('driver_name'); ?></label>
                                         <input name="driver_name" placeholder="" type="text" class="form-control"  value="<?php echo set_value('driver_name'); ?>" />
-
                                     </div>
                                 </div>
                                 <div class="col-sm-4">
@@ -159,7 +149,6 @@ $genderList = $this->customlib->getGender();
                                             <option value=""><?php echo $this->lang->line('select'); ?></option>
                                             <option value="<?php echo $this->lang->line("owned") ?>"><?php echo $this->lang->line("owned") ?></option>
                                             <option value="<?php echo $this->lang->line("contractual") ?>"><?php echo $this->lang->line("contractual") ?></option>
-
                                         </select>
                                     </div>
                                 </div>
@@ -170,16 +159,12 @@ $genderList = $this->customlib->getGender();
                                     </div>
                                 </div>
                             </div>
-
-
                         </div>
-
                         <div class="box-footer clear">
                             <button type="submit" data-loading-text="<?php echo $this->lang->line('processing') ?>" id="formaddbtn" class="btn btn-info pull-right"><?php echo $this->lang->line('save'); ?></button>
                         </div>
                     </form>
                 </div>
-
             </div>
         </div>    
     </div>
@@ -252,9 +237,8 @@ $genderList = $this->customlib->getGender();
                                         <textarea class="form-control" id="note" name="note" placeholder=""><?php echo set_value('note'); ?></textarea>
                                     </div>
                                 </div>
-                            </div><!--./row-->   
-
-                    </div><!--./col-md-12--> 
+                            </div><!--./row-->                     
+						</div><!--./col-md-12--> 
                     <div class="box-footer clear">
                         <div class="pull-right">
                             <button type="submit" id="formeditbtn"  data-loading-text="<?php echo $this->lang->line('processing') ?>" class="btn btn-info pull-right"><?php echo $this->lang->line('save'); ?></button>
@@ -263,13 +247,11 @@ $genderList = $this->customlib->getGender();
                     </form>      
                 </div><!--./row--> 
             </div>
-
         </div>
     </div>    
 </div>
 
 <script type="text/javascript">
-
     $(document).ready(function () {
         $('.detail_popover').popover({
             placement: 'right',
@@ -283,14 +265,10 @@ $genderList = $this->customlib->getGender();
     });
     $(function () {
         $('#easySelectable').easySelectable();
-//stopPropagation();
+
     })
 </script>
-
-<script type="text/javascript">
-            /*
-             Author: mee4dy@gmail.com
-             */
+<script type="text/javascript">            
                     (function ($) {
                         //selectable html elements
                         $.fn.easySelectable = function (options) {
@@ -360,7 +338,6 @@ $genderList = $this->customlib->getGender();
                         };
                     })(jQuery);
 </script>
-
 <script type="text/javascript">
             $(document).ready(function (e) {
                 $("#formadd").on('submit', (function (e) {
@@ -388,7 +365,7 @@ $genderList = $this->customlib->getGender();
                             $("#formaddbtn").button('reset');
                         },
                         error: function () {
-                            //  alert("Fail")
+                            
                         }
                     });
                 }));
@@ -396,7 +373,6 @@ $genderList = $this->customlib->getGender();
             $(document).ready(function (e) {
                 $("#formedit").on('submit', (function (e) {
                     $("#formeditbtn").button('loading');
-
                     e.preventDefault();
                     $.ajax({
                         url: '<?php echo base_url(); ?>admin/vehicle/update',
@@ -420,11 +396,12 @@ $genderList = $this->customlib->getGender();
                             $("#formeditbtn").button('reset');
                         },
                         error: function () {
-                            //  alert("Fail")
+                            
                         }
                     });
                 }));
             });
+			
             function getRecord(id) {
                 $('#myModaledit').modal('show');
                 $.ajax({
@@ -445,6 +422,7 @@ $genderList = $this->customlib->getGender();
                     },
                 });
             }
+			
             function holdModal(modalId) {
                 $('#' + modalId).modal({
                     backdrop: 'static',
@@ -452,6 +430,4 @@ $genderList = $this->customlib->getGender();
                     show: true
                 });
             }
-
 </script>
-

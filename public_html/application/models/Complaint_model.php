@@ -7,14 +7,11 @@ class complaint_model extends CI_Model {
 
     public function __construct() {
         parent::__construct();
-        $this->current_session = $this->setting_model->getCurrentSession();
-        $this->current_session_name = $this->setting_model->getCurrentSessionName();
-        $this->start_month = $this->setting_model->getStartMonth();
     }
 
     public function add($data) {
         $this->db->insert('complaint', $data);
-        return $query = $this->db->insert_id();
+        return $this->db->insert_id();
     }
 
     public function image_add($complaint_id, $image) {
@@ -65,11 +62,9 @@ class complaint_model extends CI_Model {
     }
 
     function getComplaintSource() {
-
         $this->db->select('*');
         $this->db->from('source');
         $query = $this->db->get();
         return $query->result_array();
     }
-
 }

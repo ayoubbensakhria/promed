@@ -104,7 +104,6 @@
                             <div class="form-top">
                                 <div class="form-top-left">
                                     <h3 class="font-white"><?php echo $this->lang->line('forgot_password'); ?></h3>
-
                                 </div>
                                 <div class="form-top-right">
                                     <i class="fa fa-key"></i>
@@ -135,11 +134,7 @@
         <!-- Javascript -->
         <script src="<?php echo base_url(); ?>backend/usertemplate/assets/js/jquery-1.11.1.min.js"></script>
         <script src="<?php echo base_url(); ?>backend/usertemplate/assets/bootstrap/js/bootstrap.min.js"></script>
-        <script src="<?php echo base_url(); ?>backend/usertemplate/assets/js/jquery.backstretch.min.js"></script>
-        <!-- <script src="<?php echo base_url(); ?>backend/usertemplate/assets/js/scripts.js"></script> -->
-        <!--[if lt IE 10]>
-            <script src="<?php echo base_url(); ?>backend/usertemplate/assets/js/placeholder.js"></script>
-        <![endif]-->
+        <script src="<?php echo base_url(); ?>backend/usertemplate/assets/js/jquery.backstretch.min.js"></script>        
     </body>
 </html>
 <script type="text/javascript">

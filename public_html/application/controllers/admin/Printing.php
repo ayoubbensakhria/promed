@@ -31,6 +31,19 @@ class Printing extends Admin_Controller {
         $this->load->view('layout/footer');
     }
 
+    function summaryprinting() {
+        if (!$this->rbac->hasPrivilege('discharged_summary_print_header_footer', 'can_view')) {
+            access_denied();
+        }
+        $this->session->set_userdata('top_menu', 'setup');
+        $this->session->set_userdata('sub_sidebar_menu', 'admin/printing/summaryprinting');
+        $this->session->set_userdata('sub_menu', 'admin/printing');
+        $data["printing_list"] = $this->printing_model->get('', 'summary');
+        $this->load->view('layout/header');
+        $this->load->view('admin/printing/summaryprinting', $data);
+        $this->load->view('layout/footer');
+    }
+
         function opdprinting() {
         if (!$this->rbac->hasPrivilege('opd_bill_print_header_footer', 'can_view')) {
             access_denied();
@@ -210,8 +223,9 @@ class Printing extends Admin_Controller {
     }
 
     public function update() {
-        $this->form_validation->set_rules('print_header', 'Print Header', 'callback_handle_upload');
-        if ($this->form_validation->run() == FALSE) {
+         $id = $this->input->post('printid');
+        //$this->form_validation->set_rules('print_header', 'Print Header', 'callback_handle_upload');
+        if (empty($id)) {
             $msg = array(
                 'print_header' => form_error('print_header'),
             );
@@ -226,12 +240,24 @@ class Printing extends Admin_Controller {
             );
             $this->printing_model->add($insertData);
             if (isset($_FILES["print_header"]) && !empty($_FILES['print_header']['name'])) {
+
+                   $this->form_validation->set_rules('print_header', 'Print Header', 'callback_handle_upload');
+        if ($this->form_validation->run() == FALSE) {
+            $msg = array(
+                'print_header' => form_error('print_header'),
+            );
+
+            $array = array('status' => 'fail', 'error' => $msg, 'message' => '');
+            }else{
                 $fileInfo = pathinfo($_FILES["print_header"]["name"]);
                 $img_name = $id . '.' . $fileInfo['extension'];
                 move_uploaded_file($_FILES["print_header"]["tmp_name"], "./uploads/printing/" . $img_name);
                 $img_data = array('id' => $id, 'print_header' => 'uploads/printing/' . $img_name);
                 $this->printing_model->add($img_data);
+
+
             }
+                            }
             $msg = "Record Updated Successfully";
             $array = array('status' => 'success', 'error' => '', 'message' => $this->lang->line('update_message'));
         }

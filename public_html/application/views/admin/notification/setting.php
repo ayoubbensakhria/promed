@@ -34,22 +34,22 @@
                                         $this->lang->line('opd') . " " . $this->lang->line('patient') . " " . $this->lang->line('revisit') => $this->lang->line('patient_revisit_message'),
                                         $this->lang->line('ipd') . " " . $this->lang->line('patient') . " " . $this->lang->line('discharged') => $this->lang->line('patient_discharged_message'),
                                         $this->lang->line('login_credential') => $this->lang->line('login_credential_message'),
-                                        $this->lang->line('appointment') . " " . $this->lang->line('approved') => $this->lang->line('appointment_message')
+                                        $this->lang->line('appointment') . " " . $this->lang->line('approved') => $this->lang->line('appointment_message'),
+                                        $this->lang->line('live_meeting')  => $this->lang->line('live_meeting_message'),
+                                        $this->lang->line('live_consult')  => $this->lang->line('live_consult_message')
                                     );
 
-
-
                                     $last_key = count($notificationMethods);
-                                    $i = 1;
+                                    $i = 1;                                  
                                     foreach ($notificationMethods as $note_key => $note_value) {
-
-
                                         $mail_checked = "";
                                         $sms_checked = "";
+                                        $mobileapp_checked = "";
                                         $post_back = checkExists($notificationlist, $note_key);
                                         if ($post_back) {
                                             $mail_checked = ($post_back['is_mail']) ? "checked=checked" : "";
                                             $sms_checked = ($post_back['is_sms']) ? "checked=checked" : "";
+                                            $mobileapp_checked = ($post_back['is_mobileapp']) ? "checked=checked" : "";
                                         }
 
                                         $hr = "";
@@ -59,25 +59,30 @@
                                         }
                                         ?>
 
-                                        <tr><td>
+                                        <tr>
+                                            <td>
                                                 <?php echo $note_value; ?>
                                             </td>
-                                            <td width="20%"><label class="checkbox-inline">
+                                           
+                                            <td width="30%">
+                                                <label class="checkbox-inline">
                                                     <input type="checkbox" name="<?php echo $note_key ?>_mail" value="1" <?php echo $mail_checked; ?>> <?php echo $this->lang->line('email'); ?>
                                                 </label>
                                                 <label class="checkbox-inline">
                                                     <input type="checkbox" name="<?php echo $note_key ?>_sms" value="1" <?php echo $sms_checked; ?>> <?php echo $this->lang->line('sms'); ?>
-                                                </label></td>
-                                            <td> <?php
+                                                </label>
+                                                <?php if(($note_key!=='login_credential') && ($note_key!=='live_meeting')) { ?>
+                                                 <label class="checkbox-inline">
+                                                    <input type="checkbox" name="<?php echo $note_key ?>_mobileapp" value="1" <?php echo $mobileapp_checked; ?>> <?php echo $this->lang->line('mobile_app'); ?>
+                                                </label>
+                                               <?php } ?>
+                                            </td >
+                                            <td width="50%"> <?php
                                                 if (!empty($note_value)) {
                                                     echo $content[$note_value];
                                                 }
                                                 ?> <input type="hidden" name="key_array[]" value="<?php echo $note_key ?>"></td>
-                                        </tr>     
-
-
-
-
+                                        </tr> 
                                         <?php
                                         // echo $hr;
                                         $i++;
@@ -85,10 +90,12 @@
                                     ?>
                                 </tbody>
                             </table>
-                        </div>  
+                        </div> 
+                      <?php if ($this->rbac->hasPrivilege('notification_setting', 'can_edit')) { ?>
                         <div class="box-footer">
                             <button type="submit" class="btn btn-info pull-right"><?php echo $this->lang->line('save'); ?></button>
-                        </div>   
+                        </div> 
+                       <?php } ?>   
                 </form>                 
             </div>
 
@@ -106,7 +113,8 @@ function checkExists($notificationlist, $key) {
         if ($not_value->type == $key) {
             return array(
                 'is_mail' => $not_value->is_mail,
-                'is_sms' => $not_value->is_sms
+                'is_sms' => $not_value->is_sms,
+                'is_mobileapp' => $not_value->is_mobileapp
             );
         }
     }

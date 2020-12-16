@@ -16,8 +16,8 @@ class Pharmacy extends Admin_Controller {
         $this->marital_status = $this->config->item('marital_status');
         $this->payment_mode = $this->config->item('payment_mode');
         $this->search_type = $this->config->item('search_type');
-        $this->blood_group = $this->config->item('bloodgroup');
-        $this->charge_type = $this->config->item('charge_type');
+        $this->blood_group = $this->config->item('bloodgroup');        
+        $this->charge_type = $this->customlib->getChargeMaster();
         $data["charge_type"] = $this->charge_type;
         $this->patient_login_prefix = "pat";
         $this->config->load("image_valid");
@@ -88,7 +88,8 @@ class Pharmacy extends Admin_Controller {
         echo json_encode($array);
     }
 
-    public function search() {
+    public function search() 
+    {
         if (!$this->rbac->hasPrivilege('medicine', 'can_view')) {
             access_denied();
         }
@@ -125,8 +126,6 @@ public function dt_search(){
         }
         $resultlist = $this->pharmacy_model->search_datatable($where_condition);
         $total_result = $this->pharmacy_model->search_datatable_count($where_condition);
-       
-
         $data = array();
         foreach ($resultlist as $result_key => $result_value) {
             $status = "";
@@ -145,7 +144,9 @@ public function dt_search(){
         $nestedData=array();    
         $action="<div class='rowoptionview'>";  
         $action.="<a href='#' onclick='viewDetail(".$result_value->id.")' class='btn btn-default btn-xs' data-toggle='tooltip' title='".$this->lang->line('show')."' ><i class='fa fa-reorder'></i></a>"; 
-        $action.="<a href='#' class='btn btn-default btn-xs' onclick='addbadstock(".$result_value->id.")' data-toggle='tooltip' title='".$this->lang->line('add') . ' ' . $this->lang->line('bad') . ' ' . $this->lang->line('stock')."' > <i class='fas fa-minus-square'></i> </a>";
+        if ($this->rbac->hasPrivilege('medicine_bad_stock', 'can_add')) {
+             $action.="<a href='#' class='btn btn-default btn-xs' onclick='addbadstock(".$result_value->id.")' data-toggle='tooltip' title='".$this->lang->line('add') . ' ' . $this->lang->line('bad') . ' ' . $this->lang->line('stock')."' > <i class='fas fa-minus-square'></i> </a>";
+            }
                 $action.="<div'>";  
 
         $nestedData[]=$result_value->medicine_name.$action;
@@ -154,10 +155,9 @@ public function dt_search(){
         $nestedData[]=$result_value->medicine_category;
         $nestedData[]=$result_value->medicine_group;
         $nestedData[]=$result_value->unit;
-        $nestedData[]=$result_value->total_qty.$status;    
+        $nestedData[]=$result_value->total_qty.$status;     
         $data[] = $nestedData;
-}
-
+        }
 
         $json_data = array(
             "draw"            => intval($draw),   // for every request/draw by clientside , they send a number as a parameter, when they recieve a response/data they first check the draw number, so we are sending same number in draw. 
@@ -250,6 +250,8 @@ echo json_encode($json_data);  // send data as json format
     public function getdate() {
         $id = $this->input->post("id");
         $result = $this->pharmacy_model->getdate($id);
+        $result["date"] = date($this->customlib->getSchoolDateFormat(true, true), strtotime($result['date']));
+
         echo json_encode($result);
 
     }
@@ -557,7 +559,7 @@ echo json_encode($json_data);  // send data as json format
     }
 
     public function getMedicineBatch() {
-        if (!$this->rbac->hasPrivilege('add_medicine_stock', 'can_view')) {
+        if (!$this->rbac->hasPrivilege('medicine', 'can_view')) {
             access_denied();
         }
         $id = $this->input->post("pharmacy_id");
@@ -565,6 +567,7 @@ echo json_encode($json_data);  // send data as json format
         $data["result"] = $result;
         $badstockresult = $this->pharmacy_model->getMedicineBadStock($id);
         $data["badstockresult"] = $badstockresult;
+     
         $this->load->view('admin/pharmacy/medicineDetail', $data);
     }
 
@@ -661,7 +664,6 @@ echo json_encode($json_data);  // send data as json format
         $patients = $this->patient_model->getPatientListall();
         $data["patients"] = $patients;
         $data["marital_status"] = $this->marital_status;
-        //$data["blood_group"] = $this->blood_group	;
         $data["bloodgroup"] = $this->blood_group;
         $this->load->view('layout/header');
         $this->load->view('admin/pharmacy/pharmacyBill.php', $data);
@@ -866,7 +868,11 @@ echo json_encode($json_data);  // send data as json format
         }
         $this->session->set_userdata('top_menu', 'Reports');
         $this->session->set_userdata('sub_menu', 'admin/pharmacy/billreport');
-        $select = 'pharmacy_bill_basic.*';
+        $select = 'pharmacy_bill_basic.*,patients.patient_name';
+         $join = array(
+            'LEFT JOIN patients ON pharmacy_bill_basic.patient_id = patients.id',
+        );
+     
         $table_name = "pharmacy_bill_basic";
         $search_type = $this->input->post("search_type");
         if (isset($search_type)) {
@@ -877,12 +883,12 @@ echo json_encode($json_data);  // send data as json format
         if (empty($search_type)) {
 
             $search_type = "";
-            $resultlist = $this->report_model->getReport($select, $join = array(), $table_name, $where = array());
+            $resultlist = $this->report_model->getReport($select, $join, $table_name, $where = array());
         } else {
 
             $search_table = "pharmacy_bill_basic";
             $search_column = "date";
-            $resultlist = $this->report_model->searchReport($select, $join = array(), $table_name, $search_type, $search_table, $search_column, $where = array());
+            $resultlist = $this->report_model->searchReport($select, $join, $table_name, $search_type, $search_table, $search_column, $where = array());
         }
         $data["searchlist"] = $this->search_type;
         $data["search_type"] = $search_type;
@@ -1013,6 +1019,7 @@ echo json_encode($json_data);  // send data as json format
                 'opd_ipd_no' => $this->input->post('opd_ipd_no'),
                 'total' => $this->input->post('total'),
                 'discount' => $this->input->post('discount'),
+                'note' => $this->input->post('note'),
                 'tax' => $this->input->post('tax'),
                 'net_amount' => $this->input->post('net_amount'),
             );
@@ -1145,6 +1152,7 @@ echo json_encode($json_data);  // send data as json format
                 'date' => date('Y-m-d H:i:s', $this->customlib->datetostrtotime($bill_date)),
                 'supplier_id' => $supplier_id,
                 'supplier_name' => $supplier_name,
+                'invoice_no' => $this->input->post('invoiceno'),
                 'purchase_no' => $purchase,
                 'total' => $this->input->post('total'),
                 'discount' => $this->input->post('discount'),
@@ -1165,7 +1173,6 @@ echo json_encode($json_data);  // send data as json format
             }
 
             if ($insert_id) {
-
                 $medicine_category_id = $this->input->post('medicine_category_id');
                 $medicine_name = $this->input->post('medicine_name');
                 $expiry_date = $this->input->post('expiry_date');
@@ -1175,19 +1182,33 @@ echo json_encode($json_data);  // send data as json format
                 $sale_rate = $this->input->post('sale_rate');
                 $packing_qty = $this->input->post('packing_qty');
                 $quantity = $this->input->post('quantity');
-
                 $purchase_price = $this->input->post('purchase_price');
                 $amount = $this->input->post('amount');
+
+
 
                 $data1 = array();
                 $j = 0;
                 foreach ($medicine_name as $key => $mvalue) {
+
+                      $expdate = $expiry_date[$j];
+
+            $explore = explode("/", $expdate);
+
+            $monthary = $explore[0];
+            $yearary = $explore[1];
+            $month = $monthary;
+
+            $month_number = $this->convertMonthToNumber($month);
+            $insert_date = $yearary . "-" . $month_number . "-01";
+
                     $details = array(
                         'inward_date' => date('Y-m-d H:i:s', $this->customlib->datetostrtotime($bill_date)),
                         'pharmacy_id' => $medicine_name[$j],
                         'supplier_bill_basic_id' => $insert_id,
                         'medicine_category_id' => $medicine_category_id[$j],
                         'expiry_date' => $expiry_date[$j],
+                        'expiry_date_format' => $insert_date,
                         'batch_no' => $batch_no[$j],
                         'batch_amount' => $batch_amount[$j],
                         'mrp' => $mrp[$j],
@@ -1261,6 +1282,7 @@ echo json_encode($json_data);  // send data as json format
                 'date' => date('Y-m-d H:i:s', $this->customlib->datetostrtotime($bill_date)),
                 'supplier_id' => $supplier_id,
                 'purchase_no' => $purchase_no,
+                'invoice_no' => $this->input->post('invoice_no'),
                 'total' => $this->input->post('total'),
                 'discount' => $this->input->post('discount'),
                 'tax' => $this->input->post('tax'),
@@ -1413,6 +1435,8 @@ echo json_encode($json_data);  // send data as json format
         echo json_encode($result);
     }
 
+    
+
      public function getExpireDate() {
         $batch_no = $this->input->get_post('batch_no');
         //$med_id = $this->input->get_post('med_id');
@@ -1427,7 +1451,7 @@ echo json_encode($json_data);  // send data as json format
     }
 
     public function addBadStock() {
-        if (!$this->rbac->hasPrivilege('medicine batch details', 'can_edit')) {
+        if (!$this->rbac->hasPrivilege('medicine_bad_stock', 'can_view')) {
             access_denied();
         }
         $this->form_validation->set_rules('pharmacy_id', $this->lang->line('pharmacy') . " " . $this->lang->line('id'), 'required');
@@ -1458,9 +1482,17 @@ echo json_encode($json_data);  // send data as json format
                 'quantity' => $this->input->post('packing_qty'),
                 'note' => $this->input->post('note'),
             );
-            $batch_qty = $this->input->post('available_quantity');
+
+          //  print_r($medicine_batch);
+           $batch_qty = $this->input->post('available_quantity');
             $packing_qty = $this->input->post('packing_qty');
-            $available_quantity = $batch_qty - $packing_qty;
+
+            if(!empty($batch_qty)){
+                 $available_quantity = $batch_qty - $packing_qty;
+             }else{
+                $available_quantity = 0;
+             }
+           
             $update_data = array('id' => $this->input->post('medicine_batch_id'), 'available_quantity' => $available_quantity);
 
             $this->pharmacy_model->addBadStock($medicine_batch);

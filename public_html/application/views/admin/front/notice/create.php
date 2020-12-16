@@ -49,7 +49,6 @@
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->
-
     <!-- Main content -->
     <section class="content">
         <div class="row">
@@ -59,12 +58,9 @@
                     <div class="box box-primary">
                         <div class="box-header with-border">
                             <h3 class="box-title"><?php echo $this->lang->line('add_notice'); ?></h3>
-
                         </div><!-- /.box-header -->
                         <!-- form start -->
-
                         <div class="box-body">
-
                             <?php if ($this->session->flashdata('msg')) { ?>
                                 <?php echo $this->session->flashdata('msg') ?>
                             <?php } ?>
@@ -74,9 +70,6 @@
                             }
                             ?>      
                             <?php echo $this->customlib->getCSRF(); ?>  
-
-
-
                             <div class="form-group">
                                 <label for="exampleInputEmail1"><?php echo $this->lang->line('title'); ?></label><small class="req"> *</small>
                                 <input id="title" name="title" placeholder="" type="text" class="form-control"  value="<?php echo set_value('title'); ?>" />
@@ -90,17 +83,13 @@
                                 <input class="form-control date" id="date" name="date" readonly="readonly" value="<?php echo set_value('start_date', date($this->customlib->getSchoolDateFormat())); ?>" type="text"/>
                                 <span class="text-danger"><?php echo form_error('event_start'); ?></span>
                             </div>
-
                             <div class="dividerhr"></div>   
-
                             <div class="formgroup10 form-group mb10"> <!-- Submit button !-->
                                 <label for="exampleInputEmail1"><?php echo $this->lang->line('description'); ?></label><small class="req"> *</small>
                                 <button type="button" class="btn btn-primary btn-sm pull-right" id="media_images" data-toggle="modal" data-target="#mediaModal"><i class="fa fa-plus"></i>
                                     <?php echo $this->lang->line('add_media'); ?>
                                 </button>
                             </div>  
-
-
                             <div class="form-group"> 
                                 <textarea id="editor1" name="description" placeholder="" type="text" class="form-control ss" >
                                     <?php echo set_value('description'); ?>

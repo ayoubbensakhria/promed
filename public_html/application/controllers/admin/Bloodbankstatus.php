@@ -14,7 +14,6 @@ class Bloodbankstatus extends Admin_Controller {
         $data['title'] = 'Blood Bank';
         $bloodGroup = $this->bloodbankstatus_model->getBloodGroup();
         $data["bloodGroup"] = $bloodGroup;
-
         $this->load->view("layout/header");
         $this->load->view("admin/bloodbank/bloodbankstatus", $data);
         $this->load->view("layout/footer");
@@ -62,7 +61,6 @@ class Bloodbankstatus extends Admin_Controller {
     }
 
     function get() {
-
         header('Content-Type: application/json');
         echo $this->bloodbankstatus_model->getall();
     }

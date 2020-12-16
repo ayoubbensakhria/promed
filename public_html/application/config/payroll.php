@@ -26,7 +26,6 @@ $config['marital_status'] = array(
     'Seperated' => lang('Seperated'),
     'Not_specified' => lang('Not_specified'),
 );
-
 $config['staff_marital_status'] = array(
     'Single' => lang('Single'),
     'Married' => lang('Married'),
@@ -62,7 +61,10 @@ $config['charge_type'] = array(
     'Supplier' => lang('supplier'),
     'Operation Theatre' => lang('operation_theatre'),
     'Others' => lang('others'),
-);
+    );
+
+//$config['charge_type'] = $this->customlib->getChargeMaster();
+
 $config['appointment_status'] = array(
     'pending' => lang('pending'),
     'approved' => lang('approved'),

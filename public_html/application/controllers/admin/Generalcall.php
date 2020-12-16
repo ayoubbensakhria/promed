@@ -17,12 +17,9 @@ class Generalcall extends Admin_Controller {
 
         $this->session->set_userdata('top_menu', 'front_office');
         $this->session->set_userdata('sub_menu', 'admin/generalcall');
-
         $this->form_validation->set_rules('call_type', $this->lang->line('call_type'), 'required');
-
         $this->form_validation->set_rules('contact', 'Phone Number', 'required');
         $this->form_validation->set_rules('date', 'Date', 'required');
-
         if ($this->form_validation->run() == FALSE) {
             $data['CallList'] = $this->general_call_model->call_list();
             $this->load->view('layout/header');
@@ -50,16 +47,15 @@ class Generalcall extends Admin_Controller {
 
         $date = "";
         $this->form_validation->set_rules('call_type', $this->lang->line('call_type'), 'required');
-
-        $this->form_validation->set_rules('contact', $this->lang->line('contact'), 'required');
-        $this->form_validation->set_rules('date', $this->lang->line('date'), 'required');
-
+        $this->form_validation->set_rules('name', $this->lang->line('name'), 'required');
+       
         if ($this->form_validation->run() == FALSE) {
             $msg = array(
                 'call_type' => form_error('call_type'),
                 'check_default' => form_error('check_default'),
                 'contact' => form_error('contact'),
                 'date' => form_error('date'),
+                'name' => form_error('name'),
             );
 
             $array = array('status' => 'fail', 'error' => $msg, 'message' => '');
@@ -156,16 +152,13 @@ class Generalcall extends Admin_Controller {
     }
 
     function get_calls($id) {
-
         $data = $this->general_call_model->call_list($id);
-
         $a = array(
             'datedd' => date($this->customlib->getSchoolDateFormat(), $this->customlib->dateyyyymmddTodateformat($data['date'])),
             'efollow_up_date' => date($this->customlib->getSchoolDateFormat(), $this->customlib->dateyyyymmddTodateformat($data['follow_up_date'])),
         );
 
         $result = array_merge($a, $data);
-
         echo json_encode($result);
     }
 

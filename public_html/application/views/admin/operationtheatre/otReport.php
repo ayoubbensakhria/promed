@@ -157,7 +157,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                         <th><?php echo $this->lang->line('operation') . " " . $this->lang->line('name'); ?></th>
                                         <th><?php echo $this->lang->line('operation') . " " . $this->lang->line('type'); ?></th>
                                         <th><?php echo $this->lang->line('consultant'); ?></th>
-                                        <th><?php echo $this->lang->line('description'); ?></th>
+                                        <!-- <th><?php echo $this->lang->line('description'); ?></th> -->
                                         <th><?php echo $this->lang->line('charge') . " " . $this->lang->line('category'); ?></th>
                                         <th class="text-right"><?php echo $this->lang->line('standard') . " " . $this->lang->line('charge') . '(' . $currency_symbol . ')'; ?></th>
                                     </tr>
@@ -186,7 +186,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                                 <td><?php echo $report['operation_name']; ?></td>
                                                 <td><?php echo $report['operation_type']; ?></td>
                                                 <td><?php echo $report['name'] . " " . $report['surname']; ?></td>
-                                                <td><?php echo $report['description']; ?></td>
+                                               <!--  <td><?php echo $report['description']; ?></td> -->
                                                 <td><?php echo $report['charge_category']; ?></td>
                                                 <td class="text-right"><?php echo $report['standard_charge']; ?></td>
                                             </tr>

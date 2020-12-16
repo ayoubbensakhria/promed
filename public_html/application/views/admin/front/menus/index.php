@@ -13,11 +13,8 @@
                     <div class="box-header ptbnull">
                         <h3 class="box-title titlefix"><?php echo $this->lang->line('menu_list'); ?></h3>
                         <div class="box-tools pull-right">
-                            <a data-toggle="modal" data-target="#myModal" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i>  <?php echo $this->lang->line('add_menu'); ?></a> 
-
-
-
-                        </div>
+                            <a data-toggle="modal" data-target="#myModal" class="btn btn-primary btn-sm add_menu"><i class="fa fa-plus"></i>  <?php echo $this->lang->line('add_menu'); ?></a> 
+							</div>
                     </div><!-- /.box-header -->
                     <div class="box-body">
                         <div class="mailbox-controls">
@@ -207,4 +204,8 @@
             }
         });
     });
+	
+$(".add_menu").click(function(){
+	$('#formadd').trigger("reset");	
+});
 </script>

@@ -22,15 +22,12 @@ class Customfield extends Admin_Controller {
             access_denied();
         }
         $this->session->set_userdata('top_menu', 'Library');
-
         $this->session->set_userdata('sub_menu', 'customfield/index');
         $customfields = $this->customfield_model->get();
         $data['custom_fields_list'] = $this->custom_fields_list;
         $customfield_bundle = $this->myCustomFieldBundle($customfields);
         $data['customfields'] = $customfield_bundle;
-
         $data['custom_field_table'] = $this->custom_field_table;
-
         $this->form_validation->set_rules('column', $this->lang->line('column'), 'trim|required|xss_clean');
         $this->form_validation->set_rules('name', $this->lang->line('name'), 'trim|required|xss_clean');
         $this->form_validation->set_rules('field_values', $this->lang->line('field_values'), 'callback_validate_type');
@@ -71,12 +68,8 @@ class Customfield extends Admin_Controller {
         $data['cus_field'] = $cus_field;
         $customfields = $this->customfield_model->get();
         $data['custom_fields_list'] = $this->custom_fields_list;
-
         $customfield_bundle = $this->myCustomFieldBundle($customfields);
         $data['customfields'] = $customfield_bundle;
-
-
-
         $data['custom_field_table'] = $this->custom_field_table;
         $this->form_validation->set_rules('belong_to', $this->lang->line('belong_to'), 'trim|required|xss_clean');
         $this->form_validation->set_rules('type', $this->lang->line('type'), 'trim|required|xss_clean');
@@ -125,7 +118,6 @@ class Customfield extends Admin_Controller {
     }
 
     public function myCustomFieldBundle($customfield_values) {
-
         $field_array = array();
         if (!empty($customfield_values)) {
             foreach ($customfield_values as $f_key => $f_value) {

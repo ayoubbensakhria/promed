@@ -7,14 +7,9 @@ $genderList = $this->customlib->getGender();
     <section class="content">
         <div class="row">
             <div class="col-md-3">                
-                <div class="box box-primary" <?php
-                // if ($result["is_active"] == 0) {
-                //     echo "style='background-color:#f0dddd;'";
-                // }
-                ?>>
+                <div class="box box-primary">
                     <div class="box-body box-profile">
                         <?php
-                        //  print_r($result);
 
                         $image = $result['image'];
                         if (!empty($image)) {

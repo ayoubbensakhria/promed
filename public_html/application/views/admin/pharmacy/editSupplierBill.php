@@ -2,14 +2,6 @@
 $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
 $genderList = $this->customlib->getGender();
 ?>
-<style type="text/css">
-    #easySelectable {/*display: flex; flex-wrap: wrap;*/}
-    #easySelectable li {}
-    #easySelectable li.es-selected {background: #2196F3; color: #fff;}
-    .easySelectable {-webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;}
-</style>
-<!--file dropify-->
-
 <link rel="stylesheet" href="<?php echo base_url(); ?>backend/dist/css/dropify.min.css">
 <link href="<?php echo base_url(); ?>backend/dist/css/nprogress.css" rel="stylesheet">
 <script src="<?php echo base_url(); ?>backend/dist/js/nprogress.js"></script>
@@ -26,6 +18,7 @@ $genderList = $this->customlib->getGender();
                 <?php } ?>
                 <input name="bill_basic_id" type="hidden" class="form-control" value="<?php echo $result['id']; ?>" />
                 <input name="purchase_no"  type="hidden" class="form-control" value="<?php echo $result['purchase_no']; ?>" />
+                <input name="invoice_no" id="editinvoiceno" type="hidden" class="form-control" value="" />
                 <input name="supplier_id"  id="editsupplierid" type="hidden" class="form-control" value="" />
                 <input name="date" id="editdate_supplier" type="hidden" class="form-control" value="" />
 
@@ -143,8 +136,8 @@ $genderList = $this->customlib->getGender();
                     }
                 </script>
                 <div class="col-md-12" style="clear: both;">
-                    <div class="">
-                        <table class="table table-striped table-bordered table-hover" id="edittableID">
+                    <div class="table-responsive">
+                        <table class="table tableover table-striped table-bordered table-hover tablefull12" id="edittableID">
                             <tr style="font-size: 13">
                                 <th width="12%"><?php echo $this->lang->line('medicine') . " " . $this->lang->line('category'); ?><small class="req" style="color:red;"> *</small></th>
                                 <th width="14%"><?php echo $this->lang->line('medicine') . " " . $this->lang->line('name'); ?><small class="req" style="color:red;"> *</small></th>
@@ -158,7 +151,7 @@ $genderList = $this->customlib->getGender();
 
                                 <th style="width:75px" class="text-right;"><?php echo $this->lang->line('quantity'); ?><small class="req" style="color:red;"> *</small> </th>
                                 <th style="width:155px" class="text-right"><?php echo $this->lang->line('purchase') . " " . $this->lang->line('price') . " " . ' (' . $currency_symbol . ')'; ?><small class="req" style="color:red;"> *</small></th>
-                                <th style="width:100px" class="text-right"><?php echo $this->lang->line('amount') . " (" . $currency_symbol . ")"; ?><small class="req" style="color:red;"> *</small></th>
+                                <th class="text-right"><?php echo $this->lang->line('amount') . " (" . $currency_symbol . ")"; ?><small class="req" style="color:red;"> *</small></th>
                             </tr>
                             <?php
                             $i = 0;
@@ -281,7 +274,7 @@ $genderList = $this->customlib->getGender();
                             <table class="printablea4">
                                 <tr>
                                     <th><?php echo $this->lang->line('total') . " (" . $currency_symbol . ")"; ?></th>
-                                    <td class="text-right ipdbilltable" width="40%" colspan="2"><input type="text" placeholder="Total" value="<?php echo $result["total"] ?>" value="0" name="total" id="edittotal"  style="width: 30%; float: right" class="form-control"/></td>
+                                    <td class="text-right ipdbilltable" width="60%" colspan="2"><input type="text" placeholder="Total" value="<?php echo $result["total"] ?>" value="0" name="total" id="edittotal"  style="width: 30%; float: right" class="form-control"/></td>
                                 </tr>
                                 <tr>
                                     <th><?php echo $this->lang->line('discount') . " (" . $currency_symbol . ")"; ?></th>
@@ -417,6 +410,8 @@ $genderList = $this->customlib->getGender();
         $("#editnet_amount").val(net_amount.toFixed(2));
         var supplierid = $("#editsupplier").val();
         $("#editsupplierid").val(supplierid);
+         var invoiceno = $("#invoicenoup").val();
+        $("#editinvoiceno").val(invoiceno);
         var editdate = $("#dateedit_supplier").val();
         $("#editdate_supplier").val(editdate);
         $("#editbillsave").show();

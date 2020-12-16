@@ -71,8 +71,6 @@
                                     <?php
                                 }
                                 ?>
-
-
                                 <div class="row">
                                     <div class="">
                                         <div class="col-md-7">
@@ -262,9 +260,11 @@
                                 </div>
                             </div><!-- /.box-body -->
 
+                        <?php if ($this->rbac->hasPrivilege('front_cms_setting', 'can_edit')) { ?>
                             <div class="box-footer">
                                 <button type="submit" class="btn btn-primary pull-right">Save</button>&nbsp;&nbsp;<span class="custom_loader"></span>
                             </div>
+                        <?php } ?>
                         </form>
                     </div><!-- /.box-body -->
                 </div>

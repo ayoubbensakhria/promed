@@ -25,7 +25,6 @@ class Bed extends Admin_Controller {
     }
 
     function add() {
-
         $this->form_validation->set_rules(
                 'name', $this->lang->line('name'), array('required',
             array('check_exists', array($this->bed_model, 'valid_bed'))
@@ -51,9 +50,6 @@ class Bed extends Admin_Controller {
             );
 
             $this->bed_model->savebed($bed);
-
-
-
             $array = array('status' => 'success', 'error' => '', 'message' => $this->lang->line('success_message'));
         }
         echo json_encode($array);
@@ -87,16 +83,13 @@ class Bed extends Admin_Controller {
             );
 
             $this->bed_model->savebed($bed);
-
             $msg = "Bed Updated Successfully";
-
             $array = array('status' => 'success', 'error' => '', 'message' => $this->lang->line('update_message'));
         }
         echo json_encode($array);
     }
 
     public function get($id) {
-
         $result = $this->bed_model->getBedDetails($id);
         echo json_encode($result);
     }

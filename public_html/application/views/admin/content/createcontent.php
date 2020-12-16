@@ -6,18 +6,13 @@
                 <div class="box box-primary">
                     <div class="box-header with-border">
                         <h3 class="box-title titlefix"><?php echo $this->lang->line('content_list'); ?></h3>
-                        <div class="box-tools pull-right">
+                        <div class="box-tools addmeeting">
                             <?php if ($this->rbac->hasPrivilege('upload_content', 'can_add')) { ?>
-                                <a data-toggle="modal" data-target="#myModal" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i>  <?php echo $this->lang->line('upload_content'); ?></a> 
+                                <a data-toggle="modal" data-target="#myModal" class="btn btn-primary btn-sm uploadcontent"><i class="fa fa-plus"></i>  <?php echo $this->lang->line('upload_content'); ?></a> 
                             <?php } ?>      
                         </div><!-- /.box-tools -->
                     </div>                  
                     <div class="box-body">
-                        <div class="mailbox-controls">
-                            <!-- Check all button -->
-                            <div class="pull-right">
-                            </div><!-- /.pull-right -->
-                        </div>
                         <div class="table-responsive mailbox-messages">
                             <div class="download_label"><?php echo $this->lang->line('content_list'); ?></div>
                             <table class="table table-striped table-bordered table-hover example">
@@ -26,7 +21,6 @@
                                         <th><?php echo $this->lang->line('content_title'); ?></th>
                                         <th><?php echo $this->lang->line('type'); ?></th>
                                         <th><?php echo $this->lang->line('date'); ?></th>
-
                                         <th class="text-right"><?php echo $this->lang->line('action'); ?>
                                         </th>
                                     </tr>
@@ -54,10 +48,12 @@
                                                 </div>
                                             </td>
                                             <td class="mailbox-name"><?php echo $data['type'] ?></td>
-                                            <td class="mailbox-name"><?php echo date($this->customlib->getSchoolDateFormat(), $this->customlib->dateyyyymmddTodateformat($data['date'])) ?></td>
-
+											<td><?php 
+                                                    if((($data['date'] != '1970-01-01')) ){
+                                                       echo date($this->customlib->getSchoolDateFormat(), $this->customlib->dateyyyymmddTodateformat($data['date']));
+                                                    }                                                  
+                                                     ?></td>
                                             <td class="mailbox-date pull-right">
-
                                                 <a href="<?php echo base_url(); ?>admin/content/download/<?php echo $data['file'] ?>"class="btn btn-default btn-xs"  data-toggle="tooltip" title="<?php echo $this->lang->line('download'); ?>">
                                                     <i class="fa fa-download"></i>
                                                 </a>
@@ -312,4 +308,8 @@
 
     }
 
+$(".uploadcontent").click(function(){
+	$('#upload_content').trigger("reset");
+	$(".dropify-clear").trigger("click");
+});
 </script>

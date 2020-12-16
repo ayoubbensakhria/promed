@@ -6,12 +6,8 @@ $genderList = $this->customlib->getGender();
 <div class="content-wrapper">
     <section class="content">
         <div class="row">
-            <div class="col-md-3">                
-                <div class="box box-primary" <?php
-                // if ($result["is_active"] == 0) {
-                //     echo "style='background-color:#f0dddd;'";
-                // }
-                ?>>
+            <div class="col-lg-3 col-md-4 col-sm-12">                
+                <div class="box box-primary">
                     <div class="box-body box-profile">
                         <?php
                         $image = $result['image'];
@@ -49,9 +45,9 @@ $genderList = $this->customlib->getGender();
                             <li class="list-group-item listnoback">
                                 <b><?php echo $this->lang->line('age'); ?></b> <a class="pull-right text-aqua"><?php
                                     if (!empty($result['age'])) {
-                                        echo $result['age'] . " " . $this->lang->line('years');
+                                        echo $result['age'] . " " . $this->lang->line('years')." ";
                                     } if (!empty($result['month'])) {
-                                        echo $result['month'] . " Month";
+                                        echo $result['month'] ." "."Month";
                                     }
                                     ?></a>
                             </li>
@@ -62,7 +58,7 @@ $genderList = $this->customlib->getGender();
                     </div>
                 </div>
             </div>
-            <div class="col-md-9">
+            <div class="col-lg-9 col-md-8 col-sm-12">
                 <div class="box box-primary">
                     <div class="box-header with-border">
                         <h3 class="box-title titlefix"><?php echo $this->lang->line('my_appointments'); ?></h3>
@@ -83,7 +79,7 @@ $genderList = $this->customlib->getGender();
                                     <th><?php echo $this->lang->line('doctor'); ?></th>
                                     <th><?php echo $this->lang->line('status'); ?></th> 
                                     <th><?php echo $this->lang->line('message'); ?></th>
-                                    <th><?php echo $this->lang->line('action'); ?></th>
+                                    <th class="text-right"><?php echo $this->lang->line('action'); ?></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -111,7 +107,7 @@ $genderList = $this->customlib->getGender();
                                             <td><small <?php echo $label ?>><?php echo $this->lang->line($appointment['appointment_status']); ?></small></td> 
                                             <td><?php echo $appointment['message']; ?></td>
                                             </td>
-                                            <td>
+                                            <td class="text-right">
                                                 <?php if ($appointment["appointment_status"] == "pending") { ?> 
                                                     <a href="#" class="btn btn-default btn-xs" data-toggle="tooltip" title="<?php echo $this->lang->line('delete'); ?>" onclick="delete_recordById('<?php echo base_url(); ?>patient/dashboard/deleteappointment/<?php echo $appointment['id'] ?>', '<?php echo $this->lang->line('delete_message'); ?>')" >
                                                         <i class="fa fa-trash"></i>
@@ -142,7 +138,7 @@ $genderList = $this->customlib->getGender();
             <div class="modal-body pt0 pb0">
                 <div class="row">
                     <div class="col-lg-12 col-md-12 col-sm-12 paddlr">
-                        <form id="formadd" accept-charset="utf-8"  method="post" class="ptt10">
+                        <form id="formadd" accept-charset="utf-8" method="post" class="ptt10">
                             <div class="row">
                                 <div class="col-sm-3">
                                     <div class="form-group">
@@ -187,12 +183,27 @@ $genderList = $this->customlib->getGender();
                                         <span class="text-danger"><?php echo form_error('message'); ?></span>
                                     </div> 
                                 </div>
-                                <div class="box-footer">
-                                <div class="" style="padding-right:5px;">
+
+                            <div class="col-sm-4">
+                                 <div class="form-group">
+                                 <label for="exampleInputFile"><?php echo $this->lang->line('live')." ".$this->lang->line('consultant')." (".$this->lang->line('on')." ".$this->lang->line('video')." ".$this->lang->line('conference').")"; ?></label>
+                                        <small class="req">*</small> 
+                                         <div>
+                                            <select class="form-control"  name='live_consult' style="width:100%" >
+                                                <option value="<?php echo $this->lang->line('no') ?>"><?php echo $this->lang->line('no'); ?></option>   
+                                                <option value="<?php echo $this->lang->line('yes') ?>"><?php echo $this->lang->line('yes'); ?></option>   
+                                            </select>
+                                    </div><span class="text-danger"><?php echo form_error('live_consult'); ?></span>
+                                </div>
+                            </div>  
+
+                             
+                                <div class="box-footer clearboth">
+                               
                                     <button type="submit" class="btn btn-info pull-right"><?php echo $this->lang->line('save'); ?></button>
                                 </div>
                             </div>
-                            </div>
+                         </div>
                      </form>  
                     </div><!--./col-md-12-->       
                 </div><!--./row--> 

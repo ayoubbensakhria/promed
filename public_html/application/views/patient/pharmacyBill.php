@@ -12,14 +12,7 @@ $genderList = $this->customlib->getGender();
                 <div class="box box-primary">
                     <div class="box-header with-border">
                         <h3 class="box-title titlefix"> <?php echo $this->lang->line('pharmacy') . " " . $this->lang->line('bill'); ?></h3>
-                        <!--<div class="box-tools pull-right">
-                                        
-                                <a data-toggle="modal" onclick="holdModal('myModal')" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> <?php echo $this->lang->line('generate') . " " . $this->lang->line('bill'); ?></a>
-                          
-                          
-                                <a href="<?php echo base_url(); ?>admin/pharmacy/search" class="btn btn-primary btn-sm"><i class="fa fa-reorder"></i> <?php echo $this->lang->line('medicines'); ?></a>
-                           
-                        </div> -->
+                        
                     </div><!-- /.box-header -->
                     <div class="box-body">
                         <div class="download_label"><?php echo $this->lang->line('pharmacy') . " " . $this->lang->line('bill'); ?></div>
@@ -29,7 +22,7 @@ $genderList = $this->customlib->getGender();
                                     <th><?php echo $this->lang->line('bill') . " " . $this->lang->line('no'); ?></th>
                                     <th><?php echo $this->lang->line('date'); ?></th>
                                     <th><?php echo $this->lang->line('customer') . " " . $this->lang->line('name'); ?></th>
-                                    <!--<th><?php echo $this->lang->line('customer') . " " . $this->lang->line('type'); ?></th>-->
+                                   
                                     <th><?php echo $this->lang->line('doctor') . " " . $this->lang->line('name'); ?></th>
                                     <th class="text-right"><?php echo $this->lang->line('total') . " " . '(' . $currency_symbol . ')'; ?></th>
                                     <th class="text-right"><?php echo $this->lang->line('action'); ?></th>
@@ -50,7 +43,7 @@ $genderList = $this->customlib->getGender();
                                         <tr class="">
                                             <td ><?php echo $bill['bill_no']; ?></td>
                                             <td><?php echo date($this->customlib->getSchoolDateFormat(true, true), strtotime($bill['date'])) ?></td> 
-                                            <td><?php echo $bill['customer_name']; ?></td>
+                                            <td><?php echo $bill['patient_name']; ?></td>
                                             <!--<td><?php echo $this->lang->line($bill['customer_type']); ?></td>-->
                                             <td><?php echo $bill['doctor_name']; ?></td>
                                             <td class="text-right"><?php echo $bill['net_amount']; ?></td>

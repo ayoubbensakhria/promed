@@ -37,7 +37,6 @@ class Issueitem extends Admin_Controller {
         $data['title_list'] = 'Recent Issue items';
         $roles = $this->role_model->get();
         $data['roles'] = $roles;
-
         $itemcategory = $this->itemcategory_model->get();
         $data['itemcatlist'] = $itemcategory;
         $this->load->view('layout/header', $data);
@@ -46,9 +45,7 @@ class Issueitem extends Admin_Controller {
     }
 
     function add() {
-
-
-        $this->form_validation->set_rules('account_type', $this->lang->line('account') . " " . $this->lang->line('type'), 'required|trim|xss_clean');
+        $this->form_validation->set_rules('account_type',  $this->lang->line('user_type'), 'required|trim|xss_clean');
         $this->form_validation->set_rules('issue_to', $this->lang->line('issue_to'), 'required|trim|xss_clean');
         $this->form_validation->set_rules('issue_by', $this->lang->line('issue_by'), 'required|trim|xss_clean');
         $this->form_validation->set_rules('issue_date', $this->lang->line('issue') . " " . $this->lang->line('date'), 'required|trim|xss_clean');
@@ -56,10 +53,7 @@ class Issueitem extends Admin_Controller {
         $this->form_validation->set_rules('item_id', $this->lang->line('item'), 'required|trim|xss_clean');
         $this->form_validation->set_rules('quantity', $this->lang->line('quantity'), 'trim|integer|required|xss_clean|callback_check_available_quantity');
 
-
-
         if ($this->form_validation->run() == false) {
-
             $data = array(
                 'account_type' => form_error('account_type'),
                 'issue_to' => form_error('issue_to'),
@@ -88,11 +82,9 @@ class Issueitem extends Admin_Controller {
                 'item_id' => $this->input->post('item_id'),
             );
 
-
             $this->itemissue_model->add($data);
             $array = array('status' => 'success', 'error' => '', 'message' => $this->lang->line('success_message'));
         }
-
         echo json_encode($array);
     }
 
@@ -101,12 +93,9 @@ class Issueitem extends Admin_Controller {
         $item_id = $this->input->post('item_id');
         $quantity = $this->input->post('quantity');
         if ($quantity != "" && $item_category_id != "" && $item_id != "") {
-
             $data = $this->item_model->getItemAvailable($item_id);
             $available = ($data['added_stock'] - $data['issued']);
-
             if ($quantity <= $available) {
-
                 return TRUE;
             }
             $this->form_validation->set_message('check_available_quantity', $this->lang->line('available_quantity') . " " . $available);
@@ -124,8 +113,6 @@ class Issueitem extends Admin_Controller {
     public function getUser() {
 
         $usertype = $this->input->post('usertype');
-
-
         $result_final = array();
         $result = array();
         if ($usertype != "") {
@@ -137,13 +124,12 @@ class Issueitem extends Admin_Controller {
     }
 
     public function returnItem() {
-
         $issue_id = $this->input->post('item_issue_id');
-
         if ($issue_id != "") {
             $data = array(
                 'id' => $issue_id,
                 'is_returned' => 0,
+                'quantity' => 0,
                 'return_date' => date('Y-m-d')
             );
             $this->itemissue_model->add($data);
@@ -154,25 +140,19 @@ class Issueitem extends Admin_Controller {
     }
 
     public function issueinventoryreport() {
-
         $this->session->set_userdata('top_menu', 'Reports');
         $this->session->set_userdata('sub_menu', 'Reports/issueinventoryreport');
-
         if (isset($_POST['search_type'])) {
-
             $search_type = $this->input->post("search_type");
         } else {
-
             $search_type = "this_month";
         }
 
         $data["searchlist"] = $this->search_type;
         $data["search_type"] = $search_type;
         $data['itemissueList'] = $this->itemissue_model->get_IssueInventoryReport($search_type);
-
         $this->load->view('layout/header');
         $this->load->view('admin/issueitem/issueinventoryreport', $data);
         $this->load->view('layout/footer');
     }
-
 }

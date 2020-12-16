@@ -52,37 +52,25 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                     <hr style="height: 1px; clear: both;margin-bottom: 10px; margin-top: 10px">
                     <table class="printablea4" id="testreport" width="100%">
                         <tr>
-
-                            <th><?php echo $this->lang->line('amount'); ?></th>
-
+                            <th><?php echo $this->lang->line('amount')."(".$currency_symbol.") "; ?></th>
                         </tr>
                         <?php
                         $j = 0;
                         foreach ($detail as $bill) {
                             ?>
                             <tr>
-
                                 <td><?php echo $bill["amount"]; ?></td>
                             </tr>
                             <?php
                             $j++;
                         }
                         ?>
-        <!--<tr>
-            
-            <th><?php echo $this->lang->line('total'); ?></th>
-
-            <td><?php echo $currency_symbol . "" . $result["apply_charge"]; ?></td>
-        </tr> -->
                     </table> 
                     <hr style="height: 1px; clear: both;margin-bottom: 10px; margin-top: 10px">
-
                     <table class="printablea4" style="width: 30%; float: right;">
                         <?php if (!empty($result["total"])) { ?>
                             <tr>
-
                                 <th style="padding-bottom: 5px;"><?php echo $this->lang->line('total') . " (" . $currency_symbol . ")"; ?></th>
-
                                 <td align="left" style="padding-bottom: 5px;"><?php echo $result["total"]; ?></td>
                             </tr>
                         <?php } ?>
@@ -92,9 +80,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                     echo $this->lang->line('discount') . " (" . $currency_symbol . ")";
                                     ;
                                     ?></th>
-
                                 <td align="left"><?php echo $result["discount"]; ?></td>
-
                             </tr>
                         <?php } ?>
                         <?php if (!empty($result["tax"])) { ?>
@@ -103,9 +89,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                     echo $this->lang->line('tax') . " (" . $currency_symbol . ")";
                                     ;
                                     ?></th>
-
                                 <td align="left"><?php echo $result["tax"]; ?></td>
-
                             </tr>
                         <?php } ?>
                         <?php
@@ -117,9 +101,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                         echo $this->lang->line('net_amount') . " (" . $currency_symbol . ")";
                                         ;
                                         ?></th>
-
                                     <td align="left"><?php echo $result["net_amount"]; ?></td>
-
                                 </tr>
                                 <?php
                             }
@@ -127,17 +109,13 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                         ?>
                         <?php if (!empty($result["note"])) { ?>
                             <tr>
-
                                 <th><?php echo $this->lang->line('note'); ?></th>
-
                                 <td align="left"><?php echo $result["note"]; ?></td>
                             </tr>
                         <?php } ?>
                         <?php if (($print) != 'yes') { ?>
                             <tr id="generated_by">
-
                                 <th><?php echo $this->lang->line('collected_by'); ?></th>
-
                                 <td align="right"><?php echo $result["name"] . " " . $result["surname"]; ?></td>
                             </tr>
                         <?php } ?>
@@ -158,7 +136,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
     function delete_bill(id) {
         if (confirm('<?php echo $this->lang->line('delete_conform') ?>')) {
             $.ajax({
-                url: '<?php echo base_url(); ?>admin/vehicle/deletePharmacyBill/' + id,
+                url: '<?php echo base_url(); ?>admin/vehicle/deleteCallAmbulance/' + id,
                 success: function (res) {
                     successMsg('<?php echo $this->lang->line('delete_message'); ?>');
                     window.location.reload(true);
@@ -169,15 +147,14 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
             });
         }
     }
+	
     function printData(id) {
-
         var base_url = '<?php echo base_url() ?>';
         $.ajax({
             url: base_url + 'admin/vehicle/getBillDetails/' + id,
             type: 'POST',
             data: {id: id, print: 'yes'},
             success: function (result) {
-                // $("#testdata").html(result);
                 popup(result);
             }
         });

@@ -1,8 +1,5 @@
 <?php
 $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
-//echo "<pre>";
-//print_r($result);
-//exit();
 ?>
 <style type="text/css">
 
@@ -30,8 +27,8 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                         <tr>
                             <td align="text-left"><h5><?php echo $this->lang->line('bill') . " #" ?><?php echo $result["opdid"] ?></h5></td>
                             <td align="right"><h5><?php echo $this->lang->line('date') . " : " ?><?php
-                                    if (!empty($result['date'])) {
-                                        echo date($this->customlib->getSchoolDateFormat(true, true), strtotime($result['date']));
+                                    if (!empty($result['discharge_date'])) {
+                                        echo date($this->customlib->getSchoolDateFormat(true, true), strtotime($result['discharge_date']));
                                     }
                                     ?></h5></td>
                         </tr>
@@ -42,13 +39,13 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                             <th width="25%"><?php echo $this->lang->line('name'); ?></th>
                             <td width="25%"><?php echo $result["patient_name"]; ?></td>
                             <th width="25%"><?php echo $this->lang->line('doctor'); ?></th>
-                            <td width="25%" align="right"><?php echo $result["name"] . " " . $result["surname"]; ?></td>
+                            <td width="25%" align=""><?php echo $result["name"] . " " . $result["surname"]; ?></td>
                         </tr>
                         <tr>
                             <th><?php echo $this->lang->line('opd') . " " . $this->lang->line('no'); ?></th>
                             <td><?php echo $result['opd_no']; ?></td> 
                             <th><?php echo $this->lang->line('organisation'); ?></th>
-                            <td align="right"><?php echo $result['organisation_name']; ?></td> 
+                            <td align="left"><?php echo $result['organisation_name']; ?></td> 
                         </tr> 
                         <tr>
 
@@ -74,7 +71,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                 <td><?php echo $charge["charge_type"]; ?></td> 
                                 <td><?php echo $charge["charge_category"]; ?></td>
                                 <td><?php echo date($this->customlib->getSchoolDateFormat(), $this->customlib->dateyyyymmddTodateformat($charge['date'])); ?></td>
-                                <td align="right"><?php echo $charge["apply_charge"]; ?></td>
+                                <td><?php echo $charge["apply_charge"]; ?></td>
                             </tr>
 
 
@@ -90,7 +87,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                             <td></td>
                             <td></td>
                             <td></td>
-                            <td align="right"><?php echo $this->lang->line('total') . " : " ?>  <?php echo $currency_symbol . $total ?></td>
+                            <td class="text-right"><?php echo $this->lang->line('total') . " : " ?>  <?php echo $currency_symbol . $total ?></td>
 
                         </tr>
                     </table>
@@ -191,11 +188,13 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                         <tr>
                             <th width="20%"><?php echo $this->lang->line('gross') . " " . $this->lang->line('total') . " (" . $currency_symbol . ")" ?> </th> 
                             <td align="right" width=""><?php
-                                if (empty($result['gross_total'])) {
+                               /* if (empty($result['gross_total'])) {
                                     echo $gross_total;
                                 } else {
                                     echo $result['gross_total'];
-                                }
+                                }*/
+
+                                echo $billstatus["gross_total"];
                                 ?></td>
                         </tr>
                         <tr>
@@ -218,10 +217,10 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                         <tr>
                             <th width="50%"><?php echo $this->lang->line('net_payable') . " " . $this->lang->line('amount') . " (" . $status . ")" ?></th> 
                             <td align="right"><?php
-                                if (empty($result['net_amount'])) {
-                                    echo $net_amount;
+                                if (empty($billstatus['net_amount'])) {
+                                    echo  $gross_total - $paid_amount;
                                 } else {
-                                    echo $result['net_amount'];
+                                    echo  $billstatus['net_amount'];
                                 }
                                 ?></td>
                         </tr>

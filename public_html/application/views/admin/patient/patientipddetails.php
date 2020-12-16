@@ -2,17 +2,6 @@
 $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
 $genderList = $this->customlib->getGender();
 ?>
-<style type="text/css">
-    .profile-user-img {
-        margin: 0 auto;
-        width: 100px;
-        height: 100px;
-    }
-    #easySelectable {/*display: flex; flex-wrap: wrap;*/}
-    #easySelectable li {}
-    #easySelectable li.es-selected {background: #2196F3; color: #fff;}
-    .easySelectable {-webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;}
-</style>
 <div class="content-wrapper">
     <!-- Main content -->
     <section class="content">
@@ -21,11 +10,7 @@ $genderList = $this->customlib->getGender();
                 <div class="box box-primary">
                     <div class="box-header with-border">
                         <h3 class="box-title titlefix"> <?php echo $this->lang->line('ipd') . " " . $this->lang->line('patient'); ?></h3>
-                       <!--  <select class="form-control select2">
-                            <option value="adf">adf</option>
-                            <option value="def">def</option>
-                            
-                        </select> -->
+                     
                         <div class="box-tools pull-right">
                             <?php if ($this->rbac->hasPrivilege('ipd_patient', 'can_add')) { ?>                 
                                 <a data-toggle="modal" onclick="holdModal('myModal')" id="addp" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i>  <?php echo $this->lang->line('add') . " " . $this->lang->line('patient') ?></a> 

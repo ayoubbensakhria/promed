@@ -13,13 +13,9 @@
 
                     <form id="form1" action="<?php echo site_url('admin/patient') ?>"  id="employeeform" name="employeeform" method="post" accept-charset="utf-8" enctype="multipart/form-data">
                         <div class="box-body">
-
-                            <div class="tshadow mb25 bozero">    
-
+                            <div class="tshadow mb25 bozero"> 
                                 <h4 class="pagetitleh2"><?php echo $this->lang->line('patient') . " " . $this->lang->line('information'); ?>
                                 </h4>
-
-
                                 <div class="around10">
                                     <?php if ($this->session->flashdata('msg')) { ?>
                                         <?php echo $this->session->flashdata('msg') ?>

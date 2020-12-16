@@ -5,11 +5,11 @@ if (!defined('BASEPATH'))
 
 class visitors_model extends CI_Model {
 
+    var $column_order = array('purpose','name','contact','in_time','out_time'); //set column field database for datatable orderable
+    var $column_search = array('purpose','name','contact','in_time','out_time');
+
     public function __construct() {
         parent::__construct();
-        $this->current_session = $this->setting_model->getCurrentSession();
-        $this->current_session_name = $this->setting_model->getCurrentSessionName();
-        $this->start_month = $this->setting_model->getStartMonth();
     }
 
     function add($data) {
@@ -37,6 +37,48 @@ class visitors_model extends CI_Model {
         } else {
             return $query->result_array();
         }
+    }
+
+    public function search_datatable() {       
+        $this->db->select('visitors_book.*');       
+        $this->db->order_by('`visitors_book`.`id`', 'desc');   
+        if(!empty($_POST['search']['value']) ) {   // if there is a search parameter
+            $counter=true;
+            $this->db->group_start();  
+         foreach ($this->column_search as $colomn_key => $colomn_value) {
+         if($counter){
+              $this->db->like($colomn_value, $_POST['search']['value']);      
+              $counter=false;
+         }
+              $this->db->or_like($colomn_value, $_POST['search']['value']);
+        }
+        $this->db->group_end();
+           
+        }
+        $this->db->limit($_POST['length'],$_POST['start']);
+        $this->db->order_by($this->column_order[$_POST['order'][0]['column']],$_POST['order'][0]['dir']);
+        $query = $this->db->get('visitors_book');
+        return $query->result();
+        }
+
+    public function search_datatable_count() {        
+        $this->db->select('visitors_book.*');    
+        $this->db->order_by('`visitors_book`.`id`', 'desc');        
+        if(!empty($_POST['search']['value']) ) {   // if there is a search parameter
+            $counter=true;
+            $this->db->group_start();  
+         foreach ($this->column_search as $colomn_key => $colomn_value) {
+         if($counter){
+              $this->db->like($colomn_value, $_POST['search']['value']);      
+              $counter=false;
+         }
+              $this->db->or_like($colomn_value, $_POST['search']['value']);
+        }
+        $this->db->group_end();           
+        }
+        $query = $this->db->from('visitors_book');
+        $total_result= $query->count_all_results();
+        return $total_result;        
     }
 
     public function delete($id) {

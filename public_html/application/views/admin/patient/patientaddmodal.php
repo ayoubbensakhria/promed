@@ -3,7 +3,7 @@ $genderList = $this->customlib->getGender();
 $marital_status = $this->config->item('marital_status');
 $bloodgroup = $this->config->item('bloodgroup');
 ?>
-<div class="modal fade" id="myModalpa"  role="dialog" aria-labelledby="myModalLabel">
+<div class="modal fade" id="myModalpa" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content modal-media-content">
             <div class="modal-header modal-media-header">
@@ -17,14 +17,14 @@ $bloodgroup = $this->config->item('bloodgroup');
                         <div class="row row-eq">
                             <div class="col-lg-12 col-md-12 col-sm-12">
                                 <div class="row">
-                                    <div class="col-md-6">
+                                    <div class="col-lg-6 col-md-6 col-sm-6">
                                         <div class="form-group">
                                             <label><?php echo $this->lang->line('name'); ?></label><small class="req"> *</small> 
                                             <input id="name" name="name" placeholder="" type="text" class="form-control"  value="<?php echo set_value('name'); ?>" />
                                             <span class="text-danger"><?php echo form_error('name'); ?></span>
                                         </div>
                                     </div>
-                                    <div class="col-sm-6">
+                                    <div class="col-lg-6 col-md-6 col-sm-6">
                                         <div class="form-group">
                                             <label><?php echo $this->lang->line('guardian_name') ?></label>
                                             <input type="text" name="guardian_name" placeholder="" value="" class="form-control">

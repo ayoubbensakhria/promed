@@ -15,7 +15,7 @@
                         <h3 class="box-title titlefix"><?php echo $this->lang->line('bed') . " " . $this->lang->line('group') . " " . $this->lang->line('list'); ?></h3>
                         <div class="box-tools pull-right">
                             <?php if ($this->rbac->hasPrivilege('bed', 'can_add')) { ?>
-                                <a data-toggle="modal" data-target="#myModal" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> <?php echo $this->lang->line('add'); ?></a> 
+                                <a data-toggle="modal" data-target="#myModal" class="btn btn-primary btn-sm bedgroup"><i class="fa fa-plus"></i> <?php echo $this->lang->line('add'); ?></a> 
                             <?php } ?>
 
 
@@ -288,4 +288,8 @@
             });
         }));
     });
+	
+$(".bedgroup").click(function(){
+	$('#addward').trigger("reset");	
+});
 </script>

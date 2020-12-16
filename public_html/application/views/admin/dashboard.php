@@ -2,37 +2,24 @@
     <section class="content">
         <div class="row">
             <div class="col-md-12">
-
-
-                <?php
-                $bar_chart = true;
-                $line_chart = true;
-                foreach ($notifications as $notice_key => $notice_value) {
+                   <?php
+                $show=false;
+                $role          = $this->customlib->getStaffRole();
+                $role_id= json_decode($role)->id;
+                foreach ($notifications as $notice_key => $notice_value) {                    
+                    if($role_id==7){
+                    $show=true; 
+                    }elseif(date($this->customlib->getSchoolDateFormat()) >= date($this->customlib->getSchoolDateFormat(), $this->customlib->dateyyyymmddTodateformat($notice_value->publish_date))){
+                        $show=true;
+                    }
                     ?>
-
                     <div class="dashalert alert alert-success alert-dismissible" role="alert">
                         <button type="button" class="alertclose close close_notice" data-dismiss="alert" aria-label="Close" data-noticeid="<?php echo $notice_value->id; ?>"><span aria-hidden="true">&times;</span></button>
-
                         <a href="<?php echo site_url('admin/notification') ?>"><?php echo $notice_value->title; ?></a>
                     </div>
-
-                    <?php
+                  <?php
                 }
                 ?>
-
-                <!--  <?php
-                if ($systemnotifications) {
-                    foreach ($systemnotifications as $key => $systemnotification) {
-                        ?>
-                                    <div class="dashalert alert alert-success alert-dismissible" role="alert">
-                                         <button type="button" class="alertclose close close_notice" data-dismiss="alert" aria-label="Close" data-noticeid="<?php echo $systemnotification['id']; ?>"><span aria-hidden="true">&times;</span></button>
-                                         <a href="<?php echo site_url('admin/systemnotification') ?>"><?php echo $systemnotification["notification_title"]; ?></a>
-                                     </div>   
-                    <?php
-                    }
-                }
-                ?> -->
-
             </div>
             <?php
             $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
@@ -70,14 +57,11 @@
             }
             ?>          
         </div><!--./row-->
-
         <div class="row">
-
             <?php
             if ($this->module_lib->hasActive('OPD')) {
                 if ($this->rbac->hasPrivilege('opd_income_widget', 'can_view')) {
                     ?>
-
                     <div class="col-lg-2 col-md-3 col-sm-6 col20
                          ">
                         <div class="info-box">
@@ -130,8 +114,6 @@
             if ($this->module_lib->hasActive('pharmacy')) {
                 if ($this->rbac->hasPrivilege('pharmacy_income_widget', 'can_view')) {
                     ?>
-
-
                     <div class="col-lg-2 col-md-3 col-sm-6 col20">
                         <div class="info-box">
                             <a href="<?php echo site_url('admin/pharmacy/bill') ?>">
@@ -153,10 +135,8 @@
                 }
             }
             if ($this->module_lib->hasActive('pathology')) {
-
                 if ($this->rbac->hasPrivilege('pathology_income_widget', 'can_view')) {
                     ?>
-
 
                     <div class="col-lg-2 col-md-3 col-sm-6 col20">
                         <div class="info-box">
@@ -183,8 +163,6 @@
             if ($this->module_lib->hasActive('radiology')) {
                 if ($this->rbac->hasPrivilege('radiology_income_widget', 'can_view')) {
                     ?>
-
-
                     <div class="col-lg-2 col-md-3 col-sm-6 col20">
                         <div class="info-box">
                             <a href="<?php echo site_url('admin/radio/search') ?>">
@@ -206,13 +184,10 @@
                 }
             }
             ?>
-
             <?php
             if ($this->module_lib->hasActive('operation_theatre')) {
                 if ($this->rbac->hasPrivilege('ot_income_widget', 'can_view')) {
                     ?>
-
-
                     <div class="col-lg-2 col-md-3 col-sm-6 col20">
                         <div class="info-box">
                             <a href="<?php echo site_url('admin/operationtheatre/otsearch') ?>">
@@ -238,8 +213,6 @@
             if ($this->module_lib->hasActive('blood_bank')) {
                 if ($this->rbac->hasPrivilege('blood_bank_income_widget', 'can_view')) {
                     ?>
-
-
                     <div class="col-lg-2 col-md-3 col-sm-6 col20">
                         <div class="info-box">
                             <a href="<?php echo site_url('admin/bloodbank/issue') ?>">
@@ -265,8 +238,6 @@
             if ($this->module_lib->hasActive('ambulance')) {
                 if ($this->rbac->hasPrivilege('ambulance_income_widget', 'can_view')) {
                     ?>
-
-
                     <div class="col-lg-2 col-md-3 col-sm-6 col20
                          ">
                         <div class="info-box">
@@ -395,7 +366,6 @@
             </div><!--./col-lg-9-->
             <?php if ($this->rbac->hasPrivilege('staff_role_count_widget', 'can_view')) {
                 ?>
-
                 <div class="col-lg-3 col-md-3 col-sm-12 col20">
                     <?php foreach ($roles as $key => $value) {
                         ?>
@@ -410,7 +380,6 @@
                             </a>
                         </div>
     <?php } ?>
-
                 </div><!--./col-lg-3-->
 <?php } ?>
         </div><!--./row-->  
@@ -424,16 +393,13 @@
                 <h4 class="modal-title"><?php echo "Add New Event"; ?></h4>
             </div>
             <div class="modal-body">
-
                 <div class="row">
                     <form role="form"  id="addevent_form" method="post" enctype="multipart/form-data" action="">
                         <div class="form-group col-md-12">
                             <label for="exampleInputEmail1"><?php echo $this->lang->line('event'); ?> <?php echo $this->lang->line('title'); ?></label>
                             <input class="form-control" name="title" id="input-field"> 
                             <span class="text-danger"><?php echo form_error('title'); ?></span>
-
                         </div>
-
                         <div class="form-group col-md-12">
                             <label for="exampleInputEmail1"><?php echo $this->lang->line('description'); ?></label>
                             <textarea name="description" class="form-control" id="desc-field"></textarea></div>
@@ -451,7 +417,6 @@
                             <input type="hidden" name="eventcolor" autocomplete="off" id="eventcolor" class="form-control">
                         </div>
                         <div class="form-group col-md-12">
-
                             <?php
                             $i = 0;
                             $colors = '';
@@ -473,31 +438,25 @@
                             <label for="exampleInputEmail1"><?php echo $this->lang->line('event'); ?> <?php echo $this->lang->line('type'); ?></label>
                             <br/>
                             <label class="radio-inline">
-
                                 <input type="radio" name="event_type" value="public" id="public"><?php echo $this->lang->line('public'); ?>
                             </label>
                             <label class="radio-inline">
-
                                 <input type="radio" name="event_type" value="private" checked id="private"><?php echo $this->lang->line('private'); ?>
                             </label>
                             <label class="radio-inline">
-
-                                <input type="radio" name="event_type" value="sameforall" id="public"><?php echo $this->lang->line('all'); ?> <?php echo $role ?>
+                                <input type="radio" name="event_type" value="sameforall" id="public"><?php echo $this->lang->line('all'); ?> <?php //echo $role ?>
                             </label>
                             <label class="radio-inline">
-
                                 <input type="radio" name="event_type" value="protected" id="public"><?php echo $this->lang->line('protected'); ?>
                             </label> </div>
-
                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                             <input type="submit" class="btn btn-primary submit_addevent pull-right" value="<?php echo $this->lang->line('save'); ?>"></div> </form>
                 </div>
-
             </div>
         </div>
     </div>
 </div>  
-<div id="viewEventModal" class="modal fade " role="dialog">
+<div id="viewEventModal" class="modal fade" role="dialog">
     <div class="modal-dialog modal-dialog2 modal-lg">
         <div class="modal-content">
             <div class="modal-header">
@@ -505,18 +464,17 @@
                 <h4 class="modal-title"><?php echo "View Event"; ?></h4>
             </div>
             <div class="modal-body">
-
                 <div class="row">
-                    <form role="form"   method="post" id="updateevent_form"  enctype="multipart/form-data" action="" >
+                    <form role="form" method="post" id="updateevent_form" enctype="multipart/form-data" action="">
                         <div class="form-group col-md-12">
-                            <label for="exampleInputEmail1"><?php echo $this->lang->line('event') ?><?php echo $this->lang->line('title') ?></label>
+                            <label for="exampleInputEmail1"><?php echo $this->lang->line('event')." ".$this->lang->line('title') ?></label>
                             <input class="form-control" name="title" placeholder="Event Title" id="event_title"> 
                         </div>
                         <div class="form-group col-md-12">
                             <label for="exampleInputEmail1"><?php echo $this->lang->line('description') ?></label>
                             <textarea name="description" class="form-control" placeholder="Event Description" id="event_desc"></textarea></div>
                         <div class="form-group col-md-12">
-                            <label for="exampleInputEmail1"><?php echo $this->lang->line('event') ?><?php echo $this->lang->line('date') ?></label>
+                            <label for="exampleInputEmail1"><?php echo $this->lang->line('event') ." ". $this->lang->line('date') ?></label>
                             <div class="input-group">
                                 <div class="input-group-addon">
                                     <i class="fa fa-calendar"></i>
@@ -526,11 +484,10 @@
                         </div>
                         <input type="hidden" name="eventid" id="eventid">
                         <div class="form-group col-md-12">
-                            <label for="exampleInputEmail1"><?php echo $this->lang->line('event') ?><?php echo $this->lang->line('color') ?></label>
+                            <label for="exampleInputEmail1"><?php echo $this->lang->line('event') ." ". $this->lang->line('color') ?></label>
                             <input type="hidden" name="eventcolor" autocomplete="off" placeholder="Event Color" id="event_color" class="form-control">
                         </div>
                         <div class="form-group col-md-12">
-
                             <?php
                             $i = 0;
                             $colors = '';
@@ -549,7 +506,7 @@
                             ?>
                         </div>
                         <div class="form-group col-md-12">
-                            <label for="exampleInputEmail1"><?php echo $this->lang->line('event') ?><?php echo $this->lang->line('type') ?></label>
+                            <label for="exampleInputEmail1"><?php echo $this->lang->line('event')." ".$this->lang->line('type') ?></label>
                             <label class="radio-inline">
 
                                 <input type="radio" name="eventtype" value="public" id="public"><?php echo $this->lang->line('public') ?>
@@ -559,27 +516,22 @@
                                 <input type="radio" name="eventtype" value="private" id="private"><?php echo $this->lang->line('private') ?> 
                             </label>
                             <label class="radio-inline">
-
-                                <input type="radio" name="eventtype" value="sameforall" id="public"><?php echo $this->lang->line('all') ?> <?php echo $role ?>
-                            </label>
+                                <input type="radio" name="eventtype" value="sameforall" id="public"><?php echo $this->lang->line('all') ?> 
+							</label>
                             <label class="radio-inline">
-
                                 <input type="radio" name="eventtype" value="protected" id="public"><?php echo $this->lang->line('protected') ?> 
                             </label>
                         </div>
-
-                        <div class="col-xs-11 col-sm-11 col-md-11 col-lg-11">
-
-                            <input type="submit" class="btn btn-primary submit_update pull-right" value="<?php echo $this->lang->line('save'); ?>">
-                        </div>
-                        <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1">
-                            <?php if ($this->rbac->hasPrivilege('calendar_to_do_list', 'can_delete')) { ?>
-                                <input type="button" id="delete_event" class="btn btn-primary submit_delete pull-right" value="<?php echo $this->lang->line('delete'); ?>">
-<?php } ?>
+                        <div class="col-lg-12">
+                            <div class="pull-right">
+                                <input type="submit" class="btn btn-primary submit_update mr-10" value="<?php echo $this->lang->line('save'); ?>">
+                                <?php if ($this->rbac->hasPrivilege('calendar_to_do_list', 'can_delete')) { ?>
+                                    <input type="button" id="delete_event" class="btn btn-primary submit_delete " value="<?php echo $this->lang->line('delete'); ?>">
+                                <?php } ?>
+                            </div>   
                         </div>       
                     </form>
                 </div>
-
             </div>
         </div>
     </div>
@@ -588,20 +540,16 @@
 <script src="<?php echo base_url() ?>backend/js/utils.js"></script>
 <script type="text/javascript">
 
-
-
     window.onload = function () {
         var dataPointss = [];
         console.log(dataPointss);
-
 
         var yearly_collection_array = <?php echo json_encode($yearly_collection) ?>;
         var yearly_expense_array = <?php echo json_encode($yearly_expense) ?>;
         var MONTHS = <?php echo json_encode($total_month) ?>;
         console.log(yearly_collection_array);
         console.log(yearly_expense_array);
-
-
+		
         var config = {
             type: 'line',
             data: {
@@ -668,8 +616,7 @@
         var dataPointss = [];
         var color = ['#f56954', '#00a65a', '#f39c12', '#2f4074', '#00c0ef', '#3c8dbc', '#d2d6de', '#b7b83f'];
         var datas = <?php echo json_encode($jsonarr) ?>;
-//console.log(datas);
-
+		
         function addData(datap) {
             for (var i = 0; i < datap.value.length; i++) {
                 lb = datap.label[i];
@@ -725,16 +672,11 @@
             }
         };
 
-
         var ctx2 = document.getElementById('pieChart').getContext('2d');
-
         window.myDoughnut = new Chart(ctx2, config2);
-
-
     }
 
     $(document).ready(function () {
-
         $(document).on('click', '.close_notice', function () {
             var data = $(this).data();
             $.ajax({

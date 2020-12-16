@@ -12,8 +12,8 @@ class Charges extends Admin_Controller {
         $this->session->set_userdata('top_menu', 'setup');
         $this->session->set_userdata('sub_menu', 'charges/index');
         $this->config->load("payroll");
-        $this->charge_type = $this->config->item('charge_type');
-        $data["charge_type"] = $this->charge_type;
+		$charge_type = $this->customlib->getChargeMaster();
+        $data["charge_type"] = $charge_type;
         $data['resultlist'] = $this->charge_model->searchFullText();
         $data['schedule'] = $this->organisation_model->get();
         $this->load->view("layout/header");
@@ -29,7 +29,6 @@ class Charges extends Admin_Controller {
         $this->form_validation->set_rules('charge_category', $this->lang->line('charge') . " " . $this->lang->line('category'), 'required');
         $this->form_validation->set_rules('code', $this->lang->line('code'), 'required');
         $this->form_validation->set_rules('standard_charge', $this->lang->line('standard') . " " . $this->lang->line('charge'), 'required');
-
 
         if ($this->form_validation->run() == false) {
             $msg = array(
@@ -62,7 +61,6 @@ class Charges extends Admin_Controller {
                     $i++;
                     $insert_data[] = $schedule_data;
                 }
-
                 $this->tpa_model->add($insert_data);
             }
             $json_array = array('status' => 'success', 'error' => '', 'message' => $this->lang->line('success_message'));
@@ -122,14 +120,14 @@ class Charges extends Admin_Controller {
         }
         $this->form_validation->set_rules('charge_type', $this->lang->line('charge') . " " . $this->lang->line('type'), 'required');
         $this->form_validation->set_rules('charge_category', $this->lang->line('charge') . " " . $this->lang->line('category'), 'required');
-
         $this->form_validation->set_rules('standard_charge', $this->lang->line('standard') . " " . $this->lang->line('charge'), 'required');
-
+         $this->form_validation->set_rules('code', $this->lang->line('code') , 'required');
         if ($this->form_validation->run() == false) {
             $msg = array(
                 'charge_type' => form_error('charge_type'),
                 'charge_category' => form_error('charge_category'),
                 'charge' => form_error('standard_charge'),
+                'code' => form_error('code'),
             );
             $json_array = array('status' => 'fail', 'error' => $msg, 'message' => '');
         } else {
@@ -241,7 +239,6 @@ class Charges extends Admin_Controller {
     }
 
     public function deleteOpdPatientCharge($pateint_id, $id, $opdid) {
-
         if (!$this->rbac->hasPrivilege('charges', 'can_delete')) {
             access_denied();
         }
@@ -249,7 +246,5 @@ class Charges extends Admin_Controller {
         $this->session->set_flashdata('msg', '<div class="alert alert-success">Patient Charges deleted successfully</div>');
         redirect('admin/patient/visitDetails/' . $pateint_id . '/' . $opd_id . '#charges');
     }
-
 }
-
 ?>

@@ -3,7 +3,6 @@
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->
-
     <!-- Main content -->
     <section class="content">
         <div class="row">
@@ -33,7 +32,6 @@
                                         </textarea>
                                         <span class="text-danger"><?php echo form_error('message'); ?></span>
                                     </div>
-
                                 </div>
                                 <div class="col-md-3">
                                     <div class="">
@@ -54,7 +52,6 @@
                                         </div>
                                         <div class="form-horizontal">
                                             <label for="exampleInputEmail1"><?php echo $this->lang->line('message_to'); ?></label>
-
                                             <?php
                                             foreach ($roles as $role_key => $role_value) {
                                                 $userdata = $this->customlib->getUserData();
@@ -70,16 +67,13 @@
                                                 <?php
                                             }
                                             ?>
-
                                         </div>
                                         <span class="text-danger"><?php echo form_error('visible[]'); ?></span>
-
                                     </div>
                                 </div>  
                             </div>                         
                             <div class="box-footer">
                                 <div class="pull-right">
-
                                     <button type="submit" class="btn btn-primary"><i class="fa fa-envelope-o"></i> <?php echo $this->lang->line('send'); ?></button>
                                 </div>
                             </div>                          
@@ -105,7 +99,6 @@
         $("#btnreset").click(function () {
             $("#form1")[0].reset();
         });
-
     });
 </script>
 <script>

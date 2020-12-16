@@ -1,78 +1,8 @@
 <?php
 $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
 ?>
-<style type="text/css">
-    /*REQUIRED*/
-    .carousel-row {
-        margin-bottom: 10px;
-    }
-    .slide-row {
-        padding: 0;
-        background-color: #ffffff;
-        min-height: 150px;
-        border: 1px solid #e7e7e7;
-        overflow: hidden;
-        height: auto;
-        position: relative;
-    }
-    .slide-carousel {
-        width: 20%;
-        float: left;
-        display: inline-block;
-    }
-    .slide-carousel .carousel-indicators {
-        margin-bottom: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, .5);
-    }
-    .slide-carousel .carousel-indicators li {
-        border-radius: 0;
-        width: 20px;
-        height: 6px;
-    }
-    .slide-carousel .carousel-indicators .active {
-        margin: 1px;
-    }
-    .slide-content {
-        position: absolute;
-        top: 0;
-        left: 20%;
-        display: block;
-        float: left;
-        width: 80%;
-        max-height: 76%;
-        padding: 1.5% 2% 2% 2%;
-        overflow-y: auto;
-    }
-    .slide-content h4 {
-        margin-bottom: 3px;
-        margin-top: 0;
-    }
-    .slide-footer {
-        position: absolute;
-        bottom: 0;
-        left: 20%;
-        width: 78%;
-        height: 20%;
-        margin: 1%;
-    }
-    /* Scrollbars */
-    .slide-content::-webkit-scrollbar {
-        width: 5px;
-    }
-    .slide-content::-webkit-scrollbar-thumb:vertical {
-        margin: 5px;
-        background-color: #999;
-        -webkit-border-radius: 5px;
-    }
-    .slide-content::-webkit-scrollbar-button:start:decrement,
-    .slide-content::-webkit-scrollbar-button:end:increment {
-        height: 5px;
-        display: block;
-    }
-</style>
 
-<div class="content-wrapper" style="min-height: 946px;">
+<div class="content-wrapper">
     <!-- Main content -->
     <section class="content">
         <div class="row">
@@ -126,6 +56,35 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                     <span class="text-danger"><?php echo form_error('doctor'); ?></span>
                                 </div>
                             </div> 
+                               <div class="col-sm-6 col-md-3"  >
+                                <div class="form-group">
+                                    <label><?php echo $this->lang->line('payment')." ".$this->lang->line('type'); ?></label>
+                                    <select class="form-control "  name="patient_status" style="width: 100%">
+                                        <option value="" <?php  if ((isset($patient_status)) && ($patient_status == 'all')) {
+                                                        echo "selected";
+                                                    }
+                                                    ?> ><?php echo $this->lang->line('all') ?></option>
+                                        <option value="visit" <?php  if ((isset($patient_status)) && ($patient_status == 'visit')) {
+                                                        echo "selected";
+                                                    }
+                                                    ?>><?php echo $this->lang->line('visit')?></option>
+                                       <option value="rechekup" <?php  if ((isset($patient_status)) && ($patient_status == 'rechekup')) {
+                                                        echo "selected";
+                                                    }
+                                                    ?>><?php echo $this->lang->line('re_checkup')?></option>
+                                        <option value="payment" <?php  if ((isset($patient_status)) && ($patient_status == 'payment')) {
+                                                        echo "selected";
+                                                    }
+                                                    ?>><?php echo $this->lang->line('payment') ?></option>
+                                        <option value="bill" <?php  if ((isset($patient_status)) && ($patient_status == 'bill')) {
+                                                        echo "selected";
+                                                    }
+                                                    ?>><?php echo $this->lang->line('bill')." ".$this->lang->line('paid') ?></option>
+                                    </select>
+
+                                    <span class="text-danger"><?php echo form_error('patient_status'); ?></span>
+                                </div>
+                            </div>
                             <div class="col-sm-6 col-md-3" id="fromdate" style="display: none">
                                 <div class="form-group">
                                     <label><?php echo $this->lang->line('date_from'); ?></label><small class="req"> *</small>
@@ -157,7 +116,8 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                 <thead>
                                     <tr>
                                         <th><?php echo $this->lang->line('appointment') . " " . $this->lang->line('date'); ?></th>
-                                        <th><?php echo $this->lang->line('opd') . " " . $this->lang->line('no'); ?></th>
+                                        <!-- <th><?php echo $this->lang->line('opd') . " " . $this->lang->line('id'); ?></th>  -->
+                                         <th><?php echo $this->lang->line('opd') . " " . $this->lang->line('no'); ?></th> 
                                         <th><?php echo $this->lang->line('patient') . " " . $this->lang->line('id'); ?></th>
                                         <th><?php echo $this->lang->line('patient') . " " . $this->lang->line('name'); ?></th>
                                         <th><?php echo $this->lang->line('age'); ?></th>
@@ -165,12 +125,14 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                         <th><?php echo $this->lang->line('mobile_no'); ?></th>
                                         <th><?php echo $this->lang->line('guardian_name'); ?></th>
                                         <th><?php echo $this->lang->line('address'); ?></th>
-                                        <th><?php echo $this->lang->line('casualty'); ?></th>
-                                        <th><?php echo $this->lang->line('refference'); ?></th>
+                                        <th><?php echo $this->lang->line('casualty'); ?></th> 
+                                        <th><?php echo $this->lang->line('refference'); ?></th> 
                                         <th><?php echo $this->lang->line('consultant') . " " . $this->lang->line('doctor'); ?></th>
-                                        <th><?php echo $this->lang->line('charges') ; ?></th>
-                                        <th><?php echo $this->lang->line('payment') . " " . $this->lang->line('mode'); ?></th>
-                                        <th class="text-right"><?php echo $this->lang->line('amount') . '(' . $currency_symbol . ')'; ?></th>
+                                       <!--  <th><?php echo $this->lang->line('charges') ; ?></th> -->
+                                       <th><?php echo $this->lang->line('payment') . " " . $this->lang->line('mode'); ?></th> 
+                                       <th><?php echo $this->lang->line('payment')." ".$this->lang->line('type'); ?></th>
+                                        <th class="text-right"><?php echo $this->lang->line('paid')." ".$this->lang->line('amount') . '(' . $currency_symbol . ')'; ?></th>
+
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -187,16 +149,37 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                         $total = 0;
                                         foreach ($resultlist as $report) {
                                             if (!empty($report['amount'])) {
-                                                $total += $report['amount'];
+
+                                                $amount = $report['amount'] ;
+                                                $total += $amount ;
                                             }
+
+
+                                             $paymentmode = $report['payment_mode'];
+                                          /*  if($report['payment_mode'] == 'paid'){
+                                                    $paymentmode =  $this->lang->line('paid');
+                                                }else {
+                                                    $paymentmode = $report['payment_mode'];
+                                            }*/
+
+                                            if($report['paytype'] == 'visit'){
+                                                    $paymenttype =  $this->lang->line('visit');
+
+                                            }elseif ($report['paytype'] == 'rechekup'){
+                                                    $paymenttype =  $this->lang->line('re_checkup');
+
+                                            }elseif ($report['paytype'] == 'payment'){
+                                                    $paymenttype =  $this->lang->line('payment');
+
+                                            }elseif ($report['paytype'] == 'bill'){
+                                                    $paymenttype =  $this->lang->line('bill');
+                                            }
+
                                             ?>      
                                             <tr>
                                                 <td><?php echo date($this->customlib->getSchoolDateFormat(true, true), strtotime($report['appointment_date'])) ?></td>
-                                                <td><?php echo $report['opd_no']; ?></td>
-                                                <!-- <td>
-                                                    <a href="<?php echo base_url(); ?>student/view/<?php echo $student['id']; ?>"><?php echo $student['firstname'] . " " . $student['lastname']; ?>
-                                                    </a>
-                                                </td> -->
+                                                <!--  <td><?php echo $report['id']; ?></td> -->
+                                                <td><?php echo $report['opd_no']; ?></td> 
                                                 <td><?php echo $report['patient_unique_id']; ?></td>
                                                 <td>
                                                     <a href="<?php echo base_url(); ?>admin/patient/profile/<?php echo $report['pid']; ?>"><?php echo $report['patient_name'] ?>
@@ -208,12 +191,12 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                                 <td><?php echo $report['guardian_name']; ?></td>
                                                 <td><?php echo $report['address']; ?></td>
                                                 <td><?php echo $report['casualty']; ?></td>
-                                                <td><?php echo $report['refference']; ?></td>
-                                                <td><?php echo $report['name'] . " " . $report['surname']; ?></td>
-                                                <td><?php if(isset($report["charges"])){ echo $report["charges"]; } ?></td>
-                                                <td><?php echo $report['payment_mode']; ?>
-                                                <td class="text-right"><?php echo $report['amount']; ?></td>
-                                                </td>
+                                                <td><?php echo $report['refference']; ?></td> 
+                                                <td><?php echo $report['name']." ".$report['surname']; ?></td> 
+                                               <!--  <td><?php if(isset($report["charges"])){ echo $report["charges"]; } ?></td> -->
+                                                <td><?php  echo $paymentmode ; ?></td>
+                                                 <td><?php echo $paymenttype; ?></td> 
+                                                <td class="text-right"><?php echo $amount ; ?></td>
                                             </tr>
                                             <?php
                                             $count++;
@@ -221,7 +204,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                         ?>
                                     </tbody>
                                     <tr class="box box-solid total-bg">
-                                        <td class="text-right" colspan='15'><?php echo $this->lang->line('total') . " :" . $currency_symbol . $total; ?>
+                                        <td class="text-right" colspan='16'><?php echo $this->lang->line('total') . " :" . $currency_symbol . $total; ?>
                                         </td>
                                     </tr>
 <?php } ?>

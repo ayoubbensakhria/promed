@@ -7,7 +7,6 @@ class Cms_page_content_model extends CI_Model {
 
     public function __construct() {
         parent::__construct();
-        $this->current_session = $this->setting_model->getCurrentSession();
         $this->load->config('ci-blog');
     }
 
@@ -65,19 +64,16 @@ class Cms_page_content_model extends CI_Model {
     }
 
     public function batch_insert($data) {
-
         $this->db->insert_batch('front_cms_page_contents', $data);
     }
 
     public function insertOrUpdate($data) {
         $this->db->where('page_id', $data['page_id']);
         $q = $this->db->get('front_cms_page_contents');
-
         if ($q->num_rows() > 0) {
             $this->db->where('page_id', $data['page_id']);
             $this->db->update('front_cms_page_contents', $data);
         } else {
-
             $this->db->insert('front_cms_page_contents', $data);
         }
     }

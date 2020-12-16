@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
@@ -22,8 +21,9 @@ class patient extends Admin_Controller {
         $this->payment_mode = $this->config->item('payment_mode');
         $this->search_type = $this->config->item('search_type');
         $this->blood_group = $this->config->item('bloodgroup');
-
-        $this->charge_type = $this->config->item('charge_type');
+        $this->load->model('conference_model');
+      
+        $this->charge_type = $this->customlib->getChargeMaster();
         $data["charge_type"] = $this->charge_type;
         $this->patient_login_prefix = "pat";
     }
@@ -60,14 +60,17 @@ class patient extends Admin_Controller {
             $opdnoid = $check_opd_id + 1;
             $doctor_id = $this->input->post('consultant_doctor');
             $insert_id = $this->input->post('patient_id');
+            $password = $this->input->post('password');
             $email = $this->input->post('email');
             $mobileno = $this->input->post('mobileno');
             $patient_name = $this->input->post('patient_name');
             $appointment_date = $this->input->post('appointment_date');
             $isopd = $this->input->post('is_opd');
             $appointmentid = $this->input->post('appointment_id');
+            $live_consult = $this->input->post('live_consult');
+            $date = date('Y-m-d H:i:s', $this->customlib->datetostrtotime($appointment_date));
             $opd_data = array(
-                'appointment_date' => date('Y-m-d H:i:s', $this->customlib->datetostrtotime($appointment_date)),
+                'appointment_date' =>  $date,
                 'case_type' => $this->input->post('case'),
                 'opd_no' => 'OPDN' . $opdnoid,
                 'symptoms' => $this->input->post('symptoms'),
@@ -76,17 +79,74 @@ class patient extends Admin_Controller {
                 'height' => $this->input->post('height'),
                 'weight' => $this->input->post('weight'),
                 'bp' => $this->input->post('bp'),
+                'pulse' => $this->input->post('pulse'),
+                'temperature' => $this->input->post('temperature'),
+                'respiration' => $this->input->post('respiration'),
                 'patient_id' => $insert_id,
                 'casualty' => $this->input->post('casualty'),
                 'payment_mode' => $this->input->post('payment_mode'),
                 'note_remark' => $this->input->post('note'),
                 'amount' => $this->input->post('amount'),
+                'live_consult' => $live_consult,
                 'generated_by' => $this->session->userdata('hospitaladmin')['id'],
+                'discharged' => 'no'
             );
+           
+            $patient_data = array(
+                    'id' => $insert_id,
+                    'old_patient' => $this->input->post('old_patient'),
+                    'organisation' => $this->input->post('organisation'),
+                    
+                );
+
+            $p_id = $this->patient_model->add_patient($patient_data);
             $opdn_id = $this->patient_model->add_opd($opd_data);
             $opd_no = 'OPDN' . $opdnoid;
             $notificationurl = $this->notificationurl;
             $url_link = $notificationurl["opd"];
+            $setting_result = $this->setting_model->getzoomsetting();
+            $opdduration = $setting_result->opd_duration;
+            
+            if ($live_consult = $this->lang->line('yes')) {
+                $api_type = 'global';
+                $params = array(
+                    'zoom_api_key'    => "",
+                    'zoom_api_secret' => "",
+                );
+
+                $title = 'Online consult for OPDN' . $opdnoid;
+                $this->load->library('zoom_api', $params);
+                $insert_array = array(
+                    'staff_id'     => $doctor_id,
+                    'patient_id'     => $insert_id,
+                    'opd_id' => $opdn_id,
+                    'title'        => $title,
+                    'date' =>$date,
+                    'duration'     => $opdduration,
+                    'created_id'   => $this->customlib->getStaffID(),
+                    'password'     =>$password,
+                    'api_type'     => $api_type,
+                    'host_video'   => 1,
+                    'client_video' => 1,
+                    'purpose'      => 'consult',
+                    //'description'  => $this->input->post('description'),
+                    'timezone'     => $this->customlib->getTimeZone(),
+                );
+
+                $response = $this->zoom_api->createAMeeting($insert_array);
+             
+                if (!empty($response)) {
+                    if (isset($response->id)) {
+                        $insert_array['return_response'] = json_encode($response);
+                        $conferenceid = $this->conference_model->add($insert_array);
+
+                    $sender_details = array('patient_id' => $insert_id,'conference_id'=>$conferenceid,'contact_no' => $mobileno, 'email' => $email);
+
+                     $this->mailsmsconf->mailsms('live_consult', $sender_details);
+                     }
+                 }
+            }
+
             $url = base_url() . $url_link . '/' . $insert_id . '/' . $opdn_id;
 
             $array = array('status' => 'success', 'error' => '', 'message' => $this->lang->line('success_message'), 'id' => $insert_id, 'opd_id' => $opdn_id);
@@ -98,7 +158,7 @@ class patient extends Admin_Controller {
                 $this->session->unset_userdata('appointment_id');
             }
 
-            $this->opdNotification($insert_id, $doctor_id, $opd_no, $url);
+            $this->opdNotification($insert_id, $doctor_id, $opd_no, $url,$date);
 
             if (isset($_FILES["file"]) && !empty($_FILES['file']['name'])) {
                 $fileInfo = pathinfo($_FILES["file"]["name"]);
@@ -109,9 +169,10 @@ class patient extends Admin_Controller {
             }
 
             $sender_details = array('patient_id' => $insert_id,'patient_name' => $patient_name,'opd_no' => $opd_no, 'contact_no' => $mobileno, 'email' => $email);
-            $this->mailsmsconf->mailsms('opd_patient_registration', $sender_details);
-           /* $sender_details = array('patient_id' => $insert_id, 'opd_no' => $opd_no, 'contact_no' => $this->input->post('contact'), 'email' => $this->input->post('email'));
-            $this->mailsmsconf->mailsms('opd_patient_registration', $sender_details);*/
+         //     print_r($sender_details);
+         // exit();
+        $result =  $this->mailsmsconf->mailsms('opd_patient_registration', $sender_details);
+
 
         }
         echo json_encode($array);
@@ -172,6 +233,7 @@ class patient extends Admin_Controller {
                 $check_patient_id = 0;
             }
             $patient_id = $this->input->post('id');
+            $password = $this->input->post('password');
             $email = $this->input->post('email');
             $mobileno = $this->input->post('mobileno');
             $opdn_id = $check_patient_id + 1;
@@ -179,16 +241,24 @@ class patient extends Admin_Controller {
             $patient_data = array(
                 'id' => $this->input->post('id'),
                 'old_patient' => $this->input->post('old_patient'),
+                'known_allergies' => $this->input->post('known_allergies'),
+                'organisation' => $this->input->post('organisation_name'),
             );
             $this->patient_model->add($patient_data);
             $appointment_date = $this->input->post('appointment_date');
+            $live_consult = $this->input->post('live_consult');
+            $doctor_id = $this->input->post("consultant_doctor");
+            $date =  date('Y-m-d H:i:s', $this->customlib->datetostrtotime($appointment_date));
             $opd_data = array(
                 'patient_id' => $this->input->post('id'),
-                'appointment_date' => date('Y-m-d H:i:s', $this->customlib->datetostrtotime($appointment_date)),
+                'appointment_date' => $date,
                 'opd_no' => 'OPDN' . $opdn_id,
                 'height' => $this->input->post('height'),
                 'weight' => $this->input->post('weight'),
                 'bp' => $this->input->post('bp'),
+                'pulse' => $this->input->post('pulse'),
+                'temperature' => $this->input->post('temperature'),
+                'respiration' => $this->input->post('respiration'),
                 'case_type' => $this->input->post('revisit_case'),
                 'symptoms' => $this->input->post('symptoms'),
                 'known_allergies' => $this->input->post('known_allergies'),
@@ -196,20 +266,58 @@ class patient extends Admin_Controller {
                 'cons_doctor' => $this->input->post('consultant_doctor'),
                 'amount' => $this->input->post('amount'),
                 'casualty' => $this->input->post('casualty'),
-                'payment_mode' => $this->input->post('payment_mode'),
+                'payment_mode' => $this->input->post('payment_mode'),   
                 'note_remark' => $this->input->post('note_remark'),
+                'live_consult' => $this->input->post('live_consult'),
                 'generated_by' => $this->session->userdata('hospitaladmin')['id'],
+                'discharged' => 'no'
             );
             $opd_id = $this->patient_model->add_opd($opd_data);
-
             $notificationurl = $this->notificationurl;
             $url_link = $notificationurl["opd"];
             $url = base_url() . $url_link . '/' . $patient_id . '/' . $opd_id;
 
            // $sender_details = array('patient_id' => $patient_id, 'opd_no' => 'OPDN' . $opdn_id, 'contact_no' => $this->input->post('contact'), 'email' => $this->input->post('email'));
+            $setting_result = $this->setting_model->getzoomsetting();
+            $opdduration = $setting_result->opd_duration;
+             if ($live_consult = $this->lang->line('yes')) {
+                $api_type = 'global';
+                $params = array(
+                    'zoom_api_key'    => "",
+                    'zoom_api_secret' => "",
+                );
+                $this->load->library('zoom_api', $params);
+                $insert_array = array(
+                    'staff_id'     => $doctor_id,
+                    'patient_id'     => $patient_id,
+                    'opd_id' => $opd_id,
+                    'title'        => 'Online consult for Revisit OPDN' . $opdn_id,
+                    'date' => $date,
+                    'duration'     => $opdduration,
+                    'created_id'   => $this->customlib->getStaffID(),
+                    'password'   => $password,
+                    'api_type'     => $api_type,
+                    'host_video'   => 1,
+                    'client_video' => 1,
+                    'purpose'      => 'consult',
+                    //'description'  => $this->input->post('description'),
+                    'timezone'     => $this->customlib->getTimeZone(),
+                );
+                $response = $this->zoom_api->createAMeeting($insert_array);
+             
+                if ($response) {
+                    if (isset($response->id)) {
+                        $insert_array['return_response'] = json_encode($response);
+                       
+                    $conferenceid =  $this->conference_model->add($insert_array);
+                    $sender_details = array('patient_id' => $patient_id,'conference_id'=>$conferenceid,'contact_no' => $mobileno, 'email' => $email);
 
+                     $this->mailsmsconf->mailsms('live_consult', $sender_details);
+                     }
+                 }
+            }
 
-            $this->opdNotification($this->input->post("id"), $this->input->post("consultant_doctor"), 'OPDN' . $opdn_id, $url);
+            $this->opdNotification($this->input->post("id"), $this->input->post("consultant_doctor"), 'OPDN' . $opdn_id, $url,$date);
 
             $sender_details = array('patient_id' => $patient_id,'opd_no' => 'OPDN' . $opdn_id, 'contact_no' => $mobileno, 'email' => $email);
             $this->mailsmsconf->mailsms('patient_revisit', $sender_details);
@@ -224,6 +332,13 @@ class patient extends Admin_Controller {
             access_denied();
         }
         $result = $this->patient_model->getPatientId();
+        $data["result"] = $result;
+        echo json_encode($result);
+    }
+
+    public function get_symptoms() {
+       
+        $result =  $this->symptoms_model->get();
         $data["result"] = $result;
         echo json_encode($result);
     }
@@ -261,7 +376,7 @@ class patient extends Admin_Controller {
         echo json_encode($data);
     }
 
-    public function opdNotification($patient_id = '', $doctor_id, $opd_no = '', $url) {
+    public function opdNotification($patient_id = '', $doctor_id, $opd_no = '', $url,$date) {
 
         $notification = $this->notification;
         $notification_desc = $notification["opd_created"];
@@ -274,7 +389,7 @@ class patient extends Admin_Controller {
                 'notification_for' => 'Patient',
                 'notification_type' => 'opd',
                 'receiver_id' => $patient_id,
-                'date' => date("Y-m-d H:i:s"),
+                'date' => $date,
                 'is_active' => 'yes',
             );
             $admin_notification_data = array('notification_title' => 'OPD Visit Created',
@@ -282,7 +397,7 @@ class patient extends Admin_Controller {
                 'notification_for' => 'Super Admin',
                 'notification_type' => 'opd',
                 'receiver_id' => '',
-                'date' => date("Y-m-d H:i:s"),
+                'date' => $date,
                 'is_active' => 'yes',
             );
             $this->notification_model->addSystemNotification($notification_data);
@@ -296,6 +411,72 @@ class patient extends Admin_Controller {
                 'notification_for' => 'Doctor',
                 'notification_type' => 'opd',
                 'receiver_id' => $doctor_id,
+                'date' => $date,
+                'is_active' => 'yes',
+            );
+            $this->notification_model->addSystemNotification($notification_data);
+        }
+    }
+
+     public function opdpresNotification($patient_id = '', $doctor_id, $opd_no = '',$opd_no_value = '', $url, $visible_module) {
+
+        $notification = $this->notification;
+        $notification_desc = $notification["opdpres_created"];
+
+        $desc = str_replace(array('<opdno>', '<url>'), array($opd_no_value, $url), $notification_desc);
+
+        $patient_url = $this->patient_notificationurl['opdpres'];
+
+        $patient_desc = str_replace(array('<opdno>', '<url>'), array($opd_no, base_url() . $patient_url), $notification_desc);
+        
+        if (!empty($patient_id)) {
+            $notification_data = array('notification_title' => 'OPD Prescription Created',
+                'notification_desc' => $patient_desc,
+                'notification_for' => 'Patient',
+                'notification_type' => 'opd',
+                'receiver_id' => $patient_id,
+                'date' => date("Y-m-d H:i:s"),
+                'is_active' => 'yes',
+            );
+            $admin_notification_data = array('notification_title' => 'OPD Prescription Created',
+                'notification_desc' => $desc,
+                'notification_for' => 'Super Admin',
+                'notification_type' => 'opd',
+                'receiver_id' => '',
+                'date' => date("Y-m-d H:i:s"),
+                'is_active' => 'yes',
+            );
+            $this->notification_model->addSystemNotification($notification_data);
+
+            $this->notification_model->addSystemNotification($admin_notification_data);
+
+            foreach ($visible_module as $key => $visible_value) {
+                $role_id = $visible_value ;
+
+               $role_data =  $this->role_model->getRolefromid($role_id);
+            foreach ($role_data as $key => $role_value) {
+                # code...
+             $role_notification_data = array('notification_title' => 'OPD Prescription Created',
+                'notification_desc' => $desc,
+                'notification_for' => $role_value["name"],
+                'notification_type' => 'opd',
+                'receiver_id' => $role_value["staff_id"],
+                'date' => date("Y-m-d H:i:s"),
+                'is_active' => 'yes',
+                );
+
+                 $this->notification_model->addSystemNotification($role_notification_data);
+                }
+ 
+            }
+        }
+
+        if (!empty($doctor_id)) {
+            $notification_data = array('notification_title' => 'OPD Prescription Created',
+                'notification_desc' => $desc,
+                'notification_for' => 'Doctor',
+                'notification_type' => 'opd',
+                'receiver_id' => $doctor_id,
                 'date' => date("Y-m-d H:i:s"),
                 'is_active' => 'yes',
             );
@@ -303,7 +484,76 @@ class patient extends Admin_Controller {
         }
     }
 
-    public function ipdNotification($patient_id = '', $doctor_id, $ipdno = '', $url) {
+
+public function ipdpresNotification($patient_id = '', $doctor_id, $ipd_no = '',$ipd_no_value = '', $url, $visible_module,$pres_id = '') {
+
+        $notification = $this->notification;
+        $notification_desc = $notification["ipdpres_created"];
+
+        $desc = str_replace(array('<ipdno>', '<url>'), array($ipd_no_value, $url), $notification_desc);
+
+        $patient_url = $this->patient_notificationurl['ipdpres'];
+
+        $patient_desc = str_replace(array('<ipdno>', '<url>'), array($ipd_no, base_url() . $patient_url.'/'.$ipd_no.'/'.$pres_id), $notification_desc);
+        
+        if (!empty($patient_id)) {
+            $notification_data = array('notification_title' => 'IPD Prescription Created',
+                'notification_desc' => $patient_desc,
+                'notification_for' => 'Patient',
+                'notification_type' => 'ipd',
+                'receiver_id' => $patient_id,
+                'date' => date("Y-m-d H:i:s"),
+                'is_active' => 'yes',
+            );
+
+            $admin_notification_data = array('notification_title' => 'IPD Prescription Created',
+                'notification_desc' => $desc,
+                'notification_for' => 'Super Admin',
+                'notification_type' => 'ipd',
+                'receiver_id' => '',
+                'date' => date("Y-m-d H:i:s"),
+                'is_active' => 'yes',
+            );
+
+            $this->notification_model->addSystemNotification($notification_data);
+
+            $this->notification_model->addSystemNotification($admin_notification_data);
+
+            foreach ($visible_module as $key => $visible_value) {
+                $role_id = $visible_value ;
+
+               $role_data =  $this->role_model->getRolefromid($role_id);
+            foreach ($role_data as $key => $role_value) {
+                # code...
+             $role_notification_data = array('notification_title' => 'IPD Prescription Created',
+                'notification_desc' => $desc,
+                'notification_for' => $role_value["name"],
+                'notification_type' => 'ipd',
+                'receiver_id' => $role_value["staff_id"],
+                'date' => date("Y-m-d H:i:s"),
+                'is_active' => 'yes',
+                );
+
+                 $this->notification_model->addSystemNotification($role_notification_data);
+                }
+ 
+            }
+        }
+
+        if (!empty($doctor_id)) {
+            $notification_data = array('notification_title' => 'IPD Prescription Created',
+                'notification_desc' => $desc,
+                'notification_for' => 'Doctor',
+                'notification_type' => 'ipd',
+                'receiver_id' => $doctor_id,
+                'date' => date("Y-m-d H:i:s"),
+                'is_active' => 'yes',
+            );
+            $this->notification_model->addSystemNotification($notification_data);
+        }
+    }
+
+    public function ipdNotification($patient_id = '', $doctor_id, $ipdno = '', $url,$date) {
 
         $notification = $this->notification;
         $notification_desc = $notification["ipd_created"];
@@ -317,7 +567,7 @@ class patient extends Admin_Controller {
                 'notification_for' => 'Patient',
                 'notification_type' => 'ipd',
                 'receiver_id' => $patient_id,
-                'date' => date("Y-m-d H:i:s"),
+                'date' => $date,
                 'is_active' => 'yes',
             );
 
@@ -326,7 +576,7 @@ class patient extends Admin_Controller {
                 'notification_for' => 'Super Admin',
                 'notification_type' => 'ipd',
                 'receiver_id' => '',
-                'date' => date("Y-m-d H:i:s"),
+                'date' => $date,
                 'is_active' => 'yes',
             );
             $this->notification_model->addSystemNotification($notification_data);
@@ -340,7 +590,7 @@ class patient extends Admin_Controller {
                 'notification_for' => 'Doctor',
                 'notification_type' => 'ipd',
                 'receiver_id' => $doctor_id,
-                'date' => date("Y-m-d H:i:s"),
+                'date' => $date,
                 'is_active' => 'yes',
             );
             $this->notification_model->addSystemNotification($notification_data);
@@ -400,6 +650,8 @@ class patient extends Admin_Controller {
                 'is_active' => 'yes',
                 'discharged' => 'no',
             );
+            // print_r($patient_data);
+            // exit();
             $insert_id = $this->patient_model->add_patient($patient_data);
             if ($this->session->has_userdata("appointment_id")) {
                 $appointment_id = $this->session->userdata("appointment_id");
@@ -428,7 +680,8 @@ class patient extends Admin_Controller {
             $this->patient_model->add($data_img);
 
              $sender_details = array('id' => $insert_id, 'credential_for' => 'patient', 'username' => $this->patient_login_prefix . $insert_id, 'password' => $user_password, 'contact_no' => $this->input->post('mobileno'), 'email' => $this->input->post('email'));
-            $this->mailsmsconf->mailsms('login_credential', $sender_details);   
+           
+              $this->mailsmsconf->mailsms('login_credential', $sender_details);   
 
 
         }
@@ -511,37 +764,6 @@ class patient extends Admin_Controller {
         }
         return true;
     }
-
-    // public function getOldPatient() {
-    //     if (!$this->rbac->hasPrivilege('old_patient', 'can_view')) {
-    //         access_denied();
-    //     }
-    //     $this->session->set_userdata('top_menu', 'OPD_Out_Patient');
-    //     $setting = $this->setting_model->get();
-    //     $data['setting'] = $setting;
-    //     $data['title'] = 'old_patient';
-    //     $opd_month = $setting[0]['opd_record_month'];
-    //     $data["marital_status"] = $this->marital_status;
-    //     $data["payment_mode"] = $this->payment_mode;
-    //     $data["bloodgroup"] = $this->blood_group;
-    //     $doctors = $this->staff_model->getStaffbyrole(3);
-    //     $data["doctors"] = $doctors;
-    //     $resultlist = $this->patient_model->searchFullText($opd_month, '');
-    //     $data['organisation'] = $this->organisation_model->get();
-    //     $i = 0;
-    //     foreach ($resultlist as $visits) {
-    //         $patient_id = $visits["id"];
-    //         $total_visit = $this->patient_model->totalVisit($patient_id);
-    //         $last_visit = $this->patient_model->lastVisit($patient_id);
-    //         $resultlist[$i]["total_visit"] = $total_visit["total_visit"];
-    //         $resultlist[$i]["last_visit"] = $last_visit["last_visit"];
-    //         $i++;
-    //     }
-    //     $data["resultlist"] = $resultlist;
-    //     $this->load->view('layout/header');
-    //     $this->load->view('admin/patient/search.php', $data);
-    //     $this->load->view('layout/footer');
-    // }
 
     public function exportformat() {
         $this->load->helper('download');
@@ -674,22 +896,24 @@ class patient extends Admin_Controller {
         $data["patients"] = $patients;
         $userdata = $this->customlib->getUserData();
         $role_id = $userdata['role_id'];
+        $symptoms_result = $this->symptoms_model->get();
+        $data['symptomsresult'] = $symptoms_result;
+        $symptoms_resulttype = $this->symptoms_model->getsymtype();
+        $data['symptomsresulttype'] = $symptoms_resulttype;
         $doctorid = "";
         $doctor_restriction = $this->session->userdata['hospitaladmin']['doctor_restriction'];
         $disable_option = FALSE;
+
         if ($doctor_restriction == 'enabled') {
             if ($role_id == 3) {
                 $disable_option = TRUE;
                 $doctorid = $userdata['id'];
             }
         }
+        
         $data["doctor_select"] = $doctorid;
         $data["disable_option"] = $disable_option;
         $resultlist = $this->patient_model->searchFullText('1', '');
-        // echo "<pre>";
-        // print_r($resultlist);
-        // echo "</pre>";
-        // exit();
         $data['organisation'] = $this->organisation_model->get();
         $i = 0;
         foreach ($resultlist as $visits) {
@@ -705,10 +929,90 @@ class patient extends Admin_Controller {
         }
 
         $data["resultlist"] = $resultlist;
-
         $this->load->view('layout/header');
         $this->load->view('admin/patient/search.php', $data);
         $this->load->view('layout/footer');
+    }
+
+    public function opd_search(){
+
+        $draw = $_POST['draw'];
+        $row = $_POST['start'];
+        $rowperpage = $_POST['length']; // Rows display per page
+       // $columnIndex = $_POST['order'][0]['column']; // Column index
+       //. $columnName = $_POST['columns'][$columnIndex]['data']; // Column name
+       // $columnSortOrder = $_POST['order'][0]['dir']; // asc or desc
+        $where_condition=array();
+        if(!empty($_POST['search']['value']) ) {
+            $where_condition=array('search'=>$_POST['search']['value']);
+        }
+        $resultlist = $this->patient_model->search_datatable($where_condition);
+        $total_result = $this->patient_model->search_datatable_count($where_condition);
+        $data = array();
+        foreach ($resultlist as $result_key => $result_value) { 
+            $action ="<div class='rowoptionview'>"; 
+            if ($this->rbac->hasPrivilege('revisit', 'can_add')) {
+                                                        
+            $action.="<a href='#' onclick='getRevisitRecord(".$result_value->pid.")' class='btn btn-default btn-xs'  data-toggle='tooltip' title='". $this->lang->line('revisit')."'><i class='fas fa-exchange-alt'></i></a>";  
+             } 
+
+            $action.="<a href=".base_url().'admin/patient/profile/'.$result_value->pid." class='btn btn-default btn-xs'  data-toggle='tooltip' title='".$this->lang->line('show')."'><i class='fa fa-reorder' aria-hidden='true'></i></a>"; 
+           
+            if ($result_value->is_ipd != 'yes') {
+                if ($this->rbac->hasPrivilege('opd_move _patient_in_ipd', 'can_view')) {
+                $action.="<a href=".base_url().'admin/patient/moveipd/'.$result_value->pid." data-toggle='tooltip' onclick='return confirm('".$this->lang->line('move')." ".$this->lang->line('patient')." ".$this->lang->line('in')." ".$this->lang->line('ipd').")' data-original-title='".$this->lang->line('move')." ".$this->lang->line('in')." ".$this->lang->line('ipd')."' class='btn btn-default btn-xs' ><i class='fas fa-share-square'></i></a>"; 
+
+                    }
+                }
+            $action.="</div'>";
+            // $total_visit = "<span class='pull-right'>".$result_value->total_visit."</span>";
+            $first_action ="<a href=".base_url().'admin/patient/profile/'.$result_value->pid.">" ;  
+        $nestedData=array();  
+        $nestedData[]= $first_action.$result_value->patient_name."</a>".$action;
+        $nestedData[]=$result_value->patient_unique_id;
+        $nestedData[]=$result_value->guardian_name;
+        $nestedData[]=$result_value->gender;
+        $nestedData[]=$result_value->mobileno;
+        $nestedData[]=$result_value->name." ".$result_value->surname;
+        $nestedData[]= date($this->customlib->getSchoolDateFormat(true, true), strtotime($result_value->last_visit));
+        $nestedData[]=$result_value->total_visit;     
+        $data[] = $nestedData;
+      
+        }
+
+        $json_data = array(
+            "draw"            => intval($draw),   // for every request/draw by clientside , they send a number as a parameter, when they recieve a response/data they first check the draw number, so we are sending same number in draw. 
+            "recordsTotal"    => intval($total_result),  // total number of records
+            "recordsFiltered" => intval($total_result), // total number of records after searching, if there is no searching then totalFiltered = totalData
+            "data"            => $data   // total data array
+            );
+
+echo json_encode($json_data);  // send data as json format
+
+
+}
+
+		
+
+
+     public function getPartialsymptoms()
+    {
+       
+        $sys_id = $this->input->post('sys_id');
+        $row_id              = $this->input->post('row_id');
+        $sectionList = $this->symptoms_model->getbysys($sys_id);
+        $data['sectionList'] =$sectionList;
+        $data['row_id']      = $row_id;
+        $section_page = $this->load->view('admin/patient/_getPartialsymptoms', $data, true);
+      
+        return $this->output
+            ->set_content_type('application/json')
+            ->set_status_header(200)
+            ->set_output(json_encode(array(
+                'status' => 1,
+                'record' => $section_page,
+            )));
+
     }
 
     public function getPatientList() {
@@ -717,7 +1021,15 @@ class patient extends Admin_Controller {
         echo json_encode($patients);
     }
 
-    public function ipdsearch($bedid = '', $bedgroupid = '') {
+     public function getsymptoms() {
+        $id = $this->input->post('id');
+        $symptoms = $this->patient_model->getsymptoms($id);
+        $data["symptoms"] = $symptoms;
+        echo json_encode($symptoms);
+    }
+
+    public function ipdsearch($bedid = '', $bedgroupid = '') 
+    {
         if (!$this->rbac->hasPrivilege('ipd_patient', 'can_view')) {
             access_denied();
         }
@@ -739,6 +1051,10 @@ class patient extends Admin_Controller {
         $data['bedgroup_list'] = $this->bedgroup_model->bedGroupFloor();
         $doctors = $this->staff_model->getStaffbyrole(3);
         $patients = $this->patient_model->getPatientListall();
+        $symptoms_result = $this->symptoms_model->get();
+        $data['symptomsresult'] = $symptoms_result;
+        $symptoms_resulttype = $this->symptoms_model->getsymtype();
+        $data['symptomsresulttype'] = $symptoms_resulttype;
         $data["patients"] = $patients;
         $data["doctors"] = $doctors;
         $userdata = $this->customlib->getUserData();
@@ -746,7 +1062,7 @@ class patient extends Admin_Controller {
         $doctorid = "";
         $doctor_restriction = $this->session->userdata['hospitaladmin']['doctor_restriction'];
         $disable_option = FALSE;
-        if ($doctor_restriction == 'enabled') {
+        if($doctor_restriction == 'enabled') {
             if ($role_id == 3) {
                 $disable_option = TRUE;
                 $doctorid = $userdata['id'];
@@ -756,12 +1072,8 @@ class patient extends Admin_Controller {
         $data["doctor_select"] = $doctorid;
         $data["disable_option"] = $disable_option;
         $setting = $this->setting_model->get();
-
         $data['setting'] = $setting;
-
-        $data['resultlist'] = $this->patient_model->search_ipd_patients('');
-        //echo $this->db->last_query();
-       // exit;
+        $data['resultlist'] = $this->patient_model->search_ipd_patients('');      
         $i = 0;
         foreach ($data['resultlist'] as $key => $value) {
             $charges = $this->patient_model->getCharges($value["id"], $value["ipdid"]);
@@ -772,11 +1084,68 @@ class patient extends Admin_Controller {
         }
 
         $data['organisation'] = $this->organisation_model->get();
-
         $this->load->view('layout/header');
         $this->load->view('admin/patient/ipdsearch.php', $data);
         $this->load->view('layout/footer');
     }
+
+     public function ipd_search(){
+
+	        $draw = $_POST['draw'];
+	        $row = $_POST['start'];
+	        $rowperpage = $_POST['length']; // Rows display per page
+	        $columnIndex = $_POST['order'][0]['column']; // Column index
+	        $columnName = $_POST['columns'][$columnIndex]['data']; // Column name
+	        $columnSortOrder = $_POST['order'][0]['dir']; // asc or desc
+	        $where_condition=array();
+	        if(!empty($_POST['search']['value'])) {
+	            $where_condition=array('search'=>$_POST['search']['value']);
+	        }
+	        $resultlist = $this->patient_model->searchipd_datatable($where_condition);
+	        $total_result = $this->patient_model->searchipd_datatable_count($where_condition);
+	        $data = array();
+	       
+	        foreach ($resultlist as $result_key => $result_value) { 
+	            $action ="<div class='rowoptionview'>"; 
+	            if ($this->rbac->hasPrivilege('consultant register', 'can_add')) {                                             
+	            $action.="<a href='#' onclick='add_instruction(".$result_value->id.','.$result_value->ipdid."),refreshmodal()' class='btn btn-default btn-xs' data-toggle='tooltip' title='". $this->lang->line('instruction')."'><i class='fa fa-user-md'></i></a>";  
+	             } 
+
+	            if ($this->rbac->hasPrivilege('ipd_patient', 'can_view')) {
+	                                                        
+	             $action.="<a href=".base_url().'admin/patient/ipdprofile/'.$result_value->id.'/'.$result_value->ipdid." class='btn btn-default btn-xs'  data-toggle='tooltip' title='".$this->lang->line('show')."'><i class='fa fa-reorder' aria-hidden='true'></i></a>"; 
+	             } 
+
+	            $action.="</div'>";
+	        $first_action ="<a href=".base_url().'admin/patient/ipdprofile/'.$result_value->id.'/'.$result_value->ipdid.">" ;  
+	        $nestedData=array();  
+	        $nestedData[]= $first_action.$result_value->patient_name."</a>".$action;
+	        $nestedData[]=$result_value->ipd_no;
+	        $nestedData[]=$result_value->patient_unique_id;
+	        $nestedData[]=$result_value->gender;
+	        $nestedData[]=$result_value->mobileno;
+	        $nestedData[]=$result_value->name." ".$result_value->surname;
+	        $nestedData[]=$result_value->bed_name."-".$result_value->bedgroup_name."-".$result_value->floor_name;
+	        $nestedData[]=$result_value->charges;
+	        $nestedData[]=$result_value->payment;  
+	        //$nestedData[]=$result_value->charges-$result_value->payment;
+            $nestedData[]=$result_value->amountdue;
+	        $nestedData[]=$result_value->ipdcredit_limit;      
+	        $data[] = $nestedData;
+	      
+	        }
+
+	        $json_data = array(
+	            "draw"            => intval($draw),   // for every request/draw by clientside , they send a number as a parameter, when they recieve a response/data they first check the draw number, so we are sending same number in draw. 
+	            "recordsTotal"    => intval($total_result),  // total number of records
+	            "recordsFiltered" => intval($total_result), // total number of records after searching, if there is no searching then totalFiltered = totalData
+	            "data"            => $data   // total data array
+	            );
+
+	echo json_encode($json_data);  // send data as json format
+
+
+	}
 
     public function discharged_patients() {
         if (!$this->rbac->hasPrivilege('discharged patients', 'can_view')) {
@@ -823,15 +1192,17 @@ class patient extends Admin_Controller {
             $data["id"] = $id;
             $billstatus = $this->patient_model->getBillstatus($result["id"], $visitid);
             $data["billstatus"] = $billstatus;
-
-            //print_r($billstatus);
-            //exit();
             $data['visit_id'] = $visitid;
             $opd_details = $this->patient_model->getOPDetails($id);
             $visit_details = $this->patient_model->getVisitDetails($id, $visitid);
             $data['visit_details'] = $visit_details;
             $revisit_details = $this->patient_model->getVisitDetailsByOPD($id, $visitid);
+            //echo "<pre>";
+          //  print_r($revisit_details);
+          //  exit();
             $data['revisit_details'] = $revisit_details;
+            $symptoms_resulttype = $this->symptoms_model->getsymtype();
+            $data['symptomsresulttype'] = $symptoms_resulttype;
             $doctors = $this->staff_model->getStaffbyrole(3);
             $data["doctors"] = $doctors;
             $userdata = $this->customlib->getUserData();
@@ -845,13 +1216,15 @@ class patient extends Admin_Controller {
                     $doctorid = $userdata['id'];
                 }
             }
+            $staff_id                = $this->customlib->getStaffID();
+            $data['logged_staff_id'] = $staff_id;
             $data['organisation'] = $this->organisation_model->get();
             $data["doctor_select"] = $doctorid;
             $data["disable_option"] = $disable_option;
             $data["marital_status"] = $this->marital_status;
             $data["payment_mode"] = $this->payment_mode;
             $data["bloodgroup"] = $this->blood_group;
-             $data["charge_type"] = $this->charge_type;
+            $data["charge_type"] = $this->charge_type;
             $paymentDetails = $this->payment_model->opdPaymentDetails($id, $visitid);
             $diagnosis_details = $this->patient_model->getDiagnosisDetails($id);
             $timeline_list = $this->timeline_model->getPatientTimeline($id, $timeline_status = '');
@@ -862,19 +1235,19 @@ class patient extends Admin_Controller {
             $data['medicineCategory'] = $this->medicine_category_model->getMedicineCategory();
             $data['dosage'] = $this->medicine_dosage_model->getMedicineDosage();
             $data['medicineName'] = $this->pharmacy_model->getMedicineName();
-           
             $charges = $this->charge_model->getOPDCharges($id, $visitid);
             $paymentDetails = $this->payment_model->opdPaymentDetails($id, $visitid);
             $data["charges_detail"] = $charges;
             $data["payment_details"] = $paymentDetails;
             $paid_amount = $this->payment_model->getOPDPaidTotal($id, $visitid);
             $data["paid_amount"] = $paid_amount["paid_amount"];
-            // print_r($result);
-            // exit();
+            $data['roles'] = $this->role_model->get();
+            $data['visitconferences'] = $this->conference_model->getconfrencebyvisitopd($doctorid,$id,$visitid);           
             if ($result['status'] == 'paid') {
                 $generate = $this->patient_model->getopdBillInfo($result["id"], $visitid);
                 $data["bill_info"] = $generate;
             }
+            
             $this->load->view("layout/header");
             $this->load->view("admin/patient/visitDetails", $data);
             $this->load->view("layout/footer");
@@ -896,18 +1269,13 @@ class patient extends Admin_Controller {
             );
             $array = array('status' => 'fail', 'error' => $msg, 'message' => '');
         } else {
-
             $check_patient_id = $this->patient_model->getMaxOPDId();
-
             if (empty($check_patient_id)) {
                 $check_patient_id = 0;
             }
-
             $opdn_id = $check_patient_id + 1;
-
             $patient_id = $this->input->post('id');
-
-
+            $password = $this->input->post('password');
             $appointment_date = $this->input->post('appointment_date');
             $opd_data = array(
                 'patient_id' => $this->input->post('id'),
@@ -917,6 +1285,9 @@ class patient extends Admin_Controller {
                 'height' => $this->input->post('height'),
                 'weight' => $this->input->post('weight'),
                 'bp' => $this->input->post('bp'),
+                'pulse' => $this->input->post('pulse'),
+                'temperature' => $this->input->post('temperature'),
+                'respiration' => $this->input->post('respiration'),
                 'case_type' => $this->input->post('revisit_case'),
                 'symptoms' => $this->input->post('symptoms'),
                 'known_allergies' => $this->input->post('known_allergies'),
@@ -926,9 +1297,51 @@ class patient extends Admin_Controller {
                 'casualty' => $this->input->post('casualty'),
                 'payment_mode' => $this->input->post('payment_mode'),
                 'note' => $this->input->post('note_remark'),
+                'live_consult' => $this->input->post('live_consult'),
                 'generated_by' => $this->session->userdata('hospitaladmin')['id'],
             );
             $opd_id = $this->patient_model->addvisitDetails($opd_data);
+            $live_consult = $this->input->post('live_consult');
+            $doctor_id = $this->input->post('consultant_doctor');
+            $setting_result = $this->setting_model->getzoomsetting();
+            $opdduration = $setting_result->opd_duration;
+            if ($live_consult = $this->lang->line('yes')) {
+                $api_type = 'global';
+                $params = array(
+                    'zoom_api_key'    => "",
+                    'zoom_api_secret' => "",
+                );
+                $this->load->library('zoom_api', $params);
+                $insert_array = array(
+                    'staff_id'     => $doctor_id,
+                    'patient_id'     => $this->input->post('id'),
+                    'opd_id' => $this->input->post('opd_id'),
+                    'title'        => 'Online consult for Recheckup '. $this->input->post('opd_no'),
+                    'date' => date('Y-m-d H:i:s', $this->customlib->datetostrtotime($this->input->post('appointment_date'))),
+                    'duration'     => $opdduration,
+                    'created_id'   => $this->customlib->getStaffID(),
+                    'password'     => $password,
+                    'api_type'     => $api_type,
+                    'host_video'   => 1,
+                    'client_video' => 1,
+                    'purpose'      => 'consult',
+                    //'description'  => $this->input->post('description'),
+                    'timezone'     => $this->customlib->getTimeZone(),
+                );
+                $response = $this->zoom_api->createAMeeting($insert_array);
+             
+                if (!empty($response)) {
+                    if (isset($response->id)) {
+                        $insert_array['return_response'] = json_encode($response);
+                       
+                      $conferenceid = $this->conference_model->add($insert_array);
+                         $sender_details = array('patient_id' => $patient_id,'conference_id'=>$conferenceid,'contact_no' => $this->input->post('contact'), 'email' => $this->input->post('email'));
+
+                     $this->mailsmsconf->mailsms('live_consult', $sender_details);
+                     }
+                 }
+            }
+
             $sender_details = array('patient_id' => $patient_id, 'opd_no' => 'OPDN' . $opdn_id, 'contact_no' => $this->input->post('contact'), 'email' => $this->input->post('email'));
 
             $array = array('status' => 'success', 'error' => '', 'message' => $this->lang->line('success_message'));
@@ -938,15 +1351,17 @@ class patient extends Admin_Controller {
 
     public function profile($id) {
 
-
         if (!$this->rbac->hasPrivilege('opd_patient', 'can_view')) {
             access_denied();
         }
-
+            $this->session->set_userdata('top_menu', 'OPD_Out_Patient');
+    
         $opd_data = $this->session->flashdata('opd_data');
         $data['opd_data'] = $opd_data;
         $opdn_data = $this->session->flashdata('opdn_data');
         $data['opdn_data'] = $opdn_data;
+        $opdnpres_data = $this->session->flashdata('opdnpres_data');
+        $data['opdnpres_data'] = $opdnpres_data;
         $data["marital_status"] = $this->marital_status;
         $data["payment_mode"] = $this->payment_mode;
         $data["bloodgroup"] = $this->blood_group;
@@ -960,7 +1375,8 @@ class patient extends Admin_Controller {
         $data["payment_details"] = $paymentDetails;
         $paid_amount = $this->payment_model->getPaidTotal($id, '');
         $data["paid_amount"] = $paid_amount["paid_amount"];
-
+        $symptoms_resulttype = $this->symptoms_model->getsymtype();
+        $data['symptomsresulttype'] = $symptoms_resulttype;
         $data["id"] = $id;
         $doctors = $this->staff_model->getStaffbyrole(3);
         $data["doctors"] = $doctors;
@@ -969,41 +1385,34 @@ class patient extends Admin_Controller {
         $doctorid = "";
         $doctor_restriction = $this->session->userdata['hospitaladmin']['doctor_restriction'];
         $disable_option = FALSE;
-        if ($doctor_restriction == 'enabled') {
+        if($doctor_restriction == 'enabled') {
             if ($role_id == 3) {
                 $disable_option = TRUE;
                 $doctorid = $userdata['id'];
             }
         }
-
         $data["doctor_select"] = $doctorid;
         $data["disable_option"] = $disable_option;
+        $data['roles'] = $this->role_model->get();
         $result = array();
         $diagnosis_details = array();
         $opd_details = array();
         $timeline_list = array();
-
         if (!empty($id)) {
-            //print_r($id);
-            // exit();
             $result = $this->patient_model->getDetails($id);
-
-
             if ($result['status'] == 'paid') {
                 $generate = $this->patient_model->getBillInfo($result["id"]);
                 $data["bill_info"] = $generate;
             }
-
             $opd_details = $this->patient_model->getOPDetails($id);
             $diagnosis_details = $this->patient_model->getDiagnosisDetails($id);
             $timeline_list = $this->timeline_model->getPatientTimeline($id, $timeline_status = '');
         }
-        // exit();
-
         $data["result"] = $result;
         $data["diagnosis_detail"] = $diagnosis_details;
-        //print_r($opd_details);
-        //exit;
+        $staff_id                = $this->customlib->getStaffID();
+        $data['logged_staff_id'] = $staff_id;
+        $data['opdconferences'] = $this->conference_model->getconfrencebyopd($doctorid,$id);
         $data["opd_details"] = $opd_details;
         $data["timeline_list"] = $timeline_list;
         $data['organisation'] = $this->organisation_model->get();
@@ -1017,11 +1426,15 @@ class patient extends Admin_Controller {
         if (!$this->rbac->hasPrivilege('ipd_patient', 'can_view')) {
             access_denied();
         }
-        if ($ipdid == '') {
+
+       if ($ipdid == '') {
             $ipdresult = $this->patient_model->search_ipd_patients($searchterm = '', $active = 'yes', $discharged = 'no', $id);
             $ipdid = $ipdresult["ipdid"];
         }
+
         $this->session->set_userdata('top_menu', 'IPD_in_patient');
+        $ipdnpres_data = $this->session->flashdata('ipdnpres_data');
+        $data['ipdnpres_data'] = $ipdnpres_data;
         $data['bed_list'] = $this->bed_model->bedNoType();
         $data['bedgroup_list'] = $this->bedgroup_model->bedGroupFloor();
         $data['medicineCategory'] = $this->medicine_category_model->getMedicineCategory();
@@ -1031,6 +1444,8 @@ class patient extends Admin_Controller {
         $data["payment_mode"] = $this->payment_mode;
         $data["bloodgroup"] = $this->blood_group;
         $patients = $this->patient_model->getPatientListall();
+        $symptoms_resulttype = $this->symptoms_model->getsymtype();
+        $data['symptomsresulttype'] = $symptoms_resulttype;
         $data["patients"] = $patients;
         $data['organisation'] = $this->organisation_model->get();
         $data["id"] = $id;
@@ -1048,7 +1463,6 @@ class patient extends Admin_Controller {
                 $doctorid = $userdata['id'];
             }
         }
-
         $data["doctor_select"] = $doctorid;
         $data["disable_option"] = $disable_option;
         $result = array();
@@ -1058,15 +1472,15 @@ class patient extends Admin_Controller {
         $charges = array();
         if (!empty($id)) {
             $result = $this->patient_model->getIpdDetails($id, $ipdid, $active);
+
+          
             if ($result['status'] == 'paid') {
                 $generate = $this->patient_model->getBillInfo($result["id"]);
                 $data["bill_info"] = $generate;
             }
-
             $diagnosis_details = $this->patient_model->getDiagnosisDetails($id);
             $timeline_list = $this->timeline_model->getPatientTimeline($id, $timeline_status = '');
             $prescription_details = $this->prescription_model->getIpdPrescription($ipdid);
-
             $consultant_register = $this->patient_model->getPatientConsultant($id, $ipdid);
             $charges = $this->charge_model->getCharges($id, $ipdid);
             $paymentDetails = $this->payment_model->paymentDetails($id, $ipdid);
@@ -1083,11 +1497,33 @@ class patient extends Admin_Controller {
             $data["timeline_list"] = $timeline_list;
             $data["charge_type"] = $this->charge_type;
             $data["charges"] = $charges;
+            $data['roles'] = $this->role_model->get();
         }
-
+        $staff_id                = $this->customlib->getStaffID();
+        $data['logged_staff_id'] = $staff_id;
+        $data['ipdconferences'] = $this->conference_model->getconfrencebyipd($doctorid,$id,$ipdid);
         $this->load->view("layout/header");
         $this->load->view("admin/patient/ipdprofile", $data);
         $this->load->view("layout/footer");
+    }
+
+     public function getsummaryDetails($id) {
+        if (!$this->rbac->hasPrivilege('discharge_summary', 'can_view')) {
+            access_denied();
+        }
+        $print_details = $this->printing_model->get('', 'summary');
+        $data["print_details"] = $print_details;
+        $data['id'] = $id;
+        if (isset($_POST['print'])) {
+            $data["print"] = 'yes';
+        } else {
+            $data["print"] = 'no';
+        }
+        $result = $this->patient_model->getsummaryDetails($id);
+        
+        $data['result'] = $result;
+       
+        $this->load->view('admin/patient/printsummary', $data);
     }
 
     public function patientipddetails($patient_id) {
@@ -1188,9 +1624,10 @@ class patient extends Admin_Controller {
         $visitid = $this->input->post("visitid");
 
         $result = $this->patient_model->getDetails($id,$opdid);
-      //print_r($result);
-      //  exit();
-       
+  
+        if($result['symptoms']){
+            $result['symptoms'] = nl2br($result['symptoms']);
+        }
 
         if ((!empty($visitid))) {
 
@@ -1225,11 +1662,17 @@ class patient extends Admin_Controller {
         if (!$this->rbac->hasPrivilege('ipd_patient', 'can_view')) {
             access_denied();
         }
-        $id = $this->input->post("recordid");
+        $id = $this->input->post("recordid"); 
         $ipdid = $this->input->post("ipdid");
         $active = $this->input->post("active");
         $result = $this->patient_model->getIpdDetails($id, $ipdid, $active);
+          if($result['symptoms']){
+            $result['symptoms'] = $result['symptoms'];
+             $result['vsymptoms'] = nl2br($result['symptoms']);
+        }
+        $result['dob'] = date($this->customlib->getSchoolDateFormat(true, false), strtotime($result['dob']));
         $result['date'] = date($this->customlib->getSchoolDateFormat(true, true), strtotime($result['date']));
+        $result['discharge_date'] = date($this->customlib->getSchoolDateFormat(true, false), strtotime($result['discharge_date']));
         echo json_encode($result);
     }
 
@@ -1268,7 +1711,7 @@ class patient extends Admin_Controller {
                 'organisation' => $this->input->post('organisation'),
                 'known_allergies' => $this->input->post('known_allergies'),
                 'credit_limit' => $this->input->post('credit_limit'),
-                'is_active' => 'yes',
+                //'is_active' => 'yes',
             );
 
             $this->patient_model->add($patient_data);
@@ -1301,8 +1744,6 @@ class patient extends Admin_Controller {
             'id' => $id,
             'is_active' => 'no',
         );
-
-         
 
         $this->patient_model->add($patient_data);
         $this->user_model->updateUser($id,'no');
@@ -1348,8 +1789,6 @@ class patient extends Admin_Controller {
         } else {
             $id = $this->input->post('updateid');
             $appointment_date = $this->input->post('appointment_date');
-
-
             $patientid = $this->input->post('patient_id');
             $previous_bed_id = $this->input->post('previous_bed_id');
             $current_bed_id = $this->input->post('bed_no');
@@ -1366,6 +1805,9 @@ class patient extends Admin_Controller {
                 'height' => $this->input->post('height'),
                 'bp' => $this->input->post('bp'),
                 'weight' => $this->input->post('weight'),
+                'pulse' => $this->input->post('pulse'),
+                'temperature' => $this->input->post('temperature'),
+                'respiration' => $this->input->post('respiration'),
                 'case_type' => $this->input->post('case_type'),
                 'symptoms' => $this->input->post('symptoms'),
                 'known_allergies' => $this->input->post('known_allergies'),
@@ -1378,6 +1820,10 @@ class patient extends Admin_Controller {
             $bed_data = array('id' => $this->input->post('bed_no'), 'is_active' => 'no');
             $this->bed_model->savebed($bed_data);
             $ipd_id = $this->patient_model->add_ipd($ipd_data);
+
+            $patient_data = array('id' => $id, 'organisation' => $this->input->post('organisation'),'old_patient' => $this->input->post('old_patient')) ;
+            $this->patient_model->add($patient_data);
+
             $array = array('status' => 'success', 'error' => '', 'message' => "Patient Updated Successfully");
             if (isset($_FILES["file"]) && !empty($_FILES['file']['name'])) {
                 $fileInfo = pathinfo($_FILES["file"]["name"]);
@@ -1386,6 +1832,56 @@ class patient extends Admin_Controller {
                 $data_img = array('id' => $id, 'image' => 'uploads/patient_images/' . $img_name);
                 $this->patient_model->add($data_img);
             }
+        }
+        echo json_encode($array);
+    }
+
+     public function add_discharged_summary() {
+        // if (!$this->rbac->hasPrivilege('ipd_patient', 'can_edit')) {
+        //     access_denied();
+        // }
+       
+        $this->form_validation->set_rules('patient_id', $this->lang->line('patient') . " " . $this->lang->line('name'), 'trim|required|xss_clean');
+        $this->form_validation->set_rules('file', $this->lang->line('image'), 'callback_handle_upload');
+        if ($this->form_validation->run() == FALSE) {
+            $msg = array(
+                'patient_id' => form_error('patients_id'),
+            );
+            $array = array('status' => 'fail', 'error' => $msg, 'message' => '');
+        } else {
+           
+            $patientid = $this->input->post('patient_id');
+            $updated_id = $this->input->post('updateid');
+            $ipd_id = $this->input->post('ipdid');
+            if(!empty($updated_id)){
+                 $summary_dataupdate = array(
+                'id' => $updated_id,
+                'ipd_id' => $ipd_id,
+                'patient_id' => $patientid,
+                //'date' => date('Y-m-d H:i:s', $this->customlib->datetostrtotime($appointment_date)),
+                'note' => $this->input->post('note'),
+                'diagnosis'=> $this->input->post('diagnosis'),
+                'operation'=> $this->input->post('operation'),
+                'investigations' => $this->input->post('investigations'),
+                'treatment_home' => $this->input->post('treatment_at_home'),   
+            );
+            $summary_id = $this->patient_model->add_disch_summary($summary_dataupdate);
+            }else{
+                 $summary_data = array(
+                //'id' => $updated_id,
+                'ipd_id' => $ipd_id,
+                'patient_id' => $patientid,
+                'note' => $this->input->post('note'),
+                'diagnosis'=> $this->input->post('diagnosis'),
+                'operation'=> $this->input->post('operation'),
+                'investigations' => $this->input->post('investigations'),
+                'treatment_home' => $this->input->post('treatment_at_home'),   
+            );
+            $summary_id = $this->patient_model->add_disch_summary($summary_data);
+            }
+           
+            $array = array('status' => 'success', 'error' => '', 'message' => "Patient Updated Successfully");
+           
         }
         echo json_encode($array);
     }
@@ -1413,19 +1909,21 @@ class patient extends Admin_Controller {
                     'appointment_date' => date('Y-m-d H:i:s', $this->customlib->datetostrtotime($appointment_date)),
                     'case_type' => $this->input->post('case'),
                     'symptoms' => $this->input->post('symptoms'),
-                    'known_allergies' => $this->input->post('known_allergies'),
                     'refference' => $this->input->post('refference'),
                     'cons_doctor' => $this->input->post('consultant_doctor'),
                     'amount' => $this->input->post('amount'),
                     'bp' => $this->input->post('bp'),
                     'height' => $this->input->post('height'),
                     'weight' => $this->input->post('weight'),
+                    'pulse' => $this->input->post('pulse'),
+                    'temperature' => $this->input->post('temperature'),
+                    'respiration' => $this->input->post('respiration'),
                     'tax' => $this->input->post('tax'),
                     'casualty' => $this->input->post('casualty'),
                     'payment_mode' => $this->input->post('payment_mode'),
                     'note_remark' => $this->input->post('revisit_note'),
+                    'discharged' => 'no'
                 );
-
                 $opd_id = $this->patient_model->addvisitDetails($opd_data);
             } else {
                 $opd_data = array(
@@ -1433,17 +1931,21 @@ class patient extends Admin_Controller {
                     'appointment_date' => date('Y-m-d H:i:s', $this->customlib->datetostrtotime($appointment_date)),
                     'case_type' => $this->input->post('case'),
                     'symptoms' => $this->input->post('symptoms'),
-                    'known_allergies' => $this->input->post('known_allergies'),
+                    // 'known_allergies' => $this->input->post('known_allergies'),
                     'refference' => $this->input->post('refference'),
                     'cons_doctor' => $this->input->post('consultant_doctor'),
                     'amount' => $this->input->post('amount'),
                     'bp' => $this->input->post('bp'),
                     'height' => $this->input->post('height'),
                     'weight' => $this->input->post('weight'),
+                    'pulse' => $this->input->post('pulse'),
+                    'temperature' => $this->input->post('temperature'),
+                    'respiration' => $this->input->post('respiration'),
                     'tax' => $this->input->post('tax'),
                     'casualty' => $this->input->post('casualty'),
                     'payment_mode' => $this->input->post('payment_mode'),
                     'note_remark' => $this->input->post('revisit_note'),
+                    'discharged' => 'no'
                 );
 
                 $opd_id = $this->patient_model->add_opd($opd_data);
@@ -1501,7 +2003,7 @@ class patient extends Admin_Controller {
 
     public function editDiagnosis() {
 
-        if (!$this->rbac->hasPrivilege('opd editdiagnosis', 'can_view')) {
+        if (!$this->rbac->hasPrivilege('opd diagnosis', 'can_edit')) {
             access_denied();
         }
         $id = $this->input->post("id");
@@ -1585,7 +2087,7 @@ class patient extends Admin_Controller {
             $insert_id = $this->patient_model->add_diagnosis($data);
             if (isset($_FILES["report_document"]) && !empty($_FILES['report_document']['name'])) {
                 $fileInfo = pathinfo($_FILES["report_document"]["name"]);
-                $img_name = $insert_id . '.' . $fileInfo['extension'];
+                $img_name = $id . '.' . $fileInfo['extension'];
                 move_uploaded_file($_FILES["report_document"]["tmp_name"], "./uploads/patient_images/" . $img_name);
                 $data_img = array('id' => $id, 'document' => 'uploads/patient_images/' . $img_name);
                 $this->patient_model->add_diagnosis($data_img);
@@ -1601,7 +2103,7 @@ class patient extends Admin_Controller {
         }
         //$this->form_validation->set_rules('medicine[]', $this->lang->line('medicine'), 'trim|required|xss_clean');
         $this->form_validation->set_rules('medicine_cat[]', $this->lang->line('medicine'). " " . $this->lang->line('category'), 'trim|required|xss_clean');
-       $this->form_validation->set_rules('opd_no', $this->lang->line('opd_no'), 'trim|required|xss_clean');
+        $this->form_validation->set_rules('opd_no', $this->lang->line('opd_no'), 'trim|required|xss_clean');
         if ($this->form_validation->run() == FALSE) {
             $msg = array(
                 //'medicine' => form_error('medicine[]'),
@@ -1610,12 +2112,16 @@ class patient extends Admin_Controller {
             );
             $array = array('status' => 'fail', 'error' => $msg, 'message' => '');
         } else {
-
+            
             $opd_id = $this->input->post('opd_no');
+            $opd_no_value = $this->input->post('opd_no_value');
 
-
+            if(!empty($opd_id)){
+                 $opd_details = $this->patient_model->getopddetailspres($opd_id);
+            }
+            
+            $visible_module = $this->input->post("visible[]");
             $visit_id = $this->input->post('visit_id');
-
             $medicine = $this->input->post("medicine[]");
             $medicine_cat = $this->input->post("medicine_cat[]");
             $dosage = $this->input->post("dosage[]");
@@ -1642,9 +2148,27 @@ class patient extends Admin_Controller {
                 $data_array[] = $data;
                 $i++;
             }
-            $opd_array = array('id' => $opd_id, 'header_note' => $header_note, 'footer_note' => $footer_note);
+
+            if ($visit_id > 0) {
+                $opdvisit_array = array('id' => $visit_id, 'header_note' => $header_note, 'footer_note' => $footer_note);
+                 $this->patient_model->add_opdvisit($opdvisit_array);
+
+            }else{
+                $opd_array = array('id' => $opd_id, 'header_note' => $header_note, 'footer_note' => $footer_note);
+                 $this->patient_model->add_opd($opd_array);
+            }
+
             $this->patient_model->add_prescription($data_array);
-            $this->patient_model->add_opd($opd_array);
+           
+            $insert_id = $opd_details['patient_id'];
+            $doctor_id = $opd_details['staff_id'];
+            $notificationurl = $this->notificationurl;
+            $url_link = $notificationurl["opdpres"];
+            $url = base_url() . $url_link . '/' . $insert_id . '/' . $opd_id;
+
+            $this->opdpresNotification($insert_id, $doctor_id, $opd_id, $opd_no_value,$url, $visible_module);
+
+
             $array = array('status' => 'success', 'error' => '', 'message' => $this->lang->line('success_message'));
         }
 
@@ -1652,14 +2176,13 @@ class patient extends Admin_Controller {
 
     }
 
-    public function add_ipdprescription() {
-        if (!$this->rbac->hasPrivilege('prescription', 'can_add')) {
+    public function add_ipdprescription() { 
+        if (!$this->rbac->hasPrivilege('ipd_prescription', 'can_add')) {
             access_denied();
         }
        
-        $this->form_validation->set_rules('ipd_no', $this->lang->line('ipd_no') . " " . $this->lang->line('category'), 'trim|required|xss_clean');
-        //$this->form_validation->set_rules('medicine[]', $this->lang->line('medicine'), 'trim|required|xss_clean');
-        $this->form_validation->set_rules('medicine_cat[]', $this->lang->line('medicine'). " " . $this->lang->line('category'), 'trim|required|xss_clean');  
+        $this->form_validation->set_rules('medicine_cat[]', $this->lang->line('medicine'). " " . $this->lang->line('category'), 'trim|required|xss_clean'); 
+        $this->form_validation->set_rules('ipd_no', $this->lang->line('ipd_no') . " " . $this->lang->line('category'), 'trim|required|xss_clean'); 
      
         if ($this->form_validation->run() == FALSE) {
             $msg = array(
@@ -1670,7 +2193,12 @@ class patient extends Admin_Controller {
             $array = array('status' => 'fail', 'error' => $msg, 'message' => '');
         } else {
             $ipd_id = $this->input->post('ipd_no');
+              $ipd_no_value = $this->input->post('ipd_no_value');
 
+            if(!empty($ipd_id)){
+                 $ipd_details = $this->patient_model->getipddetailspres($ipd_id);
+            }
+          
             $visit_id = 1;
             $medicine = $this->input->post("medicine[]");
             $medicine_cat = $this->input->post("medicine_cat[]");
@@ -1678,6 +2206,7 @@ class patient extends Admin_Controller {
             $instruction = $this->input->post("instruction[]");
             $header_note = $this->input->post("header_note");
             $footer_note = $this->input->post("footer_note");
+            $visible_module = $this->input->post("visible[]");
             $data_array = array();
             $ipd_basic_array = array('ipd_id' => $ipd_id, 'header_note' => $header_note, 'footer_note' => $footer_note, 'date' => date("Y-m-d"));
             $basic_id = $this->prescription_model->add_ipdprescriptionbasic($ipd_basic_array);
@@ -1699,6 +2228,15 @@ class patient extends Admin_Controller {
                 }
 
                 $data = array('basic_id' => $basic_id, 'ipd_id' => $ipd_id, 'medicine' => $value, 'dosage' => $do, 'medicine_category_id' => $medicine_cat_value, 'instruction' => $inst);
+
+                $insert_id = $ipd_details['patient_id'];
+            $doctor_id = $ipd_details['staff_id'];
+            $notificationurl = $this->notificationurl;
+            $url_link = $notificationurl["ipdpres"];
+            $url = base_url() . $url_link . '/' . $insert_id . '/' . $ipd_id.'/'.$basic_id;
+           
+            $this->ipdpresNotification($insert_id, $doctor_id, $ipd_id, $ipd_no_value,$url, $visible_module,$basic_id); 
+
                 $data_array[] = $data;
                 $i++;
             }
@@ -1736,6 +2274,8 @@ class patient extends Admin_Controller {
 
             $data_array = array();
             $delete_arr = array();
+
+            if(!empty($previous_pres_id)){
             foreach ($previous_pres_id as $pkey => $pvalue) {
                 if (in_array($pvalue, $prescription_id)) {
                     
@@ -1743,6 +2283,26 @@ class patient extends Admin_Controller {
                     $delete_arr[] = array('id' => $pvalue,);
                 }
             }
+            }
+
+       $visible_module = $this->input->post("visible");     
+
+         $opd_no_value = $this->input->post('opd_no_value');
+
+            if(!empty($opd_id)){
+                 $opd_details = $this->patient_model->getopddetailspres($opd_id);
+            }
+          
+          $insert_id = $opd_details["patient_id"];
+          $doctor_id = $opd_details["staff_id"];
+
+       $notificationurl = $this->notificationurl;
+            $url_link = $notificationurl["opdpres"];
+            $url = base_url() . $url_link . '/' . $insert_id . '/' . $opd_id;
+            $this->opdpresNotification($insert_id, $doctor_id, $opd_id, $opd_no_value,$url, $visible_module);
+
+       //$this->opdpresNotification($insert_id, $doctor_id, $opd_id, $opd_no_value,$url, $visible_module);
+
 
             $i = 0;
             foreach ($medicine as $key => $value) {
@@ -1752,6 +2312,7 @@ class patient extends Admin_Controller {
                 if (!empty($dosage[$i])) {
                     $do = $dosage[$i];
                 }
+
                 if (!empty($instruction[$i])) {
                     $inst = $instruction[$i];
                 }
@@ -1772,9 +2333,14 @@ class patient extends Admin_Controller {
 
                 $i++;
             }
-
-            $opd_array = array('id' => $opd_id, 'header_note' => $header_note, 'footer_note' => $footer_note);
-
+            if ($visit_id > 0) {
+                $opdvisit_array = array('id' => $visit_id, 'header_note' => $header_note, 'footer_note' => $footer_note);
+                $this->patient_model->add_opdvisit($opdvisit_array);
+            }else{
+               $opd_array = array('id' => $opd_id, 'header_note' => $header_note, 'footer_note' => $footer_note); 
+               $this->patient_model->add_opd($opd_array);
+            }
+            
             if (!empty($data_array)) {
                 $this->patient_model->add_prescription($data_array);
             }
@@ -1782,7 +2348,7 @@ class patient extends Admin_Controller {
 
                 $this->prescription_model->delete_prescription($delete_arr);
             }
-            $this->patient_model->add_opd($opd_array);
+            
 
             $array = array('status' => 'success', 'error' => '', 'message' => 'Prescription Added Successfully');
         }
@@ -1794,14 +2360,33 @@ class patient extends Admin_Controller {
             access_denied();
         }
         $this->form_validation->set_rules('ipd_id', $this->lang->line('ipd_no'), 'trim|required|xss_clean');
+        $this->form_validation->set_rules('medicine_cat[]', $this->lang->line('medicine')." ".$this->lang->line('category'), 'trim|required|xss_clean');
         if ($this->form_validation->run() == FALSE) {
             $msg = array(
                 'ipd_id' => form_error('ipd_id'),
+                'medicine_cat' => form_error('medicine_cat[]'),
             );
             $array = array('status' => 'fail', 'error' => $msg, 'message' => '');
         } else {
             $ipd_id = $this->input->post('ipd_id');
             $visit_id = $this->input->post('visit_id');
+
+              $visible_module = $this->input->post("visible");     
+
+         $ipd_no_value = $this->input->post('ipd_no_value');
+
+            if(!empty($ipd_id)){
+                $ipd_details = $this->patient_model->getipddetailspres($ipd_id);
+            }
+          
+          $insert_id = $ipd_details["patient_id"];
+          $doctor_id = $ipd_details["staff_id"];
+
+       $notificationurl = $this->notificationurl;
+            $url_link = $notificationurl["ipdpres"];
+            $url = base_url() . $url_link . '/' . $insert_id . '/' . $ipd_id;
+
+          $this->ipdpresNotification($insert_id, $doctor_id, $ipd_id, $ipd_no_value,$url, $visible_module); 
 
             $medicine = $this->input->post("medicine[]");
             $medicine_cat = $this->input->post("medicine_cat[]");
@@ -1809,6 +2394,7 @@ class patient extends Admin_Controller {
             $previous_pres_id = $this->input->post("previous_pres_id[]");
 
             $dosage = $this->input->post("dosage[]");
+
             $instruction = $this->input->post("instruction[]");
             $header_note = $this->input->post("header_note");
             $footer_note = $this->input->post("footer_note");
@@ -1845,11 +2431,8 @@ class patient extends Admin_Controller {
                 } else {
 
                     $update_data = array('id' => $prescription_id[$i], 'medicine_category_id' => $medicine_cat_value, 'ipd_id' => $ipd_id, 'medicine' => $value, 'dosage' => $do, 'instruction' => $inst);
-
                     $this->prescription_model->update_ipdprescription($update_data);
                 }
-
-
                 $i++;
             }
 
@@ -1870,6 +2453,7 @@ class patient extends Admin_Controller {
     }
 
     public function add_inpatient() {
+       
         if (!$this->rbac->hasPrivilege('ipd_patient', 'can_add')) {
             access_denied();
         }
@@ -1895,31 +2479,36 @@ class patient extends Admin_Controller {
             $array = array('status' => 'fail', 'error' => $msg, 'message' => '');
         } else {
 
-
+            
             $check_ipd_id = $this->patient_model->getMaxIPDId();
             $ipdnoid = $check_ipd_id + 1;
             $ipdno = 'IPDN' . $ipdnoid;
-            // $patientun_id = $this->input->post('patientunique_id');
-            // $ipdno = "IPDN".$patientun_id;
             $appointment_date = $this->input->post('appointment_date');
             $insert_id = $this->input->post('patient_id');
+            $password = $this->input->post('password');
             $email = $this->input->post('email');
             $mobileno = $this->input->post('mobileno');
             $patient_name = $this->input->post('patient_name');
-
+            $live_consult = $this->input->post('live_consult');
+            $doctor_id = $this->input->post('consultant_doctor');
+            $date = date('Y-m-d H:i:s', $this->customlib->datetostrtotime($appointment_date));
             $ipd_data = array(
-                'date' => date('Y-m-d H:i:s', $this->customlib->datetostrtotime($appointment_date)),
+                'date' => $date,
                 'ipd_no' => $ipdno,
                 'bed' => $this->input->post('bed_no'),
                 'bed_group_id' => $this->input->post('bed_group_id'),
                 'height' => $this->input->post('height'),
                 'weight' => $this->input->post('weight'),
                 'bp' => $this->input->post('bp'),
+                'pulse' => $this->input->post('pulse'),
+                'temperature' => $this->input->post('temperature'),
+                'respiration' => $this->input->post('respiration'),
                 'case_type' => $this->input->post('case'),
                 'symptoms' => $this->input->post('symptoms'),
                 'refference' => $this->input->post('refference'),
                 'cons_doctor' => $this->input->post('consultant_doctor'),
                 'patient_id' => $insert_id,
+                'credit_limit'=>$this->input->post('credit_limit'),
                 'casualty' => $this->input->post('casualty'),
                 'discharged' => 'no'
                 );
@@ -1935,6 +2524,45 @@ class patient extends Admin_Controller {
             $updateData = array('id' => $insert_id, 'is_ipd' => 'yes', 'discharged' => 'no');
             $this->patient_model->add($updateData);
             $ipdid = $this->patient_model->add($ipdpatient_data);
+            //$date = date('Y-m-d H:i:s', $this->customlib->datetostrtotime($this->input->post('appointment_date')));
+            $setting_result = $this->setting_model->getzoomsetting();
+            $ipdduration = $setting_result->ipd_duration;
+             if ($live_consult = $this->lang->line('yes')) {
+                $api_type = 'global';
+                $params = array(
+                    'zoom_api_key'    => "",
+                    'zoom_api_secret' => "",
+                );
+                $this->load->library('zoom_api', $params);
+                $insert_array = array(
+                    'staff_id'     => $doctor_id,
+                    'patient_id'     => $insert_id,
+                    'ipd_id' => $ipd_id,
+                    'title'        => 'Online consult for ' . $ipdno,
+                    'date' => $date,
+                    'duration'     => $ipdduration,
+                    'created_id'   => $this->customlib->getStaffID(),
+                    'api_type'     => $api_type,
+                    'host_video'   => 1,
+                    'client_video' => 1,
+                    'purpose'      => 'consult',
+                    'password'    => $password,
+                    //'description'  => $this->input->post('description'),
+                    'timezone'     => $this->customlib->getTimeZone(),
+                );
+                $response = $this->zoom_api->createAMeeting($insert_array);
+             
+                if ($response) {
+                    if (isset($response->id)) {
+                        $insert_array['return_response'] = json_encode($response);
+                        $conferenceid = $this->conference_model->add($insert_array);
+                         $sender_details = array('patient_id' => $insert_id,'conference_id'=>$conferenceid,'contact_no' => $mobileno, 'email' => $email);
+
+                     $this->mailsmsconf->mailsms('live_consult', $sender_details);
+                     }
+                 }
+            }
+
             $array = array('status' => 'success', 'error' => '', 'message' => "Patient Added Successfully");
             if ($this->session->has_userdata("appointment_id")) {
 
@@ -1955,7 +2583,7 @@ class patient extends Admin_Controller {
             $notificationurl = $this->notificationurl;
             $url_link = $notificationurl["ipd"];
             $url = base_url() . $url_link . '/' . $insert_id . '/' . $ipd_id;
-            $this->ipdNotification($insert_id, $this->input->post('consultant_doctor'), $ipdno, $url);
+            $this->ipdNotification($insert_id, $this->input->post('consultant_doctor'), $ipdno, $url,$date);
 
             $sender_details = array('patient_id' => $insert_id,'patient_name' => $patient_name,'ipd_no' => $ipdno, 'contact_no' => $mobileno, 'email' => $email);
             $this->mailsmsconf->mailsms('ipd_patient_registration', $sender_details);
@@ -2030,30 +2658,156 @@ class patient extends Admin_Controller {
         echo json_encode($patient_charge);
     }
 
-    public function opd_report() {
+     public function opd_report() {
         if (!$this->rbac->hasPrivilege('opd_patient', 'can_view')) {
             access_denied();
         }
         $doctorlist = $this->staff_model->getEmployeeByRoleID(3);
         $data['doctorlist'] = $doctorlist;
-
+        $doctors = $this->staff_model->getStaffbyrole(3);
+        $data['doctors'] = $doctors;
         $this->session->set_userdata('top_menu', 'Reports');
         $this->session->set_userdata('sub_menu', 'admin/patient/opd_report');
-        $this->session->set_userdata('top_menu', 'Reports');
-        $select = 'opd_details.*,staff.name,staff.surname,patients.id as pid,patients.patient_name,patients.patient_unique_id,patients.guardian_name,patients.address,patients.admission_date,patients.gender,patients.mobileno,patients.age,patients.month';
+        $select = 'opd.*,opd_details.opd_no,opd_details.cons_doctor,opd_details.casualty,opd_details.refference,staff.name,staff.surname,patients.id as pid,patients.patient_name,patients.patient_unique_id,patients.guardian_name,patients.address,patients.admission_date,patients.gender,patients.mobileno,patients.age,patients.month';
         $join = array(
-            'JOIN staff ON opd_details.cons_doctor = staff.id',
-            'JOIN patients ON opd_details.patient_id = patients.id',
-            
+            'LEFT JOIN patients ON opd.patient_id = patients.id',
+            'LEFT JOIN opd_details ON opd_details.id = opd.id',
+            'LEFT JOIN staff ON opd_details.cons_doctor = staff.id'
         );
         $where = array();
+
+        $patient_status = $this->input->post("patient_status");
+        $data["patient_status"] = $patient_status;
+        if(!empty($patient_status)){
+           $additional_where = array(
+                    "opd.paytype = '".$patient_status."'"
+                );
+        }else{
+            $additional_where = array('1 = 1');
+        }
+        
         $doctorid = $this->input->post('doctor');
 
         if (!empty($doctorid)) {
-            $where = array('opd_details.cons_doctor =' . $doctorid);
+            $additional_where= array('opd_details.cons_doctor =' . $doctorid);
         }
-        $table_name = "opd_details";
+        if (!empty($doctorid and $patient_status)) {
+           $additional_where = array("opd_details.cons_doctor = '".$doctorid."'", "opd.paytype = '".$patient_status."'");
+        }
+        
+        $table_name = "(SELECT `id`, `patient_id`,`amount`,`appointment_date`,`payment_mode`,'visit' as paytype FROM `opd_details` UNION ALL SELECT `opd_id`,`patient_id`,`amount`,`appointment_date`,`payment_mode`,'rechekup' as paytype FROM `visit_details` UNION ALL SELECT `opd_id`,`patient_id`,`paid_amount`,`date`,`payment_mode`,'payment' as paytype FROM `opd_payment` UNION ALL SELECT `opd_id`,`patient_id`,`net_amount`,`date`,`status`,'bill' as paytype FROM `opd_billing`) AS opd";
 
+        $disable_option = FALSE;
+        $userdata = $this->customlib->getUserData();
+        $role_id = $userdata['role_id'];
+        $doctor_restriction = $this->session->userdata['hospitaladmin']['doctor_restriction'];
+        if ($doctor_restriction == 'enabled') {
+            if ($role_id == 3) {
+
+                $user_id = $userdata["id"];
+                $doctorid = $user_id;
+                $additional_where = array(
+                    "opd_details.cons_doctor = " . $user_id,
+                );
+                $disable_option = TRUE;
+            }
+        }
+        $data['disable_option'] = $disable_option;
+        $data['doctor_select'] = $doctorid;
+        $search_type = $this->input->post("search_type");
+      
+        if (isset($search_type)) {
+            $search_type = $this->input->post("search_type");
+        } else {
+            $search_type = "this_month";
+        }
+        
+            $search_table = "opd";
+            $search_column = "appointment_date";
+            $resultlist = $this->report_model->searchReport($select, $join, $table_name, $search_type, $search_table, $search_column,$additional_where,$where);
+        $data["searchlist"] = $this->search_type;
+        $data["search_type"] = $search_type;
+        $data["resultlist"] = $resultlist;
+
+       
+        
+        $i = 0;
+        if (!empty($resultlist)) {
+            foreach ($data['resultlist'] as $key => $value) {
+                $charges = $this->patient_model->getOPDCharges($value["pid"], $value["id"]);
+                $data['resultlist'][$i]["charges"] = $charges['charge'];
+                $vamount = $this->patient_model->getOPDvisitCharges($value["pid"], $value["id"]);
+                $data['resultlist'][$i]["vamount"] = $vamount['vamount'];
+                $payment = $this->patient_model->getopdPayment($value["pid"], $value["id"]);
+                $data['resultlist'][$i]["payment"] = $payment['opdpayment'];
+                $i++;
+            }
+        }
+
+        $this->load->view('layout/header');
+        $this->load->view('admin/patient/opdReport.php', $data);
+        $this->load->view('layout/footer');
+    }
+
+
+   public function opdreportbalance() {
+        if (!$this->rbac->hasPrivilege('opd_balance_report', 'can_view')) {
+            access_denied();
+        }
+        
+        $this->session->set_userdata('top_menu', 'Reports');
+        $this->session->set_userdata('sub_menu', 'admin/patient/opdreportbalance');
+        $doctorlist = $this->staff_model->getEmployeeByRoleID(3);
+        $data['doctorlist'] = $doctorlist;
+        $doctors = $this->staff_model->getStaffbyrole(3);
+        $data['doctors'] = $doctors;
+        $patient_status = $this->input->post("patient_status");
+        $data["patient_status"] = $patient_status ;
+
+        $status = 'yes';
+        if(empty($patient_status)){
+           $patient_status = 'on_opd' ;
+        }
+        if($patient_status == 'all'){
+            $status = '';
+        }else if($patient_status == 'on_opd'){
+            $status = 'yes';
+        }else if($patient_status == 'discharged'){
+            $status = 'no';
+        }   
+
+        $select = 'opd_details.*,staff.name,staff.surname,patients.id as pid,patients.patient_name,patients.patient_unique_id,patients.guardian_name,patients.address,patients.admission_date,patients.gender,patients.mobileno,patients.age,patients.month';
+        $join = array(
+            'LEFT JOIN staff ON opd_details.cons_doctor = staff.id',
+            'LEFT JOIN patients ON opd_details.patient_id = patients.id',
+        );
+        $where = array();
+        // echo $patient_status."".$status;
+        // if(!empty($patient_status) && ($status != '')) {
+        //    $additional_where = array(
+                   
+        //             "opd_details.discharged = '".$status."'","patients.is_active = 'yes'"
+        //         );
+        // }else{
+        //     $additional_where = array('1 = 1');
+        // }
+        
+        // $doctorid = $this->input->post('doctor');
+
+        // if (!empty($doctorid)) {
+        //     $additional_where = array("opd_details.cons_doctor ='".$doctorid."'","patients.is_active = 'yes'");
+        // }
+        // if (!empty($doctorid and $patient_status)) {
+        //    $additional_where = array("opd_details.cons_doctor = '".$doctorid."'", "opd_details.discharged = '".$status."'","patients.is_active = 'yes'");
+        // }
+        $additional_where = array("patients.is_active = 'yes'", "opd_details.discharged != '".$status."'");
+        $doctorid = $this->input->post('doctor');
+
+        if (!empty($doctorid)) {
+            $additional_where = array("patients.is_active = 'yes' ", "opd_details.cons_doctor ='" . $doctorid . "'", "opd_details.discharged != '".$status."'");
+        }
+       
+        $table_name = "opd_details";
         $disable_option = FALSE;
         $userdata = $this->customlib->getUserData();
         $role_id = $userdata['role_id'];
@@ -2072,6 +2826,7 @@ class patient extends Admin_Controller {
         $data['disable_option'] = $disable_option;
         $data['doctor_select'] = $doctorid;
         $search_type = $this->input->post("search_type");
+        
         if (isset($search_type)) {
             $search_type = $this->input->post("search_type");
         } else {
@@ -2081,43 +2836,46 @@ class patient extends Admin_Controller {
         if (empty($search_type)) {
 
             $search_type = "";
-            $resultlist = $this->report_model->getReport($select, $join, $table_name, $where);
+            $resultlist = $this->report_model->getReport($select, $join, $table_name, $where,$additional_where);
         } else {
 
             $search_table = "opd_details";
             $search_column = "appointment_date";
-            $resultlist = $this->report_model->searchReport($select, $join, $table_name, $search_type, $search_table, $search_column, $where);
+            $resultlist = $this->report_model->searchReport($select, $join, $table_name, $search_type, $search_table, $search_column,$additional_where, $where);
         }
-         /* $resultList2 = $this->report_model->searchReport($select = 'opd_details.*,opd_patient_charges.apply_charge as amount, opd_patient_charges.created_at as payment_date,staff.name,staff.surname,patients.id as pid,patients.patient_name,patients.patient_unique_id,patients.guardian_name,patients.address,patients.admission_date,patients.gender,patients.mobileno,patients.age,patients.month', $join = array(
-            'JOIN staff ON opd_details.cons_doctor = staff.id',
-            'JOIN patients ON opd_details.patient_id = patients.id',
-            'JOIN opd_patient_charges ON opd_patient_charges.opd_id = opd_details.id',
-                ), $table_name = 'opd_details', $search_type, $search_table = 'opd_patient_charges', $search_column = 'created_at', $where);
-        // echo $this->db->last_query();  
-        if (!empty($resultList2)) {
-            array_push($resultlist, $resultList2[0]);
-        }*/
-        // echo "<pre>";
-        // print_r($resultlist);
-        // exit;
+
+        //echo $this->db->last_query();
+        //exit;
         $data["searchlist"] = $this->search_type;
         $data["search_type"] = $search_type;
         $data["resultlist"] = $resultlist;
-$i = 0;
+
+        $i = 0;
         if (!empty($resultlist)) {
             foreach ($data['resultlist'] as $key => $value) {
                 $charges = $this->patient_model->getOPDCharges($value["pid"], $value["id"]);
-             if(!empty($charges))
-               $data['resultlist'][$i]["charges"] = $charges['charge'];
+                $data['resultlist'][$i]["charges"] = $charges['charge'];
+                $vamount = $this->patient_model->getOPDvisitCharges($value["pid"], $value["id"]);
+                $data['resultlist'][$i]["vamount"] = $vamount['vamount'];
+                $billpaid = $this->patient_model->getOPDbill($value["pid"], $value["id"]);
+                $data['resultlist'][$i]["billpaid"] = $billpaid['billamount'];
+                $payment = $this->patient_model->getopdPayment($value["pid"], $value["id"]);
+                $data['resultlist'][$i]["payment"] = $payment['opdpayment'];
                 $i++;
             }
         }
-    
-     
+        if(!empty($patient_status)) { 
+           $data['patient_status'] = $patient_status;
+
+            }else{
+          $data['patient_status'] = 'on_opd';
+
+            }
         $this->load->view('layout/header');
-        $this->load->view('admin/patient/opdReport.php', $data);
+        $this->load->view('admin/patient/opdReportbalance.php', $data);
         $this->load->view('layout/footer');
     }
+
 
     public function ipdReport() {
         if (!$this->rbac->hasPrivilege('ipd_report', 'can_view')) {
@@ -2141,7 +2899,7 @@ $i = 0;
             $status = 'no';
         }
       //  echo $patient_status."-".$status ;
-        $select = 'ipd_details.*,ipd_details.discharged as ipd_discharge,payment.paid_amount, payment.date as payment_date, staff.name,staff.surname,patients.id as pid,patients.patient_name,patients.patient_unique_id,patients.guardian_name,patients.address,patients.admission_date,patients.gender,patients.mobileno,patients.age,patients.month';
+        $select = 'ipd_details.*,ipd_details.discharged as ipd_discharge,payment.paid_amount,payment.payment_mode, payment.date as payment_date, staff.name,staff.surname,patients.id as pid,patients.patient_name,patients.patient_unique_id,patients.guardian_name,patients.address,patients.admission_date,patients.gender,patients.mobileno,patients.age,patients.month';
         $join = array(
             'JOIN staff ON ipd_details.cons_doctor = staff.id',
             'JOIN patients ON ipd_details.patient_id = patients.id',
@@ -2153,7 +2911,7 @@ $i = 0;
         $doctorid = $this->input->post('doctor');
 
         if (!empty($doctorid)) {
-            $additional_where = array("patients.is_active = 'yes' ", "ipd_details.cons_doctor ='" . $doctorid . "'", "ipd_details.discharged != '".$status."'");
+            $additional_where = array("patients.is_active = 'yes' ", "ipd_details.cons_doctor ='" . $doctorid . "' ", "ipd_details.discharged != '".$status."'");
         }
         $disable_option = FALSE;
         $userdata = $this->customlib->getUserData();
@@ -2166,8 +2924,8 @@ $i = 0;
                 $user_id = $userdata["id"];
                 $doctorid = $user_id;
                 $additional_where = array(
-                    "ipd_details.cons_doctor = " . $user_id,
-                    "patients.discharged != 'yes'"
+                    "ipd_details.cons_doctor = " . $user_id." ",
+                    "ipd_details.discharged != '" . $status . "' "
                 );
                 $disable_option = TRUE;
             }
@@ -2229,6 +2987,120 @@ $i = 0;
         $this->load->view('layout/footer');
     }
 
+       public function ipdReportbalance() {
+        if (!$this->rbac->hasPrivilege('ipd_balance_report', 'can_view')) {
+            access_denied();
+        }
+        $this->session->set_userdata('top_menu', 'Reports');
+        $this->session->set_userdata('sub_menu', 'admin/patient/ipdreportbalance');
+
+        $doctorlist = $this->staff_model->getEmployeeByRoleID(3);
+        $data['doctorlist'] = $doctorlist;
+        $status = 'no';
+        $patient_status = $this->input->post("patient_status");
+        if(empty($patient_status)){
+           $patient_status = 'on_bed' ;
+        }
+        if($patient_status == 'all'){
+            $status = '';
+        }else if($patient_status == 'on_bed'){
+            $status = 'yes';
+        }else if($patient_status == 'discharged'){
+            $status = 'no';
+        }
+      //  echo $patient_status."-".$status ;
+        $select = 'ipd_details.*,ipd_details.discharged as ipd_discharge,payment.paid_amount, payment.date as payment_date,IFNULL(ipd_billing.total_amount,0) as totalpaid_amount,staff.name,staff.surname,patients.id as pid,patients.patient_name,patients.patient_unique_id,patients.guardian_name,patients.address,patients.admission_date,patients.gender,patients.mobileno,patients.age,patients.month';
+        $join = array(
+            'LEFT JOIN staff ON ipd_details.cons_doctor = staff.id',
+            'LEFT JOIN patients ON ipd_details.patient_id = patients.id',
+            'LEFT JOIN payment ON payment.ipd_id = ipd_details.id',
+            'LEFT JOIN ipd_billing ON ipd_billing.ipd_id = ipd_details.id',
+        );
+        $table_name = "ipd_details";
+        //$group_by = "payment.ipd_id";
+        $group_by = "ipd_details.ipd_no";
+        $additional_where = array("patients.is_active = 'yes'", "ipd_details.discharged != '".$status."'");
+        $doctorid = $this->input->post('doctor');
+
+        if (!empty($doctorid)) {
+            $additional_where = array("patients.is_active = 'yes' ", "ipd_details.cons_doctor ='" . $doctorid . "'", "ipd_details.discharged != '".$status."'");
+        }
+        $disable_option = FALSE;
+        $userdata = $this->customlib->getUserData();
+        $role_id = $userdata['role_id'];
+
+        $doctor_restriction = $this->session->userdata['hospitaladmin']['doctor_restriction'];
+        if ($doctor_restriction == 'enabled') {
+            if ($role_id == 3) {
+
+                $user_id = $userdata["id"];
+                $doctorid = $user_id;
+                $additional_where = array(
+                    "ipd_details.cons_doctor = " . $user_id,
+                    "patients.discharged != 'yes'"
+                );
+                $disable_option = TRUE;
+            }
+        }
+        $data['disable_option'] = $disable_option;
+        $data['doctor_select'] = $doctorid;
+
+        $search_type = $this->input->post("search_type");
+        if (isset($search_type)) {
+            $search_type = $this->input->post("search_type");
+        } else {
+            $search_type = "this_month";
+        }
+
+        if (empty($search_type)) {
+            $search_type = "";
+            $resultlist = $this->report_model->getReportbalance($select, $join, $table_name, $additional_where,$group_by);
+        } else {
+
+            $search_table = "ipd_details";
+            $search_column = "date";
+            $resultlist = $this->report_model->searchReportbalance($select, $join, $table_name, $search_type, $search_table, $search_column, $additional_where,$group_by);
+            //echo $this->db->last_query();
+            //exit;
+        }
+        $resultList2 = $this->report_model->searchReportbalance($select = 'ipd_details.*,ipd_details.discharged as ipd_discharge,ipd_billing.net_amount as paid_amount,IFNULL(ipd_billing.total_amount,0) as totalpaid_amount, ipd_billing.date as payment_date,staff.name,staff.surname,patients.id as pid,patients.patient_name,patients.patient_unique_id,patients.guardian_name,patients.address,patients.admission_date,patients.gender,patients.mobileno,patients.age,patients.month', $join = array(
+            'LEFT JOIN staff ON ipd_details.cons_doctor = staff.id',
+            'LEFT JOIN patients ON ipd_details.patient_id = patients.id',
+            'LEFT JOIN payment ON payment.patient_id = patients.id',
+            'LEFT JOIN ipd_billing ON ipd_billing.ipd_id = ipd_details.id',
+                ), $table_name = 'ipd_details', $search_type, $search_table = 'ipd_billing', $search_column = 'date', $additional_where,$group_by);
+        // echo $this->db->last_query();  
+        if (!empty($resultList2)) {
+            array_push($resultlist, $resultList2[0]);
+        }
+        // echo "<pre>";
+        //print_r($resultlist);
+        //   exit;
+        $data["searchlist"] = $this->search_type;
+        $data["search_type"] = $search_type;
+        $data["resultlist"] = $resultlist;
+        $i = 0;
+        if (!empty($resultlist)) {
+            foreach ($data['resultlist'] as $key => $value) {
+                $charges = $this->patient_model->getCharges($value["pid"], $value["id"]);
+                $data['resultlist'][$i]["charges"] = $charges['charge'];
+                $payment = $this->patient_model->getPayment($value["pid"], $value["id"]);
+                $data['resultlist'][$i]["payment"] = $payment['payment'];
+                $i++;
+            }
+        }
+        if(!empty($patient_status)) { 
+           $data['patient_status'] = $patient_status;
+
+            }else{
+          $data['patient_status'] = 'on_bed';
+
+            }
+        $this->load->view('layout/header');
+        $this->load->view('admin/patient/ipdReportbalance.php', $data);
+        $this->load->view('layout/footer');
+    }
+
     public function dischargepatientReport() {
         if (!$this->rbac->hasPrivilege('ipd_report', 'can_view')) {
             access_denied();
@@ -2238,7 +3110,7 @@ $i = 0;
 
         $this->session->set_userdata('top_menu', 'Reports');
         $this->session->set_userdata('sub_menu', 'admin/patient/dischargepatientReport');
-        $select = 'ipd_details.*,payment.paid_amount, payment.date as payment_date, staff.name,staff.surname,patients.id as pid,patients.patient_name,patients.patient_unique_id,patients.guardian_name,patients.address,patients.admission_date,patients.gender,patients.mobileno,patients.age';
+        $select = 'ipd_details.*,payment.paid_amount, payment.date as payment_date,payment.payment_mode,staff.name,staff.surname,patients.id as pid,patients.patient_name,patients.patient_unique_id,patients.guardian_name,patients.address,patients.admission_date,patients.gender,patients.mobileno,patients.age';
         $join = array(
             'JOIN staff ON ipd_details.cons_doctor = staff.id',
             'JOIN patients ON ipd_details.patient_id = patients.id',
@@ -2247,7 +3119,6 @@ $i = 0;
         $table_name = "ipd_details";
         $additional_where = array("ipd_details.discharged = 'yes'");
         $doctorid = $this->input->post('doctor');
-
         $disable_option = FALSE;
         $userdata = $this->customlib->getUserData();
         $role_id = $userdata['role_id'];
@@ -2269,7 +3140,7 @@ $i = 0;
         $data['disable_option'] = $disable_option;
 
         if (!empty($doctorid)) {
-            $additional_where = array("patients.is_active = 'yes' ", "ipd_details.discharged = 'yes'", "ipd_details.cons_doctor ='" . $doctorid . "'");
+            $additional_where = array( "ipd_details.discharged = 'yes'", "ipd_details.cons_doctor ='" . $doctorid . "'");
         }
         $search_type = $this->input->post("search_type");
         if (isset($search_type)) {
@@ -2282,30 +3153,34 @@ $i = 0;
             $search_type = "";
             $resultlist = $this->report_model->getReport($select, $join, $table_name, $additional_where);
         } else {
-
             $search_table = "ipd_details";
             $search_column = "date";
             $resultlist = $this->report_model->searchReport($select, $join, $table_name, $search_type, $search_table, $search_column, $additional_where);
         }
 
-        $resultList2 = $this->report_model->searchReport($select = 'ipd_details.*,ipd_billing.net_amount as paid_amount, ipd_billing.date as payment_date,staff.name,staff.surname,patients.id as pid,patients.patient_name,patients.patient_unique_id,patients.guardian_name,patients.address,patients.admission_date,patients.gender,patients.mobileno,patients.age', $join = array(
+      
+    $resultList2 = $this->report_model->searchReport($select = 'ipd_details.*,ipd_billing.net_amount as paid_amount, ipd_billing.date as payment_date,staff.name,staff.surname,patients.id as pid,patients.patient_name,patients.patient_unique_id,patients.guardian_name,patients.address,patients.admission_date,patients.gender,patients.mobileno,patients.age', $join = array(
             'JOIN staff ON ipd_details.cons_doctor = staff.id',
             'JOIN patients ON ipd_details.patient_id = patients.id',
-            'LEFT JOIN payment ON payment.ipd_id = ipd_details.id',
+            //'LEFT JOIN payment ON payment.ipd_id = ipd_details.id',
             'JOIN ipd_billing ON ipd_billing.ipd_id = ipd_details.id',
                 ), $table_name = 'ipd_details', $search_type, $search_table = 'ipd_billing', $search_column = 'date', $additional_where);
+        $resultlist3 = array();
         if (!empty($resultList2)) {
-            array_push($resultlist, $resultList2[0]);
+         //   array_push($resultlist, $resultList2[0]);
+          $resultlist3 =  $resultlist + $resultList2;
+          $resultlist3 = array_merge($resultlist, $resultList2);
         }
-
-
+    
+       
         $data["searchlist"] = $this->search_type;
         $data["search_type"] = $search_type;
-        $data["resultlist"] = $resultlist;
+        $data["resultlist"] = $resultlist3;
 
         $i = 0;
-        if (!empty($resultlist)) {
-            foreach ($data['resultlist'] as $key => $value) {
+        if (!empty($resultlist3)) {
+            foreach ($resultlist3 as $key => $value) {
+               
                 $charges = $this->patient_model->getCharges($value["pid"], $value["id"]);
                 $data['resultlist'][$i]["charges"] = $charges['charge'];
                 $discharge_details = $this->patient_model->getIpdBillDetails($value["pid"], $value["id"]);
@@ -2318,7 +3193,7 @@ $i = 0;
                 $i++;
             }
         }
-
+    
         $this->load->view('layout/header');
         $this->load->view('admin/patient/dischargePatientReport.php', $data);
         $this->load->view('layout/footer');
@@ -2399,7 +3274,45 @@ $i = 0;
         $this->load->view("layout/footer");
     }
 
-   
+    public function patientcredential_search()
+         
+        {
+            $draw = $_POST['draw'];
+            $row = $_POST['start'];
+            $rowperpage = $_POST['length']; // Rows display per page
+            $columnIndex = $_POST['order'][0]['column']; // Column index
+            $columnName = $_POST['columns'][$columnIndex]['data']; // Column name
+            $columnSortOrder = $_POST['order'][0]['dir']; // asc or desc
+            $where_condition=array();
+            if(!empty($_POST['search']['value']) ) {
+                $where_condition=array('search'=>$_POST['search']['value']);
+            }
+            $resultlist = $this->patient_model->search_datatablecredential($where_condition);
+            $total_result = $this->patient_model->search_datatablecredential_count($where_condition);
+            $data = array();
+              
+            foreach ($resultlist as $result_key => $result_value) { 
+               
+                   
+            $nestedData=array();  
+            $nestedData[]= $result_value->patient_unique_id;
+            $nestedData[]= $result_value->patient_name;
+            $nestedData[]= $result_value->username;
+            $nestedData[]= $result_value->password;
+            $data[] = $nestedData;
+            }
+
+            $json_data = array(
+                "draw"            => intval($draw),   // for every request/draw by clientside , they send a number as a parameter, when they recieve a response/data they first check the draw number, so we are sending same number in draw. 
+                "recordsTotal"    => intval($total_result),  // total number of records
+                "recordsFiltered" => intval($total_result), // total number of records after searching, if there is no searching then totalFiltered = totalData
+                "data"            => $data   // total data array
+                );
+
+    echo json_encode($json_data);  // send data as json format
+
+    }
+
 
     public function deleteIpdPatient($id) {
         if (!empty($id)) {
@@ -2460,8 +3373,13 @@ $i = 0;
         $phone = $appointment_details['mobileno'];
         $doctor = $appointment_details['cons_doctor'];
         $note = $appointment_details['note'];
-        $appointment_date = $appointment_details['appointment_date'];
+        $orgid = $appointment_details['orgid'];
+         //$appointment_date = $appointment_details['appointment_date'];
+        $appointment_date = date($this->customlib->getSchoolDateFormat(true, true), strtotime($appointment_details['appointment_date']));
         $amount = $appointment_details['amount'];
+        $allergies = $appointment_details['opdknown_allergies'];
+        $symptoms = strip_tags($appointment_details['symptoms']);
+        
         $patient_data = array(
             'patient_id' => $patient_id,
             'patient_name' => $patient_name,
@@ -2469,11 +3387,12 @@ $i = 0;
             'email' => $email,
             'phone' => $phone,
             'appointment_date' => $appointment_date,
+            'known_allergies' => $allergies,
             'cons_doctor' => $doctor,
+            'orgid' => $orgid
         );
+        
         $data['ipd_data'] = $patient_data;
-        //print_r($patient_data);
-        //exit();       
         $updateData = array('id' => $patient_id, 'is_ipd' => 'yes');
         $this->appointment_model->update($updateData);
         $this->session->set_flashdata('ipd_data', $data);

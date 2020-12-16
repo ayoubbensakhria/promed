@@ -8,7 +8,6 @@ class Itemstore extends Admin_Controller {
     function __construct() {
         parent::__construct();
         $this->load->helper('file');
-
         $this->load->helper('url');
     }
 
@@ -27,28 +26,24 @@ class Itemstore extends Admin_Controller {
     }
 
     function add() {
-
         if (!$this->rbac->hasPrivilege('store', 'can_add')) {
             access_denied();
         }
         $this->form_validation->set_rules('name', $this->lang->line('item') . " " . $this->lang->line('store') . " " . $this->lang->line('name'), 'trim|required|xss_clean');
 
         if ($this->form_validation->run() == FALSE) {
-
             $msg = array(
                 'name' => form_error('name'),
             );
 
             $array = array('status' => 'fail', 'error' => $msg, 'message' => '');
         } else {
-
             $data = array(
                 'item_store' => $this->input->post('name'),
                 'code' => $this->input->post('code'),
                 'description' => $this->input->post('description'),
             );
             $this->itemstore_model->add($data);
-
             $array = array('status' => 'success', 'error' => '', 'message' => $this->lang->line('success_message'));
         }
 
@@ -70,9 +65,7 @@ class Itemstore extends Admin_Controller {
         $data['title'] = 'Add Item store';
         $itemstore_result = $this->itemstore_model->get();
         $data['itemstorelist'] = $itemstore_result;
-
         $this->form_validation->set_rules('name', $this->lang->lang->line('name'), 'trim|required|xss_clean');
-
         if ($this->form_validation->run() == FALSE) {
             $this->load->view('layout/header', $data);
             $this->load->view('admin/itemstore/itemstoreList', $data);
@@ -95,15 +88,12 @@ class Itemstore extends Admin_Controller {
         }
         $id = $this->input->post('id');
         $this->form_validation->set_rules('name', $this->lang->line('item') . " " . $this->lang->line('store') . " " . $this->lang->line('name'), 'trim|required|xss_clean');
-
         if ($this->form_validation->run() == FALSE) {
             $msg = array(
                 'name' => form_error('name'),
             );
-
             $array = array('status' => 'fail', 'error' => $msg, 'message' => '');
         } else {
-
             $data = array(
                 'id' => $id,
                 'item_store' => $this->input->post('name'),

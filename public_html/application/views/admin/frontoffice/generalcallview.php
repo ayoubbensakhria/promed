@@ -1,10 +1,7 @@
-
-<div class="content-wrapper" style="min-height: 348px;">  
-
+<div class="content-wrapper" style="min-height: 348px;"> 
     <?php $call_type = $this->customlib->getCalltype(); ?>
     <section class="content">
         <div class="row">
-
             <!-- left column -->
             <div class="col-md-12">
                 <!-- general form elements -->
@@ -13,7 +10,7 @@
                         <h3 class="box-title titlefix"><?php echo $this->lang->line('phone_call_log'); ?> <?php echo $this->lang->line('list'); ?></h3>
                         <div class="box-tools pull-right">
                             <?php if ($this->rbac->hasPrivilege('phone_call_log', 'can_add')) { ?>
-                                <a data-toggle="modal" data-target="#myModal" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> <?php echo $this->lang->line('add') . " " . $this->lang->line('call_log'); ?> </a> 
+                                <a data-toggle="modal" data-target="#myModal" class="btn btn-primary btn-sm call_log"><i class="fa fa-plus"></i> <?php echo $this->lang->line('add') . " " . $this->lang->line('call_log'); ?> </a> 
                             <?php } ?>
 
 
@@ -45,7 +42,6 @@
                                         <?php
                                     } else {
                                         foreach ($CallList as $key => $value) {
-                                            // print_r($value);
                                             ?>
                                             <tr>
                                                 <td class="mailbox-name"><?php echo $value['name']; ?></td>
@@ -53,7 +49,7 @@
                                                 <td class="mailbox-name"><?php echo date($this->customlib->getSchoolDateFormat(), $this->customlib->dateyyyymmddTodateformat($value['date'])); ?> </td>
                                                 <td class="mailbox-name"> <?php echo date($this->customlib->getSchoolDateFormat(), $this->customlib->dateyyyymmddTodateformat($value['follow_up_date'])); ?></td>
                                                 <td class="mailbox-name"> <?php echo $value['call_type']; ?></td>
-                                                <td class="mailbox-date pull-right" "="">
+                                                <td class="mailbox-date pull-right">
                                                     <a  onclick="getRecord(<?php echo $value['id']; ?>)" class="btn btn-default btn-xs" data-target="#calldetails" data-toggle="tooltip"  data-original-title="<?php echo $this->lang->line('view'); ?>"><i class="fa fa-reorder"></i></a>   <?php if ($this->rbac->hasPrivilege('phone_call_log', 'can_edit')) { ?>
                                                         <a class="btn btn-default btn-xs" data-toggle="tooltip" onclick="get(<?php echo $value['id']; ?>);" data-target="#editmyModal" title="" data-original-title="<?php echo $this->lang->line('edit'); ?>">
                                                             <i class="fa fa-pencil"></i>
@@ -462,4 +458,8 @@
 
         }));
     });
+	
+$(".call_log").click(function(){	
+	$('#formadd').trigger("reset");
+});
 </script>

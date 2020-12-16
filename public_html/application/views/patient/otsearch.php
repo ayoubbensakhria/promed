@@ -2,14 +2,6 @@
 $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
 $genderList = $this->customlib->getGender();
 ?>
-<style type="text/css">
-
-    #easySelectable {/*display: flex; flex-wrap: wrap;*/}
-    #easySelectable li {}
-    #easySelectable li.es-selected {background: #2196F3; color: #fff;}
-    .easySelectable {-webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;}
-</style>
-
 <div class="content-wrapper">
     <!-- Main content -->
     <section class="content">
@@ -35,14 +27,14 @@ $genderList = $this->customlib->getGender();
                                         <th><?php echo $this->lang->line('bill') . " " . $this->lang->line('no'); ?></th>
                                         <th><?php echo $this->lang->line('patient') . " " . $this->lang->line('name'); ?></th>
                                         <th><?php echo $this->lang->line('patient') . " " . $this->lang->line('id'); ?></th>
-                                        <th><?php echo $this->lang->line('patient') . " " . $this->lang->line('type'); ?></th>
+                                      <!--   <th><?php echo $this->lang->line('patient') . " " . $this->lang->line('type'); ?></th> -->
                                         <th><?php echo $this->lang->line('gender'); ?></th>
                                         <th><?php echo $this->lang->line('phone'); ?></th>
                                         <th><?php echo $this->lang->line('operation') . " " . $this->lang->line('name'); ?></th>
                                         <th><?php echo $this->lang->line('operation') . " " . $this->lang->line('type'); ?></th>
                                         <th><?php echo $this->lang->line('consultant'); ?></th>
                                         <th><?php echo $this->lang->line('operation') . " " . $this->lang->line('date'); ?></th>
-                                        <th><?php echo $this->lang->line('applied') . " " . $this->lang->line('charge') . " (" . $currency_symbol . ")"; ?></th>
+                                        <th class="text-right"><?php echo $this->lang->line('applied') . " " . $this->lang->line('charge') . " (" . $currency_symbol . ")"; ?></th>
                                         <th class="text-right"><?php echo $this->lang->line('action') ?></th>
                                     </tr>
                                 </thead>
@@ -61,15 +53,15 @@ $genderList = $this->customlib->getGender();
                                                 <td><?php echo $optpatient['patient_name']; ?>
                                                 </td>
                                                 <td><?php echo $optpatient["patient_unique_id"] ?></td>
-                                                <td><?php echo $this->lang->line($optpatient["customer_type"]) ?></td>
+                                                <!-- <td><?php echo $this->lang->line($optpatient["customer_type"]) ?></td> -->
                                                 <td><?php echo $optpatient['gender']; ?></td>
                                                 <td><?php echo $optpatient['mobileno']; ?></td>
                                                 <td><?php echo $optpatient['operation_name']; ?></td>
                                                 <td><?php echo $optpatient['operation_type']; ?></td>
                                                 <td><?php echo $optpatient['name'] . " " . $optpatient['surname']; ?></td>
                                                 <td><?php echo date($this->customlib->getSchoolDateFormat(), strtotime($optpatient['date'])) ?></td>
-                                                <td><?php echo $optpatient['apply_charge']; ?></td>
-                                                <td class="pull-right">
+                                                <td class="text-right"><?php echo $optpatient['apply_charge']; ?></td>
+                                                <td class="text-right">
                                                     <a href="#" 
                                                        onclick="viewDetailBill('<?php echo $optpatient['id']; ?>')"
                                                        class="btn btn-default btn-xs"  data-toggle="tooltip"

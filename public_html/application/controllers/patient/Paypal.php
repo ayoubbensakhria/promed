@@ -5,7 +5,6 @@ if (!defined('BASEPATH')) {
 }
 
 class Paypal extends Patient_Controller {
-
     public $payment_method = array();
     public $pay_method = array();
     public $patient_data;
@@ -16,7 +15,6 @@ class Paypal extends Patient_Controller {
         $this->load->library('Enc_lib');
         $this->load->library('Customlib');
         $this->load->library('paypal_payment');
-
         $this->patient_data = $this->session->userdata('patient');
         $this->payment_method = $this->paymentsetting_model->get();
         $this->pay_method = $this->paymentsetting_model->getActiveMethod();
@@ -31,7 +29,6 @@ class Paypal extends Patient_Controller {
             $setting = $this->setting[0];
             $data = array();
             $id = $this->patient_data['patient_id'];
-
             $charges = $this->charge_model->getCharges($id);
             $data["charges"] = $charges;
             $paymentDetails = $this->payment_model->paymentDetails($id);
@@ -42,14 +39,43 @@ class Paypal extends Patient_Controller {
             $data["payment_details"] = $paymentDetails;
             $amount = $this->session->userdata('payment_amount');
             $ipdid = $amount['record_id'];
+            $data["payment_type"] = 'ipd';
             $data['amount'] = $amount['deposit_amount'];
             $data["id"] = $id;
             $result = $this->patient_model->getIpdDetails($id,$ipdid);
             $data['patient'] = $result;
             $data['currency'] = $setting['currency'];
             $data['hospital_name'] = $setting['name'];
-            $data['image'] = $setting['image'];
-            
+            $data['image'] = $setting['image'];            
+            $this->load->view("layout/patient/header");
+            $this->load->view("patient/paypal", $data);
+            $this->load->view("layout/patient/footer");
+        }
+    }
+
+    public function opdpay() {
+        if ($this->session->has_userdata('payment_amount')) {
+            $setting = $this->setting[0];
+            $data = array();
+            $id = $this->patient_data['patient_id'];
+            $amount = $this->session->userdata('payment_amount');
+            $ipdid = $amount['record_id'];           
+            $charges = $this->charge_model->getOPDCharges($id,$ipdid);
+            $data["charges"] = $charges;
+            $paymentDetails = $this->payment_model->opdpaymentDetails($id);
+            $paid_amount = $this->payment_model->getOPDPaidTotal($id,$ipdid);
+            $data["paid_amount"] = $paid_amount["paid_amount"];
+            $balance_amount = $this->payment_model->getOPDBalanceTotal($id);
+            $data["balance_amount"] = $balance_amount["balance_amount"];
+            $data["payment_details"] = $paymentDetails;
+            $data['amount'] = $amount['deposit_amount'];
+            $data["payment_type"] = 'opd';
+            $data["id"] = $id;
+            $result = $this->patient_model->getDetails($id,$ipdid);
+            $data['patient'] = $result;
+            $data['currency'] = $setting['currency'];
+            $data['hospital_name'] = $setting['name'];
+            $data['image'] = $setting['image'];            
             $this->load->view("layout/patient/header");
             $this->load->view("patient/paypal", $data);
             $this->load->view("layout/patient/footer");
@@ -57,7 +83,6 @@ class Paypal extends Patient_Controller {
     }
 
     public function checkout() {
-
         if ($this->input->server('REQUEST_METHOD') == 'POST') {
             if ($this->session->has_userdata('payment_amount')) {
                 $setting = $this->setting[0];
@@ -71,8 +96,9 @@ class Paypal extends Patient_Controller {
                 $data['symbol'] = $setting['currency_symbol'];
                 $data['currency_name'] = $setting['currency'];
                 $data['name'] = $result['patient_name'];
-                $data['guardian_phone'] = $result['mobileno'];
-
+                $data['patient_id'] = $result['patient_id'];
+                $data['ipd_id'] = $result['ipd_id'];
+                $data['phone'] = $result['mobileno'];
                 $response = $this->paypal_payment->payment($data);
                 if ($response->isSuccessful()) {
                     
@@ -97,39 +123,51 @@ class Paypal extends Patient_Controller {
         $data['name'] = $result['patient_name'];
         $data['guardian_phone'] = $result['mobileno'];
         $data['productinfo'] = "bill payment smart hospital";
-
         $response = $this->paypal_payment->success($data);
-
+         $type = $this->input->post('payment_type');
         $paypalResponse = $response->getData();
         if ($response->isSuccessful()) {
             $purchaseId = $_GET['PayerID'];
-
             if (isset($paypalResponse['PAYMENTINFO_0_ACK']) && $paypalResponse['PAYMENTINFO_0_ACK'] === 'Success') {
                 if ($purchaseId) {
                     $params = $this->session->userdata('payment_amount');
                     $ref_id = $paypalResponse['PAYMENTINFO_0_TRANSACTIONID'];
+                    $ipdid = $amount['record_id'];
+                       if($type == 'opd'){
+                    $save_record = array(
+                    'patient_id' => $this->patient_data['patient_id'],
+                    'paid_amount' => ($response['amount'] / 100),
+                    'opd_id' => $ipdid,
+                    'date' => date('Y-m-d'),
+                    'total_amount' => '',
+                    'note' => "Online fees deposit through Stripe TXN ID: " . $transactionid,
+                    'payment_mode' => 'Online',
+                );
+                
+                $insert_id = $this->payment_model->addOPDPayment($save_record);             
 
+                }else{
                     $save_record = array(
                         'patient_id' => $this->patient_data['patient_id'],
                         'paid_amount' => $params['deposit_amount'],
                         'date' => date('Y-m-d'),
+                        'ipd_id' => $ipdid,
                         'total_amount' => '',
                         'note' => "Online fees deposit through Paypal Ref ID: " . $ref_id,
                         'payment_mode' => 'Online',
                     );
 
-                    $insert_id = $this->payment_model->addPayment($save_record);
+                    $insert_id = $this->payment_model->addPayment($save_record);                
+                }
                     redirect(base_url("patient/pay/successinvoice/" . $insert_id));
                 }
             }
         } elseif ($response->isRedirect()) {
             $response->redirect();
         } else {
-
             redirect(base_url("patient/pay/paymentfailed"));
         }
     }
-
 }
 
 ?>

@@ -58,8 +58,6 @@ $genderList = $this->customlib->getGender();
                                     } else {
                                         $count = 1;
                                         foreach ($resultlist as $student) {
-                                            // echo "<pre>";
-                                            // print_r($student);
                                             ?>
                                             <tr class="">
 

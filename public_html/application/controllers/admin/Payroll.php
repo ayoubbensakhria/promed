@@ -100,6 +100,9 @@ class Payroll extends Admin_Controller {
         $data['monthAttendance'] = $this->monthAttendance($newdate, 3, $id);
         $data['monthLeaves'] = $this->monthLeaves($newdate, 3, $id);
 
+       // print_r($data['monthLeaves']);
+        //exit();
+
         $data["attendanceType"] = $this->staffattendancemodel->getStaffAttendanceType();
 
         $data["alloted_leave"] = $alloted_leave[0]["alloted_leave"];
@@ -147,7 +150,9 @@ class Payroll extends Admin_Controller {
 
             $record[$month] = $l;
         }
-
+       // echo $this->db->last_query();
+       // print_r($record);
+       // exit();
         return $record;
     }
 
@@ -353,7 +358,7 @@ class Payroll extends Admin_Controller {
     }
 
     function payslipView() {
-        if (!$this->rbac->hasPrivilege('staff_payroll', 'can_view')) {
+        if (!$this->rbac->hasPrivilege('staff', 'can_view')) {
             access_denied();
         }
         $data["payment_mode"] = $this->payment_mode;

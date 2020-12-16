@@ -31,7 +31,7 @@
                         <h3 class="box-title titlefix"><?php echo $this->lang->line('expense_head_list'); ?></h3>
                         <div class="box-tools pull-right">
                             <?php if ($this->rbac->hasPrivilege('expense_head', 'can_add')) { ?>
-                                <a data-toggle="modal" data-target="#myModal" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i>  <?php echo $this->lang->line('add'); ?> <?php echo $this->lang->line('expense_head'); ?></a>  
+                                <a data-toggle="modal" data-target="#myModal" class="btn btn-primary btn-sm expense_head"><i class="fa fa-plus"></i>  <?php echo $this->lang->line('add'); ?> <?php echo $this->lang->line('expense_head'); ?> </a>  
                             <?php } ?>   
                         </div>
                     </div><!-- /.box-header -->
@@ -337,6 +337,9 @@
         }));
     });
 
+$(".expense_head").click(function(){
+	$('#formadd').trigger("reset");
+});
 </script>
 
 

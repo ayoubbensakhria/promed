@@ -10,7 +10,7 @@ class Smsconfig extends Admin_Controller {
     }
 
     function index() {
-        if (!$this->rbac->hasPrivilege('sms_setting', 'can_edit')) {
+        if (!$this->rbac->hasPrivilege('sms_setting', 'can_view')) {
             access_denied();
         }
 
@@ -27,7 +27,6 @@ class Smsconfig extends Admin_Controller {
     }
 
     public function clickatell() {
-
         $this->form_validation->set_error_delimiters('', '');
         $this->form_validation->set_rules('clickatell_user', $this->lang->line('username'), 'required');
         $this->form_validation->set_rules('clickatell_password', $this->lang->line('password'), 'required');
@@ -56,14 +55,12 @@ class Smsconfig extends Admin_Controller {
     }
 
     public function twilio() {
-
         $this->form_validation->set_error_delimiters('', '');
         $this->form_validation->set_rules('twilio_account_sid', $this->lang->line('twilio_account_sid'), 'required');
         $this->form_validation->set_rules('twilio_auth_token', $this->lang->line('authentication_token'), 'required');
         $this->form_validation->set_rules('twilio_sender_phone_number', $this->lang->line('registered_phone_number'), 'required');
 
         if ($this->form_validation->run()) {
-
             $data = array(
                 'type' => 'twilio',
                 'api_id' => $this->input->post('twilio_account_sid'),
@@ -74,7 +71,6 @@ class Smsconfig extends Admin_Controller {
             $this->smsconfig_model->add($data);
             echo json_encode(array('st' => 0, 'msg' => $this->lang->line('update_message')));
         } else {
-
             $data = array(
                 'twilio_account_sid' => form_error('twilio_account_sid'),
                 'twilio_auth_token' => form_error('twilio_auth_token'),
@@ -86,14 +82,9 @@ class Smsconfig extends Admin_Controller {
     }
 
     public function custom() {
-
         $this->form_validation->set_error_delimiters('', '');
-
         $this->form_validation->set_rules('name', $this->lang->line('name'), 'required');
-
-
         if ($this->form_validation->run()) {
-
             $data = array(
                 'type' => 'custom',
                 'name' => $this->input->post('name'),
@@ -125,7 +116,6 @@ class Smsconfig extends Admin_Controller {
             $this->smsconfig_model->add($data);
             echo json_encode(array('st' => 0, 'msg' => $this->lang->line('update_message')));
         } else {
-
             $data = array(
                 'authkey' => form_error('authkey'),
                 'senderid' => form_error('senderid')
@@ -136,9 +126,7 @@ class Smsconfig extends Admin_Controller {
     }
 
     public function smscountry() {
-
         $this->form_validation->set_error_delimiters('', '');
-
         $this->form_validation->set_rules('smscountry', $this->lang->line('username'), 'required');
         $this->form_validation->set_rules('smscountrypassword', $this->lang->line('password'), 'required');
         $this->form_validation->set_rules('smscountrysenderid', $this->lang->line('sender_id'), 'required');
@@ -165,9 +153,7 @@ class Smsconfig extends Admin_Controller {
     }
 
     public function textlocal() {
-
         $this->form_validation->set_error_delimiters('', '');
-
         $this->form_validation->set_rules('text_local', $this->lang->line('username'), 'required');
         $this->form_validation->set_rules('text_localpassword', $this->lang->line('password'), 'required');
         $this->form_validation->set_rules('text_localsenderid', $this->lang->line('sender_id'), 'required');

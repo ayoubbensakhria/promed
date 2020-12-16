@@ -1,4 +1,3 @@
-
 <div class="col-sm-12 col-md-6 col-lg-6">
     <label><?php echo $this->lang->line('fee_schedule_based_charges'); ?></label> 
     <button type="button" class="plusign" onclick="same_to_all()"><?php echo $this->lang->line('apply_to_all'); ?></button>

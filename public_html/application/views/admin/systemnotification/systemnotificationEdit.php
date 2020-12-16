@@ -22,7 +22,6 @@
                             <h3 class="box-title"><?php echo $this->lang->line('edit_message'); ?></h3>
                         </div>                     
                         <div class="box-body">
-
                             <?php if ($this->session->flashdata('msg')) { ?>
                                 <?php echo $this->session->flashdata('msg') ?>
                             <?php } ?>
@@ -60,12 +59,10 @@
                                     </div>
                                     <div class="form-horizontal">
                                         <label for="exampleInputEmail1"><?php echo $this->lang->line('message_to'); ?></label>
-
                                         <?php
                                         foreach ($roles as $role_key => $role_value) {
                                             ?>
                                             <div class="checkbox">
-
                                                 <label>
                                                     <input type="checkbox" name="visible[]" value="<?php echo $role_value['id']; ?>" 
                                                     <?php echo set_checkbox('visible[]', $role_value['id'], (set_value('visible[]', in_array($role_value['id'], $prev_roles)) == 1) ? TRUE : FALSE); ?>
@@ -80,7 +77,6 @@
                             </div>                         
                             <div class="box-footer" style="clear: both;">
                                 <div class="pull-right">
-
                                     <button type="submit" class="btn btn-primary btn-sm"><i class="fa fa-envelope-o"></i> <?php echo $this->lang->line('send'); ?> </button>
                                 </div>
                             </div>                           
@@ -106,11 +102,9 @@
             $("#form1")[0].reset();
         });
     });
-
 </script>
 <script>
     $(function () {
-
         $("#compose-textarea").wysihtml5();
     });
 </script>

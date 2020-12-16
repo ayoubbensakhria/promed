@@ -3,15 +3,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
 $genderList = $this->customlib->getGender();
 ?>
 <style type="text/css">
-    .profile-user-img {
-        margin: 0 auto;
-        width: 100px;
-        height: 100px;
-    }
-    #easySelectable {/*display: flex; flex-wrap: wrap;*/}
-    #easySelectable li {}
-    #easySelectable li.es-selected {background: #2196F3; color: #fff;}
-    .easySelectable {-webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;}
+    .table-responsive {overflow-x: inherit;}
 </style>
 <div class="content-wrapper">
     <!-- Main content -->
@@ -21,21 +13,13 @@ $genderList = $this->customlib->getGender();
                 <div class="box box-primary">
                     <div class="box-header with-border">
                         <h3 class="box-title titlefix"> <?php echo $this->lang->line('ipd') . " " . $this->lang->line('patient'); ?></h3>
-                       <!--  <select class="form-control select2">
-                            <option value="adf">adf</option>
-                            <option value="def">def</option>
-                            
-                        </select> -->
                         <div class="box-tools pull-right">
                             <?php if ($this->rbac->hasPrivilege('ipd_patient', 'can_add')) { ?>                 
-                                <a data-toggle="modal" onclick="holdModal('myModal')" id="addp" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i>  <?php echo $this->lang->line('add') . " " . $this->lang->line('patient') ?></a> 
+                                <a data-toggle="modal" onclick="holdModal('myModal')" id="addp" class="btn btn-primary btn-sm addpatient"><i class="fa fa-plus"></i>  <?php echo $this->lang->line('add') . " " . $this->lang->line('patient') ?></a> 
                             <?php } ?>
                             <?php if ($this->rbac->hasPrivilege('discharged patients', 'can_view')) { ?>
                                 <a  href="<?php echo base_url() ?>admin/patient/discharged_patients" class="btn btn-primary btn-sm"><i class="fa fa-reorder"></i> <?php echo $this->lang->line('discharged') . " " . $this->lang->line('patient'); ?></a> 
-                               <!--  <a  href="#" data-toggle="modal" data-target="#bed" class="btn btn-primary btn-sm"><i class="fas fa-bed"></i> Bed Status</a> -->
-
                             <?php } ?>
-
                         </div>    
                     </div><!-- /.box-header -->
 
@@ -46,10 +30,9 @@ $genderList = $this->customlib->getGender();
 
                             <div class="download_label"><?php echo $this->lang->line('ipd') . " " . $this->lang->line('patient'); ?></div>
 
-                            <table class="table table-striped table-bordered table-hover example" cellspacing="0" width="100%">
+                            <table class="table table-striped table-bordered table-hover test_ajax" cellspacing="0" width="100%">
                                 <thead>
                                     <tr>
-
                                         <th><?php echo $this->lang->line('name') ?></th>
                                         <th><?php echo $this->lang->line('ipd_no'); ?></th>
                                         <th><?php echo $this->lang->line('patient') . " " . $this->lang->line('id'); ?></th>
@@ -64,7 +47,7 @@ $genderList = $this->customlib->getGender();
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php
+                                   <!--  <?php
                                     if (empty($resultlist)) {
                                         ?>
                                         <?php
@@ -116,7 +99,7 @@ $genderList = $this->customlib->getGender();
                                             $count++;
                                         }
                                     }
-                                    ?>
+                                    ?> -->
                                 </tbody>
                             </table>
                         </div>
@@ -129,7 +112,7 @@ $genderList = $this->customlib->getGender();
     </section>
 </div>
 <div class="modal fade" id="myModal"  role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-lg modalfullmobile" role="document">
         <div class="modal-content modal-media-content">
             <div class="modal-header modal-media-header">
                 <button type="button" class="close pt4" data-dismiss="modal">&times;</button>
@@ -137,11 +120,7 @@ $genderList = $this->customlib->getGender();
                     <div class="col-sm-6 col-xs-6">
                         <div class="form-group15">
                             <div>
-                                <select onchange="get_PatientDetails(this.value)" class="form-control select2" <?php
-                                if ($disable_option == true) {
-                                    echo "disabled";
-                                }
-                                ?> style="width:100%" id="addpatient_id" name='' >
+                                <select onchange="get_PatientDetails(this.value)" class="form-control select2"  style="width:100%" id="addpatient_id" name='' >
                                     <option value=""><?php echo $this->lang->line('select') . " " . $this->lang->line('patient') ?></option>
                                     <?php foreach ($patients as $dkey => $dvalue) { ?>
                                         <option value="<?php echo $dvalue["id"]; ?>" <?php
@@ -158,8 +137,8 @@ $genderList = $this->customlib->getGender();
                     <div class="col-sm-4 col-xs-5">
                         <div class="form-group15">
                             <?php if ($this->rbac->hasPrivilege('patient', 'can_add')) { ?>
-                                <a data-toggle="modal" id="addpip" onclick="holdModal('myModalpa')" class="modalbtnpatient"><i class="fa fa-plus"></i>  <?php echo $this->lang->line('new') . " " . $this->lang->line('patient') ?></a> 
-<?php } ?> 
+                                <a data-toggle="modal" id="addpip" onclick="holdModal('myModalpa')" class="modalbtnpatient"><i class="fa fa-plus"></i>  <span><?php echo $this->lang->line('new') . " " . $this->lang->line('patient') ?></span></a> 
+                            <?php } ?> 
                         </div>
                     </div>
                 </div><!--./row--> 
@@ -174,6 +153,7 @@ $genderList = $this->customlib->getGender();
                         <input name="email" id="pemail" type="hidden" class="form-control" />
                         <input name="mobileno" id="pmobileno" type="hidden" class="form-control" />
                         <input name="patient_name" id="patientname" type="hidden" class="form-control" />
+                        <input type="hidden" class="form-control" id="password" name="password">
                         <div class="row row-eq">
                             <div class="col-lg-8 col-md-8 col-sm-8">
                                 <div id="ajax_load"></div>
@@ -244,44 +224,91 @@ $genderList = $this->customlib->getGender();
                                     </div><!-- ./col-md-3 --> 
                                 </div>
 
-                                <div class="row">
-                                    <div class="col-md-12"> 
+                               <div class="row">
+                                        <div class="col-md-12"> 
+                                            <div class="dividerhr"></div>
+                                        </div><!--./col-md-12-->
+                                        <div class="col-sm-2 col-xs-4">
+                                            <div class="form-group">
+                                                <label for="pwd"><?php echo $this->lang->line('height'); ?></label> 
+                                                <input name="height" type="text" class="form-control" />
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-2 col-xs-4">
+                                            <div class="form-group">
+                                                <label for="pwd"><?php echo $this->lang->line('weight'); ?></label> 
+                                                <input name="weight" type="text" class="form-control" />
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-2 col-xs-4">
+                                            <div class="form-group">
+                                                <label for="pwd"><?php echo $this->lang->line('bp'); ?></label> 
+                                                <input name="bp" type="text" class="form-control" />
+                                            </div>
+                                        </div>
+                                         <div class="col-sm-2 col-xs-4">
+                                            <div class="form-group">
+                                                <label for="pwd"><?php echo $this->lang->line('pulse'); ?></label> 
+                                                <input name="pulse" type="text" class="form-control" />
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-2 col-xs-4">
+                                            <div class="form-group">
+                                                <label for="pwd"><?php echo $this->lang->line('temperature'); ?></label> 
+                                                <input name="temperature" type="text" class="form-control" />
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-2 col-xs-4">
+                                            <div class="form-group">
+                                                <label for="pwd"><?php echo $this->lang->line('respiration'); ?></label> 
+                                                <input name="respiration" type="text" class="form-control" />
+                                            </div>
+                                        </div>
 
 
-                                        <div class="dividerhr"></div>
-                                    </div><!--./col-md-12-->
-                                    <div class="col-sm-2 col-xs-4">
+                                   <div class="col-sm-3 col-xs-4">
                                         <div class="form-group">
-                                            <label for="pwd"><?php echo $this->lang->line('height'); ?></label> 
-                                            <input name="height" type="text" class="form-control" />
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-2 col-xs-4">
-                                        <div class="form-group">
-                                            <label for="pwd"><?php echo $this->lang->line('weight'); ?></label> 
-                                            <input name="weight" type="text" class="form-control" />
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-2 col-xs-4">
-                                        <div class="form-group">
-                                            <label for="pwd"><?php echo $this->lang->line('bp'); ?></label> 
-                                            <input name="bp" type="text" class="form-control" />
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-6">
-                                        <div class="form-group">
-                                            <label for="email"><?php echo $this->lang->line('symtoms'); ?></label> 
-                                            <textarea style="height: 28px;" name="symptoms" class="form-control" ><?php echo set_value('address'); ?></textarea>
-                                        </div> 
-                                    </div>
+                                                <label for="exampleInputFile">
+                                                    <?php echo $this->lang->line('symptoms')." ".$this->lang->line('type') ; ?></label>
+                                                <div><select  name='symptoms_type'  id="act"  class="form-control select2 act"  style="width:100%" >
+                                                        <option value=""><?php echo $this->lang->line('select') ?></option>
+                                                        <?php foreach ($symptomsresulttype as $dkey => $dvalue) {
+                                                            ?>
+                                                        <option value="<?php echo $dvalue["id"]; ?>"><?php echo $dvalue["symptoms_type"] ;?></option>
 
-                                    <div class="col-sm-12">
-                                        <div class="form-group">
-                                            <label for="pwd"><?php echo $this->lang->line('note'); ?></label> 
-                                            <textarea name="note" rows="3" class="form-control" ><?php echo set_value('note'); ?></textarea>
+                                                    <?php } ?>
+                                                    </select>
+                                                </div>
+                                                <span class="text-danger"><?php echo form_error('symptoms_type'); ?></span>
+                                            </div>
                                         </div>
-                                    </div>     
-                                </div><!--./row--> 
+                                        
+                                          <input name="rows[]" type="hidden" value="1">
+                                            <div class="col-sm-3 col-xs-4">
+                                                <label for="exampleInputFile"> 
+                                                    <?php echo $this->lang->line('symptoms')." ".$this->lang->line('title')  ; ?></label>
+                                                <div id="dd" class="wrapper-dropdown-3">
+                                                    <input class="form-control filterinput" type="text">
+                                                    <ul class="dropdown scroll150 section_ul">
+                                                        <li><label class="checkbox"><?php echo $this->lang->line('select') ?></label></li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+
+                                       <div class="col-sm-6 col-xs-4">
+                                            <div class="form-group">
+                                                <label><?php echo $this->lang->line('symptoms')." ".$this->lang->line('description') ; ?></label>
+                                                <textarea class="form-control" id="symptoms_description" name="symptoms" ></textarea> 
+                                            </div> 
+                                        </div>
+                                       
+                                        <div class="col-sm-12">
+                                            <div class="form-group">
+                                                <label for="pwd"><?php echo $this->lang->line('note'); ?></label> 
+                                                <textarea name="note" rows="3" class="form-control" ><?php echo set_value('note'); ?></textarea>
+                                            </div>
+                                        </div>     
+                                    </div><!--./row--> 
                             </div><!--./col-md-8--> 
                             <div class="col-lg-4 col-md-4 col-sm-4 col-eq ptt10">
                                 <div class="row">
@@ -332,7 +359,7 @@ $genderList = $this->customlib->getGender();
                                         <div class="form-group">
                                             <label for="exampleInputFile">
                                                     <?php echo $this->lang->line('organisation'); ?></label>
-                                            <div><select class="form-control" name='organisation' >
+                                            <div><select class="form-control" name='organisation' id='organisation'>
                                                     <option value=""><?php echo $this->lang->line('select') ?></option>
                                                     <?php foreach ($organisation as $orgkey => $orgvalue) {
                                                         ?>
@@ -417,7 +444,22 @@ $genderList = $this->customlib->getGender();
                                                 </select>
                                             </div>
                                             <span class="text-danger"><?php echo form_error('bed_no'); ?></span></div>
-                                    </div>  
+                                    </div> 
+
+                                       <div class="col-sm-12">
+                                            <div class="form-group">
+                                                <label for="exampleInputFile">
+                                                <?php echo $this->lang->line('live_consult'); ?></label>
+                                                <div>
+                                                    <select name="live_consult" id="live_consult" class="form-control">
+
+                                                        <option value="<?php echo $this->lang->line('yes') ?>" ><?php echo $this->lang->line('yes') ?></option>
+                                                        <option value="<?php echo $this->lang->line('no') ?>" selected><?php echo $this->lang->line('no') ?></option>
+                                                    </select>
+                                                </div>
+                                                <span class="text-danger"><?php echo form_error('live_consult'); ?></span>
+                                            </div>
+                                        </div> 
                                 </div><!--./row-->    
                             </div><!--./col-md-4-->
                         </div><!--./row--> 
@@ -803,41 +845,48 @@ $genderList = $this->customlib->getGender();
                                 <input name="ipdid" placeholder="" id="ins_ipd_id"  type="hidden" class="form-control"   />
 
                             </div>
-                            <div class="col-md-12">
-                                <table class="table table-striped table-bordered table-hover" id="tableID">
-                                    <tr>
-                                        <th><?php echo $this->lang->line('applied') . " " . $this->lang->line('date'); ?><small class="req red" style="color:red;"> *</small></th>
-                                        <th><?php echo $this->lang->line('consultant'); ?><small class="req red" style="color:red;"> *</small></th>
-                                        <th><?php echo $this->lang->line('instruction'); ?>
-                                            <small class="req red" style="color:red;"> *</small>
-                                        </th>
-                                        <th><?php echo $this->lang->line('instruction') . " " . $this->lang->line('date'); ?>
-                                            <small class="req red" style="color:red;"> *</small>
-                                        </th>
-                                    </tr>
-                                    <tr id="row0">
-                                        <td><input type="text" name="date[]" value="<?php echo set_value('date', date($this->customlib->getSchoolDateFormat(true, true))); ?>" class="form-control datetime"></td>
-                                        <td><select name="doctor[]" <?php
-                                                if ($disable_option == true) {
-                                                   // echo "disabled";
+                            <div class="col-md-12 clearboth">
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-bordered table-hover" id="tableID">
+                                        <tr>
+                                            <th><?php echo $this->lang->line('applied') . " " . $this->lang->line('date'); ?><small class="req red" style="color:red;"> *</small></th>
+                                            <th><?php echo $this->lang->line('consultant'); ?><small class="req red" style="color:red;"> *</small></th>
+                                            <th><?php echo $this->lang->line('instruction'); ?>
+                                                <small class="req red" style="color:red;"> *</small>
+                                            </th>
+                                            <th><?php echo $this->lang->line('instruction') . " " . $this->lang->line('date'); ?>
+                                                <small class="req red" style="color:red;"> *</small>
+                                            </th>
+                                        </tr>
+                                        <tr id="row0">
+                                            <td><input type="text" name="date[]" value="<?php echo set_value('date', date($this->customlib->getSchoolDateFormat(true, true))); ?>" class="form-control datetime"></td>
+                                            <td>
+                                                <input type="hidden" name="doctor[]" id="doctor_set">
+                                                <select name="doctor_field[]" <?php
+                                                    if ($disable_option == true) {
+                                                        echo "disabled";
+                                                    }
+                                                    ?> class="form-control select2" id="doctor_field" style="width: 100%">
+                                                   
+                                            <?php foreach ($doctors as $key => $value) {
+                                                ?>
+                                                <option value="<?php echo $value["id"] ?>" <?php
+                                                if ((isset($doctor_select)) && ($doctor_select == $value["id"])) {
+                                                   // echo "selected";
                                                 }
-                                                ?> class="form-control select2" style="width: 100%">
-                                               
-<?php foreach ($doctors as $key => $value) {
-    ?>
-                                                    <option value="<?php echo $value["id"] ?>" <?php
-    if ((isset($doctor_select)) && ($doctor_select == $value["id"])) {
-       // echo "selected";
-    }
-    ?>><?php echo $value["name"] . " " . $value["surname"] ?></option>
-<?php } ?>
-                                            </select></td>
-                                        <td><textarea name="instruction[]" style="height:28px" class="form-control"></textarea></td>
-                                        <td><input type="text"  name="insdate[]" value="<?php echo set_value('date', date($this->customlib->getSchoolDateFormat())); ?>" class="form-control date"></td>
-                                        <td><button type="button" onclick="add_more()" style="color: #2196f3" class="closebtn"><i class="fa fa-plus"></i></button></td>
-                                    </tr>
-                                </table>
+                                                ?>><?php echo $value["name"] . " " . $value["surname"] ?></option>
+                                            <?php } ?>
+                                                </select></td>
+                                               <!--  <?php if ($disable_option == true) { ?>
+                                                    <input type="hidden" name="doctor"  value="<?php echo $doctor_select ?>">
+                                                <?php } ?> -->
+                                            <td><textarea name="instruction[]" style="height:28px" class="form-control"></textarea></td>
+                                            <td><input type="text"  name="insdate[]" value="<?php echo set_value('date', date($this->customlib->getSchoolDateFormat())); ?>" class="form-control date"></td>
+                                            <td><button type="button" onclick="add_more()" style="color: #2196f3" class="closebtn"><i class="fa fa-plus"></i></button></td>
+                                        </tr>
+                                    </table>
                                    <!--  <a href="#" onclick="add_more()"><?php echo $this->lang->line('add_more'); ?></a> -->
+                                </div>   
                             </div>
                         </div>
                     </div>
@@ -854,6 +903,198 @@ $genderList = $this->customlib->getGender();
 </div>     
 
 <!-- Modal -->
+<script>
+    var rows = 2;
+   
+
+    var link = 1;
+    $(document).on('click', '.custom-select', function () {
+        var currents = $(this);
+
+        if (currents.parent().find('div.section_checkboxs').is(":visible")) {
+            currents.parent().find('div.section_checkboxs').hide();
+        } else {
+            currents.parent().find('div.section_checkboxs').show();
+        }
+
+    });
+
+    function toggleFillColor(obj) {
+
+        // $("#custom-select-option-box").show();
+        if ($(obj).prop('checked') == true) {
+            console.log($(obj).closest('li'));
+            $(obj).closest('li').css("background-color", '#ddd');
+        } else {
+            $(obj).closest('li').css("background-color", '#FFF');
+        }
+    }
+
+    $(document).on("click", ".checkbox", function (e) {
+        var checkboxObj = $(this).children("input");
+        // console.log(checkboxObj);
+
+        toggleFillColor(checkboxObj);
+    });
+
+    $(document).click(function (e) {
+        e.stopPropagation();
+        var container = $(".a");
+
+        //check if the clicked area is dropDown or not
+        if (container.has(e.target).length === 0) {
+            $("div.section_checkboxs").hide();
+        }
+    })
+</script>
+<script type="text/javascript">
+    $(document).on('click', '.add-btn', function () {
+        var s = "";
+        s += "<div class='row'>";
+        s += "<input name='rows[]' type='hidden' value='" + rows + "'>";
+        s += "<div class='col-md-6'>";
+        s += "<div class='form-group'>";
+        s += "<label for='act'>Act</label>";
+        s += "<select class='form-control act select2' id='act' name='act" + rows + "' data-row_id='" + rows + "'>";
+        s += "<option value=''>--Select--</option>";
+        s += $('#act-template').html();
+        s += "</select>";
+        s += "<small class='text text-danger help-inline'></small>";
+        s += "</div>";
+        s += "</div>";
+        s += "<div class='col-md-5'>";
+        s += "<label for='validationDefault02'>Section</label>";
+        s += "<div id='dd' class='wrapper-dropdown-3'>";
+        s += "<input class='form-control filterinput' type='text'>";
+        s += "<ul class='dropdown scroll150 section_ul'>";
+        s += "<li><label class='checkbox'>--Select--</label></li>";
+        s += "</ul>";
+        s += "</div>";
+        s += "</div>";
+        s += "<div class='col-md-1'>";
+        s += "<div class='form-group'>";
+        s += "<label for='removebtn'>&nbsp;</label>";
+        s += "<button type='button' class='form-control btn btn-sm btn-danger remove_row'><i class='fa fa-remove'></i></button>";
+        s += "</div>";
+        s += "</div>";
+        s += "</div>";
+        $(".multirow").append(s);
+        $('.select2').select2();
+        link = 2;
+        rows++;
+    });
+</script>
+
+<script type="text/html" id="act-template">
+
+    
+   <?php foreach ($symptomsresulttype as $dkey => $dvalue) {
+                                                            ?>
+        <option value="<?php echo $dvalue["id"]; ?>"><?php echo $dvalue["symptoms_type"] ;?></option> 
+        <?php
+    }
+    ?>
+</script>  
+
+<script>
+    $(document).on('change', '.act', function () {
+        $this = $(this);
+        var sys_val = $(this).val();
+        //console.log(sys_val);
+        var row_id = $this.data('row_id');
+        var section_ul = $(this).closest('div.row').find('ul.section_ul');
+
+        var sel_option = "";
+        $.ajax({
+            type: 'POST',
+            url: base_url + 'admin/patient/getPartialsymptoms',
+            data: {'sys_id': sys_val, 'row_id': row_id},
+            dataType: 'JSON',
+            beforeSend: function () {
+                // setting a timeout
+                $('ul.section_ul').find('li:not(:first-child)').remove();
+                $("div.wrapper-dropdown-3").removeClass('active');
+
+            },
+            success: function (data) {
+           
+                section_ul.append(data.record);
+
+            },
+            error: function (xhr) { // if error occured
+                alert("Error occured.please try again");
+
+            },
+            complete: function () {
+
+            }
+        });
+
+    });
+</script>
+<script type="text/javascript">
+
+    
+
+    $(document).on('click', '.remove_row', function () {
+        $this = $(this);
+        $this.closest('.row').remove();
+
+    });
+    $(document).mouseup(function (e)
+    {
+        var container = $(".wrapper-dropdown-3"); // YOUR CONTAINER SELECTOR
+
+        if (!container.is(e.target) // if the target of the click isn't the container...
+                && container.has(e.target).length === 0) // ... nor a descendant of the container
+        {
+            $("div.wrapper-dropdown-3").removeClass('active');
+        }
+    });
+
+    $(document).on('click', '.filterinput', function () {
+
+        if (!$(this).closest('.wrapper-dropdown-3').hasClass("active")) {
+            $(".wrapper-dropdown-3").not($(this)).removeClass('active');
+            $(this).closest("div.wrapper-dropdown-3").addClass('active');
+        }
+
+
+    });
+
+    $(document).on('click', 'input[name="section[]"]', function () {
+        $(this).closest('label').toggleClass('active_section');
+    });
+
+    $(document).on('keyup', '.filterinput', function () {
+
+        var valThis = $(this).val().toLowerCase();
+        var closer_section = $(this).closest('div').find('.section_ul > li');
+
+        var noresult = 0;
+        if (valThis == "") {
+            closer_section.show();
+            noresult = 1;
+            $('.no-results-found').remove();
+        } else {
+            closer_section.each(function () {
+                var text = $(this).text().toLowerCase();
+                var match = text.indexOf(valThis);
+                if (match >= 0) {
+                    $(this).show();
+                    noresult = 1;
+                    $('.no-results-found').remove();
+                } else {
+                    $(this).hide();
+                }
+            });
+        }
+        ;
+        if (noresult == 0) {
+            closer_section.append('<li class="no-results-found">No results found.</li>');
+        }
+    });
+</script>
 
 
 <script type="text/javascript">
@@ -1059,11 +1300,10 @@ $genderList = $this->customlib->getGender();
     })(jQuery);
 
 </script>
+
 <script type="text/javascript">
     $(document).ready(function (e) {
         $("#formadd").on('submit', (function (e) {
-//var student_id = $("#student_id").val();
-//alert("hii");
             $("#formaddbtn").button('loading');
             e.preventDefault();
             $.ajax({
@@ -1213,12 +1453,22 @@ $genderList = $this->customlib->getGender();
         }));
     });
 
+    function makeid(length) {
+        var result = '';
+        var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        var charactersLength = characters.length;
+        for (var i = 0; i < length; i++) {
+            result += characters.charAt(Math.floor(Math.random() * charactersLength));
+        }
+        return result;
+    }
 
     function get_PatientDetails(id) {
         //$("#schedule_charge").html("schedule_charge");
         // $('#guardian_name').html("Null");
         var base_url = "<?php echo base_url(); ?>backend/images/loading.gif";
         $("#ajax_load").html("<center><img src='" + base_url + "'/>");
+        var password = makeid(5);
         $.ajax({
             url: '<?php echo base_url(); ?>admin/patient/patientDetails',
             type: "POST",
@@ -1233,6 +1483,8 @@ $genderList = $this->customlib->getGender();
                     $('#patientuniqueid').val(res.patient_unique_id);
                     //console.log(res.patient_unique_id);
                     $('#patient_id').val(res.id);
+                    $('#password').val(password);
+                   // console.log(password);
                     $('#patientname').val(res.patient_name);
                     $('#pemail').val(res.email);
                     $('#pmobileno').val(res.mobileno);
@@ -1268,6 +1520,7 @@ $genderList = $this->customlib->getGender();
                     //$("#dob").html(res.dob);
                     $("#bp").html(res.bp);
                     //$("#month").html(res.month);
+                 //   alert(res.symptoms);
                     $("#symptoms").html(res.symptoms);
                     $("#known_allergies").html(res.known_allergies);
                     $("#address").html(res.address);
@@ -1334,6 +1587,25 @@ $genderList = $this->customlib->getGender();
 
     }
 
+    function get_symptoms(id) {
+
+       
+        $.ajax({
+            url: '<?php echo base_url(); ?>admin/patient/getsymptoms',
+            type: "POST",
+            data: {id: id},
+            dataType: 'json',
+            success: function (res) {
+                if (res) {
+                   
+                        $('#symptoms_description').val(res.description);
+                      
+                } else{
+                    $('#symptoms_description').val("");
+                }  
+            }
+        });
+    }
 
     function getRevisitRecord(id) {
 
@@ -1381,8 +1653,12 @@ $genderList = $this->customlib->getGender();
 
     $(document).ready(function (e) {
         $("#consultant_register").on('submit', (function (e) {
-//var student_id = $("#student_id").val();
-//alert("hii");
+
+    var doctor_id = $("#doctor_field").val();
+
+    $("#doctor_set").val(doctor_id);
+    //alert(doctor_id);
+    //alert("hii");
             $("#consultant_registerbtn").button('loading');
             e.preventDefault();
             $.ajax({
@@ -1450,7 +1726,7 @@ $genderList = $this->customlib->getGender();
 
         $('select[name="bed_group_id"] option[value="' + bedgroup + '"]').attr("selected", "selected");
         getBed(bedgroup, bed);
-        //$("#bed").modal('hide');
+      
         holdModal('myModal');
     }
 
@@ -1477,9 +1753,113 @@ $genderList = $this->customlib->getGender();
 </script>
 
 <script type="text/javascript">
+    $(document).ready(function() {
+    $('.test_ajax').DataTable({
+        "processing": true,
+        "serverSide": true,
+         "createdRow": function( row, data, dataIndex ) {
+            $(row).children(':nth-child(11)').addClass('text-right');
+            $(row).children(':nth-child(10)').addClass('text-right');
+            $(row).children(':nth-child(9)').addClass('text-right');
+             $(row).children(':nth-child(8)').addClass('text-right');
+        },
+        "ajax": {
+            "url": base_url+"admin/patient/ipd_search",
+            "type": "POST"
+        },
+         responsive: 'true',
+            dom: "Bfrtip",
+         buttons: [
 
+                {
+                    extend: 'copyHtml5',
+                    text: '<i class="fa fa-files-o"></i>',
+                    titleAttr: 'Copy',
+                    title: $('.download_label').html(),
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                },
 
-    //$("#myModal").modal('show');  
+                {
+                    extend: 'excelHtml5',
+                    text: '<i class="fa fa-file-excel-o"></i>',
+                    titleAttr: 'Excel',
+                   
+                    title: $('.download_label').html(),
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                },
 
-</script>                                                       
+                {
+                    extend: 'csvHtml5',
+                    text: '<i class="fa fa-file-text-o"></i>',
+                    titleAttr: 'CSV',
+                    title: $('.download_label').html(),
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                },
+
+                {
+                    extend: 'pdfHtml5',
+                    text: '<i class="fa fa-file-pdf-o"></i>',
+                    titleAttr: 'PDF',
+                    title: $('.download_label').html(),
+                    exportOptions: {
+                        columns: ':visible'
+                        
+                    }
+                },
+
+                {
+                    extend: 'print',
+                    text: '<i class="fa fa-print"></i>',
+                    titleAttr: 'Print',
+                    title: $('.download_label').html(),
+                        customize: function ( win ) {
+                    $(win.document.body)
+                        .css( 'font-size', '10pt' );
+ 
+                    $(win.document.body).find( 'table' )
+                        .addClass( 'compact' )
+                        .css( 'font-size','inherit');
+                },
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                },
+
+                {
+                    extend: 'colvis',
+                    text: '<i class="fa fa-columns"></i>',
+                    titleAttr: 'Columns',
+                    title: $('.download_label').html(),
+                    postfixButtons: ['colvisRestore']
+                },
+            ]
+    });
+});
+
+$(".addpatient").click(function(){	
+	$('#select2-addpatient_id-container').html("");
+	$('#formadd').trigger("reset");
+	$("#patientDetails").hide();
+});
+
+$(".modalbtnpatient").click(function(){	
+	$('#formaddpa').trigger("reset");
+	$(".dropify-clear").trigger("click");
+});
+
+function refreshmodal(){	
+	$('#formaddpa').trigger("reset");
+	var table = document.getElementById("tableID");
+    var table_len = (table.rows.length);	
+	for (i = 1; i < table_len; i++) {			
+		delete_row(i);
+	}
+}
+</script>                                                   
 <?php $this->load->view('admin/patient/patientaddmodal') ?>

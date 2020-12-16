@@ -16,53 +16,56 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
         <?php } ?>
     </ul>    
     <div class="tab-content">
-        <?php if ($this->rbac->hasPrivilege('add_medicine_stock', 'can_view')) { ?>
+        <?php if ($this->rbac->hasPrivilege('medicine', 'can_view')) { ?>
             <div class="tab-pane active" id="current_stock">   
-                <table class="table table-striped table-bordered table-hover example" id="detail" cellspacing="0" width="100%" >
-                    <thead>
-                        <tr>
-                            <th><?php echo $this->lang->line('inward') . " " . $this->lang->line('date'); ?></th>
-                            <th><?php echo $this->lang->line('batch') . " " . $this->lang->line('no'); ?></th>
-
-                            <th><?php echo $this->lang->line('expire') . " " . $this->lang->line('date'); ?></th>
-                            <th class="text-right"><?php echo $this->lang->line('packing') . " " . $this->lang->line('qty') . " (" . $currency_symbol . ")"; ?></th>
-                            <th class="text-right"><?php echo $this->lang->line('purchase_rate') . " (" . $currency_symbol . ")"; ?></th>
-                            <th class="text-right"><?php echo  $this->lang->line('amount') . ' (' . $currency_symbol . ')'; ?></th>
-                            <th class="text-right"><?php echo $this->lang->line('quantity'); ?></th>
-                            <th class="text-right"><?php echo $this->lang->line('mrp') . ' (' . $currency_symbol . ')'; ?></th>
-                            <th class="text-right"><?php echo $this->lang->line('sale_price') . ' (' . $currency_symbol . ')'; ?></th>
-                            <th class="text-right"><?php echo $this->lang->line('action'); ?></th>
-
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php
-                        $count = 1;
-                        foreach ($result as $detail) {
-                            ?>
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered table-hover example" id="detail" cellspacing="0" width="100%">
+                        <thead>
                             <tr>
-                                <td><?php echo date($this->customlib->getSchoolDateFormat(), strtotime($detail->inward_date)); ?></td>
-                                <td ><?php echo $detail->batch_no ?></td>
-                                <td><?php echo $detail->expiry_date ?></td>
-                                <td class="text-right"><?php echo $detail->packing_qty ?></td>
-                                <td class="text-right"><?php echo $detail->purchase_price ?></td>
-                                <td class="text-right"><?php echo $detail->amount; ?></td>
-                                <td class="text-right"><?php echo $detail->quantity ?></td>
-                                <td class="text-right"><?php echo $detail->mrp; ?> </td>
-                                <td class="text-right"><?php echo $detail->sale_rate; ?></td>
+                                <th><?php echo $this->lang->line('inward') . " " . $this->lang->line('date'); ?></th>
+                                <th><?php echo $this->lang->line('batch') . " " . $this->lang->line('no'); ?></th>
 
-                                <td class="text-right"><?php if ($this->rbac->hasPrivilege('add_medicine_stock', 'can_delete')) { ?><a href="#" class="btn btn-default btn-xs" data-toggle="tootip" title="<?php echo $this->lang->line('delete'); ?>" onclick="delete_batch('<?php echo $detail->id ?>', '<?php echo $detail->pharmacy_id ?>')"><i class="fa fa-trash"></i></a><?php } ?></td>
+                                <th><?php echo $this->lang->line('expire') . " " . $this->lang->line('date'); ?></th>
+                                <th class="text-right"><?php echo $this->lang->line('packing') . " " . $this->lang->line('qty') . " (" . $currency_symbol . ")"; ?></th>
+                                <th class="text-right"><?php echo $this->lang->line('purchase_rate') . " (" . $currency_symbol . ")"; ?></th>
+                                <th class="text-right"><?php echo  $this->lang->line('amount') . ' (' . $currency_symbol . ')'; ?></th>
+                                <th class="text-right"><?php echo $this->lang->line('quantity'); ?></th>
+                                <th class="text-right"><?php echo $this->lang->line('mrp') . ' (' . $currency_symbol . ')'; ?></th>
+                                <th class="text-right"><?php echo $this->lang->line('sale_price') . ' (' . $currency_symbol . ')'; ?></th>
+                                <th class="text-right"><?php echo $this->lang->line('action'); ?></th>
+
                             </tr>
+                        </thead>
+                        <tbody>
                             <?php
-                            $count++;
-                        }
-                        ?>
-                    </tbody>
-                </table>
+                            $count = 1;
+                            foreach ($result as $detail) {
+                                ?>
+                                <tr>
+                                    <td><?php echo date($this->customlib->getSchoolDateFormat(), strtotime($detail->inward_date)); ?></td>
+                                    <td ><?php echo $detail->batch_no ?></td>
+                                    <td><?php echo $detail->expiry_date ?></td> 
+                                    <td class="text-right"><?php echo $detail->packing_qty ?></td>
+                                    <td class="text-right"><?php echo $detail->purchase_price ?></td>
+                                    <td class="text-right"><?php echo $detail->amount; ?></td>
+                                    <td class="text-right"><?php echo $detail->quantity ?></td>
+                                    <td class="text-right"><?php echo $detail->mrp; ?> </td>
+                                    <td class="text-right"><?php echo $detail->sale_rate; ?></td>
+
+                                    <td class="text-right"><?php if ($this->rbac->hasPrivilege('add_medicine_stock', 'can_delete')) { ?><a href="#" class="btn btn-default btn-xs" data-toggle="tootip" title="<?php echo $this->lang->line('delete'); ?>" onclick="delete_batch('<?php echo $detail->id ?>', '<?php echo $detail->pharmacy_id ?>')"><i class="fa fa-trash"></i></a><?php } ?></td>
+                                </tr>
+                                <?php
+                                $count++;
+                            }
+                            ?>
+                        </tbody>
+                    </table>
+                </div>    
             </div>
         <?php } if ($this->rbac->hasPrivilege('medicine_bad_stock', 'can_view')) { ?>
             <div class="tab-pane" id="bad_stock">   
-                <table class="table table-striped table-bordered table-hover example" cellspacing="0" width="100%" >
+                <div class="table-responsive">
+                  <table class="table table-striped table-bordered table-hover example" cellspacing="0" width="100%" >
                     <thead>
                         <tr>
                             <th><?php echo $this->lang->line('outward') . " " . $this->lang->line('date'); ?></th>
@@ -84,7 +87,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                             <tr>
                                 <td><?php echo date($this->customlib->getSchoolDateFormat(), strtotime($stockdetail->outward_date)); ?></td>
                                 <td ><?php echo $stockdetail->batch_no ?></td>
-                                <td><?php echo $stockdetail->expiry_date ?></td>
+                                <td><?php echo $stockdetail->expiry_date ?></td> 
                                 <td class="text-right"><?php echo $stockdetail->quantity ?></td>
                                 <td class="text-right"><?php if ($this->rbac->hasPrivilege('medicine_bad_stock', 'can_delete')) { ?> <a href="#" class="btn btn-default btn-xs" data-toggle="tootip" title="<?php echo $this->lang->line('delete'); ?>" onclick="delete_badstock('<?php echo $stockdetail->id ?>', '<?php echo $stockdetail->pharmacy_id ?>')"><i class="fa fa-trash"></i></a><?php } ?></td>
                             </tr>
@@ -93,6 +96,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                         ?>
                     </tbody>
                 </table>
+              </div>  
             </div>
         <?php } ?>
     </div>

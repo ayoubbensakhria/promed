@@ -5,12 +5,30 @@ if (!defined('BASEPATH'))
 
 class Medicinecategory extends Admin_Controller {
 
-    public function medicine() {
-        
+    public function index()
+    {
+        if (!$this->rbac->hasPrivilege('medicine', 'can_view')) {
+            access_denied();
+        }
+        if ($this->rbac->hasPrivilege('medicine_category', 'can_view')) {
+          redirect('admin/medicinecategory/medicine');  
+        }else
+        if ($this->rbac->hasPrivilege('medicine_supplier', 'can_view')) {
+          redirect('admin/medicinecategory/supplier');  
+        }else
+        if ($this->rbac->hasPrivilege('medicine_dosage', 'can_view')) {
+          redirect('admin/medicinedosage')  ;
+        }
+
+        $this->medicine();
+    }
+
+
+    public function medicine() {      
 
         if (!$this->rbac->hasPrivilege('medicine_category', 'can_view')) {
             access_denied();
-        }
+        }        
         $this->session->set_userdata('top_menu', 'setup');
         $this->session->set_userdata('sub_menu', 'medicine/index');
         $this->session->set_userdata('sub_sidebar_menu', 'admin/medicinecategory/medicine');
@@ -24,7 +42,6 @@ class Medicinecategory extends Admin_Controller {
                 )
         );
         if ($this->form_validation->run()) {
-
             $medicineCategory = $this->input->post("medicine_category");
             $medicinecategoryid = $this->input->post("id");
             if (empty($medicinecategoryid)) {
@@ -39,7 +56,6 @@ class Medicinecategory extends Admin_Controller {
             if (!empty($medicinecategoryid)) {
                 $data = array('medicine_category' => $medicineCategory, 'id' => $medicinecategoryid);
             } else {
-
                 $data = array('medicine_category' => $medicineCategory);
             }
 
@@ -47,7 +63,6 @@ class Medicinecategory extends Admin_Controller {
             $this->session->set_flashdata('msg', '<div class="alert alert-success">Record added Successfully</div>');
             redirect("admin/medicinecategory/medicine");
         } else {
-
             $this->load->view("layout/header");
             $this->load->view("admin/pharmacy/medicine_category", $data);
             $this->load->view("layout/footer");

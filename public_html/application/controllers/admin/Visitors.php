@@ -51,6 +51,70 @@ class Visitors extends Admin_Controller {
         }
     }
 
+
+     public function visitors_search()
+            {
+
+                $draw = $_POST['draw'];
+                $row = $_POST['start'];
+                $rowperpage = $_POST['length']; // Rows display per page
+                $columnIndex = $_POST['order'][0]['column']; // Column index
+                $columnName = $_POST['columns'][$columnIndex]['data']; // Column name
+                $columnSortOrder = $_POST['order'][0]['dir']; // asc or desc
+                $where_condition=array();
+                if(!empty($_POST['search']['value']) ) {
+                    $where_condition=array('search'=>$_POST['search']['value']);
+                }
+                $resultlist = $this->visitors_model->search_datatable($where_condition);
+                $total_result = $this->visitors_model->search_datatable_count($where_condition);
+                $data = array();
+                  
+                foreach ($resultlist as $result_key => $result_value) { 
+                        
+                    $action=" <a href='#' data-toggle='tooltip' class='btn btn-default btn-xs'  title='".$this->lang->line('show')."'    data-target='#visitordetails' data-original-title='".$this->lang->line('view')."' onclick='getRecord(".$result_value->id.")'>  <i class='fa fa-reorder'></i> </a>"; 
+
+                     if ($result_value->image !== "") {
+                        $action.="<a href=".base_url().'admin/visitors/download/'.$result_value->image." class='btn btn-default btn-xs'  data-toggle='tooltip' title=''  data-original-title=".$this->lang->line('download')."><i class='fa fa-download' aria-hidden='true'></i></a>"; 
+                    }
+                    
+
+                    if ($this->rbac->hasPrivilege('visitor_book', 'can_edit')) {
+                        $action.="<a href='#'  class='btn btn-default btn-xs'  data-toggle='tooltip' title=".$this->lang->line('edit')." onclick=get(".$result_value->id.")><i class='fa fa-pencil' aria-hidden='true'></i></a>"; 
+                    }
+
+                    if ($this->rbac->hasPrivilege('visitor_book', 'can_delete')) {
+                          if ($result_value->image !== "") {
+                            $action.="<a href='#' onclick=delete_recordById('".base_url().'admin/visitors/imagedelete/'.$result_value->id.'/'.$result_value->image."') class='btn btn-default btn-xs'  data-toggle='tooltip' title=''  data-original-title=".$this->lang->line('delete')."><i class='fa fa-trash' aria-hidden='true'></i></a>"; 
+                             } else {
+
+                            $action.="<a href='#' onclick=delete_recordById('".base_url().'admin/visitors/delete/'.$result_value->id."','delete') class='btn btn-default btn-xs'  data-toggle='tooltip' title=''  data-original-title=".$this->lang->line('delete')."><i class='fa fa-trash' aria-hidden='true'></i></a>";
+                             }
+                        
+                    }
+                    
+                $nestedData=array();  
+                $nestedData[]=$result_value->purpose;
+                $nestedData[]=$result_value->name;
+                $nestedData[]=$result_value->contact;
+                $nestedData[]=date($this->customlib->getSchoolDateFormat(), $this->customlib->dateyyyymmddTodateformat($result_value->date));
+                $nestedData[]=$result_value->in_time;
+                $nestedData[]=$result_value->out_time;
+                $nestedData[]=$action;
+                $data[] = $nestedData;
+                }
+
+                $json_data = array(
+                    "draw"            => intval($draw),   // for every request/draw by clientside , they send a number as a parameter, when they recieve a response/data they first check the draw number, so we are sending same number in draw. 
+                    "recordsTotal"    => intval($total_result),  // total number of records
+                    "recordsFiltered" => intval($total_result), // total number of records after searching, if there is no searching then totalFiltered = totalData
+                    "data"            => $data   // total data array
+                    );
+
+        echo json_encode($json_data);  // send data as json format
+
+
+        }
+
     public function add() {
         $this->form_validation->set_rules('purpose', $this->lang->line('purpose'), 'required');
         $this->form_validation->set_rules('name', $this->lang->line('name'), 'required');

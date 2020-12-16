@@ -3,7 +3,6 @@
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->
-
     <section class="content">
         <div class="row">
             <div class="col-md-12">
@@ -44,7 +43,7 @@
                                                     <a href="<?php echo base_url() ?>admin/notification/edit/<?php echo $notification['id'] ?>" class="btn btn-default btn-xs" data-toggle="tooltip" title="<?php echo $this->lang->line('edit'); ?>" data-original-title="<?php echo $this->lang->line('add'); ?>">
                                                         <i class="fa fa-pencil"></i>
                                                     </a>
-                                                    &nbsp; <?php } if (($this->rbac->hasPrivilege('notice_board', 'can_delete')) || ($notification["created_id"] == $user_id)) { ?>                                            
+                                                    &nbsp; <?php } if (($this->rbac->hasPrivilege('notice_board', 'can_delete')) || ($notification["created_id"] == $user_id)) { ?>                                         
                                                     <a onclick="delete_recordById('<?php echo base_url() ?>admin/notification/delete/<?php echo $notification['id'] ?>', '<?php echo $this->lang->line('delete_message'); ?>')"  class="btn btn-default btn-xs" data-toggle="tooltip" title="<?php echo $this->lang->line('delete'); ?>" data-original-title="<?php echo $this->lang->line('add'); ?>">
                                                         <i class="fa fa-trash"></i>
                                                     </a>
@@ -63,19 +62,16 @@
                                                                 <ul class="nav nav-pills">
                                                                     <li><i class="fa fa-calendar-check-o"></i> <?php echo $this->lang->line('publish_date'); ?> : <?php echo date($this->customlib->getSchoolDateFormat(), $this->customlib->dateyyyymmddTodateformat($notification['publish_date'])); ?> </li>
                                                                     <li><i class="fa fa-calendar"></i> <?php echo $this->lang->line('notice_date'); ?> : <?php echo date($this->customlib->getSchoolDateFormat(), $this->customlib->dateyyyymmddTodateformat($notification['date'])); ?> </li>
-
                                                                 </ul>
                                                                 <h4 class="text text-primary ptt10"> <?php echo $this->lang->line('message_to'); ?></h4>
                                                                 <ul class="nav nav-pills nav-stacked">
                                                                     <?php foreach ($role_name as $key => $role_value) {
                                                                         ?>
-
                                                                         <li>
                                                                             <i class="fa fa-user" aria-hidden="true"></i>
                                                                             <?php echo $role_value['name']; ?>
                                                                         </li>
                                                                     <?php } ?>
-
                                                                     <?php ?> 
                                                                 </ul>
                                                             </div>
@@ -85,7 +81,6 @@
                                             </div>
                                         </div>
                                     </div>
-
                                     <?php
                                 }
                             }
@@ -96,7 +91,6 @@
             </div>           
         </div>
 </div>
-
 </section>
 </div>
 <script type="text/javascript">
@@ -110,13 +104,10 @@
         $("#btnreset").click(function () {
             $("#form1")[0].reset();
         });
-
     });
-
 </script>
 <script>
     $(function () {
-
         $("#compose-textarea").wysihtml5();
     });
 </script>

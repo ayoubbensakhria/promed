@@ -26,7 +26,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                             <div class="form-group"> 
                                                 <label><?php echo $this->lang->line("role") ?></label><small class="req"> *</small>
                                                 <select name="role" class="form-control">
-                                                    <option value=""><?php $this->lang->line('select') ?></option>
+                                                    <option value=""><?php echo $this->lang->line('select') ?></option>
                                                     <?php foreach ($role as $key => $role_value) {
                                                         ?>
                                                         <option value="<?php echo $role_value['type'] ?>"><?php echo $role_value['type'] ?></option>
@@ -133,8 +133,8 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                         </table>
                                     </div>                           
                                     <div class="tab-pane active" id="tab_1">
-                                        <div class="">   
-                                            <div class="">   
+                                        <div class="mediarow row">   
+                                            <div class="col-md-12">   
                                                 <?php if (empty($resultlist)) {
                                                     ?>
                                                     <div class="alert alert-info"><?php echo $this->lang->line('no_record_found'); ?></div>

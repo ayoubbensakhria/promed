@@ -19,6 +19,8 @@ $config['notification'] = array(
     'appointment_created' => "Appointment has been created for <a href='<url>'><patient></a>",
     'appointment_approved' => "Appointment has been approved for <a href='<url>'><patient></a>",
     'opd_created' => "OPD has been created with <a href='<url>'><opdno></a>",
+    'opdpres_created' => "OPD Prescription has been created with <a href='<url>'><opdno></a>",
+    'ipdpres_created' => "IPD Prescription has been created with <a href='<url>'><ipdno></a>",
     'ipd_created' => "IPD has been created with <a href='<url>'><ipdno></a>",
     'ot_created' => "OT Visit has been created for <a href='<url>' onclick='<onchngfun>'><patient></a>",
     'salary_paid' => "Salary Amount <amount> has been paid for Month <month> to <a href='<url>'><staffname></a>"
@@ -35,6 +37,9 @@ $config['notification_icon'] = array(
 
 $config['patient_notification_url'] = array(
     'opd' => "patient/dashboard/profile",
+    'opdvisit' => "patient/dashboard/visitdetails",
+    'opdpres' => "patient/dashboard/profile",
+    'ipdpres' => "patient/systemnotifications/moveipdpresnotification",
     'ipd' => "patient/dashboard/ipdprofile",
     'appointment' => "patient/dashboard/appointment",
     'ot' => "patient/dashboard/otsearch",
@@ -51,8 +56,10 @@ $config['patient_notification_url'] = array(
 
 $config['notification_url'] = array(
     'opd' => "admin/systemnotification/moveopdnotification",
+    'opdpres' => "admin/systemnotification/moveopdpresnotification",
     //'opd_revisit' =>"admin/patient/profile",
     'ipd' => "admin/systemnotification/moveipdnotification",
+    'ipdpres' => "admin/systemnotification/moveipdpresnotification",
     'appointment' => "admin/systemnotification/moveappointment",
     'ot' => "admin/systemnotification/moveotpatient",
     'salary' => "admin/systemnotification/movesalarypay"

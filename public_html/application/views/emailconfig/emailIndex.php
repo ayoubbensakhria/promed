@@ -84,9 +84,11 @@
                             </div>                          
                         </div>
                         <div class="box-footer">
-                            <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
-                                <button type="submit" class="btn btn-info pull-left"><?php echo $this->lang->line('save'); ?></button>
-                            </div>
+                            <?php  if ($this->rbac->hasPrivilege('email_setting','can_edit')) { ?>
+                                <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
+                                    <button type="submit" class="btn btn-info pull-left"><?php echo $this->lang->line('save'); ?></button>
+                                </div>
+                            <?php } ?>
                         </div>
                     </form>
                 </div>

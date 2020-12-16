@@ -1,16 +1,16 @@
-
-
-<div class="content-wrapper" style="min-height: 946px;">  
-
-    <!-- Main content -->
+<div class="content-wrapper">  
     <section class="content">
         <div class="row">
-            <!--  <?php //if (($this->rbac->hasPrivilege('department', 'can_add')) || ($this->rbac->hasPrivilege('department', 'can_edit'))) {
-?>      -->
             <div class="col-md-2">
                 <div class="box border0">
                     <ul class="tablists">
+                          <?php if ($this->rbac->hasPrivilege('radiology category', 'can_view')) { ?>
                         <li><a href="<?php echo base_url(); ?>admin/lab/addLab" class="active"><?php echo $this->lang->line('radiology') . " " . $this->lang->line('category'); ?></a></li>
+                    <?php } if ($this->rbac->hasPrivilege('radiology_unit', 'can_view')) { ?>
+                        <li><a href="<?php echo base_url(); ?>admin/lab/unit" class=""><?php echo $this->lang->line('unit'); ?></a></li>
+                    <?php } if ($this->rbac->hasPrivilege('radiology_parameter', 'can_view')) { ?>
+                        <li><a href="<?php echo base_url(); ?>admin/lab/radioparameter" class=""><?php echo $this->lang->line('radiology') . " " . $this->lang->line('parameter'); ?></a></li>
+                    <?php } ?>
                     </ul>
                 </div>
             </div>
@@ -18,9 +18,9 @@
                 <div class="box box-primary" id="tachelist">
                     <div class="box-header ptbnull">
                         <h3 class="box-title titlefix"><?php echo $this->lang->line('radiology') . " " . $this->lang->line('category') . " " . $this->lang->line('list'); ?></h3>
-                        <div class="box-tools pull-right">
-                            <?php if ($this->rbac->hasPrivilege('radiology_category', 'can_add')) { ?>
-                                <a data-toggle="modal" data-target="#myModal" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> <?php echo $this->lang->line('add') . " " . $this->lang->line('radiology') . " " . $this->lang->line('category'); ?></a> 
+                        <div class="box-tools addmeeting">
+                            <?php if ($this->rbac->hasPrivilege('radiology category', 'can_add')) { ?>
+                                <a data-toggle="modal" data-target="#myModal" class="btn btn-primary btn-sm radiology"><i class="fa fa-plus"></i> <?php echo $this->lang->line('add') . " " . $this->lang->line('radiology') . " " . $this->lang->line('category'); ?></a> 
                             <?php } ?>    
                         </div>
                     </div>
@@ -44,11 +44,11 @@
                                         <tr>
                                             <td><?php echo $lab['lab_name']; ?></td>
                                             <td class="text-right">
-                                                <?php if ($this->rbac->hasPrivilege('radiology_category', 'can_edit')) { ?><a data-target="#editmyModal" onclick="get(<?php echo $lab['id'] ?>)"  class="btn btn-default btn-xs" data-toggle="tooltip" title="<?php echo $this->lang->line('edit'); ?>">
+                                                <?php if ($this->rbac->hasPrivilege('radiology category', 'can_edit')) { ?><a data-target="#editmyModal" onclick="get(<?php echo $lab['id'] ?>)"  class="btn btn-default btn-xs" data-toggle="tooltip" title="<?php echo $this->lang->line('edit'); ?>">
                                                         <i class="fa fa-pencil"></i>
                                                     </a>
                                                 <?php } ?>
-                                                <?php if ($this->rbac->hasPrivilege('radiology_category', 'can_delete')) { ?>
+                                                <?php if ($this->rbac->hasPrivilege('radiology category', 'can_delete')) { ?>
                                                     <a  class="btn btn-default btn-xs"  data-toggle="tooltip" title="<?php echo $this->lang->line('delete'); ?>" onclick="delete_recordById('<?php echo base_url(); ?>admin/lab/delete/<?php echo $lab['id'] ?>', '<?php echo $this->lang->line('delete_message'); ?>')";>
                                                         <i class="fa fa-trash"></i>
                                                     </a>
@@ -242,13 +242,12 @@
 
                 }
             });
-
-
         }));
-
     });
 
-
+$(".radiology").click(function(){
+	$('#formadd').trigger("reset");
+});
 </script>
 
 

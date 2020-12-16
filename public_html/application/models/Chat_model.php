@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
@@ -7,7 +6,6 @@ class Chat_model extends Admin_Model {
 
     public function __construct() {
         parent::__construct();
-        $this->current_session = $this->setting_model->getCurrentSession();
     }
 
     /**
@@ -54,9 +52,7 @@ class Chat_model extends Admin_Model {
     }
 
     public function conversation_staff($sender_id) {
-
         $this->db->select('chat.receiver_id,staff.name,staff.surname, chat.sender_type,chat.receiver_type,roles.name as role,staff.image ')->from('chat')->join('staff', 'staff.id=chat.receiver_id', 'inner')->join('staff_roles', 'staff.id=staff_roles.staff_id', 'inner')->join('roles', 'staff_roles.role_id=roles.id', 'inner');
-        ;
         $this->db->where("(sender_id='" . $sender_id . "' or sender_type=1  and receiver_id='" . $sender_id . "' or receiver_type=1)");
         $this->db->group_by('receiver_id');
         $this->db->order_by('chat.id', 'desc');
@@ -65,39 +61,25 @@ class Chat_model extends Admin_Model {
     }
 
     public function conversation_student($sender_id) {
-
         $this->db->select('chat.receiver_id, patients.patient_name, chat.sender_type,chat.receiver_type,"Patient" as role,patients.image as image')->from('chat')->join('patients', 'patients.id=chat.receiver_id', 'inner');
         $this->db->where("(sender_id='" . $sender_id . "' or sender_type=2  and receiver_id='" . $sender_id . "' or receiver_type=2)");
         $this->db->group_by('receiver_id');
         $this->db->order_by('chat.id', 'desc');
         $query = $this->db->get();
         return $query->result_array();
-    }
-
-    // public function conversation_parent($sender_id){
-    //     $this->db->select('chat.receiver_id, students.father_name, chat.sender_type,chat.receiver_type,"Parent" as role,"no_image.png" as image')->from('chat')->join('students','students.parent_id=chat.receiver_id','inner');
-    //     $this->db->where("(sender_id='".$sender_id."' or sender_type=3  and receiver_id='".$sender_id."' or receiver_type=3)");
-    //     $this->db->group_by('receiver_id');
-    //     $this->db->order_by('chat.id','desc');
-    //     $query = $this->db->get();
-    //     return $query->result_array();
-    // }
+    }    
 
     public function conversation_seen($sender_id) {
-
         $this->db->select('chat.receiver_id,staff.name,staff.surname, chat.sender_type,chat.receiver_type,roles.name as role,staff.image ')->from('chat')->join('staff', 'staff.id=chat.receiver_id', 'inner')->join('staff_roles', 'staff.id=staff_roles.staff_id', 'inner')->join('roles', 'staff_roles.role_id=roles.id', 'inner');
-        $this->db->where("(sender_id='" . $sender_id . "' OR receiver_id='" . $sender_id . "')");
-        //$this->db->group_by('receiver_id');
+        $this->db->where("(sender_id='" . $sender_id . "' OR receiver_id='" . $sender_id . "')");       
         $this->db->order_by('chat.id', 'desc');
         $query = $this->db->get();
         return $query->result_array();
     }
 
     public function conversation($sender_id) {
-
         $this->db->select('chat.receiver_id,chat.sender_type,chat.receiver_type,')->from('chat');
-        $this->db->where("(sender_id='" . $sender_id . "' OR receiver_id='" . $sender_id . "')");
-        //$this->db->group_by('receiver_id');
+        $this->db->where("(sender_id='" . $sender_id . "' OR receiver_id='" . $sender_id . "')");        
         $this->db->order_by('chat.id', 'desc');
         $query = $this->db->get();
         return $query->result_array();
@@ -105,7 +87,6 @@ class Chat_model extends Admin_Model {
 
     public function conversation_forstudent($sender_id) {
         $this->db->select('chat.receiver_id,staff.name,staff.surname, chat.sender_type,chat.receiver_type,roles.name as role,staff.image ')->from('chat')->join('staff', 'staff.id=chat.receiver_id', 'inner')->join('staff_roles', 'staff.id=staff_roles.staff_id', 'inner')->join('roles', 'staff_roles.role_id=roles.id', 'inner');
-        ;
         $this->db->where("(sender_id='" . $sender_id . "' or sender_type=2  and receiver_id='" . $sender_id . "' or receiver_type=2)");
         $this->db->group_by('receiver_id');
         $this->db->order_by('chat.id', 'desc');
@@ -115,7 +96,6 @@ class Chat_model extends Admin_Model {
 
     public function conversation_forparent($parent_id) {
         $this->db->select('chat.receiver_id,staff.name,chat.message,chat.created_at,staff.surname, chat.sender_type,chat.receiver_type,roles.name as role,staff.image ')->from('chat')->join('staff', 'staff.id=chat.receiver_id', 'inner')->join('staff_roles', 'staff.id=staff_roles.staff_id', 'inner')->join('roles', 'staff_roles.role_id=roles.id', 'inner');
-        ;
         $this->db->where("(sender_id='" . $parent_id . "' or sender_type=3  and receiver_id='" . $parent_id . "' or receiver_type=3)");
         $this->db->group_by('receiver_id');
         $this->db->order_by('chat.created_at', 'asc');
@@ -131,28 +111,20 @@ class Chat_model extends Admin_Model {
     }
 
     public function get_student($student) {
-
         $this->db->select('patients.patient_name ,patients.id,"Student" as role')->from('patients');
         $this->db->like('patients.patient_name', $student);
-
         $query = $this->db->get();
-
         return $query->result_array();
     }
 
     public function get_parent($name) {
-
         $this->db->select('students.father_name,students.parent_id, "Parent" as role')->from('students');
         $this->db->like('students.father_name', $name);
-
-
         $query = $this->db->get();
-
         return $query->result_array();
     }
 
     public function receiver_name($receiver_id, $type) {
-
         if ($type == '1') {
             $this->db->select('staff.name,staff.surname,staff.image,roles.name as role')->from('staff')->join('staff_roles', 'staff_roles.staff_id=staff.id', 'inner')->join('roles', 'roles.id=staff_roles.role_id', 'inner')->where('staff.id', $receiver_id);
         } elseif ($type == '3') {
@@ -162,8 +134,6 @@ class Chat_model extends Admin_Model {
         }
 
         $query = $this->db->get();
-
         return $query->row_array();
     }
-
 }

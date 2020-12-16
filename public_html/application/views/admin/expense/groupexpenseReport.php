@@ -107,7 +107,6 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                         $expense_date = "";
                                         $invoice_no = "";
                                         $expense_amount = "";
-                                        // print_r($expensedata);die;
                                         foreach ($expensedata as $expensevalue) {
                                             $expenseexpload = explode('@', $expensevalue);
 
@@ -138,7 +137,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                             <td></td>
                                             <td></td>
                                             <td></td>
-                                            <td></td>
+                                            <td><b><?php echo $this->lang->line('total') ?></b></td>
                                             <td class="text text-right"><b><?php echo $value['total_amount']; ?></b></td>
                                         </tr>
                                         <?php
@@ -149,8 +148,8 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                         <td></td>
                                         <td></td>
                                         <td></td>
-                                        <td><b>Total</b></td>
-                                        <td class="text text-right"><b><?php echo $grd_total; ?></b></td>
+                                        <td><b>Grand Total</b></td>
+                                        <td class="text text-right"><b><?php echo number_format($grd_total, 2, '.', '') ; ?></b></td>
                                     </tr>
                                 </tbody>
                             </table>

@@ -5,7 +5,7 @@
 <script src="<?php echo base_url(); ?>backend/dist/js/moment.min.js"></script>
 <footer class="main-footer">
     &copy;  <?php echo date('Y'); ?> 
-    <?php echo $this->customlib->getAppName(); ?> <?php echo $this->customlib->getAppVersion(); ?>
+    <?php echo $this->customlib->getAppName(); ?> <!-- <?php echo $this->customlib->getAppVersion(); ?> -->
 </footer>
 <div class="control-sidebar-bg"></div>
 </div>
@@ -20,13 +20,19 @@
 <script src="<?php echo base_url(); ?>backend/plugins/input-mask/jquery.inputmask.js"></script>
 <script src="<?php echo base_url(); ?>backend/plugins/input-mask/jquery.inputmask.date.extensions.js"></script>
 <script src="<?php echo base_url(); ?>backend/plugins/input-mask/jquery.inputmask.extensions.js"></script>
-
-
 <script src="<?php echo base_url(); ?>backend/plugins/daterangepicker/daterangepicker.js"></script>
 <script src="<?php echo base_url(); ?>backend/plugins/colorpicker/bootstrap-colorpicker.min.js"></script>
 <script src="<?php echo base_url(); ?>backend/plugins/timepicker/bootstrap-timepicker.min.js"></script>
 <script src="<?php echo base_url(); ?>backend/plugins/slimScroll/jquery.slimscroll.min.js"></script>
 <script src="<?php echo base_url(); ?>backend/dist/js/jquery.mCustomScrollbar.concat.min.js"></script>
+
+<!--language js-->
+<script type="text/javascript" src="<?php echo base_url(); ?>backend/dist/js/bootstrap-select.min.js"></script>
+<script type="text/javascript">
+    $(function(){
+      $('.languageselectpicker').selectpicker();
+   });
+</script>
 
 <script type="text/javascript">
     $(document).ready(function () {
@@ -333,13 +339,17 @@ if (isset($title)) {
 <?php if ($this->rbac->hasPrivilege('calendar_to_do_list', 'can_add')) { ?>
 
 
+           // alert('this is here');
+             var datetime_format = '<?php echo $result = strtr($this->customlib->getSchoolDateFormat(true, true), ['d' => 'DD', 'm' => 'MM', 'Y' => 'YYYY', 'H' => 'hh', 'i' => 'mm',]) ?>';
+
                 $("#input-field").val('');
                 $("#desc-field").text('');
                 $("#date-field").daterangepicker({
                     startDate: date,
                     endDate: date,
                     timePicker: true, timePickerIncrement: 5, locale: {
-                        format: 'MM/DD/YYYY hh:mm a'
+                    format: datetime_format
+                    
                     }
                 });
                 $('#newEventModal').modal('show');
@@ -351,15 +361,23 @@ if (isset($title)) {
     });
 
     $(document).ready(function () {
+
+         var datetime_format = '<?php echo $result = strtr($this->customlib->getSchoolDateFormat(true, true), ['d' => 'DD', 'm' => 'MM', 'Y' => 'YYYY', 'H' => 'hh', 'i' => 'mm',]) ?>';
+
         $("#date-field").daterangepicker({timePicker: true, timePickerIncrement: 5, locale: {
-                format: 'MM/DD/YYYY hh:mm A'
+                format: datetime_format
             }});
 
 
     });
 
     function datepic() {
-        $("#date-field").daterangepicker();
+
+         var datetime_format = '<?php echo $result = strtr($this->customlib->getSchoolDateFormat(true, true), ['d' => 'DD', 'm' => 'MM', 'Y' => 'YYYY', 'H' => 'hh', 'i' => 'mm',]) ?>';
+
+        $("#date-field").daterangepicker({
+            format: datetime_format
+        });
     }
     function view_event(id) {
         //$("#28B8DA").removeClass('cpicker-small').addClass('cpicker-big');
@@ -368,6 +386,9 @@ if (isset($title)) {
         if (typeof (id) == 'undefined') {
             return;
         }
+
+        var daterange_format = '<?php echo $result = strtr($this->customlib->getSchoolDateFormat(), ['d' => 'DD', 'm' => 'MM', 'Y' => 'YYYY']) ?>';
+
         $.ajax({
             url: base_url + 'admin/calendar/view_event/' + id,
             type: 'POST',
@@ -401,11 +422,11 @@ if (isset($title)) {
                     startDate: msg.startdate,
                     endDate: msg.enddate,
                     timePicker: true, timePickerIncrement: 5, locale: {
-                        format: 'MM/DD/YYYY hh:mm A'
+                        format: daterange_format,
                     }
                 });
                 $("#event_color").val(msg.event_color);
-                $("#delete_event").attr("onclick", "deleteevent(" + id + ",'Event')")
+                $("#delete_event").attr("onclick", "deleteevent(" + id + ",'Event ')")
 
                 // $("#28B8DA").removeClass('cpicker-big').addClass('cpicker-small');
                 $("#" + msg.colorid).removeClass('cpicker-small').addClass('cpicker-big');
@@ -433,10 +454,6 @@ if (isset($title)) {
 
             });
         });
-
-
-
-
         var date_format = '<?php echo $result = strtr($this->customlib->getSchoolDateFormat(), ['d' => 'dd', 'm' => 'mm', 'Y' => 'yyyy',]) ?>';
         var capital_date_format = date_format.toUpperCase();
         $.fn.dataTable.moment(capital_date_format);
@@ -541,7 +558,7 @@ if (isset($title)) {
         if (typeof (id) == 'undefined') {
             return;
         }
-        if (confirm("<?php echo $this->lang->line('are_you_sure_to_delete_this') ?>" + msg + " !")) {
+        if (confirm("<?php echo $this->lang->line('are_you_sure_to_delete_this') ?>"+' '+ msg + " !")) {
             $.ajax({
                 url: base_url + 'admin/calendar/delete_event/' + id,
                 type: 'POST',
@@ -590,10 +607,7 @@ if (isset($title)) {
         add_inpatient('<?php echo $bedid ?>', '<?php echo $bedgroupid ?>');
 <?php } ?>
 
-    /*  $('.modal').on('hidden.bs.modal', function () {
-     $(this).find('form').trigger('reset');
-     $(".select2").select2('destroy');
-     })*/
+   
 
     function getbedstatus() {
 
@@ -613,8 +627,10 @@ if (isset($title)) {
         })
     }
 </script>
-<!-------------------Appointment To Move OPD------------------------->
+
 <?php
+//==================Appointment To Move OPD=============
+
 if (isset($opd_data) && (!empty($opd_data))) {
     if (isset($opd_data['opd_data']['patient_id'])) {
         ?>
@@ -623,9 +639,12 @@ if (isset($opd_data) && (!empty($opd_data))) {
 
             var opd_data = '<?php echo json_encode($opd_data['opd_data']) ?>';
             var data = JSON.parse(opd_data);
-            $("#admission_date").val(new Date(data.appointment_date).toString(datetime_format));
+         //  $("#admission_date").val(new Date(data.appointment_date).toString(datetime_format));
+            $("#admission_date").val(data.appointment_date);
             $("#consultant_doctor").val(data.cons_doctor);
             $("#addpatient_id").val(data.patient_id);
+            $("#live_consult").val(data.live_consult);
+            get_Charges(data.cons_doctor);
             get_PatientDetails(data.patient_id);
             holdModal('myModal');
         </script>
@@ -641,16 +660,23 @@ if (isset($opd_data) && (!empty($opd_data))) {
             $("#addformemail").val(data.email);
             $("#number").val(data.phone);
             $("#addformgender").val(data.gender);
-            $("#admission_date").val(new Date(data.appointment_date).toString(datetime_format));
+           $("#admission_date").val(data.appointment_date); 
+            //$("#admission_date").val(new Date(data.appointment_date).toString(datetime_format));
+           //$("#admission_date").val(data.appointment_date);
             $("#consultant_doctor").val(data.cons_doctor);
+            get_Charges(data.cons_doctor);
+            $("#live_consult").val(data.live_consult);
+          
             holdModal('myModalpa');
         </script>
     <?php }
 }
 ?>
 
-<!-------------------Appontment To Move IPD ------------------------->
+
 <?php
+// ===========Appontment To Move IPD =========
+
 if (isset($ipd_data) && (!empty($ipd_data))) {
     if (isset($ipd_data['ipd_data']['patient_id'])) {
         ?>
@@ -659,9 +685,13 @@ if (isset($ipd_data) && (!empty($ipd_data))) {
 
             var ipd_data = '<?php echo json_encode($ipd_data['ipd_data']) ?>';
             var data = JSON.parse(ipd_data);
-            $("#admission_date").val(new Date(data.appointment_date).toString(datetime_format));
+          //  $("#admission_date").val(new Date(data.appointment_date).toString(datetime_format));
+            console.log(data.orgid)
+          $("#admission_date").val(data.appointment_date);
             $("#consultant_doctor").val(data.cons_doctor);
             $("#addpatient_id").val(data.patient_id);
+            $("#organisation").val(data.orgid)
+            $("#live_consult").val(data.live_consult);
             get_PatientDetails(data.patient_id);
             holdModal('myModal');
         </script>
@@ -674,10 +704,12 @@ if (isset($ipd_data) && (!empty($ipd_data))) {
             var data = JSON.parse(ipd_data);
             console.log(data);
             $("#name").val(data.patient_name);
+            $("#admission_date").val(data.appointment_date);
             $("#addformemail").val(data.email);
             $("#number").val(data.phone);
             $("#addformgender").val(data.gender);
-            $("#admission_date").val(new Date(data.appointment_date).toString(datetime_format));
+            $("#live_consult").val(data.live_consult);
+            //$("#admission_date").val(new Date(data.appointment_date).toString(datetime_format));
             $("#consultant_doctor").val(data.cons_doctor);
 
             holdModal('myModalpa');
@@ -686,8 +718,10 @@ if (isset($ipd_data) && (!empty($ipd_data))) {
 }
 ?>
 
-<!-------------------OPD Notification------------------------->
+
 <?php
+//====================OPD Notification =================
+
 if (isset($opdn_data) && (!empty($opdn_data))) {
     if (isset($opdn_data['opdn_data']['patient_id'])) {
         ?>
@@ -730,10 +764,77 @@ if (isset($opdn_data) && (!empty($opdn_data))) {
 }
 ?>
 
-
-
-<!-------------------Ot Notification------------------------->
 <?php
+//====================OPD Presciption Notification =================
+
+if (isset($opdnpres_data) && (!empty($opdnpres_data))) {
+    if (isset($opdnpres_data['opdnpres_data']['patient_id'])) {
+        ?>
+        <script type="text/javascript">
+            var datetime_format = '<?php echo $result = strtr($this->customlib->getSchoolDateFormat(true, true), ['d' => 'dd', 'm' => 'MM', 'Y' => 'yyyy', 'H' => 'hh', 'i' => 'mm',]) ?>';
+
+            var opdnpres_data = '<?php echo json_encode($opdnpres_data['opdnpres_data']) ?>';
+            var data = JSON.parse(opdnpres_data);
+            var patientid = data.patient_id;
+            var opdid = data.id;
+
+            
+            view_prescription(opdid, opdid, 'yes');
+        </script>
+    <?php } else {
+        ?> 
+        <script type="text/javascript">
+            var datetime_format = '<?php echo $result = strtr($this->customlib->getSchoolDateFormat(true, true), ['d' => 'dd', 'm' => 'MM', 'Y' => 'yyyy', 'H' => 'hh', 'i' => 'mm',]) ?>';
+
+            var opdnpres_data = '<?php echo json_encode($opdnpres_data['opdnpres_data']) ?>';
+            var data = JSON.parse(opdnpres_data);
+            var patientid = data.patient_id;
+            var opdid = data.id;
+            
+            view_prescription(opdid, opdid, 'yes')
+        </script>
+    <?php }
+}
+?>
+
+<?php
+//====================IPD Presciption Notification =================
+
+if (isset($ipdnpres_data) && (!empty($ipdnpres_data))) {
+    if (isset($ipdnpres_data['ipdnpres_data']['patient_id'])) {
+        ?>
+        <script type="text/javascript">
+            var datetime_format = '<?php echo $result = strtr($this->customlib->getSchoolDateFormat(true, true), ['d' => 'dd', 'm' => 'MM', 'Y' => 'yyyy', 'H' => 'hh', 'i' => 'mm',]) ?>';
+
+            var ipdnpres_data = '<?php echo json_encode($ipdnpres_data['ipdnpres_data']) ?>';
+            var data = JSON.parse(ipdnpres_data);
+            var patientid = data.patient_id;
+            var ipdid = data.id;
+            var presid = data.presid
+            
+            view_prescription(presid, ipdid, 'yes');
+           // console.log(ipdid);
+        </script>
+    <?php } else {
+        ?> 
+        <script type="text/javascript">
+            var datetime_format = '<?php echo $result = strtr($this->customlib->getSchoolDateFormat(true, true), ['d' => 'dd', 'm' => 'MM', 'Y' => 'yyyy', 'H' => 'hh', 'i' => 'mm',]) ?>';
+
+            var ipdnpres_data = '<?php echo json_encode($ipdnpres_data['ipdnpres_data']) ?>';
+            var data = JSON.parse(ipdnpres_data);
+            var patientid = data.patient_id;
+            var ipdid = data.id;
+            var presid = data.presid
+            view_prescription(presid, ipdid, 'yes')
+        </script>
+    <?php }
+}
+?>
+
+
+<?php
+// ==============Ot Notification====================
+
 if (isset($ot_data) && (!empty($ot_data))) {
     if (isset($ot_data['ot_data']['patient_id'])) {
         ?>
@@ -767,8 +868,9 @@ if (isset($ot_data) && (!empty($ot_data))) {
 }
 ?>
 
-<!-------------------Appointment Notification------------------------->
+
 <?php
+// =============== Appointment Notification ===========
 if (isset($app_data) && (!empty($app_data))) {
     if (isset($app_data['app_data']['patient_id'])) {
         ?>
@@ -834,8 +936,10 @@ if (isset($app_data) && (!empty($app_data))) {
 }
 ?>
 
-<!-------------------payslip Notification ------------------------->
+
 <?php
+// ========== payslip Notification ====================
+
 if (isset($staff_data) && (!empty($staff_data))) {
     if (isset($staff_data['staff_data']['id'])) {
         ?>

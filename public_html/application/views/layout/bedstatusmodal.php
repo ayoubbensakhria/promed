@@ -1,5 +1,4 @@
-
-
+  
 <?php foreach ($floor_list as $key => $floor) {
     ?>
     <fieldset class="floormain">
@@ -21,9 +20,9 @@
                                         if ($beds["is_active"] == 'no') {
                                             $name = $beds["patient_name"];
                                             ?>
-                                            <div class="col-md-1">
+                                            <div class="col-md-1 col-xs-6 col-lg-1 col-sm-4">
                                                 <a data-toggle="popover" class="beddetail_popover" href="<?php echo base_url() . "admin/patient/ipdprofile/" . $beds["pid"] ?>">
-                                                    <div class="">
+                                                    <div class="relative">
                                                         <div class="<?php
                                                         if ($beds["is_active"] == "yes") {
                                                             echo "bedgreen";
@@ -49,9 +48,9 @@
                                               // $name = $bed["name"]; 
                                             
                                             ?>
-                                            <div class="col-md-1">
+                                            <div class="col-md-1 col-xs-6 col-lg-1 col-sm-4">
                                                 <a href="<?php echo base_url() . "admin/patient/ipdsearch/" . $beds["id"] . "/" . $bedgroup["id"] ?>" >
-                                                    <div class="">
+                                                    <div class="relative">
                                                         <div class="<?php
                                                         if ($beds["is_active"] == "yes") {
                                                             echo "bedgreen";
@@ -89,6 +88,7 @@
             container: 'body',
             html: true,
             content: function () {
+
                 return $(this).closest('div').find('.bed_detail_popover').html();
             }
         });

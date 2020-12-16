@@ -8,7 +8,7 @@ class Chargecategory extends Admin_Controller {
     function __construct() {
         parent::__construct();
         $this->config->load("payroll");
-        $this->charge_type = $this->config->item('charge_type');
+         $this->charge_type = $this->customlib->getChargeMaster();
     }
 
     public function charges() {
@@ -35,11 +35,9 @@ class Chargecategory extends Admin_Controller {
             $description = $this->input->post("description");
             $charge_type = $this->input->post("charge_type");
             $chargecategoryid = $this->input->post("id");
-
             if (!empty($chargecategoryid)) {
                 $data = array('name' => $name, 'description' => $description, 'charge_type' => $charge_type, 'id' => $chargecategoryid);
             } else {
-
                 $data = array('name' => $name, 'description' => $description, 'charge_type' => $charge_type);
             }
             $insert_id = $this->charge_category_model->addChargeCategory($data);
@@ -83,7 +81,6 @@ class Chargecategory extends Admin_Controller {
             if (!empty($chargecategoryid)) {
                 $array = array('status' => 'success', 'error' => '', 'message' => $this->lang->line('update_message'));
             } else {
-
                 $array = array('status' => 'success', 'error' => '', 'message' => $this->lang->line('success_message'));
             }
         }
@@ -125,7 +122,5 @@ class Chargecategory extends Admin_Controller {
         $result = $this->charge_category_model->getChargeCategory($id);
         echo json_encode($result);
     }
-
 }
-
 ?>

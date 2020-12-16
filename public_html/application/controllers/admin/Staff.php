@@ -32,8 +32,7 @@ class Staff extends Admin_Controller {
         $search = $this->input->post("search");
         $resultlist = $this->staff_model->searchFullText("", 1);
         $data['resultlist'] = $resultlist;
-
-
+        
         $staffRole = $this->staff_model->getStaffRole();
         $data["role"] = $staffRole;
         $data["role_id"] = "";
@@ -56,8 +55,6 @@ class Staff extends Admin_Controller {
                 }
             } else if ($search == 'search_full') {
                 $data['searchby'] = "text";
-
-
 
                 $data['search_text'] = trim($this->input->post('search_text'));
 
@@ -92,19 +89,11 @@ class Staff extends Admin_Controller {
 
             $start = 0;
         }
-
         $order = 'staff.' . $columns[1];
         $dir = 'asc';
         $totalData = 4;
         $totalFiltered = $totalData;
-
-
-
         $posts = $this->staff_model->searchFullText("", 1, $order, $dir, $limit, $start);
-
-
-
-
         $data = array();
         if (!empty($posts)) {
             foreach ($posts as $post) {
@@ -180,11 +169,9 @@ class Staff extends Admin_Controller {
         if (!$this->rbac->hasPrivilege('staff', 'can_view')) {
             access_denied();
         }
-         $data['enable_disable']=1;
+        $data['enable_disable']=1;
         $staff_data = $this->session->flashdata('staff_data');
         $data['staff_data'] = $staff_data;
-
-
         $data["id"] = $id;
         $data['title'] = 'Staff Details';
         $staff_info = $this->staff_model->getProfile($id);
@@ -200,7 +187,6 @@ class Staff extends Admin_Controller {
         $staff_payroll = $this->staff_model->getStaffPayroll($id);
         $staff_leaves = $this->leaverequest_model->staff_leave_request($id);
         $alloted_leavetype = $this->staff_model->allotedLeaveType($id);
-
         $salary = $this->payroll_model->getSalaryDetails($id);
         $attendencetypes = $this->staffattendancemodel->getStaffAttendanceType();
         $data['attendencetypeslist'] = $attendencetypes;
@@ -219,23 +205,16 @@ class Staff extends Admin_Controller {
         $data['staff'] = $staff_info;
         $data['staff_payroll'] = $staff_payroll;
         $data['salary'] = $salary;
-
         $monthlist = $this->customlib->getMonthDropdown();
         $startMonth = $this->setting_model->getStartMonth();
         $data["monthlist"] = $monthlist;
         $data['yearlist'] = $this->staffattendancemodel->attendanceYearCount();
-
-        $year = date("Y");
-
+        $year = date("Y");        
         $j = 0;
         for ($n = 1; $n <= 31; $n++) {
-
             $att_date = sprintf("%02d", $n);
-
             $attendence_array[] = $att_date;
-
             foreach ($monthlist as $key => $value) {
-
                 $datemonth = date("m", strtotime($value));
                 $att_dates = $year . "-" . $datemonth . "-" . sprintf("%02d", $n);
                 $date_array[] = $att_dates;
@@ -244,18 +223,11 @@ class Staff extends Admin_Controller {
 
             $j++;
         }
-
-        $session = $this->setting_model->getCurrentSessionName();
-
-        $session_start = explode("-", $session);
-        $start_year = $session_start[0];
-
+        $start_year = date("Y");
         $date = $start_year . "-" . $startMonth;
         $newdate = date("Y-m-d", strtotime($date . "+1 month"));
-
         $countAttendance = $this->countAttendance($start_year, $startMonth, $id);
         $data["countAttendance"] = $countAttendance;
-
         $data["resultlist"] = $res;
         $data["attendence_array"] = $attendence_array;
         $data["date_array"] = $date_array;
@@ -265,19 +237,17 @@ class Staff extends Admin_Controller {
         $data["status"] = $this->status;
         $roles = $this->role_model->get();
         $data["roles"] = $roles;
-
         $stafflist = $this->staff_model->get();
         $data['stafflist'] = $stafflist;
-
         $this->load->view('layout/header', $data);
         $this->load->view('admin/staff/staffprofile', $data);
         $this->load->view('layout/footer', $data);
     }
 
     function countAttendance($st_month, $no_of_months, $emp) {
-
         $record = array();
-        for ($i = 1; $i <= 1; $i++) {
+        for ($i = 1; $i <= 1; $i++) 
+        {
 
             $r = array();
             $month = date('m', strtotime($st_month . " -$i month"));
@@ -694,17 +664,13 @@ class Staff extends Admin_Controller {
         $staff = $this->staff_model->get($id);
         $data['staff'] = $staff;
         $data["contract_type"] = $this->contract_type;
-
         $staffLeaveDetails = $this->staff_model->getLeaveDetails($id);
         $data['staffLeaveDetails'] = $staffLeaveDetails;
-
-
         $resume = $this->input->post("resume");
         $joining_letter = $this->input->post("joining_letter");
         $resignation_letter = $this->input->post("resignation_letter");
         $other_document_name = $this->input->post("other_document_name");
         $other_document_file = $this->input->post("other_document_file");
-
         $this->form_validation->set_rules('name', $this->lang->line('name'), 'trim|required|xss_clean');
         $this->form_validation->set_rules('role', $this->lang->line('role'), 'trim|required|xss_clean');
         $this->form_validation->set_rules('gender', $this->lang->line('gender'), 'trim|required|xss_clean');
@@ -839,8 +805,6 @@ class Staff extends Admin_Controller {
                         );
                     }
 
-
-
                     $this->staff_model->add_staff_leave_details($data2);
                     $i++;
                 }
@@ -869,7 +833,6 @@ class Staff extends Admin_Controller {
 
                 $resume_doc = $resume;
             }
-
             if (isset($_FILES["second_doc"]) && !empty($_FILES['second_doc']['name'])) {
                 $uploaddir = './uploads/staff_documents/' . $id . '/';
                 if (!is_dir($uploaddir) && !mkdir($uploaddir)) {
@@ -968,9 +931,7 @@ class Staff extends Admin_Controller {
     function dateDifference($date_1, $date_2, $differenceFormat = '%a') {
         $datetime1 = date_create($date_1);
         $datetime2 = date_create($date_2);
-
         $interval = date_diff($datetime1, $datetime2);
-
         return $interval->format($differenceFormat) + 1;
     }
 
@@ -981,7 +942,6 @@ class Staff extends Admin_Controller {
         $data['staff'] = $staff;
         $userpermission = $this->userpermission_model->getUserPermission($id);
         $data['userpermission'] = $userpermission;
-
         if ($this->input->server('REQUEST_METHOD') == "POST") {
             $staff_id = $this->input->post('staff_id');
             $prev_array = $this->input->post('prev_array');
@@ -1002,7 +962,6 @@ class Staff extends Admin_Controller {
                     );
                 }
             }
-
             $this->userpermission_model->getInsertBatch($insert_array, $staff_id, $delete_array);
 
             $this->session->set_flashdata('msg', '<div class="alert alert-success text-left">' . $this->lang->line('update_message') . '</div>');
@@ -1021,21 +980,14 @@ class Staff extends Admin_Controller {
         $this->session->set_userdata('top_menu', 'HR');
         $this->session->set_userdata('sub_menu', 'admin/staff/leaverequest');
         $userdata = $this->customlib->getUserData();
-
         $leave_request = $this->leaverequest_model->user_leave_request($userdata["id"]);
-
         $data["leave_request"] = $leave_request;
-
-
         $LeaveTypes = $this->leaverequest_model->allotedLeaveType($userdata["id"]);
         $data["staff_id"] = $userdata["id"];
         $data["leavetype"] = $LeaveTypes;
-
         $staffRole = $this->staff_model->getStaffRole();
         $data["staffrole"] = $staffRole;
         $data["status"] = $this->status;
-
-
         $this->load->view("layout/header", $data);
         $this->load->view("admin/staff/leaverequest", $data);
         $this->load->view("layout/footer", $data);

@@ -8,10 +8,13 @@
             <div class="col-md-2">
                 <div class="box border0">
                     <ul class="tablists">
+                        <?php if ($this->rbac->hasPrivilege('item_category', 'can_view')) { ?>
                         <li><a href="<?php echo base_url(); ?>admin/itemcategory" ><?php echo $this->lang->line('item_category'); ?></a></li>
+                        <?php } if ($this->rbac->hasPrivilege('store', 'can_view')) {?>
                         <li><a href="<?php echo base_url(); ?>admin/itemstore"><?php echo $this->lang->line('item_store'); ?></a></li>
+                        <?php } if ($this->rbac->hasPrivilege('supplier', 'can_view')) { ?>
                         <li><a href="<?php echo base_url(); ?>admin/itemsupplier" class="active"><?php echo $this->lang->line('item_supplier'); ?></a></li>
-
+                    <?php } ?>
                     </ul>
                 </div>
             </div>
@@ -21,11 +24,13 @@
                 <div class="box box-primary" id="exphead">
                     <div class="box-header ptbnull">
                         <h3 class="box-title titlefix"><?php echo $this->lang->line('item_supplier_list'); ?></h3>
-                        <div class="box-tools pull-right">
-                            <a data-toggle="modal" data-target="#myModal" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i>  <?php echo $this->lang->line('add'); ?> <?php echo $this->lang->line('item_supplier'); ?></a>     
+                        <div class="box-tools addmeeting">
+                            <?php if ($this->rbac->hasPrivilege('supplier', 'can_add')) { ?>
+                            <a data-toggle="modal" data-target="#myModal" class="btn btn-primary btn-sm itemsupplier"><i class="fa fa-plus"></i>  <?php echo $this->lang->line('add'); ?> <?php echo $this->lang->line('item_supplier'); ?></a> 
+                            <?php } ?>    
                         </div>
                     </div><!-- /.box-header -->
-                    <div class="box-body  ">
+                    <div class="box-body">
                         <div class="table-responsive mailbox-messages">
                             <div class="download_label"><?php echo $this->lang->line('item_supplier_list'); ?></div>
                             <table class="table table-striped table-bordered table-hover example">
@@ -450,6 +455,9 @@
     });
 
 
+$(".itemsupplier").click(function(){
+	$('#formadd').trigger("reset");
+});
 </script>
 
 

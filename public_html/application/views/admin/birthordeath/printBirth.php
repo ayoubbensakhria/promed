@@ -55,9 +55,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                         <th width="20%"><?php echo $this->lang->line('father_name'); ?></th>
                                         <td width="25%"><?php echo $result["father_name"]; ?></td>
                                     </tr>
-
                                     <tr>
-
                                         <th width="25%"><?php echo $this->lang->line('address'); ?></th>
                                         <td width="30%" align="left"><?php echo $result['address']; ?></td> 
                                     </tr> 
@@ -72,16 +70,14 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                 <?php } ?>      
                             </td>   
                         </tr>
-
                     </table>
                     <hr style="height: 1px; clear: both;margin-bottom: 10px; margin-top: 10px">
                     <table class="printablea4" cellspacing="0" cellpadding="0" width="100%">
-
                         <?php
-                        //$customid=8;
                         $cutom_fields_data = get_custom_table_values($result['id'], 'birth_report');
                         if (!empty($cutom_fields_data)) {
                             foreach ($cutom_fields_data as $field_key => $field_value) {
+                                if ($field_value->visible_on_table > 0) {                                  
                                 ?>
                                 <tr>
                                     <th style="font-size: 13px;"><?php echo $field_value->name; ?></th>
@@ -105,15 +101,12 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                         ?>
                                     </td> 
                                 </tr>
-
                                 <?php
                             }
                         }
+                        }
                         ?>
                     </table>
-
-
-
                     <hr style="height: 1px; clear: both;margin-bottom: 10px; margin-top: 10px">    
                     <p><?php
                         if (!empty($print_details[0]['print_footer'])) {
@@ -141,15 +134,14 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
             });
         }
     }
+	
     function printData(id) {
-
         var base_url = '<?php echo base_url() ?>';
         $.ajax({
             url: base_url + 'admin/pharmacy/getBillDetails/' + id,
             type: 'POST',
             data: {id: id, print: 'yes'},
             success: function (result) {
-                // $("#testdata").html(result);
                 popup(result);
             }
         });

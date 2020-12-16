@@ -36,11 +36,8 @@ class Bedtype extends Admin_Controller {
         } else {
 
             $bedtype = array('name' => $this->input->post('name'));
-
             $this->bedtype_model->savebed($bedtype);
-
             $msg = "Bed Type Added Successfully";
-
             $array = array('status' => 'success', 'error' => '', 'message' => $this->lang->line('success_message'));
         }
         echo json_encode($array);
@@ -68,16 +65,13 @@ class Bedtype extends Admin_Controller {
             );
 
             $this->bedtype_model->savebed($bedtype);
-
             $msg = "Bed Type Updated Successfully";
-
             $array = array('status' => 'success', 'error' => '', 'message' => $this->lang->line('update_message'));
         }
         echo json_encode($array);
     }
 
     function delete_bedgroup($id) {
-
         $this->bedtype_model->delete_bedgroup($id);
         redirect('admin/setup/bed/bedgroup');
     }

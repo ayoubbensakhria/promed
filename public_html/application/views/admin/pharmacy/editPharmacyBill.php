@@ -2,12 +2,6 @@
 $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
 $genderList = $this->customlib->getGender();
 ?>
-<style type="text/css">
-    #easySelectable {/*display: flex; flex-wrap: wrap;*/}
-    #easySelectable li {}
-    #easySelectable li.es-selected {background: #2196F3; color: #fff;}
-    .easySelectable {-webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;}
-</style>
 <form id="editbill"  accept-charset="utf-8" method="post" class="ptt10">
     <div class="row">
         <div class="col-lg-12 col-md-12 col-sm-12 paddlr">
@@ -84,6 +78,7 @@ $genderList = $this->customlib->getGender();
                             }
                         });
                     }
+
                     function geteditQuantity(id,med_id,batch = '', newrow = '') {
                         if (batch == "") {
                             var batch_no = $('#batch_edit_no' + id).val();
@@ -138,6 +133,7 @@ $genderList = $this->customlib->getGender();
                             }
                         });
                     }
+                    
                     function geteditExpire(id) {
                         var batch_no = $("#batch_edit_no" + id).val();
                          //var medicine = $("#medicine_edit_name" + id).val();
@@ -227,7 +223,7 @@ $genderList = $this->customlib->getGender();
                             data: {'medicine': id},
                             dataType: 'json',
                             success: function (res) {
-                                console.log(res);
+                               // console.log(res);
                                 $.each(res, function (i, obj)
                                 {
                                     var sel = "";
@@ -244,12 +240,12 @@ $genderList = $this->customlib->getGender();
                     }
                 </script>
                 <div class="col-md-12" style="clear: both;">
-                    <div class="">
-                        <table class="table table-striped table-bordered table-hover" id="edittableID">
+                    <div class="table-responsive">
+                        <table class="table tableover table-striped table-bordered table-hover tablefull12" id="edittableID">
                             <tr style="font-size: 13">
                                 <th><?php echo $this->lang->line('medicine') . " " . $this->lang->line('category'); ?><small class="req" style="color:red;"> *</small></th>
                                 <th><?php echo $this->lang->line('medicine') . " " . $this->lang->line('name'); ?><small class="req" style="color:red;"> *</small></th>
-                                <th><?php echo $this->lang->line('batch') . " " . $this->lang->line('no'); ?><small class="req" style="color:red;">*</small></th>
+                                <th><?php echo $this->lang->line('batch') . " " . $this->lang->line('no'); ?><small class="req" style="color:red;"> *</small></th>
                                 <th><?php echo $this->lang->line('expire') . " " . $this->lang->line('date'); ?><small class="req" style="color:red;"> *</small></th>
                                 <th class="text-right"><?php echo $this->lang->line('quantity'); ?><small class="req" style="color:red;"> *</small> <?php echo " | " . $this->lang->line('available') . " " . $this->lang->line('qty'); ?></th>
                                 <th class="text-right"><?php echo $this->lang->line('sale_price') . ' (' . $currency_symbol . ')'; ?><small class="req" style="color:red;"> *</small></th>
@@ -258,14 +254,10 @@ $genderList = $this->customlib->getGender();
                             <?php
                             $i = 0;
                             foreach ($detail as $key => $value) {
-                                # code...
-                                // echo "<pre>";
-                                //  print_r($value);
+                                # code...                            
                                 ?>
                                 <script type="text/javascript">
                                     getmedicine_edit_name('<?php echo $value['medicine_category_id'] ?>', '<?php echo $i ?>', '<?php echo $value['medicine_id'] ?>');
-
-
                                     geteditbatchnolist('<?php echo $value['medicine_id'] ?>', '<?php echo $i ?>', '<?php echo $value['batch_no'] ?>');
                                     geteditQuantity('<?php echo $i ?>','<?php echo $value['medicine_id'] ?>','<?php echo $value['batch_no'] ?>');
                                 </script>
@@ -279,7 +271,7 @@ $genderList = $this->customlib->getGender();
                                                 ?>
                                                 <option value="<?php echo $dvalue["id"]; ?>" <?php if ($value["medicine_category_id"] == $dvalue["id"]) echo "selected"; ?> ><?php echo $dvalue["medicine_category"] ?>
                                                 </option>   
-    <?php } ?>
+                                        <?php } ?>
                                         </select>
                                         <span class="text-danger"><?php echo form_error('medicine_category_id[]'); ?>
                                         </span>
@@ -345,33 +337,33 @@ $genderList = $this->customlib->getGender();
                     <div class="col-sm-6">
                         <div class="form-group">   
                             <label><?php echo $this->lang->line('note'); ?></label>
-                            <textarea name="note" rows="3" id="note" class="form-control"></textarea>
+                            <textarea name="note" rows="3" id="note" class="form-control"><?php echo $result["note"] ?></textarea>
                         </div> 
                     </div>  
                     <div class="col-sm-6">
 
                         <table class="printablea4">
                             <tr>
-                                <th><?php echo $this->lang->line('total') . " (" . $currency_symbol . ")"; ?></th>
-                                <td class="text-right ipdbilltable" width="40%" colspan="2"><input type="text" placeholder="Total" value="<?php echo $result["total"] ?>" value="0" name="total" id="edittotal"  style="width: 30%; float: right" class="form-control"/></td>
+                                <th width="40%"><?php echo $this->lang->line('total') . " (" . $currency_symbol . ")"; ?></th>
+                                <td width="60%" class="text-right ipdbilltable" colspan="2"><input type="text" placeholder="Total" value="<?php echo $result["total"] ?>" value="0" name="total" id="edittotal"  style="width: 40%; float: right" class="form-control"/></td>
                             </tr>
                             <tr>
                                 <th><?php echo $this->lang->line('discount') . " (" . $currency_symbol . ")"; ?></th>
 
-                                <td class="text-right ipdbilltable"><h4 style="float: right;font-size: 12px; padding-left: 5px;"> %</h4><input type="text" placeholder="Discount" value="" name="discount_percent" id="editdiscount_percent" style="width: 50%; float: right;font-size: 12px;" class="form-control"/></td>
-                                <td class="text-right ipdbilltable"><input type="text" placeholder="Discount" value="<?php echo $result["discount"] ?>" name="discount" id="editdiscount" style="width: 40%; float: right" class="form-control"/></td>
+                                <td class="text-right ipdbilltable"><h4 style="float: right;font-size: 12px; padding-left: 5px;"> %</h4><input type="text" placeholder="Discount" value="" name="discount_percent" id="editdiscount_percent" style="width: 70%; float: right;font-size: 12px;" class="form-control"/></td>
+                                <td class="text-right ipdbilltable"><input type="text" placeholder="Discount" value="<?php echo $result["discount"] ?>" name="discount" id="editdiscount" style="width: 65%; float: right" class="form-control"/></td>
                             </tr>
                             <tr>
                                 <th><?php echo $this->lang->line('tax') . " (" . $currency_symbol . ")"; ?></th>
 
                                 <td class="text-right ipdbilltable">
-                                    <h4 style="float: right;font-size: 12px;padding-left: 5px;"> %</h4><input type="text" placeholder="Tax" name="tax_percent" value="" id="edittax_percent" style="width: 50%; float: right;font-size: 12px;" class="form-control"/>
+                                    <h4 style="float: right;font-size: 12px;padding-left: 5px;"> %</h4><input type="text" placeholder="Tax" name="tax_percent" value="" id="edittax_percent" style="width: 70%; float: right;font-size: 12px;" class="form-control"/>
                                 </td>
-                                <td class="text-right ipdbilltable"><input type="text" placeholder="Tax" name="tax" value="<?php echo $result["tax"] ?>" id="edittax" style="width: 40%; float: right" class="form-control"/></td>
+                                <td class="text-right ipdbilltable"><input type="text" placeholder="Tax" name="tax" value="<?php echo $result["tax"] ?>" id="edittax" style="width: 65%; float: right" class="form-control"/></td>
                             </tr>
                             <tr>
                                 <th><?php echo $this->lang->line('net_amount') . "(" . $currency_symbol . ")"; ?></th>
-                                <td class="text-right ipdbilltable" width="40%" colspan="2"><input type="text" placeholder="Net Amount" value="<?php echo $result["net_amount"] ?>" name="net_amount" id="editnet_amount" style="width: 30%; float: right" class="form-control"/></td>
+                                <td class="text-right ipdbilltable" colspan="2"><input type="text" placeholder="Net Amount" value="<?php echo $result["net_amount"] ?>" name="net_amount" id="editnet_amount" style="width: 39%; float: right" class="form-control"/></td>
                             </tr>
 
 

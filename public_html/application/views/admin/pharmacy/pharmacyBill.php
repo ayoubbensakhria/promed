@@ -2,16 +2,6 @@
 $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
 $genderList = $this->customlib->getGender();
 ?>
-<style type="text/css">
-    #easySelectable {/*display: flex; flex-wrap: wrap;*/}
-    #easySelectable li {}
-    #easySelectable li.es-selected {background: #2196F3; color: #fff;}
-    .easySelectable {-webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;}
-    .printablea4{width: 100%;}
-    /*.printablea4 p{margin-bottom: 0;}*/
-    .printablea4>tbody>tr>th,
-    .printablea4>tbody>tr>td{padding:2px 0; line-height: 1.42857143;vertical-align: top; font-size: 12px;}
-</style>
 <div class="content-wrapper">
     <!-- Main content -->
     <section class="content">
@@ -22,7 +12,7 @@ $genderList = $this->customlib->getGender();
                         <h3 class="box-title titlefix"> <?php echo $this->lang->line('pharmacy') . " " . $this->lang->line('bill'); ?></h3>
                         <div class="box-tools pull-right">
                             <?php if ($this->rbac->hasPrivilege('pharmacy bill', 'can_add')) { ?>                
-                                <a data-toggle="modal" onclick="holdModal('myModal')" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> <?php echo $this->lang->line('generate') . " " . $this->lang->line('bill'); ?></a>
+                                <a data-toggle="modal" onclick="holdModal('myModal')" class="btn btn-primary btn-sm generatebill"><i class="fa fa-plus"></i> <?php echo $this->lang->line('generate') . " " . $this->lang->line('bill'); ?></a>
                             <?php } ?>
                             <?php if ($this->rbac->hasPrivilege('medicine', 'can_view')) { ?>
                                 <a href="<?php echo base_url(); ?>admin/pharmacy/search" class="btn btn-primary btn-sm"><i class="fa fa-reorder"></i> <?php echo $this->lang->line('medicines'); ?></a>
@@ -47,9 +37,7 @@ $genderList = $this->customlib->getGender();
                                 <?php
                                 if (empty($resultlist)) {
                                     ?>
-                                              <!-- <tr>
-                                                <td colspan="12" class="text-danger text-center"><?php //echo $this->lang->line('no_record_found');     ?></td>
-                                              </tr> -->
+                                            
                                     <?php
                                 } else {
                                     $count = 1;
@@ -59,18 +47,15 @@ $genderList = $this->customlib->getGender();
                                             <td ><?php echo $bill['bill_no']; ?></td>
                                             <td><?php echo date($this->customlib->getSchoolDateFormat(true, true), strtotime($bill['date'])) ?></td> 
                                             <td><?php echo $bill['patient_name']; ?></td>
-                                           <!-- <td><?php echo $this->lang->line($bill['customer_type']); ?></td>-->
                                             <td><?php echo $bill['doctor_name']; ?></td>
                                             <td class="text-right"><?php echo $bill['net_amount']; ?></td>
                                             <td class="pull-right">
-
                                                 <a href="#" 
                                                    onclick="viewDetail(<?php echo $bill['id'] ?>,<?php echo $bill['bill_no'] ?>,<?php echo $bill['patient_id'] ?>)"
                                                    class="btn btn-default btn-xs"  data-toggle="tooltip"
                                                    title="<?php echo $this->lang->line('show'); ?>" >
                                                     <i class="fa fa-reorder"></i>
                                                 </a> 
-
                                                 <a href="#" 
                                                    onclick="viewDetail(<?php echo $bill['id'] ?>,<?php echo $bill['bill_no'] ?>,<?php echo $bill['patient_id'] ?>)"
                                                    class="btn btn-default btn-xs"  data-toggle="tooltip"
@@ -93,14 +78,15 @@ $genderList = $this->customlib->getGender();
     </section>
 </div>
 
-<div class="modal fade" id="myModal"  aria-hidden="true" role="dialog" aria-labelledby="myModalLabel">
+<div class="modal fade" id="myModal" aria-hidden="true" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog pup100" role="document">
         <div class="modal-content modal-media-content">
             <div class="modal-header modal-media-header">
+                 <button type="button" data-toggle="tooltip" title="<?php echo $this->lang->line('close'); ?>" class="close closemobile" data-dismiss="modal">&times;</button>
                 <div class="row modalbillform">
-                    <div class="col-lg-5 col-sm-5">
+                    <div class="col-lg-5 col-sm-6">
                         <div class="row">
-                            <div class="col-sm-9">   
+                            <div class="col-sm-8 col-xs-6">   
                                 <select onchange="get_PatientDetails(this.value)"  style="width: 100%" class="form-control select2" id="addpatient_id" name='' >
                                     <option value=""><?php echo $this->lang->line('select') . " " . $this->lang->line('patient') ?></option>
                                     <?php foreach ($patients as $dkey => $dvalue) {
@@ -113,14 +99,14 @@ $genderList = $this->customlib->getGender();
                                             <?php } ?>
                                 </select> 
                             </div><!--./col-sm-3-->  
-                            <div class="col-sm-3">
+                            <div class="col-sm-3 col-xs-5">
                                 <?php if ($this->rbac->hasPrivilege('patient', 'can_add')) { ?>
-                                    <a data-toggle="modal" id="add" onclick="holdModal('myModalpa')" class="modalbtnpatient"><i class="fa fa-plus"></i>  <?php echo $this->lang->line('new') . " " . $this->lang->line('patient') ?></a> 
+                                    <a data-toggle="modal" id="add" onclick="holdModal('myModalpa')" class="modalbtnpatient"><i class="fa fa-plus"></i>  <span><?php echo $this->lang->line('new') . " " . $this->lang->line('patient') ?></span></a> 
                                 <?php } ?> 
                             </div><!--./col-sm-3-->
                         </div><!--./row-->  
                     </div><!--./col-sm-6-->
-                    <div class="col-lg-6 col-sm-6">
+                    <div class="col-lg-6 col-sm-5">
                         <div class="row">        
                             <div class="col-lg-2 col-sm-3 col-xs-3">
                                  <label><?php echo $this->lang->line('bill') . " " . $this->lang->line('no'); ?></label><!-- <small class="req" style="color:red;"> *</small> --> 
@@ -130,16 +116,16 @@ $genderList = $this->customlib->getGender();
                                 <span class="text-danger"><?php echo form_error('bill_no'); ?></span>
                             </div> 
                             <div class="mdclear"></div>
-                            <div class="col-lg-2 col-sm-3 col-xs-3">
+                            <div class="col-lg-2 col-sm-2 col-xs-3">
                                 <label><?php echo $this->lang->line('date'); ?></label>
                             </div> 
-                            <div class="col-lg-5 col-sm-3 col-xs-9">
+                            <div class="col-lg-5 col-sm-4 col-xs-9">
                                 <input name="date" id="date_pharmacy" type="text" value="<?php echo date($this->customlib->getSchoolDateFormat(true, true)) ?>" class="form-control datetime"/>
                             </div>  
                         </div><!--./row-->  
                     </div><!--./col-sm-6-->    
 
-                    <div class="col-sm-1 pull-right">
+                    <div class="col-sm-1 pull-right" style="display: none">
                         <button type="button" data-toggle="tooltip" title="<?php echo $this->lang->line('close'); ?>" class="close " data-dismiss="modal">&times;</button>
                       <!-- <h4 class="box-title"><?php echo $this->lang->line('generate') . " " . $this->lang->line('bill'); ?></h4>  -->
                     </div><!--./col-sm-1--> 
@@ -149,38 +135,16 @@ $genderList = $this->customlib->getGender();
                 <div class="modal-body pt0 pb0">
                     <div class="row">
                         <div class="col-lg-12 col-md-12 col-sm-12">
-
                             <input name="customer_name" id="patient_name" type="hidden" class="form-control"/>
                             <input name="date" id="date_result" type="hidden" class="form-control"/>
                             <input name="patient_id" id="patient_id" type="hidden" class="form-control"/>
                             <input name="bill_no" id="billnoform" type="hidden" class="form-control"/>
                             <div class="row">
-                                <!-- <div class="col-sm-1">
-                                    <div class="form-group">
-                                        <label><?php echo $this->lang->line('bill') . " " . $this->lang->line('no'); ?></label>
-                                        <small class="req" style="color:red;"> *</small> 
-                                        <input readonly name="bill_no" id="billno" type="text" class="form-control"/>
-                                        <span class="text-danger"><?php echo form_error('bill_no'); ?></span>
-                                    </div>
-                                </div>
-                                <div class="col-sm-3">
-                                    <div class="form-group">
-                                        <label><?php echo $this->lang->line('date'); ?></label>
-                                        <input name="date"  type="text" value="<?php echo date($this->customlib->getSchoolDateFormat(true, true)) ?>" class="form-control datetime"/>
-                                    </div>
-                                </div> -->
-
-
-
-
-
-
-                                <div class="col-md-12" style="clear:both;">
-                                    <div class="">
-                                        <table class="table table-striped table-bordered table-hover" id="tableID">
+                                <div class="col-md-12">
+                                    <div class="table-responsive">
+                                        <table class="table tableover table-striped table-bordered table-hover tablefull12" id="tableID">
                                             <thead>
-                                                <tr style="font-size: 13px">
-
+                                                <tr class="font13">
                                                     <th><?php echo $this->lang->line('medicine') . " " . $this->lang->line('category'); ?><small class="req" style="color:red;"> *</small></th>
                                                     <th><?php echo $this->lang->line('medicine') . " " . $this->lang->line('name'); ?><small class="req" style="color:red;"> *</small></th>
                                                     <th><?php echo $this->lang->line('batch') . " " . $this->lang->line('no'); ?> <small class="req" style="color:red;">*</small></th>
@@ -191,7 +155,7 @@ $genderList = $this->customlib->getGender();
                                                 </tr>
                                             </thead>
                                             <tr id="row0">
-                                                <td width="16%">      
+                                                <td width="160">      
                                                     <select class="form-control" name='medicine_category_id[]'  onchange="getmedicine_name(this.value, '0')">
                                                         <option value="<?php echo set_value('medicine_category_id'); ?>"><?php echo $this->lang->line('select') ?>
                                                         </option>
@@ -305,24 +269,21 @@ $genderList = $this->customlib->getGender();
                                         <div class="col-sm-6">
                                             <table class="printablea4">
                                                 <tr>
-                                                    <th width="50%"><?php echo $this->lang->line('total') . " (" . $currency_symbol . ")"; ?></th>
-                                                    <td width="40%" colspan="2" class="text-right ipdbilltable"><input type="text" placeholder="Total" value="0" name="total" id="total" style="width: 30%; float: right" class="form-control"/></td>
+                                                    <th width="40%"><?php echo $this->lang->line('total') . " (" . $currency_symbol . ")"; ?></th>
+                                                    <td width="60%" colspan="2" class="text-right ipdbilltable"><input type="text" placeholder="Total" value="0" name="total" id="total" style="width: 30%; float: right" class="form-control"/></td>
                                                 </tr>
 
                                                 <tr>
                                                     <th><?php echo $this->lang->line('discount') . " (" . $currency_symbol . ")"; ?></th>
-                                                    <td class="text-right ipdbilltable"><h4 style="float: right;font-size: 12px; padding-left: 5px;"> %</h4><input type="text" placeholder="Discount" value="" name="discount_percent" id="discount_percent" style="width: 50%; float: right;font-size: 12px;" class="form-control"/></td>
+                                                    <td class="text-right ipdbilltable"><h4 style="float: right;font-size: 12px; padding-left: 5px;"> %</h4><input type="text" placeholder="Discount" value="" name="discount_percent" id="discount_percent" style="width: 70%; float: right;font-size: 12px;" class="form-control"/></td>
 
                                                     <td class="text-right ipdbilltable"><input type="text" placeholder="Discount" value="0" name="discount" id="discount" style="width: 50%; float: right" class="form-control"/></td>
                                                 </tr>
-                                                <!--<tr>
-                                                    <th><?php echo $this->lang->line('discount') . " (" . $currency_symbol . ")"; ?></th>
-                                                    <td class="text-right ipdbilltable"><input type="text" placeholder="Discount" value="0" name="discount" id="discount" style="width: 30%; float: right" class="form-control"/></td>
-                                                </tr>-->
+                                            
                                                 <tr>
                                                     <th><?php echo $this->lang->line('tax') . " (" . $currency_symbol . ")"; ?></th>
                                                     <td class="text-right ipdbilltable">
-                                                        <h4 style="float: right;font-size: 12px;     padding-left: 5px;"> %</h4><input type="text" placeholder="Tax" name="tax_percent" value="" id="tax_percent" style="width: 50%; float: right;font-size: 12px;" class="form-control"/>
+                                                        <h4 style="float: right;font-size: 12px;padding-left: 5px;"> %</h4><input type="text" placeholder="Tax" name="tax_percent" value="" id="tax_percent" style="width: 70%; float: right;font-size: 12px;" class="form-control"/>
 
                                                     </td>
 
@@ -332,15 +293,7 @@ $genderList = $this->customlib->getGender();
                                                     </td>
                                                 </tr>
 
-                                                <!--  </tr>
-                                                                                                  <tr>
-                                                      <th><?php echo $this->lang->line('tax'); ?></th>
-                                                      <td class="text-right ipdbilltable">
-                                                          <input type="text" placeholder="Tax" name="tax_percent" value="0" id="tax_percent" style="width: 30%; float: right" class="form-control"/>
-  
-                                                      </td>
-  
-                                                  </tr>-->
+                                               
                                                 <tr>
                                                     <th><?php echo $this->lang->line('net_amount') . " (" . $currency_symbol . ")"; ?></th>
                                                     <td colspan="2" class="text-right ipdbilltable">
@@ -348,22 +301,12 @@ $genderList = $this->customlib->getGender();
                                                 </tr>
                                             </table>
 
-                                            <!-- <div class="form-group">
-                                             <label>Discount</label>
-                                              <input type="text" placeholder="Total" name="total" id="total" class="form-control"/>
-                                            </div>
-                                            <div class="form-group">
-                                             <label>Tax</label>
-                                              <input type="text" placeholder="Total" name="total" id="total" class="form-control"/>
-                                            </div> -->
+                                         
                                         </div>
 
                                     </div><!--./row-->  
                                 </div><!--./col-md-12-->
-                                <!--  <div class="col-sm-offset-9 ">
-                                   <label>Total</label>
-                                   <input type="text" name="total" placeholder="Total">
-                                 </div> -->
+                              
 
                             </div><!--./row-->  
                         </div><!--./box-footer-->
@@ -450,7 +393,7 @@ $genderList = $this->customlib->getGender();
     </div> 
 </div>
 
-<div class="modal fade" id="viewModal"  role="dialog" aria-labelledby="myModalLabel">
+<div class="modal fade" id="viewModal" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content modal-media-content">
             <div class="modal-header modal-media-header">
@@ -485,9 +428,15 @@ $genderList = $this->customlib->getGender();
             data: {id: id},
             dataType: 'json',
             success: function (data) {
-            var date_format = '<?php echo $result = strtr($this->customlib->getSchoolDateFormat(true, true), ['d' => 'dd', 'm' => 'MM', 'Y' => 'yyyy',]) ?>';
+            var date_format = '<?php echo $result = strtr($this->customlib->getSchoolDateFormat(true, true), ['d' => 'dd', 'm' => 'MM', 'Y' => 'yyyy','H' => 'hh', 'i' => 'mm']) ?>';
+
+         //  alert(data.date);
+           // alert($this->customlib->getSchoolDateFormat(true, true));
+           // var newformat = hours >= 12 ? 'PM' : 'AM';, 'i' => 'mm'
             var date = new Date(data.date).toString(date_format);
-            $('#editdate').val(date);
+            //var hours = date.getHours();
+           //alert(date);
+            $('#editdate').val(data.date);
             $("#editbillno").val(bill_no);
             $("#addeditpatient_id").val(patient_id);
                $.ajax({
@@ -646,7 +595,7 @@ $genderList = $this->customlib->getGender();
     });
 
     function printData(insert_id, id) {
-        alert(insert_id);
+       // alert(insert_id);
 
         var base_url = '<?php echo base_url() ?>';
         $.ajax({
@@ -822,18 +771,14 @@ $genderList = $this->customlib->getGender();
 
 
     function viewDetail(id, bill_no, patient_id) {
-        // var billno = bill_no;
-        //var patientid = patient_id;
-        //var dateedit = date;
-
-        // console.log(patient_id);
+       
         $.ajax({
             url: '<?php echo base_url() ?>admin/pharmacy/getBillDetails/' + id,
             type: "GET",
             data: {id: id},
             success: function (data) {
                 $('#reportdata').html(data);
-                $('#edit_deletebill').html("<?php if ($this->rbac->hasPrivilege('pharmacy bill', 'can_view')) { ?><a href='#' data-toggle='tooltip' onclick='printData(" + id + ")'   data-original-title='<?php echo $this->lang->line('print'); ?>'><i class='fa fa-print'></i></a> <?php } ?><?php if ($this->rbac->hasPrivilege('pharmacy bill', 'can_edit')) { ?><a href='#'' onclick='edit_bill(" + id + "," + bill_no + "," + patient_id + ")' data-toggle='tooltip'  data-original-title='<?php echo $this->lang->line('edit'); ?>'><i class='fa fa-pencil'></i></a><?php } ?><?php if ($this->rbac->hasPrivilege('pharmacy bill', 'can_edit')) { ?><a onclick='delete_bill(" + id + ")'  href='#'  data-toggle='tooltip'  data-original-title='<?php echo $this->lang->line('delete'); ?>'><i class='fa fa-trash'></i></a><?php } ?>");
+                $('#edit_deletebill').html("<?php if ($this->rbac->hasPrivilege('pharmacy bill', 'can_view')) { ?><a href='#' data-toggle='tooltip' onclick='printData(" + id + ")'   data-original-title='<?php echo $this->lang->line('print'); ?>'><i class='fa fa-print'></i></a> <?php } ?><?php if ($this->rbac->hasPrivilege('pharmacy bill', 'can_edit')) { ?><a href='#'' onclick='edit_bill(" + id + "," + bill_no + "," + patient_id + ")' data-toggle='tooltip'  data-original-title='<?php echo $this->lang->line('edit'); ?>'><i class='fa fa-pencil'></i></a><?php } ?><?php if ($this->rbac->hasPrivilege('pharmacy bill', 'can_delete')) { ?><a onclick='delete_bill(" + id + ")'  href='#'  data-toggle='tooltip'  data-original-title='<?php echo $this->lang->line('delete'); ?>'><i class='fa fa-trash'></i></a><?php } ?>");
                 holdModal('viewModal');
             },
         });
@@ -1094,5 +1039,21 @@ $genderList = $this->customlib->getGender();
                     $("#opd_ipd_no").hide();
                 }
             }
+			
+			
+$(".generatebill").click(function(){	
+	$('#select2-addpatient_id-container').html("");
+	$('#bill').trigger("reset");
+	var table = document.getElementById("tableID");
+    var table_len = (table.rows.length);	
+	for (i = 1; i < table_len; i++) {			
+		delete_row(i);
+	}
+});	
+
+$(".modalbtnpatient").click(function(){	
+	$('#formaddpa').trigger("reset");
+	$(".dropify-clear").trigger("click");
+});
 </script>
 <?php $this->load->view('admin/patient/patientaddmodal') ?>

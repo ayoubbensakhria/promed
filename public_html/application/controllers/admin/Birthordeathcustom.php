@@ -8,7 +8,6 @@ class Birthordeathcustom extends Admin_Controller {
     function __construct() {
         parent::__construct();
         $this->load->library('encoding_lib');
-
         $this->custom_fields_list = $this->config->item('custom_fields');
         $this->custom_field_table = $this->config->item('custom_field_table');
         $this->load->helper('customfield_helper');
@@ -18,6 +17,7 @@ class Birthordeathcustom extends Admin_Controller {
     }
 
     public function index() {
+
         if (!$this->rbac->hasPrivilege('birth_death_customfields', 'can_view')) {
             access_denied();
         }
@@ -31,7 +31,6 @@ class Birthordeathcustom extends Admin_Controller {
         $customfield_bundle = $this->myCustomFieldBundle($customfields);
         $data['customfields'] = $customfield_bundle;
         if ($this->form_validation->run() == true) {
-
             $data = array(
                 'belong_to' => 'birth_report',
                 'type' => 'input',
@@ -41,18 +40,17 @@ class Birthordeathcustom extends Admin_Controller {
                 'validation' => isset($_POST['validation']) ? $_POST['validation'] : "",
                 'visible_on_table' => isset($_POST['display_tbl']) ? $_POST['display_tbl'] : "",
             );
+           
             $this->customfield_model->add($data);
             $this->session->set_flashdata('msg', '<div class="alert alert-success text-left">' . $this->lang->line('success_message') . '</div>');
             redirect('admin/birthordeathcustom/index');
         }
-
         $this->load->view("layout/header");
         $this->load->view("admin/birthordeathcustom/birthReport", $data);
         $this->load->view("layout/footer");
     }
 
     public function myCustomFieldBundle($customfield_values) {
-
         $field_array = array();
         if (!empty($customfield_values)) {
             foreach ($customfield_values as $f_key => $f_value) {
@@ -64,7 +62,7 @@ class Birthordeathcustom extends Admin_Controller {
     }
 
     public function edit() {
-        if (!$this->rbac->hasPrivilege('birth_death_record', 'can_view')) {
+        if (!$this->rbac->hasPrivilege('birth_death_customfields', 'can_view')) {
             access_denied();
         }
         $id = $this->input->post("id");
@@ -73,7 +71,7 @@ class Birthordeathcustom extends Admin_Controller {
     }
 
     public function getBirthdata() {
-        if (!$this->rbac->hasPrivilege('birth_death_report', 'can_view')) {
+        if (!$this->rbac->hasPrivilege('birth_death_customfields', 'can_view')) {
             access_denied();
         }
         $id = $this->input->post("id");
@@ -82,7 +80,7 @@ class Birthordeathcustom extends Admin_Controller {
     }
 
     public function getDeathdata() {
-        if (!$this->rbac->hasPrivilege('death_report', 'can_view')) {
+        if (!$this->rbac->hasPrivilege('birth_death_customfields', 'can_view')) {
             access_denied();
         }
         $id = $this->input->post("id");
@@ -91,7 +89,7 @@ class Birthordeathcustom extends Admin_Controller {
     }
 
     public function editDeath() {
-        if (!$this->rbac->hasPrivilege('death_record', 'can_view')) {
+        if (!$this->rbac->hasPrivilege('birth_death_customfields', 'can_view')) {
             access_denied();
         }
         $id = $this->input->post("id");
@@ -100,7 +98,7 @@ class Birthordeathcustom extends Admin_Controller {
     }
 
     public function death() {
-        if (!$this->rbac->hasPrivilege('death_record', 'can_view')) {
+        if (!$this->rbac->hasPrivilege('birth_death_customfields', 'can_view')) {
             access_denied();
         }
 
@@ -114,7 +112,6 @@ class Birthordeathcustom extends Admin_Controller {
         $customfield_bundle = $this->myCustomFieldBundle($customfields);
         $data['customfields'] = $customfield_bundle;
         if ($this->form_validation->run() == true) {
-
             $data = array(
                 'belong_to' => 'death_report',
                 'type' => 'input',
@@ -140,10 +137,8 @@ class Birthordeathcustom extends Admin_Controller {
         $data['custom_fields_list'] = $this->custom_fields_list;
         $customfield_bundle = $this->myCustomFieldBundle($customfields);
         $data['customfields'] = $customfield_bundle;
-
         $this->form_validation->set_rules('name', $this->lang->line('name'), 'trim|required|xss_clean');
         $id = $this->input->post('id');
-
         if ($this->form_validation->run() == true) {
             $data = array(
                 'id' => $id,
@@ -168,8 +163,6 @@ class Birthordeathcustom extends Admin_Controller {
         $data['custom_fields_list'] = $this->custom_fields_list;
         $customfield_bundle = $this->myCustomFieldBundle($customfields);
         $data['customfields'] = $customfield_bundle;
-
-
         $this->form_validation->set_rules('name', $this->lang->line('name'), 'trim|required|xss_clean');
         $id = $this->input->post('id');
 
@@ -210,7 +203,6 @@ class Birthordeathcustom extends Admin_Controller {
             );
 
             $this->customfield_model->add($data);
-            //echo $this->db->last_query();die;
             $array = array('status' => 'success', 'error' => '', 'message' => $this->lang->line('success_message'));
         }
         echo json_encode($array);
@@ -219,10 +211,6 @@ class Birthordeathcustom extends Admin_Controller {
     public function addCustomfiled() {
         $id = "";
         $this->form_validation->set_rules('name', $this->lang->line('name'), 'trim|required|xss_clean');
-
-
-
-
         if ($this->form_validation->run() == FALSE) {
             $msg = array(
                 'name' => form_error('name'),
@@ -232,6 +220,7 @@ class Birthordeathcustom extends Admin_Controller {
             if (isset($_POST['id']) && $_POST['id'] != '') {
                 $id = $_POST['id'];
             }
+
             $data = array(
                 'id' => $id,
                 'belong_to' => 'birth_report',
@@ -239,20 +228,19 @@ class Birthordeathcustom extends Admin_Controller {
                 'name' => $this->input->post('name'),
                 'visible_on_table' => isset($_POST['display_tbl']) ? $_POST['display_tbl'] : "",
             );
+          
             $this->customfield_model->add($data);
-
             $array = array('status' => 'success', 'error' => '', 'message' => $this->lang->line('success_message'));
         }
         echo json_encode($array);
     }
 
     public function addDeathdata() {
-        if (!$this->rbac->hasPrivilege('death_report', 'can_add')) {
+        if (!$this->rbac->hasPrivilege('birth_death_customfields', 'can_add')) {
             access_denied();
         }
 
         $this->form_validation->set_rules('patient', $this->lang->line('patient'), 'trim|required|xss_clean');
-
         if ($this->form_validation->run() == FALSE) {
             $msg = array(
                 'patient' => form_error('patient'),
@@ -272,7 +260,6 @@ class Birthordeathcustom extends Admin_Controller {
                 'is_active' => 'yes',
             );
             $insert_id = $this->birthordeath_model->addDeathdata($death_data);
-
             $array = array('status' => 'success', 'error' => '', 'message' => $this->lang->line('success_message'));
             if (isset($_FILES["file"]) && !empty($_FILES['file']['name'])) {
                 $fileInfo = pathinfo($_FILES["file"]["name"]);
@@ -286,12 +273,11 @@ class Birthordeathcustom extends Admin_Controller {
     }
 
     public function addBirthdata() {
-        if (!$this->rbac->hasPrivilege('birth_death_report', 'can_add')) {
+        if (!$this->rbac->hasPrivilege('birth_death_customfields', 'can_add')) {
             access_denied();
         }
 
         $this->form_validation->set_rules('child_name', $this->lang->line('child'), 'trim|required|xss_clean');
-
         if ($this->form_validation->run() == FALSE) {
             $msg = array(
                 'child_name' => form_error('child_name'),
@@ -333,7 +319,7 @@ class Birthordeathcustom extends Admin_Controller {
     }
 
     public function delete($id) {
-        if (!$this->rbac->hasPrivilege('birth_death_record', 'can_delete')) {
+        if (!$this->rbac->hasPrivilege('birth_death_customfields', 'can_delete')) {
             access_denied();
         }
         $result = $this->birthordeath_model->delete($id);
@@ -342,7 +328,7 @@ class Birthordeathcustom extends Admin_Controller {
     }
 
     public function deletecustom($id) {
-        if (!$this->rbac->hasPrivilege('birth_death_record', 'can_delete')) {
+        if (!$this->rbac->hasPrivilege('birth_death_customfields', 'can_delete')) {
             access_denied();
         }
         $result = $this->birthordeath_model->deletecustom($id);
@@ -351,7 +337,7 @@ class Birthordeathcustom extends Admin_Controller {
     }
 
     public function deletedeath($id) {
-        if (!$this->rbac->hasPrivilege('birth_death_report', 'can_delete')) {
+        if (!$this->rbac->hasPrivilege('birth_death_customfields', 'can_delete')) {
             access_denied();
         }
         $result = $this->birthordeath_model->deletedeath($id);
@@ -360,7 +346,7 @@ class Birthordeathcustom extends Admin_Controller {
     }
 
     public function update_death() {
-        if (!$this->rbac->hasPrivilege('death_report', 'can_edit')) {
+        if (!$this->rbac->hasPrivilege('birth_death_customfields', 'can_edit')) {
             access_denied();
         }
         $patient_type = $this->customlib->getPatienttype();
@@ -394,7 +380,6 @@ class Birthordeathcustom extends Admin_Controller {
                 $this->birthordeath_model->addDeathdata($data_img);
             }
         }
-
         echo json_encode($array);
     }
 

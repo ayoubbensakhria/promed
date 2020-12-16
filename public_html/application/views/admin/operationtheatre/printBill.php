@@ -30,7 +30,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                         <tr>
                             <td align="text-left"><h5><?php echo $this->lang->line('bill') . " #"; ?><?php echo $result["bill_no"] ?></h5>
                             </td>
-                            <td align="right"><h5><?php echo $this->lang->line('date') . " : "; ?><?php echo date($this->customlib->getSchoolDateFormat(true, true), strtotime($result['date'])) ?></h5>
+                            <td align="right"><h5><?php echo $this->lang->line('date') . " : "; ?><?php echo date($this->customlib->getSchoolDateFormat(true, false), strtotime($result['date'])) ?></h5>
                             </td>
                         </tr>
                     </table>
@@ -53,7 +53,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                     <table class="printablea4" id="testreport" width="100%">
                         <tr>
 
-                            <th><?php echo $this->lang->line('amount'); ?></th>
+                            <th><?php echo $this->lang->line('amount')." (".$currency_symbol.")"; ?></th>
 
                         </tr>
                         <?php

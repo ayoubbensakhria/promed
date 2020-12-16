@@ -30,7 +30,6 @@ class Notificationsetting_model extends CI_Model {
         $q = $this->db->get();
         if ($q->num_rows() > 0) {
             $result = $q->row();
-
             $this->db->where('id', $result->id);
             $this->db->update('notification_setting', $data);
         } else {

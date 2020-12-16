@@ -15,7 +15,7 @@ class Ward extends Admin_Controller {
         $this->session->set_userdata('sub_sidebar_menu', 'admin/setup/ward');
         $this->session->set_userdata('sub_menu', 'bed');
         $data['ward_list'] = $this->Ward_Model->ward_list();
-        $data['floor_list'] = $this->Floor_Model->floor_list();
+        $data['floor_list'] = $this->floor_model->floor_list();
         $data['dept_list'] = $this->Ward_Model->getdepartment();
         $this->load->view('layout/header');
         $this->load->view('setup/Ward', $data);
@@ -80,7 +80,7 @@ class Ward extends Admin_Controller {
 
     public function getdata($id) {
         $data['ward_data'] = $this->Ward_Model->ward_list($id);
-        $data['floor_list'] = $this->Floor_Model->floor_list();
+        $data['floor_list'] = $this->floor_model->floor_list();
         $data['dept_list'] = $this->Ward_Model->getdepartment();
         $this->load->view('setup/editWardModel', $data);
     }

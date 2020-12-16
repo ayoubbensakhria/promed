@@ -19,14 +19,23 @@ class Department_model extends CI_model {
     function getall() {
         $this->datatables->select('id,department_name,is_active');
         $this->datatables->from('department');
-        $this->datatables->add_column('view', '<a onclick="get($1)" class="btn btn-default btn-xs" data-target="#editmyModal" data-toggle="tooltip" title="" data-original-title=' . $this->lang->line('edit') . '> <i class="fa fa-pencil"></i></a><a  class="btn btn-default btn-xs" onclick="deleterecord($1)" data-toggle="tooltip" title=""  data-original-title=' . $this->lang->line('delete') . '>
-                                                        <i class="fa fa-trash"></i>
-                                                    </a>', 'id,is_active');
+        if ($this->rbac->hasPrivilege('department', 'can_edit')) {
+        $edit = '<a onclick="get($1)" class="btn btn-default btn-xs" data-target="#editmyModal" data-toggle="tooltip" title="" data-original-title=' . $this->lang->line('edit') . '> <i class="fa fa-pencil"></i></a>';            
+            }else{
+                $edit= '';
+            }
+
+            if ($this->rbac->hasPrivilege('department', 'can_delete')) {
+        $delete = '<a  class="btn btn-default btn-xs" onclick="deleterecord($1)" data-toggle="tooltip" title=""  data-original-title=' . $this->lang->line('delete') . '><i class="fa fa-trash"></i></a>';
+            }else{
+                $delete = '';
+            }
+
+        $this->datatables->add_column('view', $edit.$delete, 'id,is_active');
         return $this->datatables->generate();
     }
 
     function check_department_exists($name, $id) {
-
         if ($id != 0) {
             $data = array('id != ' => $id, 'department_name' => $name);
             $query = $this->db->where($data)->get('department');
@@ -48,25 +57,20 @@ class Department_model extends CI_model {
     }
 
     function deleteDepartment($id) {
-
         $this->db->where("id", $id)->delete("department");
     }
 
     function getDepartmentType($id = null) {
-
         if (!empty($id)) {
-
             $query = $this->db->where("id", $id)->get('department');
             return $query->row_array();
         } else {
-
             $query = $this->db->get("department");
             return $query->result_array();
         }
     }
 
     public function addDepartmentType($data) {
-
         if (isset($data['id'])) {
             $this->db->where('id', $data['id']);
             $this->db->update('department', $data);
@@ -75,7 +79,5 @@ class Department_model extends CI_model {
             return $this->db->insert_id();
         }
     }
-
 }
-
 ?>

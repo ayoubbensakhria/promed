@@ -8,6 +8,173 @@ $genderList = $this->customlib->getGender();
     span{
         text-transform: capitalize;
     }
+
+       .multiselect {
+    width:20em;
+    height:5em;
+    border:solid 1px #c0c0c0;
+    overflow:auto;
+}
+ 
+/*.multiselect label {
+    display:block;
+}*/
+ 
+/*.multiselect-on {
+    color:black;
+   background-color:#8b8c8b;
+}*/
+
+    .wrapper-dropdown-3 .dropdown li:hover {
+
+        cursor: pointer;
+        color: white;
+    }
+
+    .scroll150{max-height: 157px; overflow-y: auto; position: relative;}
+  
+    .active_section{
+        background: #f3f8f8;
+    }
+    .no-results-found {
+        padding: 3px;
+        text-decoration: none;
+        color: #8aa8bd;
+        margin-bottom: 0px;
+        border-bottom: 1px solid #e6e8ea;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,1);
+    }
+    .wrapper-dropdown-3 {
+        /* Size and position */
+        position: relative;
+        width: 100%;
+        margin: 0 auto;  
+    }
+
+    .wrapper-dropdown-3:after {
+        content: "";
+        width: 0;
+        height: 0;
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        margin-top: -3px;
+        border-width: 6px 6px 0 6px;
+        border-style: solid;
+        border-color: #8aa8bd transparent;
+    }
+
+    .wrapper-dropdown-3 .dropdown {
+        /* Size & position */
+        position: absolute;
+        padding-left: 0;
+        top: 102%;
+        left: 0;
+        right: 0;
+        /* Styles */
+        background: white;
+        border-radius: inherit;
+        border: 1px solid rgba(0,0,0,0.17);
+        box-shadow: 0 0 5px rgba(0,0,0,0.1);
+        /*font-weight: normal;*/
+        -webkit-transition: all 0.1s ease-in;
+        -moz-transition: all 0.1s ease-in;
+        -ms-transition: all 0.1s ease-in;
+        -o-transition: all 0.1s ease-in;
+        transition: all 0.1s ease-in;
+        list-style: none;
+
+        /* Hiding */
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .wrapper-dropdown-3 .dropdown:after {
+        content: "";
+        width: 0;
+        height: 0;
+        position: absolute;
+        bottom: 100%;
+        right: 15px;
+        border-width: 0 6px 6px 6px;
+        border-style: solid;
+        border-color: #fff transparent;
+    }
+
+    .wrapper-dropdown-3 .dropdown:before {
+        content: "";
+        width: 0;
+        height: 0;
+        position: absolute;
+        bottom: 100%;
+        right: 13px;
+        border-width: 0 8px 8px 8px;
+        border-style: solid;
+        border-color: rgba(0,0,0,0.1) transparent;
+    }
+
+    .wrapper-dropdown-3 .dropdown li label {
+        display: block;
+        font-weight: normal;
+        margin-top: 0px;
+        padding: 6px 12px;
+        text-decoration: none;
+        /* color: #8aa8bd; */
+        margin-bottom: 0px;
+        border-bottom: 1px solid #e6e8ea;
+        /*box-shadow: inset 0 1px 0 rgba(255,255,255,1);*/
+        -webkit-transition: all 0.3s ease-out;
+        -moz-transition: all 0.3s ease-out;
+        -ms-transition: all 0.3s ease-out;
+        -o-transition: all 0.3s ease-out;
+        transition: all 0.3s ease-out;
+    }
+    .wrapper-dropdown-3 .dropdown li label input[type=checkbox] {
+        position: relative;
+        margin-left:0px;
+    }
+
+    .wrapper-dropdown-3 .dropdown li i {
+        float: right;
+        color: inherit;
+    }
+
+    .wrapper-dropdown-3 .dropdown li:first-of-type a {
+        border-radius: 7px 7px 0 0;
+    }
+
+    .wrapper-dropdown-3 .dropdown li:last-of-type a {
+        border: none;
+        border-radius: 0 0 7px 7px;
+    }
+
+    /* Hover state */
+
+    .wrapper-dropdown-3 .dropdown li:hover label {
+        background: #3c8dbc;
+    }
+
+    /* Active state */
+
+    .wrapper-dropdown-3.active .dropdown {
+        opacity: 1;
+        pointer-events: auto;
+        z-index: 1
+    }
+
+    /* No CSS3 support */
+
+    .no-opacity       .wrapper-dropdown-3 .dropdown,
+    .no-pointerevents .wrapper-dropdown-3 .dropdown {
+        display: none;
+        opacity: 1; /* If opacity support but no pointer-events support */
+        pointer-events: auto; /* If pointer-events support but no pointer-events support */
+    }
+
+    .no-opacity       .wrapper-dropdown-3.active .dropdown,
+    .no-pointerevents .wrapper-dropdown-3.active .dropdown {
+        display: block;
+    }
 </style>
 <div class="content-wrapper">
     <section class="content">
@@ -21,7 +188,6 @@ $genderList = $this->customlib->getGender();
                         if (!empty($image)) {
                             $file = $result['image'];
                         } else {
-
                             $file = "uploads/patient_images/no_image.png";
                         }
                         ?>        
@@ -64,28 +230,22 @@ $genderList = $this->customlib->getGender();
                                 <b><?php echo $this->lang->line('consultant'); ?></b> <a class="pull-right text-aqua"><?php echo $visit_details['name'] . "" . $visit_details["surname"]; ?></a>
                             </li>
                             <li class="list-group-item listnoback">
-                                <b><?php echo $this->lang->line('symptoms'); ?></b> <a class="pull-right text-aqua"><?php echo $visit_details['symptoms']; ?></a>
+                                <b><?php echo $this->lang->line('symptoms'); ?></b> <a class="pull-right text-aqua"><?php echo nl2br($visit_details['symptoms']); ?></a>
                             </li>
                             <li class="list-group-item listnoback">
                                 <b><?php echo $this->lang->line('case'); ?></b> <a class="pull-right text-aqua"><?php echo $visit_details['case_type']; ?></a>
                             </li>
                         </ul>
                     </div>
-
                 </div>
-
             </div>
-
             <div class="col-md-12 itemcol">
-
                 <div class="nav-tabs-custom relative">
                     <a href="#" class="dshow arrow-angle"><i class="fa fa-angle-right"></i></a>
                     <a href="#" class="dhide arrow-angle" style="display: none;"><i class="fa fa-angle-left"></i></a>
                     <ul class="nav nav-tabs">
                         <?php if ($this->rbac->hasPrivilege('revisit', 'can_view')) { ?>
                             <li class="active"><a href="#activity" data-toggle="tab" aria-expanded="true"><i class="far fa-caret-square-down"></i> <?php echo $this->lang->line('visits'); ?></a></li>
-
-
 
                             <?php
                         }
@@ -111,8 +271,14 @@ $genderList = $this->customlib->getGender();
 
                             <li><a href="#diagnosis" data-toggle="tab" aria-expanded="true"><i class="fas fa-diagnoses"></i> <?php echo $this->lang->line('diagnosis'); ?></a></li>
                         <?php } ?>
+                       
                         <?php if ($this->rbac->hasPrivilege('opd timeline', 'can_view')) { ?>
                             <li><a href="#timeline" data-toggle="tab" aria-expanded="true"><i class="far fa-calendar-check"></i> <?php echo $this->lang->line('timeline'); ?></a></li>
+
+                        <?php } if ($this->rbac->hasPrivilege('opd live_consult', 'can_view')) { ?>
+                           
+                            <li><a href="#live_consult" data-toggle="tab" aria-expanded="true"><i class="fa fa-video-camera ftlayer"></i> <?php echo $this->lang->line('live_consult'); ?></a></li>
+                            
                         <?php } ?>
 
                     </ul>
@@ -120,11 +286,11 @@ $genderList = $this->customlib->getGender();
                         <?php if ($this->rbac->hasPrivilege('revisit', 'can_view')) { ?>
                             <div class="tab-pane active" id="activity">
                                 <div class="impbtnview">
-                                    <?php if ($this->rbac->hasPrivilege('revisit', 'can_add')) { ?>
+                                    <?php if ($this->rbac->hasPrivilege('revisit', 'can_add')) { if($result['discharged'] !='yes'){?>
 
-                                        <a href="#"  onclick="getRevisitRecord('<?php echo $result['id'] ?>')" class="btn btn-primary btn-sm"  data-toggle="modal" title=""><i class="fas fa-exchange-alt"></i> <?php echo $this->lang->line('re_checkup'); ?>
+                                        <a href="#"  onclick="getRevisitRecord('<?php echo $result['id'] ?>')" class="btn btn-primary btn-sm revisitrecheckup"  data-toggle="modal" title=""><i class="fas fa-exchange-alt"></i> <?php echo $this->lang->line('re_checkup'); ?>
                                         </a>
-                                    <?php } ?>
+                                    <?php }} ?>
                                 </div><!--./impbtnview20-->
                                 <div class="download_label"><?php echo $result['patient_name'] . " " . $this->lang->line('opd') . " " . $this->lang->line('details'); ?></div>
                                 <div class="table-responsive">
@@ -150,13 +316,13 @@ $genderList = $this->customlib->getGender();
                                                             <td><?php echo date($this->customlib->getSchoolDateFormat(true, true), strtotime($value['appointment_date'])) ?></td>
                                                             <td><?php echo $value["name"] . " " . $value["surname"]; ?></td>
                                                             <td><?php echo $value['refference']; ?></td>
-                                                            <td><?php echo $value['symptoms']; ?></td>
+                                                            <td><?php echo nl2br($value['symptoms']); ?></td>
                                                             <td class="pull-right">
-                                                                <?php
-                                                                if ($this->rbac->hasPrivilege('prescription', 'can_add')) {
-                                                                    if ($value["prescription"] == 'no') {
-                                                                        ?>
-                                                                        <a href="#" class="btn btn-default btn-xs" data-toggle="tooltip" title="<?php echo $this->lang->line('add_prescription'); ?>" onclick="getRecord_id('<?php echo $value["id"]; ?>',0)"><i class="fas fa-prescription"></i></a>
+                                                  <?php
+                            if ($this->rbac->hasPrivilege('prescription', 'can_add')) {
+                                 if ($value["prescription"] == 'no') {
+                                 ?>
+                                                <a href="#" class="btn btn-default btn-xs" data-toggle="tooltip" title="<?php echo $this->lang->line('add_prescription'); ?>" onclick="getRecord_id('<?php echo $value["id"]; ?>',0,'<?php echo $value["opd_no"] ?>')"><i class="fas fa-prescription"></i></a>
                                                                         <?php
                                                                     }
                                                                 }
@@ -212,7 +378,7 @@ $genderList = $this->customlib->getGender();
                                                             if ($this->rbac->hasPrivilege('prescription', 'can_add')) {
                                                                 if ($revisit["prescription"] == 'no') {
                                                                     ?>
-                                                                    <a href="#" class="btn btn-default btn-xs" data-toggle="tooltip" title="<?php echo $this->lang->line('add_prescription'); ?>" onclick="getRecord_id('<?php echo $revisit["id"]; ?>','<?php echo $visit_id ?>')"><i class="fas fa-prescription"></i></a>
+                                                                    <a href="#" class="btn btn-default btn-xs" data-toggle="tooltip" title="<?php echo $this->lang->line('add_prescription'); ?>" onclick="getRecord_id('<?php echo $revisit["id"]; ?>','<?php echo $visit_id ?>','<?php echo $revisit["opd_no"]?>')"><i class="fas fa-prescription"></i></a>
                                                                     <?php
                                                                 }
                                                             }
@@ -256,7 +422,7 @@ $genderList = $this->customlib->getGender();
                         <div class="tab-pane" id="diagnosis">
                             <div class="impbtnview">
                                 <?php
-                                if ($this->rbac->hasPrivilege('opd diagnosis', 'can_add')) {
+                                if ($this->rbac->hasPrivilege('opd diagnosis', 'can_add')) { if($result ['discharged'] !='yes'){
                                     $userdata = $this->customlib->getUserData();
                                     $diagnosis = "yes";
                                     $doctor_restriction = $this->session->userdata['hospitaladmin']['doctor_restriction'];
@@ -272,9 +438,9 @@ $genderList = $this->customlib->getGender();
                                     if ($diagnosis == 'yes') {
                                         ?> 
 
-                                        <a data-toggle="modal" onclick="holdModal('add_diagnosis')" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> <?php echo $this->lang->line('add') ?> <?php echo $this->lang->line('diagnosis'); ?></a>
+                                        <a data-toggle="modal" onclick="holdModal('add_diagnosis')" class="btn btn-primary btn-sm adddiagnosis"><i class="fa fa-plus"></i> <?php echo $this->lang->line('add') ?> <?php echo $this->lang->line('diagnosis'); ?></a>
                                     <?php }
-                                }
+                                }}
                                 ?>
                             </div>
                             <div class="download_label"><?php echo $result['patient_name'] . " " . $this->lang->line('opd') . " " . $this->lang->line('details'); ?></div>
@@ -291,7 +457,6 @@ $genderList = $this->customlib->getGender();
                                         if (!empty($diagnosis_details)) {
                                             foreach ($diagnosis_details as $diagnosis_key => $diagnosis_value) {
 
-                                                //print_r($value);
                                                 ?>  
                                                 <tr>
                                                     <td><?php echo $diagnosis_value["report_type"] ?></td>
@@ -335,9 +500,9 @@ $genderList = $this->customlib->getGender();
                                 <?php if ($this->rbac->hasPrivilege('opd_charges', 'can_view')) { ?>
                             <div class="tab-pane" id="charges">
                                 <div class="impbtnview">
-    <?php if ($this->rbac->hasPrivilege('opd_charges', 'can_add')) { ?>
-                                        <a data-toggle="modal" onclick="holdModal('add_chargeModal')" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> <?php echo $this->lang->line('add') ?> <?php echo $this->lang->line('charges'); ?></a>
-    <?php } ?>
+    <?php if ($this->rbac->hasPrivilege('opd_charges', 'can_add')) { if ($result['discharged'] !='yes'){?>
+                                        <a data-toggle="modal" onclick="holdModal('add_chargeModal')" class="btn btn-primary btn-sm addcharges"><i class="fa fa-plus"></i> <?php echo $this->lang->line('add') ?> <?php echo $this->lang->line('charges'); ?></a>
+    <?php }} ?>
                                 </div>
                                 <div class="download_label"><?php echo $result['patient_name'] . " " . $this->lang->line('opd') . " " . $this->lang->line('details'); ?></div>
                                 <div class="table-responsive">
@@ -359,9 +524,8 @@ $genderList = $this->customlib->getGender();
                                             $total = 0;
                                             if (!empty($charges_detail)) {
                                                 foreach ($charges_detail as $charges_key => $charges_value) {
-
                                                     $total += $charges_value["apply_charge"];
-                                                    //print_r($value);
+                                                   
                                                     ?>  
                                                     <tr>
                                                         <td><?php echo date($this->customlib->getSchoolDateFormat(), strtotime($charges_value['date'])); ?></td>
@@ -399,14 +563,14 @@ $genderList = $this->customlib->getGender();
                             <div class="tab-pane" id="payment">
                                 <?php
                                 if ($this->rbac->hasPrivilege('opd_payment', 'can_add')) {
-                                    // if ($result['status'] != 'paid') {
+                                     if ($result['discharged'] != 'yes') {
                                     ?>
 
                                     <div class="impbtnview">
-                                        <a href="#" class="btn btn-sm btn-primary dropdown-toggle" onclick="addpaymentModal()" data-toggle='modal'><i class="fa fa-plus"></i> <?php echo $this->lang->line('add') . " " . $this->lang->line('payment'); ?></a>
+                                        <a href="#" class="btn btn-sm btn-primary dropdown-toggle addpayment" onclick="addpaymentModal()" data-toggle='modal'><i class="fa fa-plus"></i> <?php echo $this->lang->line('add') . " " . $this->lang->line('payment'); ?></a>
                                     </div><!--./impbtnview-->
                                     <?php
-                                    //}
+                                    }
                                 }
                                 ?>
                                 <div class="download_label"><?php echo $this->lang->line('payment'); ?></div>
@@ -438,7 +602,7 @@ $genderList = $this->customlib->getGender();
                                                        <!--  <td><?php echo $payment["balance_amount"] ?></td> -->
                                                         <td class="text-right">
                                                             <?php if (!empty($payment["document"])) { ?>
-                                                                <a onclick="delte_record('<?php echo base_url(); ?>admin/payment/download/<?php echo $payment["document"]; ?>', '<?php echo $this->lang->line('delete_message'); ?>')"  class="btn btn-default btn-xs"  data-toggle="tooltip" title="<?php echo $this->lang->line('download'); ?>">
+                                                                <a href="<?php echo base_url(); ?>admin/payment/download/<?php echo $payment["document"]; ?>"  class="btn btn-default btn-xs"  data-toggle="tooltip" title="<?php echo $this->lang->line('download'); ?>">
                                                                     <i class="fa fa-download"></i>
                                                                 </a>
             <?php } ?>
@@ -470,9 +634,9 @@ $genderList = $this->customlib->getGender();
                                 <?php } ?>
                         <div class="tab-pane" id="timeline">
                             <div class="impbtnview"> 
-<?php if ($this->rbac->hasPrivilege('opd timeline', 'can_add')) { ?>
-                                    <a data-toggle="modal" onclick="holdModal('myTimelineModal')" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i>  <?php echo $this->lang->line('add') ?> <?php echo $this->lang->line('timeline'); ?></a> 
-<?php } ?>
+<?php if ($this->rbac->hasPrivilege('opd timeline', 'can_add')) { if($result['discharged'] !='yes'){?>
+                                    <a data-toggle="modal" onclick="holdModal('myTimelineModal')" class="btn btn-primary btn-sm addtimeline"><i class="fa fa-plus"></i>  <?php echo $this->lang->line('add') ?> <?php echo $this->lang->line('timeline'); ?></a> 
+<?php }} ?>
                             </div>
                             <div class="timeline-header no-border">
 
@@ -527,13 +691,170 @@ if (empty($timeline_list)) {
                                     </ul>
                                 </div>
 
-
-
-
                             </div>
 
                         </div>  
                         <!-- -->
+
+                           <div class="tab-pane" id="live_consult">
+                           <!--  <div class="impbtnview20">
+                                <?php
+                                if ($this->rbac->hasPrivilege('opd live_consult', 'can_add')) {
+                                    $userdata = $this->customlib->getUserData();
+                                    $diagnosis = "yes";
+                                    $doctor_restriction = $this->session->userdata['hospitaladmin']['doctor_restriction'];
+                                    if ($doctor_restriction == 'enabled') {
+                                        if ($userdata["role_id"] == 3) {
+                                            if ($userdata["id"] == $result["staff_id"]) {
+                                                
+                                            } else {
+                                                $diagnosis = 'not_applicable';
+                                            }
+                                        }
+                                    }
+                                    if ($diagnosis == 'yes') {
+                                        ?> 
+
+                                        <a data-toggle="modal" onclick="holdModal('add_diagnosis')" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> <?php echo $this->lang->line('add') ?> <?php echo $this->lang->line('diagnosis'); ?></a>
+                                    <?php }
+                                }
+                                ?>
+                            </div> -->
+                            
+                            <div class="table-responsive">
+                                <table class="table table-striped table-bordered table-hover example">
+                                    <thead>
+                                    <th><?php echo $this->lang->line('consult').' '.$this->lang->line('title'); ?></th>
+                                        <th><?php echo $this->lang->line('date'); ?></th>
+                                       <!--  <th><?php echo $this->lang->line('api_used'); ?></th> -->
+                                        <th><?php echo $this->lang->line('created_by'); ?> </th>
+                                        <th><?php echo $this->lang->line('created_for'); ?></th>
+                                        <th><?php echo $this->lang->line('patient'); ?></th>
+                                        <th><?php echo $this->lang->line('status'); ?></th>
+                                        <th class="text-right"><?php echo $this->lang->line('action'); ?></th>
+                                    </thead>
+                                    <tbody>
+                                        <?php
+                                    if (empty($visitconferences)) {
+                                        ?>
+
+                                        <?php
+                                    } else {
+                                        foreach ($visitconferences as $conference_key => $conference_value) {
+
+                                            $return_response = json_decode($conference_value->return_response);
+                                            ?>
+                                            <tr>
+                                                <td class="mailbox-name">
+                                                    <a href="#" data-toggle="popover" class="detail_popover"><?php echo $conference_value->title; ?></a>
+
+                                                    <div class="fee_detail_popover" style="display: none">
+                                                        <?php
+                                                        if ($conference_value->description == "") {
+                                                            ?>
+                                                            <p class="text text-danger"><?php echo $this->lang->line('no_description'); ?></p>
+                                                            <?php
+                                                        } else {
+                                                            ?>
+                                                            <p class="text text-info"><?php echo $conference_value->description; ?></p>
+                                                            <?php
+                                                        }
+                                                        ?>
+                                                    </div>
+                                                </td>
+
+                                                <td class="mailbox-name">
+                                                <?php echo date($this->customlib->getSchoolDateFormat(true, true), strtotime($conference_value->date))?>
+                                                 
+                                              <!--   <td class="mailbox-name">
+
+                                                   <?php echo $this->lang->line($conference_value->api_type);   ?>
+
+                                                </td> -->
+
+                                                <td class="mailbox-name">
+
+                                                    <?php
+                                                    if ($conference_value->created_id == $logged_staff_id) {
+                                                        echo $this->lang->line('self');
+                                                    } else {
+                                                        $name= ($conference_value->create_by_surname == "") ? $conference_value->create_by_name : $conference_value->create_by_name . " " . $conference_value->create_by_surname;
+        echo  $name. " (".$conference_value->for_create_role_name." : ".$conference_value->for_create_employee_id.")";
+                                                    }
+                                                    ?></td>
+
+                                                <td class="mailbox-name">
+                                                    <?php
+
+                                                          $name= ($conference_value->create_for_surname == "") ? $conference_value->create_for_name : $conference_value->create_for_name . " " . $conference_value->create_for_surname;
+        echo  $name. " (".$conference_value->for_create_role_name." : ".$conference_value->for_create_employee_id.")";
+
+
+                                                  
+                                                    ?>
+                                                </td>
+
+                                                <td class="mailbox-name">
+                                                     <?php
+
+                                                          $name= ($conference_value->patient_name == "") ? $conference_value->patient_name : $conference_value->patient_name ;
+        echo  $name. " (".$this->lang->line('patient')." : ".$conference_value->patient_unique_id.")";
+
+
+                                                  
+                                                    ?>
+
+                                                </td>
+                                              <td class="mailbox-name">
+                                                <form class="chgstatus_form" method="POST" action="<?php echo site_url('admin/conference/chgstatus')?>">
+                                                    <input type="hidden" name="conference_id" value="<?php echo $conference_value->id;?>">
+                                                 <select class="form-control chgstatus_dropdown" name="chg_status">
+                                                     <option value="0" <?php if($conference_value->status==0) echo "selected='selected'" ?>><?php echo $this->lang->line('awaited'); ?></option>
+                                                     <option value="1" <?php if($conference_value->status==1) echo "selected='selected'" ?>><?php echo $this->lang->line('cancelled'); ?> </option>
+                                                     <option value="2" <?php if($conference_value->status==2) echo "selected='selected'" ?>><?php echo $this->lang->line('finished'); ?> </option>
+                                                 </select>
+                                                </form>
+                                                </td>
+                                                <td class="mailbox-date pull-right">
+                                                    <?php 
+if($conference_value->status == 0){
+    ?>
+<a data-placement="left" href="<?php echo $return_response->start_url; ?>" class="btn btn-default btn-xs"  target="_blank" >
+                                                        <i class="fa fa-sign-in"></i> <?php echo $this->lang->line('start').' '.$this->lang->line('class'); ?> 
+                                                    </a>
+    <?php
+}
+                                                     ?>
+                                                    
+                                                    <?php
+                                                    if ($conference_value->api_type != 'self') {
+                                                        ?>
+                                                        <?php 
+                                                        if($this->rbac->hasPrivilege('live_classes','can_delete')){
+                                                            ?>
+                                                            <a data-placement="left" href="<?php echo base_url(); ?>admin/conference/delete/<?php echo $conference_value->id . "/" . $return_response->id; ?>"class="btn btn-default btn-xs"  data-toggle="tooltip" title="<?php echo $this->lang->line('delete'); ?>" onclick="return confirm('<?php echo $this->lang->line('delete_confirm') ?>');">
+                                                            <i class="fa fa-remove"></i>
+                                                        </a>
+                                                            <?php
+                                                        }
+                                                        ?>
+                                                        
+                                                        <?php
+                                                    }
+                                                    ?>
+
+                                                </td>
+                                            </tr>
+                                            <?php
+                                        }
+                                    }
+                                    ?>
+
+                                    </tbody>
+                                </table>
+                            </div> 
+                        </div> 
+
                         <div class="tab-pane" id="prescription">
                             <div class="table-responsive">
                                 <table class="table table-striped table-bordered table-hover example">                       
@@ -548,7 +869,6 @@ if (empty($timeline_list)) {
                                         if (!empty($prescription_detail)) {
                                             foreach ($prescription_detail as $prescription_key => $prescription_value) {
 
-                                                //print_r($value);
                                                 ?>  
                                                 <tr>
                                                     <td><?php echo $prescription_value["opd_id"] ?></td>
@@ -635,7 +955,7 @@ if (empty($timeline_list)) {
                                                         ?>
                                                         <tr>
                                                             <td class="pttleft" style="text-transform: capitalize;"><?php echo $payment["payment_mode"]; ?></td>
-                                                            <td class=""><?php echo date($this->customlib->getSchoolDateFormat(), $this->customlib->dateyyyymmddTodateformat($payment['date'])); ?></td>
+                                                            <td class=""><?php echo date($this->customlib->getSchoolDateFormat(true, false), strtotime($payment['date'])) ?></td>
                                                             <td class="text-right"><?php echo $payment["paid_amount"]; ?></td>
 
                                                         </tr>
@@ -837,15 +1157,14 @@ if (empty($timeline_list)) {
                                                 <input data-loading-text="<?php echo $this->lang->line('processing') ?>" type="submit" style="display:none" id="save_button" name="" value="<?php echo $this->lang->line('generate') ?>" class="btn btn-sm btn-info"/>
 
                                                 <a href="#" style="display:none" class="btn btn-sm btn-info" id="printBill" onclick="printBill('<?php echo $result["id"] ?>', '<?php echo $this->uri->segment(5); ?>')"><?php echo $this->lang->line('print') . " " . $this->lang->line('bill') ?></a>
-        <?php
-    } else {
+                                                <?php
+                                            } else {
 
-        if ($billstatus["status"] == "paid") {
-            ?>
-                                                    <span class="pull-right"><?php echo $this->lang->line('bill_generated_by') . " : " . $bill_info["name"] . " " . $bill_info["surname"] . " (" . $bill_info["employee_id"] . ")"; ?></span>
+                                                if ($billstatus["status"] == "paid") {
+                                                    ?>
+                                                    <span class="pull-right"><?php echo $this->lang->line('bill_generated_by') . " : " . $bill_info["name"] . " " . $bill_info["surname"] ?> <?php if(!empty($bill_info["employee_id"] )) { echo " (" . $bill_info["employee_id"] . ")"; } ?></span>
 
                                                     <a href="#"  class="btn btn-sm btn-info" onclick="printBill('<?php echo $result["id"] ?>', '<?php echo $this->uri->segment(5); ?>')"><?php echo $this->lang->line('print') . " " . $this->lang->line('bill') ?></a>
-
         <?php }
     }
     ?> 
@@ -927,27 +1246,30 @@ if (empty($timeline_list)) {
                                         <input type="text" id="edit_weight" name="weight" class="form-control">
                                     </div> 
                                 </div>
-
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label><?php echo $this->lang->line('symptoms'); ?></label>
-                                        <textarea class="form-control" id="edit_symptoms" name="symptoms" ></textarea> 
-                                    </div> 
-                                </div>
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label><?php echo $this->lang->line('any_known_allergies'); ?></label> 
-                                        <textarea class="form-control" id="edit_knownallergies" name="known_allergies"></textarea>
-                                        <input type="hidden" name="opdid" id="edit_opdid">
-                                        <input type="hidden" name="visitid" id="edit_visitid">
-                                    </div> 
-                                </div>
                                 <div class="col-sm-4">
                                     <div class="form-group">
                                         <label><?php echo $this->lang->line('bp'); ?></label> 
                                         <input type="text" name="bp" class="form-control" id="edit_bp" />  
                                     </div> 
                                 </div>
+                                 <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label><?php echo $this->lang->line('pulse'); ?></label> 
+                                        <input type="text" id="edit_pulse" name="pulse" class="form-control">
+                                    </div> 
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label><?php echo $this->lang->line('temperature'); ?></label> 
+                                        <input type="text" id="edit_temperature" name="temperature" class="form-control">
+                                    </div> 
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label><?php echo $this->lang->line('respiration'); ?></label> 
+                                        <input type="text" name="respiration" class="form-control" id="edit_respiration" />  
+                                    </div> 
+                                </div>  
                                 <div class="col-sm-4">
                                     <div class="form-group">
                                         <label><?php echo $this->lang->line('organisation'); ?></label> 
@@ -960,8 +1282,42 @@ if (empty($timeline_list)) {
                                         </select>    
                                     </div> 
                                 </div>
+                              <div class="col-sm-4">
+                                            <div class="form-group">
+                                                <label for="exampleInputFile">
+                                                    <?php echo $this->lang->line('symptoms')." ".$this->lang->line('type') ; ?></label>
+                                                <div><select  name='symptoms_type'  id="act"  class="form-control select2 act"  style="width:100%" >
+                                                        <option value=""><?php echo $this->lang->line('select') ?></option>
+                                                        <?php foreach ($symptomsresulttype as $dkey => $dvalue) {
+                                                            ?>
+                                                        <option value="<?php echo $dvalue["id"]; ?>"><?php echo $dvalue["symptoms_type"] ;?></option>
 
-                                <div class="col-sm-4">
+                                                    <?php } ?>
+                                                    </select>
+                                                </div>
+                                                <span class="text-danger"><?php echo form_error('symptoms_type'); ?></span>
+                                            </div>
+                                        </div>
+                                        
+
+                                            <div class="col-sm-3">
+                                                <label for="exampleInputFile"> 
+                                                    <?php echo $this->lang->line('symptoms') ; ?></label>
+                                                <div id="dd" class="wrapper-dropdown-3">
+                                                    <input class="form-control filterinput" type="text">
+                                                    <ul class="dropdown scroll150 section_ul">
+                                                        <li><label class="checkbox">--Select--</label></li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                            <div class="col-sm-9">
+                                <div class="form-group">
+                                    <label><?php echo $this->lang->line('symptoms')." ".$this->lang->line('description'); ?></label>
+                                    <textarea class="form-control" id="symptoms_description" name="symptoms" ></textarea> 
+                                </div> 
+                            </div>
+
+                                <div class="col-sm-3">
                                     <div class="form-group">
                                         <label><?php echo $this->lang->line('consultant') . " " . $this->lang->line('doctor'); ?></label><small class="req"> *</small> 
                                         <select  onchange="get_Charges(this.value)" name="consultant_doctor" <?php
@@ -980,6 +1336,23 @@ if (empty($timeline_list)) {
 
                                     </div> 
                                 </div>
+                                   <div class="col-sm-3">
+                                    <div class="form-group">
+                                        <label><?php echo $this->lang->line('refference'); ?></label> 
+                                        <input type="text" name="refference" class="form-control" id="edit_refference" />  
+                                    </div> 
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label><?php echo $this->lang->line('any_known_allergies'); ?></label> 
+                                        <textarea class="form-control" id="edit_knownallergies" name="known_allergies"></textarea>
+                                        <input type="hidden" name="opdid" id="edit_opdid">
+                                        <input type="hidden" name="visitid" id="edit_visitid">
+                                    </div> 
+                                </div>
+                              
+
+                               
                                 <div class="col-sm-4">
                                     <div class="form-group">
                                         <label><?php echo $this->lang->line('standard') . " " . $this->lang->line('charge') . " (" . $currency_symbol . ")" ?></label>
@@ -990,17 +1363,12 @@ if (empty($timeline_list)) {
                                 </div>
                                 <div class="col-sm-4">
                                     <div class="form-group">
-                                        <label><?php echo $this->lang->line('amount') . " (" . $currency_symbol . ")"; ?></label> 
+                                        <label><?php echo $this->lang->line('amount') . " (" . $currency_symbol . ")"; ?></label> <small class="req"> *</small>
                                         <input type="text" name="amount" class="form-control" id="edit_amount" />
                                         <input type="hidden" name="patientid" class="form-control" id="patientid" />
                                     </div> 
                                 </div>
-                                <div class="col-sm-4">
-                                    <div class="form-group">
-                                        <label><?php echo $this->lang->line('refference'); ?></label> 
-                                        <input type="text" name="refference" class="form-control" id="edit_refference" />  
-                                    </div> 
-                                </div>
+                              
                                 <div class="col-sm-4">
                                     <div class="form-group">
                                         <label><?php echo $this->lang->line('payment') . " " . $this->lang->line('mode'); ?></label> 
@@ -1049,6 +1417,10 @@ if (empty($timeline_list)) {
                 <div class="row">
                     <div class="col-lg-12 col-md-12 col-sm-12 paddlr">
                         <form id="add_charges" accept-charset="utf-8"  method="post" class="ptt10" >
+                            <input type="hidden" name="patient_id" value="<?php echo $visit_details["patient_id"] ?>">
+                            <input type="hidden" name="charge_id" id="charge_id">
+                            <input type="hidden" name="org_id" id="org_id">
+                            <input type="hidden" name="opd_id" value="<?php echo $visit_details['id'] ?>" > 
                             <div class="row">
                                 <div class="col-sm-3">
                                     <div class="form-group">
@@ -1061,7 +1433,7 @@ if (empty($timeline_list)) {
                                         <label><?php echo $this->lang->line('charge') . " " . $this->lang->line('type') ?></label><small class="req"> *</small> 
 
                                         <select name="charge_type" onchange="getcharge_category(this.value)" class="form-control">
-                                            <option value="">Select</option>
+                                            <option value=""><?php echo $this->lang->line('select') ?></option>
 <?php foreach ($charge_type as $key => $value) {
     ?>
                                                 <option value="<?php echo $key ?>">
@@ -1077,17 +1449,15 @@ if (empty($timeline_list)) {
                                         <label><?php echo $this->lang->line('charge') . " " . $this->lang->line('category') ?></label><small class="req"> *</small> 
 
                                         <select name="charge_category" id="charge_category" style="width: 100%" class="form-control select2" onchange="getchargecode(this.value)">
-                                            <option value="">Select</option>
+                                            <option value=""><?php echo $this->lang->line('select') ?></option>
                                         </select>
                                         <span class="text-danger"><?php echo form_error('charge_category'); ?></span>
                                     </div>
                                 </div>
                                 <div class="col-sm-3">
                                     <div class="form-group">
-                                        <label><?php echo $this->lang->line('code') ?></label><small class="req"> *</small> 
-
-                                        <select name="code" id="code" style="width: 100%" class="form-control select2" onchange="get_Charges(this.value, '<?php echo $result['organisation'] ?>')">
-                                            <option value="">Select</option>
+                                        <label><?php echo $this->lang->line('code') ?></label>                                       <select name="code" id="code" style="width: 100%" class="form-control select2" onchange="get_Charges(this.value, '<?php echo $result['organisation'] ?>')">
+                                            <option value=""><?php echo $this->lang->line('select') ?></option>
                                         </select>
                                         <span class="text-danger"><?php echo form_error('code'); ?></span>
                                     </div>
@@ -1097,13 +1467,11 @@ if (empty($timeline_list)) {
                                     <div class="form-group">
                                         <label><?php echo $this->lang->line('standard') . " " . $this->lang->line('charge') . " (" . $currency_symbol . ")" ?></label>
                                         <input type="text" readonly name="standard_charge" id="addstandard_charge" class="form-control" value="<?php echo set_value('standard_charge'); ?>"> 
-                                        <input type="hidden" name="patient_id" value="<?php echo $visit_details["patient_id"] ?>">
-                                        <input type="hidden" name="charge_id" id="charge_id">
-                                        <input type="hidden" name="org_id" id="org_id">
-                                        <input type="hidden" name="opd_id" value="<?php echo $visit_details['id'] ?>" > 
+                                       
                                         <span class="text-danger"><?php echo form_error('standard_charge'); ?></span>
                                     </div>
-                                </div> 
+                                </div>
+
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label><?php echo $this->lang->line('organisation') . " " . $this->lang->line('charge') . " (" . $currency_symbol . ")" ?></label>
@@ -1483,51 +1851,48 @@ if (empty($timeline_list)) {
                 <h4 class="box-title"> <?php echo $this->lang->line('add') . " " . $this->lang->line('prescription'); ?></h4> 
             </div>
 
-            <div class="modal-body pt0 pb0">
-                <div class="row">
-                    <div class="col-lg-12 col-md-12 col-sm-12 paddlr">
-                        <form id="form_prescription" accept-charset="utf-8"  enctype="multipart/form-data" method="post" class="ptt10">
-                            <div class="row">
-                                <div class="col-sm-12">
-                                    <div class="form-group">
-                                        <label><?php echo $this->lang->line('header_note'); ?></label> 
-                                        <textarea style="height:50px"  name="header_note" class="form-control" id="compose-textareanew" ></textarea>
-                                    </div> 
-                                    <hr/>
-                                </div>
+             <form id="form_prescription" accept-charset="utf-8"  enctype="multipart/form-data" method="post" class="">
+                <div class="modal-body pt0 pb0">
+                    <div class="row">
+                    <div class="col-sm-9">
+                    <div class="ptt10">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label><?php echo $this->lang->line('header_note'); ?></label> 
+                                    <textarea style="height:50px"  name="header_note" class="form-control" id="compose-textareanew" ></textarea>
+                                </div> 
+                                <hr/>
+                            </div>
 
-                                <table style="width: 100%" id="tableID">
-                                    <tr id="row0">
-                                        <td>           
-                                            <div class="col-sm-3">
-                                                <div class="form-group">
-                                                    <label>
-                                                        <?php echo $this->lang->line('medicine') . "" . $this->lang->line("category"); ?></label> 
-                                                    <select class="form-control select2" style="width: 100%" name='medicine_cat[]' onchange="getMedicineName(0)"  id="medicine_cat0">
-                                                        <option value="<?php echo set_value('medicine_category_id'); ?>"><?php echo $this->lang->line('select') ?>
-                                                        </option>
-<?php foreach ($medicineCategory as $dkey => $dvalue) {
-    ?>
-                                                            <option value="<?php echo $dvalue["id"]; ?>"><?php echo $dvalue["medicine_category"] ?>
-                                                            </option>   
-<?php } ?>
-                                                    </select>
-                                                </div>
-                                            </div>                     
-                                            <div class="col-sm-3">
-                                                <div class="form-group">
-                                                    <label>
-<?php echo $this->lang->line('medicine'); ?></label>
-<!--                                                     <input type="text" name="medicine[]" class="form-control" id="report_type" /> -->
-                                                    <select class="form-control select2" style="width: 100%"  name="medicine[]" id="search-query0">
-                                                        <option value="l"><?php echo $this->lang->line('select') ?></option>
-                                                    </select>
-
-                                                    <div id="suggesstion-box0"></div>
-
-                                                </div>
+                            <table style="width: 100%" id="tableID">
+                                <tr id="row0">
+                                    <td>           
+                                        <div class="col-sm-3">
+                                            <div class="form-group">
+                                                <label>
+                                                    <?php echo $this->lang->line('medicine') . " " . $this->lang->line("category"); ?></label> <small class="req"> *</small>
+                                                <select class="form-control select2" style="width: 100%" name='medicine_cat[]' onchange="getMedicineName(0)"  id="medicine_cat0">
+                                                    <option value="<?php echo set_value('medicine_category_id'); ?>"><?php echo $this->lang->line('select') ?>
+                                                    </option>
+                                                    <?php foreach ($medicineCategory as $dkey => $dvalue) {
+                                                        ?>
+                                                        <option value="<?php echo $dvalue["id"]; ?>"><?php echo $dvalue["medicine_category"] ?>
+                                                        </option>   
+                                                    <?php } ?>
+                                                </select>
                                             </div>
-                                            <div class="col-sm-3">
+                                        </div>                     
+                                        <div class="col-sm-3">
+                                            <div class="form-group">
+                                                <label><?php echo $this->lang->line('medicine'); ?></label> 
+                                                <select class="form-control select2" style="width: 100%"  name="medicine[]" id="search-query0">
+                                                    <option value="l"><?php echo $this->lang->line('select') ?></option>
+                                                </select>
+                                                <div id="suggesstion-box0"></div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
                                             <div class="form-group">
                                                 <label><?php echo $this->lang->line('dosage'); ?></label> 
 
@@ -1536,54 +1901,73 @@ if (empty($timeline_list)) {
                                                 </select>
                                             </div> 
                                         </div>
-                                            <div class="col-sm-3">
-                                                <div class="form-group">
-                                                    <label><?php echo $this->lang->line('instruction'); ?></label> 
-                                                    <textarea name="instruction[]" style="height: 28px;" class="form-control" ></textarea>
-                                                </div> 
-                                            </div>
-                                        </td>
-                                        <td><button type="button" onclick="add_more()" style="color: #2196f3" class="modaltableclosebtn"><i class="fa fa-plus"></i></button></a></td>
-                                    </tr>
-                                </table>
-                                <div class="add_row">
-
-                                </div>
-                                <!--div class="col-sm-12">
-                                   <a href="#" class="pull-right" onclick="add_more()"><?php //echo $this->lang->line('add_more');    ?></a>
-                                </div-->
-
-
+                                        <div class="col-sm-3">
+                                            <div class="form-group">
+                                                <label><?php echo $this->lang->line('instruction'); ?></label> 
+                                                <textarea name="instruction[]" style="height: 28px;" class="form-control" ></textarea>
+                                            </div> 
+                                        </div>
+                                    </td>
+                                    <td><button type="button" onclick="add_more()" style="color: #2196f3" class="modaltableclosebtn"><i class="fa fa-plus"></i></button></td>
+                                </tr>
+                            </table>
 
 
                                 <input type="hidden" id="prescription_id" name="opd_no">
+                                <input type="hidden" id="opd_no_value" name="opd_no_value">
+
                                 <input type="hidden" id="visit_id" name="visit_id">
 
-                                <hr/>
-                                <div class="col-sm-12">
-                                    <div class="form-group">
-                                        <label><?php echo $this->lang->line('footer_note'); ?></label> 
-                                        <textarea style="height:50px" rows="1" name="footer_note" class="form-control" id="compose-textareas"></textarea>
-                                    </div> 
-                                </div>
-                            </div>
-                            <div class="box-footer">
-                                <div class="pull-right">
-                                    <button type="submit" id="form_prescriptionbtn" data-loading-text="<?php echo $this->lang->line('processing') ?>" class="btn btn-info pull-right"><?php echo $this->lang->line('save'); ?></button>
+                            <hr/>
 
-                                </div>
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label><?php echo $this->lang->line('footer_note'); ?></label> 
+                                    <textarea style="height:50px" rows="1" name="footer_note" class="form-control" id="compose-textareas"></textarea>
+                                </div> 
                             </div>
-                        </form>
+                        </div>
+                    </div> 
+                </div>
+                <div class="col-sm-3">
+                     <div class="ptt10">
+                        <label for="exampleInputEmail1"><?php echo $this->lang->line('notification')." ".$this->lang->line('to'); ?></label>
+                             <?php
+                                foreach ($roles as $role_key => $role_value) {
+                                            $userdata = $this->customlib->getUserData();
+                                            $role_id = $userdata["role_id"];
+                                            ?>
+                                                <div class="checkbox">
+                                                    <label><input type="checkbox" name="visible[]" value="<?php echo $role_value['id']; ?>" <?php
+                                                        if ($role_value["id"] == $role_id) {
+                                                            echo "checked onclick='return false;'";
+                                                        }
+                                                        ?>  <?php echo set_checkbox('visible[]', $role_value['id'], false) ?> /> <b><?php echo $role_value['name']; ?></b> </label>
+                                                </div>
+                                                <?php
+                                            }
+                                            ?>
+
+                     </div>
+                </div>
+                </div>  
+                </div> <!--./modal-body--> 
+                <div class="box-footer">
+                    <div class="pull-right">
+                        <button type="submit" id="form_prescriptionbtn" data-loading-text="<?php echo $this->lang->line('processing') ?>" class="btn btn-info"><?php echo $this->lang->line('save'); ?></button>
+
                     </div>
                 </div>
-            </div>    
+
+
+            </form> 
 
         </div></div> </div>
 
 <!-- -->
 <div class="modal fade" id="viewModal" role="dialog">
     <div class="modal-dialog modal-dialog2 modal-lg" role="document">
-        <div class="modal-content ">
+        <div class="modal-content">
             <div class="modal-header">
 
                 <button type="button" data-toggle="tooltip" title="" data-original-title="<?php echo $this->lang->line('close'); ?>" class="close" data-dismiss="modal">&times;</button>
@@ -1603,16 +1987,19 @@ if ($this->rbac->hasPrivilege('revisit', 'can_delete')) {
                 </div>
                 <h4 class="box-title"> <?php echo $this->lang->line('visit') . " " . $this->lang->line('information'); ?></h4> 
             </div>
-
+<div class="table-responsive">
             <div class="modal-body">
-                <div class="">
+                
 
                     <form id="" accept-charset="utf-8" enctype="multipart/form-data" method="post" >
-                        <div class="table-responsive">
+                        <div class="">
                             <table class="table mb0 table-striped table-bordered examples tablelr0space">
                                 <tr>
                                     <th width="15%"><?php echo $this->lang->line('opd_no'); ?></th>
                                     <td width="35%"><span id="opd_no"></span>
+                                    </td>
+                                    <th width="15%"><?php echo $this->lang->line('old')." ".$this->lang->line('patient'); ?></th>
+                                    <td width="35%"><span id="old_patient"></span>
                                     </td>
                                 </tr>
                                 <tr>
@@ -1660,11 +2047,22 @@ if ($this->rbac->hasPrivilege('revisit', 'can_delete')) {
 
                                 </tr>
 
+                                 <tr>
+                                    <th width="15%"><?php echo $this->lang->line('pulse'); ?></th>
+                                    <td width="35%"><span id='pulse'></span></td>
+                                    <th width="15%"><?php echo $this->lang->line('temperature'); ?></th>
+                                    <td width="35%"><span id="temperature"></span>
+                                    </td>
+
+                                </tr>
+
                                 <tr>
                                     <th width="15%"><?php echo $this->lang->line('bp'); ?></th>
                                     <td width="35%"><span id='patient_bp'></span></td>
-                                    <th width="15%"><?php echo $this->lang->line('symptoms'); ?></th>
-                                    <td width="35%"><span id='symptoms'></span></td>
+                                     <th width="15%"><?php echo $this->lang->line('respiration'); ?></th>
+                                    <td width="35%"><span id="respiration"></span>
+                                    </td>
+                                   
                                 </tr>
                                 <tr>
                                     <th width="15%"><?php echo $this->lang->line('known_allergies'); ?></th>
@@ -1705,6 +2103,8 @@ if ($this->rbac->hasPrivilege('revisit', 'can_delete')) {
 
                                 </tr>
                                 <tr>
+                                     <th width="15%"><?php echo $this->lang->line('symptoms'); ?></th>
+                                    <td width="35%"><span id='symptoms'></span></td>
                                     <th width="15%"><?php echo $this->lang->line('note'); ?></th>
                                     <td width="35%"><span id='note'></span></td>
 
@@ -1887,8 +2287,11 @@ foreach ($bloodgroup as $key => $value) {
                     <div class="col-lg-12 col-md-12 col-sm-12 ">
                         <form id="formrevisit"   accept-charset="utf-8"  enctype="multipart/form-data" method="post" >
                             <input type="hidden" name="id" id="pid">
+                            <input type="hidden" name="password" id="revisit_password">
                             <input type="hidden" name="opd_no" id="revisit_opd_no">
                             <input type="hidden" name="opd_id" id="revisit_opd_id">
+                            <input type="hidden" name="email" id="revisit_email">
+                            <input type="hidden" name="contact" id="revisit_contact">
                             <input id="revisit_name" name="name" placeholder="" type="hidden" class="form-control"  value="" />
                             <div class="row row-eq">
                                 <div class="col-lg-8 col-md-8 col-sm-8">
@@ -1939,31 +2342,78 @@ foreach ($bloodgroup as $key => $value) {
 
                                         </ul> 
                                     </div>
-                                        <div class="col-sm-4 col-xs-4">
+                                        <div class="col-sm-2 col-xs-2">
                                             <div class="form-group">
                                                 <label for="pwd"><?php echo $this->lang->line('height'); ?></label> 
                                                 <input name="height" id="revisit_height" type="text" class="form-control"  value="<?php echo set_value('height'); ?>" />
                                             </div>
                                         </div>
-                                        <div class="col-sm-4 col-xs-4">
+                                        <div class="col-sm-2 col-xs-2">
                                             <div class="form-group">
                                                 <label for="pwd"><?php echo $this->lang->line('weight'); ?></label> 
                                                 <input name="weight" id="revisit_weight" type="text" class="form-control"  value="<?php echo set_value('weight'); ?>" />
                                             </div>
                                         </div>
-                                        <div class="col-sm-4 col-xs-4">
+                                        <div class="col-sm-2 col-xs-2">
                                             <div class="form-group">
                                                 <label for="pwd"><?php echo $this->lang->line('bp'); ?></label> 
                                                 <input name="bp" type="text" id="revisit_bp" class="form-control"  value="<?php echo set_value('bp'); ?>"/>
                                             </div>
                                         </div>
+                                        <div class="col-sm-2 col-xs-2">
+                                            <div class="form-group">
+                                                <label for="pwd"><?php echo $this->lang->line('pulse'); ?></label> 
+                                                <input name="pulse" id="revisit_pulse" type="text" class="form-control"  value="<?php echo set_value('pulse'); ?>" />
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-2 col-xs-2">
+                                            <div class="form-group">
+                                                <label for="pwd"><?php echo $this->lang->line('temperature'); ?></label> 
+                                                <input name="temperature" id="revisit_temperature" type="text" class="form-control"  value="<?php echo set_value('temperature'); ?>" />
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-2 col-xs-2">
+                                            <div class="form-group">
+                                                <label for="pwd"><?php echo $this->lang->line('respiration'); ?></label> 
+                                                <input name="respiration" type="text" id="revisit_respiration" class="form-control"  value="<?php echo set_value('bp'); ?>"/>
+                                            </div>
+                                        </div>
+                                    <div class="col-sm-3 col-xs-4">
+                                        <div class="form-group">
+                                                <label for="exampleInputFile">
+                                                    <?php echo $this->lang->line('symptoms')." ".$this->lang->line('type') ; ?></label>
+                                                <div><select  name='symptoms_type'  id="act"  class="form-control select2 act"  style="width:100%" >
+                                                        <option value=""><?php echo $this->lang->line('select') ?></option>
+                                                        <?php foreach ($symptomsresulttype as $dkey => $dvalue) {
+                                                            ?>
+                                                        <option value="<?php echo $dvalue["id"]; ?>"><?php echo $dvalue["symptoms_type"] ;?></option>
+
+                                                    <?php } ?>
+                                                    </select>
+                                                </div>
+                                                <span class="text-danger"><?php echo form_error('symptoms_type'); ?></span>
+                                            </div>
+                                        </div>
+                                        
+                                          
+                                            <div class="col-sm-3">
+                                                <label for="exampleInputFile"> 
+                                                    <?php echo $this->lang->line('symptoms') ; ?></label>
+                                                <div id="dd" class="wrapper-dropdown-3">
+                                                    <input class="form-control filterinput" type="text">
+                                                    <ul class="dropdown scroll150 section_ul">
+                                                        <li><label class="checkbox">--Select--</label></li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+
                                         <div class="col-sm-6">
                                             <div class="form-group">
                                                 <label for="email"><?php echo $this->lang->line('symptoms'); ?></label> 
-                                                <textarea name="symptoms" id="revisit_symptoms" class="form-control" ><?php echo set_value('address'); ?></textarea>
+                                                <textarea name="symptoms" id="esymptoms" class="form-control" ><?php echo set_value('address'); ?></textarea>
                                             </div> 
                                         </div>
-                                        <div class="col-sm-6">
+                                        <div class="col-sm-12">
                                             <div class="form-group">
                                                 <label for="email"><?php echo $this->lang->line('any_known_allergies'); ?></label> <textarea name="known_allergies" id="revisit_allergies" class="form-control" ><?php echo set_value('address'); ?></textarea>
                                             </div> 
@@ -2090,17 +2540,33 @@ foreach ($bloodgroup as $key => $value) {
                                                 <label for="pwd"><?php echo $this->lang->line('payment') . " " . $this->lang->line('mode'); ?></label> 
                                                 <select name="payment_mode" id="revisit_payment" class="form-control">
 
-<?php foreach ($payment_mode as $payment_key => $payment_value) {
-    ?>
+                                                    <?php foreach ($payment_mode as $payment_key => $payment_value) {
+                                                        ?>
                                                         <option value="<?php echo $payment_key ?>" <?php
-    if ($payment_key == 'cash') {
-        echo "selected";
-    }
-    ?> ><?php echo $payment_value ?></option>
-<?php } ?>
+                                                        if ($payment_key == 'cash') {
+                                                            echo "selected";
+                                                        }
+                                                        ?> ><?php echo $payment_value ?></option>
+                                                    <?php } ?>
                                                 </select>
                                             </div>
-                                        </div>  
+                                        </div>
+
+                                        <div class="col-sm-12">
+                                            <div class="form-group">
+                                                <label for="exampleInputFile">
+                                                <?php echo $this->lang->line('live_consult'); ?></label>
+                                                <div>
+                                                    <select name="live_consult" id="live_consultvisit" class="form-control">
+
+                                                        <option value="<?php echo $this->lang->line('yes') ?>" ><?php echo $this->lang->line('yes') ?></option>
+                                                        <option value="<?php echo $this->lang->line('no') ?>" selected><?php echo $this->lang->line('no') ?></option>
+                                                    </select>
+                                                </div>
+                                                <span class="text-danger"><?php echo form_error('case'); ?></span>
+                                            </div>
+                                        </div> 
+
                                     </div>
                                 </div>
                             </div><!--./row-->   
@@ -2194,7 +2660,159 @@ foreach ($bloodgroup as $key => $value) {
     </div> 
 </div>
 <!-- -->
+<script type="text/javascript">
+    /*function clearTextArea() {
+    document.getElementById("symptoms_description").value='';
+    }*/
 
+
+    $(document).on('click', '.add-btn', function () {
+        var s = "";
+        s += "<div class='row'>";
+        s += "<input name='rows[]' type='hidden' value='" + rows + "'>";
+        s += "<div class='col-md-6'>";
+        s += "<div class='form-group'>";
+        s += "<label for='act'>Act</label>";
+        s += "<select class='form-control act select2' id='act' name='act" + rows + "' data-row_id='" + rows + "'>";
+        s += "<option value=''>--Select--</option>";
+        s += $('#act-template').html();
+        s += "</select>";
+        s += "<small class='text text-danger help-inline'></small>";
+        s += "</div>";
+        s += "</div>";
+        s += "<div class='col-md-5'>";
+        s += "<label for='validationDefault02'>Section</label>";
+        s += "<div id='dd' class='wrapper-dropdown-3'>";
+        s += "<input class='form-control filterinput' type='text'>";
+        s += "<ul class='dropdown scroll150 section_ul'>";
+        s += "<li><label class='checkbox'>--Select--</label></li>";
+        s += "</ul>";
+        s += "</div>";
+        s += "</div>";
+        s += "<div class='col-md-1'>";
+        s += "<div class='form-group'>";
+        s += "<label for='removebtn'>&nbsp;</label>";
+        s += "<button type='button' class='form-control btn btn-sm btn-danger remove_row'><i class='fa fa-remove'></i></button>";
+        s += "</div>";
+        s += "</div>";
+        s += "</div>";
+        $(".multirow").append(s);
+        $('.select2').select2();
+        link = 2;
+        rows++;
+    });
+</script>
+
+<script type="text/html" id="act-template">
+
+    
+   <?php foreach ($symptomsresulttype as $dkey => $dvalue) {
+                                                            ?>
+        <option value="<?php echo $dvalue["id"]; ?>"><?php echo $dvalue["symptoms_type"] ;?></option> 
+        <?php
+    }
+    ?>
+</script>  
+
+<script>
+    $(document).on('change', '.act', function () {
+        $this = $(this);
+        var sys_val = $(this).val();
+        //console.log(sys_val);
+        var row_id = $this.data('row_id');
+        var section_ul = $(this).closest('div.row').find('ul.section_ul');
+
+        var sel_option = "";
+        $.ajax({
+            type: 'POST',
+            url: base_url + 'admin/patient/getPartialsymptoms',
+            data: {'sys_id': sys_val, 'row_id': row_id},
+            dataType: 'JSON',
+            beforeSend: function () {
+                // setting a timeout
+                $('ul.section_ul').find('li:not(:first-child)').remove();
+                $("div.wrapper-dropdown-3").removeClass('active');
+
+            },
+            success: function (data) {
+           
+                section_ul.append(data.record);
+
+            },
+            error: function (xhr) { // if error occured
+                alert("Error occured.please try again");
+
+            },
+            complete: function () {
+
+            }
+        });
+
+    });
+</script>
+<script type="text/javascript">
+
+    
+
+    $(document).on('click', '.remove_row', function () {
+        $this = $(this);
+        $this.closest('.row').remove();
+
+    });
+    $(document).mouseup(function (e)
+    {
+        var container = $(".wrapper-dropdown-3"); // YOUR CONTAINER SELECTOR
+
+        if (!container.is(e.target) // if the target of the click isn't the container...
+                && container.has(e.target).length === 0) // ... nor a descendant of the container
+        {
+            $("div.wrapper-dropdown-3").removeClass('active');
+        }
+    });
+
+    $(document).on('click', '.filterinput', function () {
+
+        if (!$(this).closest('.wrapper-dropdown-3').hasClass("active")) {
+            $(".wrapper-dropdown-3").not($(this)).removeClass('active');
+            $(this).closest("div.wrapper-dropdown-3").addClass('active');
+        }
+
+
+    });
+
+    $(document).on('click', 'input[name="section[]"]', function () {
+        $(this).closest('label').toggleClass('active_section');
+    });
+
+    $(document).on('keyup', '.filterinput', function () {
+
+        var valThis = $(this).val().toLowerCase();
+        var closer_section = $(this).closest('div').find('.section_ul > li');
+
+        var noresult = 0;
+        if (valThis == "") {
+            closer_section.show();
+            noresult = 1;
+            $('.no-results-found').remove();
+        } else {
+            closer_section.each(function () {
+                var text = $(this).text().toLowerCase();
+                var match = text.indexOf(valThis);
+                if (match >= 0) {
+                    $(this).show();
+                    noresult = 1;
+                    $('.no-results-found').remove();
+                } else {
+                    $(this).hide();
+                }
+            });
+        }
+        ;
+        if (noresult == 0) {
+            closer_section.append('<li class="no-results-found">No results found.</li>');
+        }
+    });
+</script>
 <script type="text/javascript">
     function holdModal(modalId) {
         $('#' + modalId).modal({
@@ -2263,29 +2881,27 @@ foreach ($bloodgroup as $key => $value) {
         });
     }
 
-    function get_Charges(id) {
-        $("#standard_charge").html("standard_charge");
-        //$("#schedule_charge").html("schedule_charge");
+    // function get_Charges(id) {
+    //     $("#standard_charge").html("standard_charge");
+    //     $.ajax({
+    //         url: '<?php echo base_url(); ?>admin/patient/doctCharge',
+    //         type: "POST",
+    //         data: {doctor: id},
+    //         dataType: 'json',
+    //         success: function (res) {
+    //             console.log(res);
+    //             if (res) {
 
-        $.ajax({
-            url: '<?php echo base_url(); ?>admin/patient/doctCharge',
-            type: "POST",
-            data: {doctor: id},
-            dataType: 'json',
-            success: function (res) {
-                console.log(res);
-                if (res) {
+    //                 $('#standard_charge').val(res.standard_charge);
+    //                 $('#edit_amount').val(res.standard_charge);
 
-                    $('#standard_charge').val(res.standard_charge);
-                    $('#edit_amount').val(res.standard_charge);
-
-                } else {
-                    $('#standard_charge').val('0');
-                    $('#edit_amount').val('0');
-                }
-            }
-        });
-    }
+    //             } else {
+    //                 $('#standard_charge').val('0');
+    //                 $('#edit_amount').val('0');
+    //             }
+    //         }
+    //     });
+    // }
 
     function get_Chargesvisit(id) {
         $("#standard_charge").html("standard_charge");
@@ -2386,7 +3002,7 @@ foreach ($bloodgroup as $key => $value) {
             dataType: 'json',
             success: function (data) {
 
-                //   console.log(data.apply_charge);
+                   //console.log(data);
 
                 $("#patient_name").html(data.patient_name);
                 $("#patients_id").html(data.patient_unique_id);
@@ -2413,25 +3029,21 @@ foreach ($bloodgroup as $key => $value) {
                     }
 
                     if (data.dob) {
-                        var dob = "(" + data.dob + ")";
+                        var date_format = '<?php echo $results = strtr($this->customlib->getSchoolDateFormat(), ['d' => 'dd', 'm' => 'MM', 'Y' => 'yyyy',]) ?>';
+                        var dt = new Date(data.dob).toString(date_format);
+                        var dob = "(" + dt + ")";
                     } else {
                         var dob = "";
                     }
-                    $("#age").html(age + "" + month + "" + dob);
+                    $("#age").html(age + " " + month + "" + dob);
                 }
-                /*  var age = '';
-                 var month = '';
-                 if (data.age != '') {
-                 age = data.age + ' Year ';
-                 }
-                 
-                 if (data.month != '') {
-                 month = data.month + ' Month ';
-                 }
-                 $("#age").html(age + month);*/
+               
                 $("#blood_group").html(data.blood_group);
                 $("#height").html(data.height);
                 $("#weight").html(data.weight);
+                $("#pulse").html(data.pulse);
+                $("#temperature").html(data.temperature);
+                $("#respiration").html(data.respiration);
                 $('#patient_bp').html(data.bp);
                 $("#symptoms").html(data.symptoms);
                 $("#known_allergies").html(data.known_allergies);
@@ -2447,6 +3059,7 @@ foreach ($bloodgroup as $key => $value) {
                 $("#payment_mode").html(data.payment_mode);
                 $("#opdid").val(data.opdid);
                 $("#opd_no").html(data.opd_no);
+                $("#old_patient").html(data.old_patient);
                 $("#collected_by").html(data.generated_byname);
                 $("#note").html(data.note_remark);
                 var patient_id = "<?php echo $result["id"] ?>";
@@ -2484,18 +3097,21 @@ foreach ($bloodgroup as $key => $value) {
                 // $("#edit_consdoctor").select2().select2('val','3');
                 $("#appointmentdate").val(data.appointment_date);
                 $("#edit_case").val(data.case_type);
-                $("#edit_symptoms").val(data.symptoms);
+                $("#symptoms_description").val(data.symptoms);
                 $("#edit_casualty").val(data.casualty);
                 $("#edit_knownallergies").val(data.known_allergies);
                 $("#edit_refference").val(data.refference);
                 $("#revisit_note").html(data.note_remark);
-                $("#edit_amount").val(data.apply_charge);
+                $("#edit_amount").val(data.amount);
                 $("#standard_charge").val(data.standard_charge);
                 $("#edit_oldpatient").val(data.old_patient);
                 $("#edit_organisation").val(data.organisation);
                 $("#edit_height").val(data.height);
                 $("#edit_weight").val(data.weight);
                 $("#edit_bp").val(data.bp);
+                $("#edit_pulse").val(data.pulse);
+                $("#edit_temperature").val(data.temperature);
+                $("#edit_respiration").val(data.respiration);
                 $("#edit_paymentmode").val(data.payment_mode);
                 $("#edit_opdid").val(opdid);
                 $("#viewModal").modal('hide');
@@ -2537,15 +3153,16 @@ foreach ($bloodgroup as $key => $value) {
                 $("#edit_height").val(data.height);
                 $("#edit_weight").val(data.weight);
                 $("#edit_bp").val(data.bp);
+                $("#edit_pulse").val(data.pulse);
+                $("#edit_temperature").val(data.temperature);
+                $("#edit_respiration").val(data.respiration);
                 $("#edit_paymentmode").val(data.payment_mode);
                 $("#edit_visitid").val(visitid);
                 $("#edit_opdid").val(data.opd_id);
                 $("#viewModal").modal('hide');
                 holdModal('editModal');
-
-
                 // thiss.select2("val", data.cons_doctor);
-                console.log(data);
+                //console.log(data);
             },
         });
     }
@@ -2684,16 +3301,17 @@ foreach ($bloodgroup as $key => $value) {
             });
         }));
     });
-    function getRecord_id(id,visitid) {
-        // var pres_id = '<?php echo $visit_id ?>';
-        // if (pres_id == id) {
-        //     $('#visit_id').val('0');
-        // } else {
-        //     $('#visit_id').val(id);
-        // }
-         $('#visit_id').val(visitid);
+    function getRecord_id(id,visitid,opd_no) {
+        var pres_id = '<?php echo $visit_id ?>';
+     if (pres_id == id) {
+             $('#visit_id').val('0');
+         } else {
+             $('#visit_id').val(id);
+         }
+       //  $('#visit_id').val(visitid);
         $('#pres_patient_id').val(id);
         $('#prescription_id').val('<?php echo $visit_id ?>');
+        $('#opd_no_value').val(opd_no)
         holdModal('add_prescription');
     }
 
@@ -2801,12 +3419,13 @@ foreach ($bloodgroup as $key => $value) {
     });
     function add_more() {
 
-
-        var div = "<div id=row1><div class=col-sm-3><select class='form-control select2' onchange='getMedicineName(1)' name='medicine_cat[]'  id='medicine_cat1'><option value='<?php echo set_value('medicine_category_id'); ?>'><?php echo $this->lang->line('select') ?></option><?php foreach ($medicineCategory as $dkey => $dvalue) { ?><option value='<?php echo $dvalue["id"]; ?>'><?php echo $dvalue["medicine_category"] ?></option><?php } ?></select></div><div class=col-sm-3><div class=form-group><select class='form-control select2'  name='medicine[]' id='search-query1'><option value='l'><?php echo $this->lang->line('select') ?></option></select></div></div><div class=col-sm-3><div class=form-group><select type=text class=form-control name='dosage[]' id='dosagelist1'><option value='l'><?php echo $this->lang->line('select') ?></option><?php foreach ($dosage as $dkey => $dosagevalue) { ?><option value='<?php echo $dosagevalue["dosage"]; ?>'><?php echo $dosagevalue["dosage"] ?></option><?php } ?></select></div></div><div class=col-sm-3><div class=form-group><textarea style='height:28px' name='instruction[]' class=form-control id=description></textarea></div></div></div>";
-
         var table = document.getElementById("tableID");
         var table_len = (table.rows.length);
         var id = parseInt(table_len);
+        
+        var div = "<div id=row1><div class=col-sm-3><select class='form-control select2' onchange='getMedicineName(" + id + ")' name='medicine_cat[]'  id='medicine_cat" + id + "'><option value='<?php echo set_value('medicine_category_id'); ?>'><?php echo $this->lang->line('select') ?></option><?php foreach ($medicineCategory as $dkey => $dvalue) { ?><option value='<?php echo $dvalue["id"]; ?>'><?php echo $dvalue["medicine_category"] ?></option><?php } ?></select></div><div class=col-sm-3><div class=form-group><select class='form-control select2'  name='medicine[]' id='search-query" + id + "'><option value='l'><?php echo $this->lang->line('select') ?></option></select></div></div><div class=col-sm-3><div class=form-group><select class='form-control select2' name='dosage[]' id='search-dosage" + id + "'><option value='l'><?php echo $this->lang->line('select') ?></option></select></div></div><div class=col-sm-3><div class=form-group><textarea style='height:28px' name='instruction[]' class=form-control id=description></textarea></div></div></div>";
+
+      
         var row = table.insertRow(table_len).outerHTML = "<tr id='row" + id + "'><td>" + div + "</td><td><button type='button' onclick='delete_row(" + id + ")' class='modaltableclosebtn'><i class='fa fa-remove'></i></button></td></tr>";
         $('.select2').select2();
     }
@@ -2849,13 +3468,13 @@ foreach ($bloodgroup as $key => $value) {
                                 alert("Fail")
                             }
                         });
-                        //window.location.reload(true);
+                    window.location.reload(true);
                     }
                     $("#add_timelinebtn").button('reset');
                 },
                 error: function (e) {
                     alert("Fail");
-                    console.log(e);
+                   // console.log(e);
                 }
             });
         }));
@@ -2934,7 +3553,7 @@ foreach ($bloodgroup as $key => $value) {
         });
         if (prescription == 'yes') {
 
-            $('#edit_deleteprescription').html("<?php if ($this->rbac->hasPrivilege('prescription', 'can_view')) { ?><a href='#'' onclick='printprescription(" + id + "," + opdid + ")'   data-original-title='<?php echo $this->lang->line('print'); ?>'><i class='fa fa-print'></i></a><?php } ?><?php if ($this->rbac->hasPrivilege('prescription', 'can_edit')) { ?><a href='#'' onclick='edit_prescription(" + id + "," + opdid + "," + visitid + ")' data-target='#edit_prescription' data-toggle='modal'  data-original-title='<?php echo $this->lang->line('edit'); ?>'><i class='fa fa-pencil'></i></a><?php } if ($this->rbac->hasPrivilege('prescription', 'can_delete')) { ?><a onclick='delete_prescription(" + id + "," + opdid + ")'  href='#'  data-toggle='tooltip'  data-original-title='<?php echo $this->lang->line('delete'); ?>'><i class='fa fa-trash'></i></a><?php } ?>");
+            $('#edit_deleteprescription').html("<?php if ($this->rbac->hasPrivilege('prescription', 'can_view')) { ?><a href='#'' onclick='printprescription(" + id + "," + opdid + "," + visitid + ")'   data-original-title='<?php echo $this->lang->line('print'); ?>'><i class='fa fa-print'></i></a><?php } ?><?php if ($this->rbac->hasPrivilege('prescription', 'can_edit')) { ?><a href='#'' onclick='edit_prescription(" + id + "," + opdid + "," + visitid + ")' data-target='#edit_prescription' data-toggle='modal'  data-original-title='<?php echo $this->lang->line('edit'); ?>'><i class='fa fa-pencil'></i></a><?php } if ($this->rbac->hasPrivilege('prescription', 'can_delete')) { ?><a onclick='delete_prescription(" + id + "," + opdid + ","+ visitid +")'  href='#'  data-toggle='tooltip'  data-original-title='<?php echo $this->lang->line('delete'); ?>'><i class='fa fa-trash'></i></a><?php } ?>");
         }
 
         holdModal('prescriptionview');
@@ -3020,16 +3639,24 @@ foreach ($bloodgroup as $key => $value) {
         }));
     });
 
+    function makeid(length) {
+        var result = '';
+        var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        var charactersLength = characters.length;
+        for (var i = 0; i < length; i++) {
+            result += characters.charAt(Math.floor(Math.random() * charactersLength));
+        }
+        return result;
+    }
 
     function getRevisitRecord(id) {
-
+        var password = makeid(5)
         $.ajax({
             url: '<?php echo base_url(); ?>admin/patient/getDetails',
             type: "POST",
             data: {patient_id: id},
             dataType: 'json',
             success: function (data) {
-
                 $("#listname").html(data.patient_name);
                 $('#guardian').html(data.guardian_name);
                 $('#rgender').html(data.gender);
@@ -3038,12 +3665,18 @@ foreach ($bloodgroup as $key => $value) {
                 $("#rblood_group").html(data.blood_group);
                 $("#raddress").html(data.address);
                 $("#rmarital_status").html(data.marital_status);
+
+                 var date_format = '<?php echo $result = strtr($this->customlib->getSchoolDateFormat(), ['d' => 'dd', 'm' => 'MM', 'Y' => 'yyyy',]) ?>';
+                var dob_format = new Date(data.dob).toString(date_format);
+                
                 if (data.age == "") {
                     $("#rage").html("");
                 } else {
-                    $("#rage").html(data.age + " Years " + data.month + " Month (" + data.dob + ")");
+                    $("#rage").html(data.age + " Years " + data.month + " Month (" + dob_format + ")");
                 }
+                
                 $("#revisit_id").val(data.patient_unique_id);
+                $('#revisit_password').val(password);
                 $("#revisit_name").val(data.patient_name);
                 $('#revisit_guardian').val(data.guardian_name);
                 $("#revisit_contact").val(data.mobileno);
@@ -3056,15 +3689,19 @@ foreach ($bloodgroup as $key => $value) {
                 $("#revisit_email").val(data.email);
                 $("#revisit_amount").val(data.amount);
                 $("#standard_chargevisit").val(data.standard_charge);
+                $("#live_consultvisit").val(data.live_consult);
                 $("#revisit_amount").val(data.standard_charge);
-                $("#revisit_symptoms").val(data.symptoms);
+                $("#esymptoms").val(data.symptoms);
                 $("#revisit_age").val(data.age);
                 $("#revisit_month").val(data.month);
                 $("#revisit_height").val(data.height);
                 $("#revisit_opd_no").val('<?php echo $visit_details['opd_no'] ?>');
                 $("#revisit_opd_id").val('<?php echo $visit_details['id'] ?>');
-                // $("#revisit_weight").val(data.weight);
-                // $("#revisit_bp").val(data.bp);
+                $("#revisit_weight").val(data.weight);
+                $("#revisit_bp").val(data.bp);
+                 $("#revisit_pulse").val(data.pulse);
+                $("#revisit_temperature").val(data.temperature);
+                $("#revisit_respiration").val(data.respiration);
                 $("#revisit_blood_group").val(data.blood_group);
                 $("#revisi_tax").val(data.tax);
                 $("#revisit_address").val(data.address);
@@ -3082,10 +3719,10 @@ foreach ($bloodgroup as $key => $value) {
 
     }
 
-    function printprescription(id, opdid) {
+    function printprescription(id, opdid,visitid) {
         var base_url = '<?php echo base_url() ?>';
         $.ajax({
-            url: base_url + 'admin/prescription/getPrescription/' + id + '/' + opdid,
+            url: base_url + 'admin/prescription/getPrescription/' + id + '/' + opdid+'/'+visitid,
             type: 'POST',
             data: {payslipid: id, print: 'yes'},
             //dataType: "json",
@@ -3212,6 +3849,7 @@ foreach ($bloodgroup as $key => $value) {
                     var sel = "";
                     div_data += "<option value='" + obj.medicine_name + "'>" + obj.medicine_name + "</option>";
                 });
+               // alert(div_data);
                 $("#search-query" + id).html("<option value=''>Select</option>");
                 $('#search-query' + id).append(div_data);
                 $('#search-query' + id).select2("val", '');
@@ -3234,7 +3872,7 @@ foreach ($bloodgroup as $key => $value) {
         div_data = '';
 
         $("#search-dosage" + id).html("<option value='l'><?php echo $this->lang->line('loading') ?></option>");
-        $('#search-dosage' + id).select2("val", +id);
+       // $('#search-dosage' + id).select2("val", +id);
 
         $.ajax({
             type: "POST",
@@ -3252,7 +3890,7 @@ foreach ($bloodgroup as $key => $value) {
                 $("#search-dosage" + id).html("<option value=''>Select</option>");
                 $('#search-dosage' + id).append(div_data);
                 //$("#search-dosage" + id).select2();
-                $('#search-dosage' + id).select2("val", '');
+                //$('#search-dosage' + id).select2("val", '');
 
             }
         });
@@ -3286,7 +3924,7 @@ foreach ($bloodgroup as $key => $value) {
 
     function get_Charges(code, orgid) {
         $("#standard_charge").html("standard_charge");
-        $("#schedule_charge").html("schedule_charge");
+        //$("#schedule_charge").html("schedule_charge");
 
         $.ajax({
             url: '<?php echo base_url(); ?>admin/patient/ipdCharge',
@@ -3294,7 +3932,7 @@ foreach ($bloodgroup as $key => $value) {
             data: {code: code, organisation_id: orgid},
             dataType: 'json',
             success: function (res) {
-                console.log(res);
+                //console.log(res.org_charge);
 
                 if (res) {
                     $('#addstandard_charge').val(res.standard_charge);
@@ -3319,7 +3957,7 @@ foreach ($bloodgroup as $key => $value) {
 
     $(document).ready(function (e) {
         $("#add_bill").on('submit', (function (e) {
-            if (confirm('Are you sure?')) {
+            if (confirm('<?php echo $this->lang->line('are_you_sure')?>')) {
                 $("#save_button").button('loading');
                 e.preventDefault();
                 $.ajax({
@@ -3342,7 +3980,7 @@ foreach ($bloodgroup as $key => $value) {
                             window.location.reload = true;
                         }
                         $("#save_button").button('reset');
-
+                         location.reload();
                     },
                     error: function (e) {
                         alert("Fail");
@@ -3426,39 +4064,7 @@ foreach ($bloodgroup as $key => $value) {
         }));
     });
 
-   /* function calculate() {
-
-        var discount_percent = $("#discount_percent").val();
-        var tax_percent = $("#tax_percent").val();
-
-        var total_amount = $("#total_amount").val();
-        if (discount_percent != '') {
-            var discount = (total_amount * discount_percent) / 100;
-            $("#discount").val(discount.toFixed(2));
-        } else {
-            var discount = $("#discount").val();
-
-        }
-
-        if (tax_percent != '') {
-            var tax = ((total_amount - discount) * tax_percent) / 100;
-            $("#tax").val(tax.toFixed(2));
-        } else {
-            var tax = $("#tax").val();
-        }
-        // var discount = $("#discount").val();
-        var other_charge = $("#other_charge").val();
-        //var gross_total = $("#gross_total").val();
-        //   var tax = $("#tax").val();
-        // var net_amount = $("#net_amount").val();
-        var gross_total = parseFloat(total_amount) + parseFloat(other_charge) + parseFloat(tax);
-        var net_amount = parseFloat(total_amount) + parseFloat(other_charge) + parseFloat(tax) - parseFloat(discount);
-        $("#gross_total").val(gross_total.toFixed(2));
-        $("#net_amount").val(net_amount.toFixed(2));
-        $("#net_amount_span").html(net_amount.toFixed(2));
-        $("#save_button").show();
-        $("#printBill").show();
-    }*/
+   
 
 
 
@@ -3489,11 +4095,7 @@ foreach ($bloodgroup as $key => $value) {
         } else {
             var tax = $("#tax").val();
         }
-        // var discount = $("#discount").val();
-        
-        //var gross_total = $("#gross_total").val();
-        //   var tax = $("#tax").val();
-        // var net_amount = $("#net_amount").val();
+
         var gross_total = parseFloat(total_amount) + parseFloat(other_charge) + parseFloat(tax) - parseFloat(discount);
         var net_amount = parseFloat(total_amount) + parseFloat(other_charge) + parseFloat(tax) - parseFloat(discount);
         var net_amount_payble = parseFloat(net_amount) - parseFloat(paid_amount);
@@ -3537,4 +4139,67 @@ foreach ($bloodgroup as $key => $value) {
     }
 
 
+</script>
+<script type="text/javascript">
+    $(document).on('change','.chgstatus_dropdown',function(){
+        $(this).parent('form.chgstatus_form').submit()
+
+    });
+
+    $("form.chgstatus_form").submit(function(e) {
+
+    e.preventDefault(); // avoid to execute the actual submit of the form.
+
+    var form = $(this);
+    var url = form.attr('action');
+
+    $.ajax({
+           type: "POST",
+           url: url,
+           data: form.serialize(), // serializes the form's elements.
+           dataType:"JSON",
+           success: function(data)
+           {
+               if (data.status == 0) {
+                    var message = "";
+                    $.each(data.error, function (index, value) {
+
+                        message += value;
+                    });
+                    errorMsg(message);
+                } else {
+
+                    successMsg(data.message);
+
+                    window.location.reload(true);
+                }               
+           }
+         });
+});
+
+
+$(".addcharges").click(function(){	
+	$('#add_charges').trigger("reset");		
+	$('#select2-charge_category-container').html("");		
+	$('#select2-code-container').html("");		
+});
+
+$(".revisitrecheckup").click(function(){	
+	$('#formrevisit').trigger("reset");			
+});
+
+$(".addpayment").click(function(){	
+	$('#add_payment').trigger("reset");
+	$(".dropify-clear").trigger("click");
+});
+
+$(".adddiagnosis").click(function(){	
+	$('#form_diagnosis').trigger("reset");	
+	$(".dropify-clear").trigger("click");
+});
+
+$(".addtimeline").click(function(){	
+	$('#add_timeline').trigger("reset");	
+	$(".dropify-clear").trigger("click");
+});
 </script>

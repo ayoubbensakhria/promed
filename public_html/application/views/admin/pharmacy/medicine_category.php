@@ -1,4 +1,4 @@
-<div class="content-wrapper" style="min-height: 946px;">  
+<div class="content-wrapper">  
 
     <!-- Main content -->
     <section class="content">
@@ -13,7 +13,7 @@
                         <h3 class="box-title titlefix"><?php echo $this->lang->line('medicine') . " " . $this->lang->line('category') . " " . $this->lang->line('list'); ?></h3>
                         <div class="box-tools pull-right">
                             <?php if ($this->rbac->hasPrivilege('medicine_category', 'can_add')) { ?>
-                                <a data-toggle="modal" data-target="#myModal" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i>  <?php echo $this->lang->line('add'); ?> <?php echo $this->lang->line('medicine') . " " . $this->lang->line('category'); ?></a> 
+                                <a data-toggle="modal" data-target="#myModal" class="btn btn-primary btn-sm medicine"><i class="fa fa-plus"></i>  <?php echo $this->lang->line('add'); ?> <?php echo $this->lang->line('medicine') . " " . $this->lang->line('category'); ?></a> 
                             <?php } ?>    
                         </div>
                     </div>
@@ -233,12 +233,12 @@
 
                 }
             });
-
-
         }));
-
     });
 
 
+$(".medicine").click(function(){
+	$('#formadd').trigger("reset");
+});
 </script>
 

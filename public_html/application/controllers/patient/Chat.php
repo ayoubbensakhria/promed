@@ -12,7 +12,6 @@ class Chat extends Patient_Controller {
         $this->load->library('Enc_lib');
         $this->load->library('Customlib');
         $this->load->library('stripe_payment');
-
         $this->patient_data = $this->session->userdata('patient');
         $this->payment_method = $this->paymentsetting_model->get();
         $this->pay_method = $this->paymentsetting_model->getActiveMethod();
@@ -26,7 +25,6 @@ class Chat extends Patient_Controller {
         $data = array();
         $this->session->set_userdata('top_menu', 'Reports');
         $this->session->set_userdata('sub_menu', 'audit/index');
-
         $this->load->view('layout/patient/header');
         $this->load->view('patient/chat/index', $data);
         $this->load->view('layout/patient/footer');
@@ -38,7 +36,6 @@ class Chat extends Patient_Controller {
         $chat_user = $this->chatuser_model->getMyID($student_id, 'patient');
         $data['chat_user'] = array();
         $data['userList'] = array();
-
         if (!empty($chat_user)) {
             $data['chat_user'] = $chat_user;
             $data['userList'] = $this->chatuser_model->myUser($student_id, $chat_user->id, 'patient');
@@ -52,14 +49,10 @@ class Chat extends Patient_Controller {
     public function getChatRecord() {
         $student_id = $this->customlib->getPatientSessionUserID();
         $chat_user = $this->chatuser_model->getMyID($student_id, 'patient');
-
         $data['chat_user'] = $chat_user;
-
         $chat_connection_id = $this->input->post('chat_connection_id');
         $chat_to_user = 0;
-
         $user_last_chat = $this->chatuser_model->getLastMessages($chat_connection_id);
-
         $chat_connection = $this->chatuser_model->getChatConnectionByID($chat_connection_id);
         if (!empty($chat_connection)) {
             $chat_to_user = $chat_connection->chat_user_one;
@@ -76,7 +69,6 @@ class Chat extends Patient_Controller {
     }
 
     public function newMessage() {
-
         $chat_connection_id = $this->input->post('chat_connection_id');
         $chat_to_user = $this->input->post('chat_to_user');
         $message = $this->input->post('message');
@@ -89,7 +81,6 @@ class Chat extends Patient_Controller {
         );
 
         $last_insert_id = $this->chatuser_model->addMessage($insert_record);
-
         $array = array('status' => '1', 'last_insert_id' => $last_insert_id, 'error' => '', 'message' => 'inserted --r');
         echo json_encode($array);
     }
@@ -102,9 +93,7 @@ class Chat extends Patient_Controller {
         $data['chat_user_id'] = $chat_user_id;
         $student_id = $this->customlib->getPatientSessionUserID();
         $chat_user = $this->chatuser_model->getMyID($student_id, 'patient');
-
         $data['updated_chat'] = $this->chatuser_model->getUpdatedchat($chat_connection_id, $last_chat_id, $chat_user->id);
-
         $userlist = $this->load->view('patient/chat/_chatupdate', $data, true);
         $array = array('status' => '1', 'error' => '', 'page' => $userlist, 'user_last_chat' => $user_last_chat);
         echo json_encode($array);
@@ -113,13 +102,10 @@ class Chat extends Patient_Controller {
     public function mychatnotification() {
         $student_id = $this->customlib->getPatientSessionUserID();
         $chat_user = $this->chatuser_model->getMyID($student_id, 'patient');
-
-
         $notifications = array();
         if (!empty($chat_user)) {
             $notifications = $this->chatuser_model->getChatNotification($chat_user->id);
         }
-
         $array = array('status' => '1', 'message' => $this->lang->line('success_message'), 'notifications' => $notifications);
         echo json_encode($array);
     }
@@ -134,10 +120,8 @@ class Chat extends Patient_Controller {
         }
 
         $data['chat_user'] = $this->chatuser_model->searchForUser($keyword, $chat_user_id, 'patient', $student_id);
-
         $userlist = $this->load->view('admin/chat/_partialSearchUser', $data, true);
         $array = array('status' => '1', 'error' => '', 'page' => $userlist);
-
         echo json_encode($array);
     }
 
@@ -157,7 +141,6 @@ class Chat extends Patient_Controller {
     }
 
     public function adduser() {
-
         $this->form_validation->set_error_delimiters('', '');
         $this->form_validation->set_rules('user_id', 'Contact Person --r', 'required|trim|xss_clean');
         $this->form_validation->set_rules('user_type', 'User Type', 'required|trim|xss_clean');
@@ -176,7 +159,6 @@ class Chat extends Patient_Controller {
                 'patient_id' => $student_id,
             );
             $insert_data = array('user_type' => strtolower($user_type), 'create_student_id' => null);
-
             if ($user_type == "Patient") {
                 $insert_data['patient_id'] = $user_id;
             } elseif ($user_type == "Staff") {
@@ -192,16 +174,11 @@ class Chat extends Patient_Controller {
             //===================
             $new_user_record = $this->chatuser_model->addNewUserForStudent($first_entry, $insert_data, 'patient', $student_id, $insert_message);
             $json_record = json_decode($new_user_record);
-
             //==================
 
             $new_user = $this->chatuser_model->getChatUserDetail($json_record->new_user_id);
-
             $student_id = $this->customlib->getPatientSessionUserID();
             $chat_user = $this->chatuser_model->getMyID($student_id, 'patient');
-
-
-
             $data['chat_user'] = $chat_user;
             $chat_connection_id = $json_record->new_user_chat_connection_id;
             $chat_to_user = 0;

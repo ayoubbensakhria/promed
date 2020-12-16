@@ -130,7 +130,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                     <div class="box border0 clear">
                         <div class="box-header ptbnull"></div>
                         <div class="box-body table-responsive">
-                            <div class="download_label"><?php echo $this->lang->line('radiology') . " " . $this->lang->line('report'); ?></div>
+                            <div class="download_label"><?php echo $this->lang->line('radiology') . " " . $this->lang->line('patient') . " " . $this->lang->line('report'); ?></div>
                             <table class="table table-striped table-bordered table-hover example">
                                 <thead>
                                     <tr>

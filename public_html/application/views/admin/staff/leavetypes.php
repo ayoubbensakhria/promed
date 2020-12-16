@@ -30,7 +30,7 @@
                         <h3 class="box-title titlefix"><?php echo $this->lang->line('leave_type'); ?> <?php echo $this->lang->line('list'); ?></h3>
                         <div class="box-tools pull-right">
                             <?php if ($this->rbac->hasPrivilege('leave_types', 'can_add')) { ?>
-                                <a data-toggle="modal" data-target="#myModal" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i>  <?php echo $this->lang->line('add'); ?> <?php echo $this->lang->line('leave_type'); ?></a> 
+                                <a data-toggle="modal" data-target="#myModal" class="btn btn-primary btn-sm leavetype"><i class="fa fa-plus"></i>  <?php echo $this->lang->line('add'); ?> <?php echo $this->lang->line('leave_type'); ?></a> 
                             <?php } ?>    
                         </div>
                     </div>
@@ -42,10 +42,8 @@
                             <table class="table table-striped table-bordered table-hover example">
                                 <thead>
                                     <tr>
-
                                         <th><?php echo $this->lang->line('name'); ?></th>
-                                     <!--    <th><?php echo $this->lang->line('active'); ?> <?php echo $this->lang->line('status'); ?></th>
-                                        -->   <th class="text-right no-print"><?php echo $this->lang->line('action'); ?>
+										<th class="text-right no-print"><?php echo $this->lang->line('action'); ?>
                                         </th>
                                     </tr>
                                 </thead>
@@ -65,8 +63,7 @@
                                         <tr>
 
                                             <td class="mailbox-name"> <?php echo $value['type'] ?></td>
-                                     <!--        <td><?php echo $this->lang->line($value['is_active']) ?></td>
-                                            -->       <td class="mailbox-date pull-right no-print">
+											<td class="mailbox-date pull-right no-print">
                                                 <?php if ($this->rbac->hasPrivilege('leave_types', 'can_edit')) { ?>
                                                     <a href="#" class="btn btn-default btn-xs"  data-toggle="tooltip" onclick="get(<?php echo $value['id'] ?>)" data-target="#editmyModal" title="<?php echo $this->lang->line('edit'); ?>">
                                                         <i class="fa fa-pencil"></i>
@@ -92,7 +89,6 @@
                     </div>
                 </div>
             </div> 
-
         </div>
     </section>
 </div>
@@ -103,9 +99,6 @@
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                 <h4 class="box-title"> <?php echo $this->lang->line('add'); ?>  <?php echo $this->lang->line('leave_type'); ?></h4> 
             </div>
-
-
-
             <form id="formadd" action="<?php echo site_url('admin/leavetypes/createLeaveType') ?>"  id="employeeform" name="employeeform" method="post" accept-charset="utf-8"  enctype="multipart/form-data">
                 <div class="modal-body pt0 pb0">
                     <div class="ptt10">
@@ -121,23 +114,16 @@
                             }
                             ?>" />
                             <span class="text-danger"><?php echo form_error('type'); ?></span>
-
-
                         </div>
-
-
                     </div>
                 </div><!--./modal-->        
                 <div class="box-footer">
                     <button type="submit" id="formaddbtn" data-loading-text="<?php echo $this->lang->line('processing') ?>" class="btn btn-info pull-right"><?php echo $this->lang->line('save'); ?></button>
                 </div>
             </form>
-
-
         </div><!--./row--> 
     </div>
 </div>
-
 
 <div class="modal fade" id="editmyModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog modal-mid" role="document">
@@ -146,9 +132,6 @@
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                 <h4 class="box-title"> <?php echo $this->lang->line('edit'); ?>  <?php echo $this->lang->line('leave_type'); ?></h4> 
             </div>
-
-
-
             <form id="editformadd" action="<?php echo site_url('admin/leavetypes/leaveedit') ?>"  id="employeeform" name="employeeform" method="post" accept-charset="utf-8"  enctype="multipart/form-data">
                 <div class="modal-body pt0 pb0">
                     <div class="ptt10">
@@ -160,19 +143,14 @@
                             <label for="exampleInputEmail1"><?php echo $this->lang->line('name'); ?></label><small class="req"> *</small>
                             <input autofocus="" id="type"  name="type" placeholder="" type="text" class="form-control"  />
                             <span class="text-danger"><?php echo form_error('type'); ?></span>
-
                             <input autofocus="" id="id"  name="leavetypeid" placeholder="" type="hidden" class="form-control"   />
                         </div>
-
-
                     </div>
                 </div><!--./modal-->    
                 <div class="box-footer">
                     <button type="submit" data-loading-text="<?php echo $this->lang->line('processing') ?>" id="editformaddbtn" class="btn btn-info pull-right"><?php echo $this->lang->line('save'); ?></button>
                 </div>
             </form>
-
-
         </div><!--./row--> 
     </div>
 </div>
@@ -191,17 +169,13 @@
                 cache: false,
                 processData: false,
                 success: function (data) {
-
                     if (data.status == "fail") {
-
                         var message = "";
                         $.each(data.error, function (index, value) {
-
                             message += value;
                         });
                         errorMsg(message);
                     } else {
-
                         successMsg(data.message);
                         window.location.reload(true);
                     }
@@ -211,40 +185,24 @@
 
                 }
             });
-
-
         }));
-
     });
-
 
     function get(id) {
         $('#editmyModal').modal('show');
-        //alert(id);
-
         $.ajax({
-
             dataType: 'json',
-
             url: '<?php echo base_url(); ?>admin/leavetypes/get_type/' + id,
-
             success: function (result) {
-
                 $('#id').val(result.id);
                 $('#type').val(result.type);
-
-
             }
-
         });
-
     }
-
 
     $(document).ready(function (e) {
         $('#editformadd').on('submit', (function (e) {
             $("#editformaddbtn").button('loading');
-
             e.preventDefault();
             $.ajax({
                 url: $(this).attr('action'),
@@ -255,17 +213,13 @@
                 cache: false,
                 processData: false,
                 success: function (data) {
-
                     if (data.status == "fail") {
-
                         var message = "";
                         $.each(data.error, function (index, value) {
-
                             message += value;
                         });
                         errorMsg(message);
                     } else {
-
                         successMsg(data.message);
                         window.location.reload(true);
                     }
@@ -275,11 +229,10 @@
 
                 }
             });
-
-
         }));
-
     });
 
-
+$(".leavetype").click(function(){
+	$('#formadd').trigger("reset");
+});
 </script>

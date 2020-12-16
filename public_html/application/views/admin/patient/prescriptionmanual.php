@@ -229,12 +229,11 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                     <table width="100%" class="printablea4">
 
                         <tr>
-
                             <th><?php echo $this->lang->line("opd") . " " . $this->lang->line("no"); ?> #<?php echo $result["opd_no"] ?></th> 
                             <td></td>
                             <th class="text-right"></th> <th class="text-right"><?php echo $this->lang->line('date'); ?> : <?php
                                 if (!empty($result['appointment_date'])) {
-                                    echo date($this->customlib->getSchoolDateFormat(true, true), strtotime($appointment_date));
+                                    echo date($this->customlib->getSchoolDateFormat(true, false), strtotime($appointment_date));
                                 }
                                 ?></th>
                         </tr>
@@ -251,17 +250,17 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                         </tr>
                         <tr>
                             <th width="25%"><?php echo $this->lang->line("age"); ?></th>
-                            <td><?php echo $result["age"] ?></td>
-<!--<td>
+                            <!-- <td><?php echo $result["age"] ?></td> -->
+                        <td>
                             <?php
                             if (!empty($result["age"])) {
                                 echo $result["age"] . " " . $this->lang->line("year") . " ";
-                            } if (!empty($result["age"])) {
+                            } if (!empty($result["month"])) {
                                 echo $result["month"] . " " . $this->lang->line("month");
                             }
                             ?>
-                            </td>-->
-                            <th width="25%"><?php echo $this->lang->line("gender"); ?></th>
+                        </td>
+                        <th width="25%"><?php echo $this->lang->line("gender"); ?></th>
                             <td><?php echo $result["gender"] ?></td>
                         </tr>
 

@@ -1,6 +1,4 @@
-
-<div class="content-wrapper" style="min-height: 348px;">  
-
+<div class="content-wrapper" style="min-height: 348px;"> 
     <section class="content">
         <div class="row">
             <div class="col-md-2">
@@ -9,7 +7,7 @@
                         <li><a href="<?php echo site_url('admin/visitorspurpose') ?>" class="active"><?php echo $this->lang->line('purpose'); ?></a></li>
                         <li><a href="<?php echo site_url('admin/complainttype') ?>"><?php echo $this->lang->line('complain_type'); ?></a></li>
                         <li><a href="<?php echo site_url('admin/source') ?>"><?php echo $this->lang->line('source'); ?></a></li>
-
+                        <li><a href="<?php echo site_url('admin/appointpriority') ?>"><?php echo $this->lang->line('appointment')." ".$this->lang->line('priority'); ?></a></li>
                     </ul>
                 </div>
             </div><!--./col-md-3-->
@@ -20,7 +18,9 @@
                     <div class="box-header ptbnull">
                         <h3 class="box-title titlefix"><?php echo $this->lang->line('purpose'); ?> <?php echo $this->lang->line('list'); ?></h3>
                         <div class="box-tools pull-right">
-                            <a data-toggle="modal" data-target="#myModal" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i>  <?php echo $this->lang->line('add'); ?> <?php echo $this->lang->line('purpose'); ?></a>     
+                            <?php if ($this->rbac->hasPrivilege('setup_front_office', 'can_add')) { ?>
+                            <a data-toggle="modal" data-target="#myModal" class="btn btn-primary btn-sm addpurpose"><i class="fa fa-plus"></i>  <?php echo $this->lang->line('add'); ?> <?php echo $this->lang->line('purpose'); ?></a>    
+                            <?php } ?> 
                         </div>
                     </div><!-- /.box-header -->
                     <div class="box-body">
@@ -283,9 +283,10 @@
 
                 }
             });
-
-
         }));
-
     });
+		
+$(".addpurpose").click(function(){
+	$('#formadd').trigger("reset");	
+});
 </script>

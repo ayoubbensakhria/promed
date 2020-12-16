@@ -1,3 +1,4 @@
+
 <div class="content-wrapper" style="min-height: 946px;">
     <!-- Content Header (Page header) -->
 
@@ -32,42 +33,19 @@
                         <?php } ?>
                         <div class="table-responsive mailbox-messages">
                             <table class="table table-hover table-striped">
-                                <tbody>
+                                
                                     <tr>
                                         <th>#</th>
                                         <th><?php echo $this->lang->line('language'); ?></th>
-                                        <th><?php echo $this->lang->line('status'); ?></th>
+                                       
+                                        <th><?php echo $this->lang->line('short_code'); ?></th>
+                                        <th><?php echo $this->lang->line('country_code'); ?></th>
+                                         <th><?php echo $this->lang->line('status'); ?></th>
+                                         <th><?php echo $this->lang->line('active'); ?></th>
                                         <th class="text-right"><?php echo $this->lang->line('action'); ?></th>
                                     </tr>
-                                    <?php
-                                    $count = 1;
-                                    foreach ($languagelist as $language) {
-                                        ?>
-                                        <tr>
-                                            <td><?php echo $count . "."; ?></td>
-                                            <td class="mailbox-name"> <?php echo $language['language'] ?></td>
-                                            <td class="mailbox-name"><?php
-                                                if ($this->customlib->getSessionLanguage() == $language['id']) {
-                                                    ?>
-                                                    <span class="label bg-green"><?php echo $this->lang->line('active'); ?></span>
-                                                    <?php
-                                                } else {
-                                                    
-                                                }
-                                                ?></td>
-                                            <td class="mailbox-date pull-right">
-                                                <?php if ($this->customlib->getSessionLanguage() != $language['id']) {
-                                                    ?>
-                                                    <a class="btn btn-primary btn-xs text-right" href="<?php echo base_url() . "admin/language/active_language/" . $language["id"] ?>">Active</a>
-                                                <?php } ?>
-                                            </td>
-
-                                        </tr>
-                                        <?php
-                                        $count++;
-                                    }
-                                    ?>
-
+                                     <tbody id="result_data">
+                                    <?php $this->load->view('admin/language/languageResult'); ?>
                                 </tbody>
                             </table><!-- /.table -->
                         </div><!-- /.mail-box-messages -->
@@ -80,7 +58,7 @@
             </div>
         </div>   <!-- /.row -->
     </section><!-- /.content -->
-</div>
+</div> 
 
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog modal-sm400" role="document">
@@ -95,8 +73,23 @@
                     <div class="row">
                         <div class="col-sm-12">
                             <div class="form-group">
-                                <label for="exampleInputEmail1"><?php echo $this->lang->line('language'); ?></label>
+                                <label for="exampleInputEmail1"><?php echo $this->lang->line('language'); ?><small class="req"> *</small></label>
                                 <input id="invoice_no" name="language" placeholder="" type="text" class="form-control"  value="<?php echo set_value('language'); ?>" />
+
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label for="exampleInputEmail1"><?php echo $this->lang->line('short_code'); ?></label>
+                                <input id="short_code" name="short_code" placeholder="" type="text" class="form-control"  value="<?php echo set_value('short_code'); ?>" />
+
+                            </div>
+
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label for="exampleInputEmail1"><?php echo $this->lang->line('country_code'); ?></label>
+                                <input id="country_code" name="country_code" placeholder="" type="text" class="form-control"  value="<?php echo set_value('country_code'); ?>" />
 
                             </div>
                         </div>
@@ -149,3 +142,111 @@
         }));
     });
 </script>           
+<script type="text/javascript">
+    $(document).ready(function () {
+        var onload=  $('#languageSwitcher').val();
+      //load();
+        $(document).on('click', '.chk', function () {
+            var checked = $(this).is(':checked');
+           
+            var rowid = $(this).data('rowid');
+            var role = $(this).data('role');
+            var confirm_msg='<?php echo $this->lang->line('confirm_msg') ?>';
+           
+            if (checked) {
+
+                if (!confirm(confirm_msg)) {
+                    $(this).removeAttr('checked');
+
+                } else {
+                    var status = "yes";
+
+                    if(role=='2'){
+                        changeStatusselect(rowid);
+                    }else{
+                        changeStatusunselect(rowid);
+                    }
+
+                }
+
+            } else if (!confirm(confirm_msg)) {
+
+                $(this).prop("checked", true);
+            } else {
+                
+                var status = "no";
+                if(role=='2'){
+                        changeStatusselect(rowid);
+                    }else{
+                        changeStatusunselect(rowid);
+                    }
+
+            }
+        });
+    });
+
+    function changeStatusselect(rowid) {
+
+        var base_url = '<?php echo base_url() ?>';
+
+        $.ajax({
+            type: "POST",
+            url: base_url + "admin/language/select_language/"+rowid,
+            data: {},
+            
+            success: function (data) {
+                successMsg("Status Change Successfully");
+              $('#languageSwitcher').html(data);
+             
+               window.location.reload('true');
+            }
+
+        });
+    }
+
+    function changeStatusunselect(rowid) {
+
+ 
+        var base_url = '<?php echo base_url() ?>';
+
+        $.ajax({
+            type: "POST",
+            url: base_url + "admin/language/unselect_language/"+rowid,
+            data: {},
+           
+            success: function (data) {
+
+               successMsg("Status Change Successfully");
+               window.location.reload('true');
+           }
+        });
+    }
+
+
+function load(){
+ $.ajax({
+        type: "POST",
+        url: '<?php echo base_url() ?>admin/language/onloadlanguage',
+        data: {},
+        //dataType: "json",
+        success: function (data) {
+           window.location.reload('true');
+          
+        }
+        });
+}
+
+    function defoult(id){
+        $.ajax({
+        type: "POST",
+        url: '<?php echo base_url() ?>admin/language/defoult_language/'+id,
+        data: {},
+        //dataType: "json",
+        success: function (data) {
+           window.location.reload('true');
+          
+        }
+        });
+    }
+
+</script>

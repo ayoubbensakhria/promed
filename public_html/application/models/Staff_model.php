@@ -7,7 +7,6 @@ class Staff_model extends CI_Model {
     }
 
     public function get($id = null) {
-
         $this->db->select('staff.*,roles.name as user_type,roles.id as role_id')->from('staff')->join("staff_roles", "staff_roles.staff_id = staff.id", "left")->join("roles", "staff_roles.role_id = roles.id", "left");
 
         if ($id != null) {
@@ -39,8 +38,7 @@ class Staff_model extends CI_Model {
     }
 
     public function getstaff($staff_id) {
-
-        $this->db->select('staff.name,staff.surname');
+        $this->db->select('staff.*');
         $this->db->from('staff');
         $this->db->where('staff.id', $staff_id);
         $query = $this->db->get();
@@ -48,7 +46,6 @@ class Staff_model extends CI_Model {
     }
 
     public function getAll($id = null, $is_active = null) {
-
         $this->db->select("staff.*,staff_designation.designation,department.department_name as department, roles.id as role_id, roles.name as role");
         $this->db->from('staff');
         $this->db->join('staff_designation', "staff_designation.id = staff.designation", "left");
@@ -56,14 +53,10 @@ class Staff_model extends CI_Model {
         $this->db->join('roles', "roles.id = staff_roles.role_id", "left");
         $this->db->join('department', "department.id = staff.department", "left");
 
-
-
-
         if ($id != null) {
             $this->db->where('staff.id', $id);
         } else {
             if ($is_active != null) {
-
                 $this->db->where('staff.is_active', $is_active);
             }
             $this->db->order_by('staff.id');
@@ -77,7 +70,6 @@ class Staff_model extends CI_Model {
     }
 
     public function add($data) {
-
         if (isset($data['id'])) {
             $this->db->where('id', $data['id']);
             $this->db->update('staff', $data);
@@ -112,38 +104,29 @@ class Staff_model extends CI_Model {
     }
 
     public function batchInsert($data, $roles = array(), $leave_array = array()) {
-
         $this->db->trans_start();
         $this->db->trans_strict(FALSE);
-
         $this->db->insert('staff', $data);
         $staff_id = $this->db->insert_id();
         $roles['staff_id'] = $staff_id;
         $this->db->insert_batch('staff_roles', array($roles));
-
         if (!empty($leave_array)) {
             foreach ($leave_array as $key => $value) {
                 $leave_array[$key]['staff_id'] = $staff_id;
             }
-
             $this->db->insert_batch('staff_leave_details', $leave_array);
         }
         $this->db->trans_complete();
-
-
         if ($this->db->trans_status() === FALSE) {
-
             $this->db->trans_rollback();
             return FALSE;
         } else {
-
             $this->db->trans_commit();
             return $staff_id;
         }
     }
 
     public function adddoc($data) {
-
         if (isset($data['id'])) {
             $this->db->where('id', $data['id']);
             $this->db->update('staff_documents', $data);
@@ -154,26 +137,24 @@ class Staff_model extends CI_Model {
     }
 
     public function remove($id) {
-
+		
         $this->db->where('id', $id);
         $this->db->delete('staff');
-
-
+		
         $this->db->where('staff_id', $id);
         $this->db->delete('staff_payslip');
-
+		
         $this->db->where('staff_id', $id);
         $this->db->delete('staff_leave_request');
-
+		
         $this->db->where('staff_id', $id);
         $this->db->delete('staff_attendance');
-
+		
         $this->db->where('staff_id', $id);
         $this->db->delete('staff_roles');
     }
 
     public function add_staff_leave_details($data2) {
-
         if (isset($data2['id'])) {
             $this->db->where('id', $data2['id']);
             $this->db->update('staff_leave_details', $data2);
@@ -184,7 +165,6 @@ class Staff_model extends CI_Model {
     }
 
     public function getPayroll($id = null) {
-
         $this->db->select()->from('staff_payroll');
         if ($id != null) {
             $this->db->where('id', $id);
@@ -200,7 +180,6 @@ class Staff_model extends CI_Model {
     }
 
     public function getLeaveType($id = null) {
-
         $this->db->select()->from('leave_types');
         if ($id != null) {
             $this->db->where('id', $id);
@@ -220,7 +199,6 @@ class Staff_model extends CI_Model {
         $name = $this->input->post('name');
         $id = $this->input->post('employee_id');
         $staff_id = $this->input->post('editid');
-
         if (!isset($id)) {
             $id = 0;
         }
@@ -237,7 +215,6 @@ class Staff_model extends CI_Model {
     }
 
     function check_data_exists($name, $id, $staff_id) {
-
         if ($staff_id != 0) {
             $data = array('id != ' => $staff_id, 'employee_id' => $id);
             $query = $this->db->where($data)->get('staff');
@@ -247,7 +224,6 @@ class Staff_model extends CI_Model {
                 return FALSE;
             }
         } else {
-
             $this->db->where('employee_id', $id);
             $query = $this->db->get('staff');
             if ($query->num_rows() > 0) {
@@ -262,7 +238,6 @@ class Staff_model extends CI_Model {
         $email = $this->input->post('email');
         $id = $this->input->post('employee_id');
         $staff_id = $this->input->post('editid');
-
         if (!isset($id)) {
             $id = 0;
         }
@@ -279,7 +254,6 @@ class Staff_model extends CI_Model {
     }
 
     function check_email_exists($email, $id, $staff_id) {
-
         if ($staff_id != 0) {
             $data = array('id != ' => $staff_id, 'email' => $email);
             $query = $this->db->where($data)->get('staff');
@@ -289,7 +263,6 @@ class Staff_model extends CI_Model {
                 return FALSE;
             }
         } else {
-
             $this->db->where('email', $email);
             $query = $this->db->get('staff');
             if ($query->num_rows() > 0) {
@@ -301,7 +274,6 @@ class Staff_model extends CI_Model {
     }
 
     public function getStaffRole($id = null) {
-
         $this->db->select('roles.id,roles.name as type')->from('roles');
         if ($id != null) {
             $this->db->where('id', $id);
@@ -325,108 +297,82 @@ class Staff_model extends CI_Model {
                 }
             }
         }
-
-
         return $result;
     }
 
     public function count_leave($month, $year, $staff_id) {
-
-        $query1 = $this->db->select('sum(leave_days) as tl')->where(array('month(date)' => $month, 'year(date)' => $year, 'staff_id' => $staff_id, 'status' => 'approve'))->get("staff_leave_request");
+        $query1 = $this->db->select('sum(leave_days) as tl')->where(array('month(leave_from)' => $month, 'year(leave_from)' => $year, 'staff_id' => $staff_id, 'status' => 'approve'))->get("staff_leave_request");
         return $query1->row_array();
     }
 
     public function alloted_leave($staff_id) {
-
-
         $query2 = $this->db->select('sum(alloted_leave) as alloted_leave')->where(array('staff_id' => $staff_id))->get("staff_leave_details");
-
         return $query2->result_array();
     }
 
     public function allotedLeaveType($id) {
-
         $query = $this->db->select('staff_leave_details.*,leave_types.type')->where(array('staff_id' => $id))->join("leave_types", "staff_leave_details.leave_type_id = leave_types.id")->get("staff_leave_details");
-
         return $query->result_array();
     }
 
     function getAllotedLeave($staff_id) {
-
         $query = $this->db->select('*')->join("leave_types", "staff_leave_details.leave_type_id = leave_types.id")->where("staff_id", $staff_id)->get("staff_leave_details");
-
         return $query->result_array();
     }
 
     function getEmployee($role, $active = 1) {
-
         $query = $this->db->select("staff.*,staff_designation.designation,department.department_name as department,roles.name as user_type")->join('staff_designation', "staff_designation.id = staff.designation", "left")->join('staff_roles', "staff_roles.staff_id = staff.id", "left")->join('roles', "roles.id = staff_roles.role_id", "left")->join('department', "department.id = staff.department", "left")->where("staff.is_active", $active)->where("roles.name", $role)->get("staff");
-
         return $query->result_array();
     }
 
     function getEmployeeByRoleID($role, $active = 1) {
-
-
         $query = $this->db->select("staff.*,staff_designation.designation,department.department_name as department, roles.id as role_id, roles.name as role")->join('staff_designation', "staff_designation.id = staff.designation", "left")->join('staff_roles', "staff_roles.staff_id = staff.id", "left")->join('roles', "roles.id = staff_roles.role_id", "left")->join('department', "department.id = staff.department", "left")->where("staff.is_active", $active)->where("roles.id", $role)->get("staff");
-
-
         return $query->result_array();
     }
 
     function getStaffDesignation() {
-
         $query = $this->db->select('*')->where("is_active", "yes")->get("staff_designation");
-
         return $query->result_array();
     }
 
     function getDepartment() {
-
         $query = $this->db->select('*')->where("is_active", "yes")->get('department');
         return $query->result_array();
     }
 
     function getLeaveRecord($id) {
-
         $query = $this->db->select('leave_types.type,leave_types.id as lid,staff.name,staff.id as staff_id,staff.surname,roles.name as user_type,staff.employee_id,staff_leave_request.*')->join("leave_types", "leave_types.id = staff_leave_request.leave_type_id")->join("staff", "staff.id = staff_leave_request.staff_id")->join("staff_roles", "staff.id = staff_roles.staff_id")->join("roles", "staff_roles.role_id = roles.id")->where("staff_leave_request.id", $id)->get("staff_leave_request");
-
         return $query->row();
     }
 
-    function getStaffId($empid) {
+    public function deleteleave($id) {
+        $this->db->where("id", $id)->delete('staff_leave_request');      
+    }
 
+    function getStaffId($empid) {
         $data = array('employee_id' => $empid);
         $query = $this->db->select('id')->where($data)->get("staff");
         return $query->row_array();
     }
 
     function getProfile($id) {
-
         $this->db->select('staff.*,staff_designation.designation as designation,staff_roles.role_id, department.department_name as department,roles.name as user_type');
         $this->db->join("staff_designation", "staff_designation.id = staff.designation", "left");
         $this->db->join("department", "department.id = staff.department", "left");
         $this->db->join("staff_roles", "staff_roles.staff_id = staff.id", "left");
         $this->db->join("roles", "staff_roles.role_id = roles.id", "left");
-
         $this->db->where("staff.id", $id);
-
         $this->db->from('staff');
         $query = $this->db->get();
-
         return $query->row_array();
     }
 
     function getstaffProfile($staffid, $id) {
-
         $query = $this->db->select("staff.id as staffid,staff.name,staff.surname,department.department_name as department,staff_designation.designation,staff.employee_id,staff_payslip.*")->join("staff", "staff.id = staff_payslip.staff_id")->join("staff_designation", "staff.designation = staff_designation.id", 'left')->join("department", "staff.department = department.id", "left")->where("staff_payslip.id", $id)->get("staff_payslip");
-
-
         return $query->row_array();
     }
 
     public function searchFullText($searchterm, $active, $order = 'staff.employee_id', $dir = 'desc', $limit = 5, $start = 0) {
-
         $query = $this->db->query("SELECT `staff`.*, `staff_designation`.`designation` as `designation`, `department`.`department_name` as `department`,`roles`.`name` as user_type,`roles`.`id` as role_id  FROM `staff` LEFT JOIN `staff_designation` ON `staff_designation`.`id` = `staff`.`designation` LEFT JOIN `staff_roles` ON `staff_roles`.`staff_id` = `staff`.`id` LEFT JOIN `roles` ON `staff_roles`.`role_id` = `roles`.`id` LEFT JOIN `department` ON `department`.`id` = `staff`.`department` WHERE  `staff`.`is_active` = '$active' and (`staff`.`name` LIKE '%$searchterm%' ESCAPE '!' OR `staff`.`surname` LIKE '%$searchterm%' ESCAPE '!' OR `staff`.`employee_id` LIKE '%$searchterm%' ESCAPE '!' OR `staff`.`local_address` LIKE '%$searchterm%' ESCAPE '!'  OR `staff`.`contact_no` LIKE '%$searchterm%' ESCAPE '!' OR `staff`.`email` LIKE '%$searchterm%' ESCAPE '!') ");
 
         $result = $query->result_array();
@@ -445,7 +391,6 @@ class Staff_model extends CI_Model {
     }
 
     public function searchByEmployeeId($employee_id) {
-
         $this->db->select('*');
         $this->db->from('staff');
         $this->db->like('staff.employee_id', $employee_id);
@@ -455,7 +400,6 @@ class Staff_model extends CI_Model {
     }
 
     public function getStaffDoc($id) {
-
         $this->db->select('*');
         $this->db->from('staff_documents');
         $this->db->where('staff_id', $id);
@@ -464,15 +408,11 @@ class Staff_model extends CI_Model {
     }
 
     function count_attendance($year, $staff_id, $att_type) {
-
-
         $query = $this->db->select('count(*) as attendence')->where(array('staff_id' => $staff_id, 'year(date)' => $year, 'staff_attendance_type_id' => $att_type))->get("staff_attendance");
-
         return $query->row()->attendence;
     }
 
     public function getStaffPayroll($id) {
-
         $this->db->select('*');
         $this->db->from('staff_payslip');
         $this->db->where('staff_id', $id);
@@ -481,7 +421,6 @@ class Staff_model extends CI_Model {
     }
 
     public function doc_delete($id, $doc, $file) {
-
         if ($doc == 1) {
 
             $data = array('resume' => '',);
@@ -503,41 +442,33 @@ class Staff_model extends CI_Model {
     }
 
     public function getLeaveDetails($id) {
-
         $query = $this->db->select('staff_leave_details.alloted_leave,staff_leave_details.id as altid,leave_types.type,leave_types.id')->join("leave_types", "staff_leave_details.leave_type_id = leave_types.id", "inner")->where("staff_leave_details.staff_id", $id)->get("staff_leave_details");
-
         return $query->result_array();
     }
 
     public function disablestaff($id) {
-
         $data = array('is_active' => 0);
-
         $query = $this->db->where("id", $id)->update("staff", $data);
     }
 
     public function enablestaff($id) {
-
         $data = array('is_active' => 1);
-
         $query = $this->db->where("id", $id)->update("staff", $data);
     }
 
     public function getByEmail($email) {
-        $this->db->select('*');
-        $this->db->from('staff');
+         $this->db->select('staff.*,languages.language,languages.id as language_id');
+        $this->db->from('staff')->join('languages', 'languages.id=staff.lang_id', 'left');
         $this->db->where('email', $email);
         $query = $this->db->get();
         if ($query->num_rows() == 1) {
             return $query->row();
         } else {
-            return FALSE;
+            return false;
         }
     }
 
     public function checkLogin($data) {
-
-
         $record = $this->getByEmail($data['email']);
         if ($record) {
             $pass_verify = $this->enc_lib->passHashDyc($data['password'], $record->password);
@@ -592,7 +523,6 @@ class Staff_model extends CI_Model {
     }
 
     public function update_role($role_data) {
-
         $this->db->where("staff_id", $role_data["staff_id"])->update("staff_roles", $role_data);
     }
 

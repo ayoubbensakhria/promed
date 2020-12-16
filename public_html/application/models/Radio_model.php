@@ -2,8 +2,12 @@
 
 class Radio_model extends CI_Model {
 
+      var $column_order = array('test_name','short_name','test_type','lab_name','sub_category','report_days','charges.standard_charge'); //set column field database for datatable orderable
+    var $column_search = array('test_name','short_name','test_type','lab_name','sub_category','report_days','charges.standard_charge');
+
     public function add($radiology) {
         $this->db->insert('radio', $radiology);
+        return $this->db->insert_id();
     }
 
     public function searchFullText() {
@@ -14,6 +18,114 @@ class Radio_model extends CI_Model {
         $this->db->order_by('lab.id', 'desc');
         $query = $this->db->get('radio');
         return $query->result_array();
+    }
+
+    public function search_datatable()
+    {    
+        $this->db->select('radio.*,lab.id as category_id,lab.lab_name,charges.standard_charge');
+        $this->db->join('lab', 'radio.radiology_category_id = lab.id', 'left');
+        $this->db->join('charges', 'radio.charge_id = charges.id', 'left');
+        $this->db->where('`radio`.`radiology_category_id`=`lab`.`id`');
+         if(!isset($_POST['order'])){
+         $this->db->order_by('lab.id', 'desc');
+         }
+        if(!empty($_POST['search']['value']) ) {   // if there is a search parameter
+            $counter=true;
+            $this->db->group_start();
+  
+         foreach ($this->column_search as $colomn_key => $colomn_value) {
+         if($counter){
+              $this->db->like($colomn_value, $_POST['search']['value']);      
+              $counter=false;
+         }
+              $this->db->or_like($colomn_value, $_POST['search']['value']);
+        }
+        $this->db->group_end();           
+        }
+        $this->db->limit($_POST['length'],$_POST['start']);
+        if(isset($_POST['order'])){
+        $this->db->order_by($this->column_order[$_POST['order'][0]['column']],$_POST['order'][0]['dir']);
+        }
+        $query = $this->db->get('radio');
+        return $query->result();
+    }
+
+   public function search_datatable_count() {        
+       $this->db->select('radio.*,lab.id as category_id,lab.lab_name,charges.standard_charge');
+        $this->db->join('lab', 'radio.radiology_category_id = lab.id', 'left');
+        $this->db->join('charges', 'radio.charge_id = charges.id', 'left');
+        $this->db->where('`radio`.`radiology_category_id`=`lab`.`id`');
+        $this->db->order_by('lab.id', 'desc');
+        if(!empty($_POST['search']['value']) ) {   // if there is a search parameter
+            $counter=true;
+            $this->db->group_start();  
+         foreach ($this->column_search as $colomn_key => $colomn_value) {
+         if($counter){
+              $this->db->like($colomn_value, $_POST['search']['value']);      
+              $counter=false;
+         }
+              $this->db->or_like($colomn_value, $_POST['search']['value']);
+        }
+        $this->db->group_end();           
+        }
+        $query = $this->db->from('radio');
+        $total_result= $query->count_all_results();
+        return $total_result;
+    }
+
+    public function addparameter($data) {
+        if (isset($data['id'])) {
+            $this->db->where('id', $data['id']);
+            $this->db->update('radiology_parameterdetails', $data);
+        } else {
+            $this->db->insert_batch('radiology_parameterdetails', $data);
+            return $this->db->insert_id();
+        }       
+    }
+
+   public function delete_parameter($delete_arr) {
+          foreach ($delete_arr as $key => $value) {        
+            $id = $value["id"];
+            $this->db->where("id", $value["id"])->delete("radiology_parameterdetails");
+          }
+    }
+
+     public function getpathoparameter($id = null) {
+        if (!empty($id)) {
+            $this->db->select('radiolog_parameter.*,unit.unit_name');
+            $this->db->from('radiolog_parameter');
+            $this->db->join('unit', 'radiolog_parameter.unit = unit.id','left');
+            $this->db->where("radiolog_parameter.id", $id);
+            $query = $this->db->get(); 
+            return $query->row_array();
+        } else {
+            $this->db->select('radiology_parameter.*,unit.unit_name');
+            $this->db->from('radiology_parameter');
+            $this->db->join('unit', 'radiology_parameter.unit = unit.id','left');
+            $this->db->join('radio', 'radiology_parameter.id = radio.radiology_parameter_id','left');
+            $query = $this->db->get(); 
+            return $query->result_array();
+        }
+    }
+	
+    public function getparameterDetails($id) {
+        $query = $this->db->select('radiology_parameterdetails.*,radiology_parameter.parameter_name,radiology_parameter.reference_range,radiology_parameter.unit,unit.unit_name')
+                ->join('radiology_parameter', 'radiology_parameter.id = radiology_parameterdetails.parameter_id')
+                ->join('unit', 'unit.id = radiology_parameter.unit')
+                ->where('radiology_parameterdetails.radiology_id', $id)
+                ->get('radiology_parameterdetails');
+        return $query->result_array();
+    }
+
+     public function getparameterDetailsforpatient($report_id)
+    {
+           $query = $this->db->select('radiology_report_parameterdetails.*,radiology_parameter.parameter_name,radiology_parameter.reference_range,radiology_parameter.unit,unit.unit_name')
+                ->join('radiology_parameter', 'radiology_parameter.id = radiology_report_parameterdetails.parameter_id')
+                ->join('unit', 'unit.id = radiology_parameter.unit')
+                ->where("radiology_report_parameterdetails.radiology_report_id",$report_id)
+                ->get('radiology_report_parameterdetails');
+                   return $query->result_array();
+                   echo $this->db->last_query();
     }
 
     public function getDetails($id) {
@@ -60,8 +172,17 @@ class Radio_model extends CI_Model {
                 ->get("staff");
         $staff_result = $staff_query->row_array();
         $result["generated_byname"] = $staff_result["name"] . $staff_result["surname"];
-
         return $result;
+    }
+
+    public function updateparameter($condition) {
+        $SQL =  "INSERT INTO radiology_parameterdetails 
+                    (parameter_id, id)
+                    VALUES
+                    ".$condition."
+                    ON DUPLICATE KEY UPDATE 
+                    parameter_id=VALUES(parameter_id)";
+        $query = $this->db->query($SQL);
     }
 
     function getMaxId() {
@@ -79,7 +200,6 @@ class Radio_model extends CI_Model {
     }
 
     public function testReportBatch($report_batch) {
-
         if (isset($report_batch["id"])) {
             $this->db->where("id", $report_batch["id"])->update('radiology_report', $report_batch);
         } else {
@@ -102,7 +222,25 @@ class Radio_model extends CI_Model {
         $this->db->where('id', $report_batch['id'])->update('radiology_report', $report_batch);
     }
 
+    public function addparametervalue($parametervalue) {    
+        if(isset($parametervalue["id"])){
+            $this->db->where("id", $parametervalue["id"])->update('radiology_report_parameterdetails', $parametervalue);
+        }else{
+             $this->db->insert('radiology_parameterdetails', $parametervalue);
+        }
+    }
+
     public function getTestReportBatch($radiology_id) {
+           $doctor_restriction = $this->session->userdata['hospitaladmin']['doctor_restriction'];
+        $disable_option = FALSE;
+           $userdata = $this->customlib->getUserData();
+            $role_id = $userdata['role_id'];
+        if ($doctor_restriction == 'enabled') {
+            if ($role_id == 3) {
+                 $doctorid = $userdata['id'];
+                  $this->db->where("radiology_report.consultant_doctor", $doctorid);
+            }}
+
         $this->db->select('radiology_report.*, radio.id as rid,radio.test_name, radio.short_name,staff.name,staff.surname,charges.id as cid,charges.charge_category,charges.standard_charge,patients.patient_name');
         $this->db->join('radio', 'radiology_report.radiology_id = radio.id', 'inner');
         $this->db->join('staff', 'staff.id = radiology_report.consultant_doctor', "left");
@@ -120,7 +258,6 @@ class Radio_model extends CI_Model {
             $staff_result = $staff_query->row_array();
             $result[$key]->generated_byname = $staff_result["name"] . $staff_result["surname"];
         }
-
         return $result;
     }
 
@@ -148,6 +285,17 @@ class Radio_model extends CI_Model {
         return $query->result_array();
     }
 
-}
+    public function getparameterBypathology($id)
+    {
+         $query = $this->db->select('radiology_parameterdetails.parameter_id')
+                ->where('radiology_id',$id)
+                ->get('radiology_parameterdetails');
+         return $query->result_array();      
+    }
 
+    public function addParameterforPatient($data)
+    {
+        $this->db->insert("radiology_report_parameterdetails",$data);
+    }
+}
 ?>

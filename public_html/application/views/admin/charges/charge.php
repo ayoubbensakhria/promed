@@ -23,7 +23,11 @@ $genderList = $this->customlib->getGender();
                         <?php } ?> 
                         <?php if ($this->rbac->hasPrivilege('doctor_opd_charges', 'can_view')) { ?> 
                             <li><a href="<?php echo base_url(); ?>admin/consultcharges"><?php echo $this->lang->line('doctor') . " " . $this->lang->line('opd') . " " . $this->lang->line('charge'); ?></a></li>
-                        <?php } ?>                                                                
+                        <?php } ?>    
+                           <?php if ($this->rbac->hasPrivilege('charge_type', 'can_view')) { ?> 
+                            <li><a href="<?php echo base_url(); ?>admin/chargetype" ><?php echo $this->lang->line('charge') . " " . $this->lang->line('type') ; ?></a></li>
+                        <?php } ?> 
+                                                                                 
                     </ul>
                 </div>
             </div>
@@ -35,7 +39,7 @@ $genderList = $this->customlib->getGender();
                             <?php
                             if ($this->rbac->hasPrivilege('hospital_charges', 'can_add')) {
                                 ?>
-                                <a data-toggle="modal" onclick="holdModal('myModal')" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> <?php echo $this->lang->line('add') . " " . $this->lang->line('charge'); ?></a> 
+                                <a data-toggle="modal" onclick="holdModal('myModal')" class="btn btn-primary btn-sm charge"><i class="fa fa-plus"></i> <?php echo $this->lang->line('add') . " " . $this->lang->line('charge'); ?></a> 
                             <?php } ?>
                             <div class="btn-group">
                                 <ul class="dropdown-menu multi-level pull-right width300" role="menu" aria-labelledby="dropdownMenu1" id="easySelectable">
@@ -127,7 +131,7 @@ $genderList = $this->customlib->getGender();
                         </table>
                     </div>
                 </div>                                                    
-            </div>                                                                                                                                          
+            </div>                                                                                                             
         </div>  
     </section>
 </div>
@@ -174,29 +178,23 @@ $genderList = $this->customlib->getGender();
                                         <span class="text-danger"><?php echo form_error('code'); ?></span>
                                     </div>
                                 </div>
-
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label><?php echo $this->lang->line('standard') . " " . $this->lang->line('charge') . " (" . $currency_symbol . ")"; ?></label><small class="req"> *</small> 
-                                        <input type="text" name="standard_charge" id="standard_charge" class="form-control">    
+                                        <input type="text" name="standard_charge" id="standard_charge" class="form-control">   
                                         <span class="text-danger"><?php echo form_error('code'); ?></span>
                                     </div>
-
                                     <div class="form-group">
                                         <label> <?php echo $this->lang->line('description'); ?></label> 
                                         <textarea name="description" class="form-control"></textarea>
                                         <span class="text-danger"><?php echo form_error('description'); ?></span>
                                     </div>
-
                                 </div>
                                 <div class="col-sm-12 col-md-6 col-lg-6">
                                     <label><?php echo $this->lang->line('fee_schedule_based_charges'); ?></label>
                                     <button type="button" class="plusign" onclick="apply_to_all()"><?php echo $this->lang->line('apply_to_all'); ?></button>
                                     <div class="chargesborbg">
-
                                         <div class="form-group">
-
-
                                             <table class="printablea4">
                                                 <?php foreach ($schedule as $category) { ?>
                                                     <tr id="schedule_charge">
@@ -210,8 +208,7 @@ $genderList = $this->customlib->getGender();
                                         </div>
                                     </div>
                                 </div>
-                            </div><!--./row-->  
-
+                            </div><!--./row--> 
                     </div><!--./col-md-12-->  
                     <div class="box-footer" style="clear: both;">
                         <div class="pull-right">
@@ -221,7 +218,6 @@ $genderList = $this->customlib->getGender();
                     </form>     
                 </div><!--./row--> 
             </div>
-
         </div>
     </div>    
 </div>
@@ -270,8 +266,6 @@ $genderList = $this->customlib->getGender();
                                         <span class="text-danger"><?php echo form_error('code'); ?></span>
                                     </div>
                                 </div>
-
-
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label><?php echo $this->lang->line('standard') . " " . $this->lang->line('charge') . " (" . $currency_symbol . ")"; ?></label><small class="req"> *</small> 
@@ -285,16 +279,14 @@ $genderList = $this->customlib->getGender();
                                     </div>
                                 </div>
                                 <div id="sc_category"></div>
-                            </div><!--./row-->   
-
-                    </div><!--./col-md-12--> 
+                            </div><!--./row-->
+						</div><!--./col-md-12--> 
                     <div class="box-footer" style="clear: both;">
-
                         <button type="submit" id="formeditbtn" data-loading-text="<?php echo $this->lang->line('processing') ?>" class="btn btn-info pull-right"><?php echo $this->lang->line('save'); ?></button>
                     </div>      
                 </div><!--./row--> 
-            </div> </form>
-
+            </div> 
+		</form>
         </div>
     </div>    
 </div>
@@ -345,30 +337,18 @@ $genderList = $this->customlib->getGender();
         </div>
     </div>    
 </div>
-
 <script type="text/javascript">
     $(function () {
         $('#easySelectable').easySelectable();
 
     })
 
-
-
     function apply_to_all() {
-
         var standard_charge = $("#standard_charge").val();
-
-
         $('input name=schedule_charge_id').val(standard_charge);
     }
-
 </script>
-
-
-<script type="text/javascript">
-    /*
-     Author: mee4dy@gmail.com
-     */
+<script type="text/javascript">    
     (function ($) {
         //selectable html elements
         $.fn.easySelectable = function (options) {
@@ -454,10 +434,12 @@ $genderList = $this->customlib->getGender();
                     }
                     div_data += "<option value='" + obj.name + "'  " + sel + ">" + obj.name + "</option>";
                 });
+                $("#edit_charge_category").html("");
                 $('#edit_charge_category').append(div_data);
             }
         });
     }
+	
     function getcharge_category(id, htmlid) {
         var div_data = "";
         $("#" + htmlid).html("<option value='l'><?php echo $this->lang->line('loading') ?></option>");
@@ -508,6 +490,7 @@ $genderList = $this->customlib->getGender();
             });
         }));
     });
+	
     $(document).ready(function (e) {
         $("#formedit").on('submit', (function (e) {
             $("#formeditbtn").button('loading');
@@ -539,6 +522,7 @@ $genderList = $this->customlib->getGender();
             });
         }));
     });
+	
     $(document).ready(function (e) {
         var date_format = '<?php echo $result = strtr($this->customlib->getSchoolDateFormat(), ['d' => 'DD', 'm' => 'MM', 'Y' => 'YYYY',]) ?>';
         $('#dates_of_birth , #date_of_birth').datepicker();
@@ -572,6 +556,7 @@ $genderList = $this->customlib->getGender();
             }
         });
     }
+	
     function viewDetail(id) {
         $.ajax({
             url: '<?php echo base_url(); ?>admin/charges/getDetails',
@@ -596,6 +581,7 @@ $genderList = $this->customlib->getGender();
             }
         });
     }
+	
     function apply_to_all() {
         var total = 0;
         var standard_charge = $("#standard_charge").val();
@@ -605,11 +591,16 @@ $genderList = $this->customlib->getGender();
             inp.value = standard_charge;
         }
     }
+	
     function holdModal(modalId) {
         $('#' + modalId).modal({
             backdrop: 'static',
             keyboard: false,
             show: true
         });
-    }
+    }	
+	
+$(".charge").click(function(){
+	$('#formadd').trigger("reset");	
+});
 </script>

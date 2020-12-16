@@ -51,21 +51,18 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                     </table>
                     <hr style="height: 1px; clear: both;margin-bottom: 10px; margin-top: 10px">
                     <table class="printablea4" id="testreport" width="100%">
-                        <tr>
-                                                        <!--<th width="20%"><?php echo $this->lang->line('institution'); ?></th>-->
+                        <tr>                                                        
                             <th><?php echo $this->lang->line('technician'); ?></th>
                             <th width="20%"><?php echo $this->lang->line('lot'); ?></th> 
                             <th><?php echo $this->lang->line('bag_no'); ?></th>
                             <th width="20%"><?php echo $this->lang->line('remarks'); ?></th> 
-                            <th><?php echo $this->lang->line('amount'); ?></th>
-
+                            <th><?php echo $this->lang->line('amount')." (".$currency_symbol.")"; ?></th>
                         </tr>
                         <?php
                         $j = 0;
                         foreach ($detail as $bill) {
                             ?>
                             <tr>
-                                                                <!--<td width="20%"><?php echo $bill["institution"]; ?></td>-->
                                 <td><?php echo $bill["technician"]; ?></td>
                                 <td width="20%"><?php echo $bill["lot"]; ?></td>
                                 <td><?php echo $bill["bag_no"]; ?></td>
@@ -79,13 +76,10 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
 
                     </table> 
                     <hr style="height: 1px; clear: both;margin-bottom: 10px; margin-top: 10px">
-
                     <table class="printablea4" width="100%" style="width: 30%; float: right;">
                         <?php if (!empty($result["total"])) { ?>
                             <tr>
-
                                 <th width="20%"><?php echo $this->lang->line('total') . " (" . $currency_symbol . ")"; ?></th>
-
                                 <td align="left" width="80%"><?php echo $result["total"]; ?></td>
                             </tr>
                         <?php } ?>
@@ -93,22 +87,16 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                             <tr>
                                 <th><?php
                                     echo $this->lang->line('discount') . " (" . $currency_symbol . ")";
-                                    ;
                                     ?></th>
-
                                 <td align="left"><?php echo $result["discount"]; ?></td>
-
                             </tr>
                         <?php } ?>
                         <?php if (!empty($result["tax"])) { ?>
                             <tr>
                                 <th><?php
                                     echo $this->lang->line('tax') . " (" . $currency_symbol . ")";
-                                    ;
                                     ?></th>
-
                                 <td align="left"><?php echo $result["tax"]; ?></td>
-
                             </tr>
                         <?php } ?>
                         <?php
@@ -118,11 +106,8 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                 <tr>
                                     <th><?php
                                         echo $this->lang->line('net_amount') . " (" . $currency_symbol . ")";
-                                        ;
                                         ?></th>
-
                                     <td align="left"><?php echo $result["net_amount"]; ?></td>
-
                                 </tr>
                                 <?php
                             }
@@ -130,17 +115,13 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                         ?>
                         <?php if (!empty($result["note"])) { ?>
                             <tr>
-
                                 <th><?php echo $this->lang->line('note'); ?></th>
-
                                 <td align="left"><?php echo $result["note"]; ?></td>
                             </tr>
                         <?php } ?>
                         <?php if (($print) != 'yes') { ?>
                             <tr id="generated_by">
-
                                 <th><?php echo $this->lang->line('collected_by'); ?></th>
-
                                 <td align="right"><?php echo $result["name"] . " " . $result["surname"]; ?></td>
                             </tr>
                         <?php } ?>
@@ -180,7 +161,6 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
             type: 'POST',
             data: {id: id, print: 'yes'},
             success: function (result) {
-                // $("#testdata").html(result);
                 popup(result);
             }
         });

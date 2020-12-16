@@ -23,7 +23,6 @@ class Roomtype extends Admin_Controller {
     function add() {
         $this->form_validation->set_rules('name', 'Name', 'trim|required|xss_clean');
         if ($this->form_validation->run() == FALSE) {
-
             $msg = array(
                 'name' => form_error('name'),
             );
@@ -32,11 +31,8 @@ class Roomtype extends Admin_Controller {
         } else {
 
             $roomtype = array('name' => $this->input->post('name'));
-
             $this->Roomtype_Model->saveroomtype($roomtype);
-
             $msg = "Room Type Added Successfully";
-
             $array = array('status' => 'success', 'error' => '', 'message' => $msg);
         }
         echo json_encode($array);
@@ -64,12 +60,9 @@ class Roomtype extends Admin_Controller {
             );
 
             $this->Roomtype_Model->saveroomtype($roomtype);
-
             $msg = "Room Type Added Successfully";
-
             $array = array('status' => 'success', 'error' => '', 'message' => $msg);
         }
         echo json_encode($array);
     }
-
 }

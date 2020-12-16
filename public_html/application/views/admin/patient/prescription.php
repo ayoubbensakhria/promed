@@ -214,30 +214,27 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
             <div class="col-md-12">
                 <div class="pprinta4">
                     <img src="<?php
-                    if (!empty($print_details[0]['print_header'])) {
-                        echo base_url() . $print_details[0]['print_header'];
-                    }
-                    ?>" style="height:100px; width:100%;" class="img-responsive">
+if (!empty($print_details[0]['print_header'])) {
+    echo base_url() . $print_details[0]['print_header'];
+}
+?>" style="height:100px; width:100%;" class="img-responsive">
                     <div style="height: 10px; clear: both;"></div>
-                </div> 
+                </div>
                 <div class="">
 
                     <?php
-                    $date = $result["appointment_date"];
-                    $appointment_date = date("Y-m-d", strtotime($date));
-                    ?>
+$date             = $result["appointment_date"];
+$appointment_date = date("Y-m-d", strtotime($date));
+?>
                     <table width="100%" class="printablea4">
-
                         <tr>
-
-                            <th><?php echo $this->lang->line('prescription'); ?> #<?php echo $result["id"] ?></th> <td></td>
+                            <th><?php echo $this->lang->line('prescription'); ?> #<?php echo $result["presid"] ?></th> <td></td>
                             <th class="text-right"></th> <th class="text-right"><?php echo $this->lang->line('date'); ?> : <?php
-                                if (!empty($result['appointment_date'])) {
-                                    echo date($this->customlib->getSchoolDateFormat(true, true), strtotime($appointment_date));
-                                }
-                                ?></th>
+if (!empty($result['appointment_date'])) {
+    echo date($this->customlib->getSchoolDateFormat(true, false), strtotime($appointment_date));
+}
+?></th>
                         </tr>
-
                     </table>
                     <hr style="height: 1px; clear: both;margin-bottom: 10px; margin-top: 10px" />
                     <table width="100%" class="printablea4">
@@ -251,12 +248,12 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                         <tr>
                             <th width="25%"><?php echo $this->lang->line("age"); ?></th>
                             <td><?php
-                                if (!empty($result["age"])) {
-                                    echo $result["age"] . " " . $this->lang->line("year") . " ";
-                                } if (!empty($result["age"])) {
-                                    echo $result["month"] . " " . $this->lang->line("month");
-                                }
-                                ?></td>
+if (!empty($result["age"])) {
+    echo $result["age"] . " " . $this->lang->line("year") . " ";
+}if (!empty($result["month"])) {
+    echo $result["month"] . " " . $this->lang->line("month");
+}
+?></td>
                             <th width="25%"><?php echo $this->lang->line("gender"); ?></th>
                             <td><?php echo $result["gender"] ?></td>
                         </tr>
@@ -268,13 +265,13 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                         </tr>
                         <tr>
                             <th width="25%"><?php echo $this->lang->line("phone"); ?></th>
-                            <td width="25%"><?php echo $result["mobileno"] ?></td>   
+                            <td width="25%"><?php echo $result["mobileno"] ?></td>
                             <th width="25%"><?php echo $this->lang->line("email"); ?></th>
                             <td width="25%"><?php echo $result["email"] ?></td>
                         </tr>
                         <tr>
                             <th width="25%"><?php echo $this->lang->line("symptoms"); ?></th>
-                            <td width="25%"><?php echo $result["symptoms"] ?></td>
+                            <td width="25%"><?php echo nl2br($result["symptoms"]); ?></td>
                             <th><?php echo $this->lang->line('consultant'); ?> <?php echo $this->lang->line('doctor'); ?></th><td><?php echo $result["name"] . " " . $result["surname"] ?></td>
                         </tr>
                     </table>
@@ -288,18 +285,19 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                     <hr style="height: 1px; clear: both;margin-bottom: 10px; margin-top:0px" />
 
                     <table width="100%"  class="printablea4">
+
                         <tr>
                             <th width="25%"><?php echo $this->lang->line("medicine") . " " . $this->lang->line("category"); ?></th>
-                            <th width="25%"><?php echo $this->lang->line("medicine"); ?></th> 
-                            <th width="25%"><?php echo $this->lang->line("dosage"); ?></th> 
-                            <th width="50%"><?php echo $this->lang->line("instruction"); ?></th> 
+                            <th width="25%"><?php echo $this->lang->line("medicine"); ?></th>
+                            <th width="25%"><?php echo $this->lang->line("dosage"); ?></th>
+                            <th width="50%"><?php echo $this->lang->line("instruction"); ?></th>
                         </tr>
                         <?php foreach ($prescription_list as $pkey => $pvalue) {
-                            ?>
+    ?>
                             <tr><td><?php echo $pvalue["medicine_category"] ?></td><td><?php echo $pvalue["medicine"] ?></td><td><?php echo $pvalue["dosage"] ?></td><td><?php echo $pvalue["instruction"] ?></td>
-                            </tr>  
-                        <?php } ?>
-                    </table>   
+                            </tr>
+                        <?php }?>
+                    </table>
 
                     <hr style="height: 1px; clear: both;margin-bottom: 10px; margin-top: 10px" />
 
@@ -315,11 +313,11 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                     <table width="100%" class="printablea4">
                         <tr>
                             <td><?php
-                                if (!empty($print_details[0]['print_footer'])) {
-                                    echo $print_details[0]['print_footer'];
-                                }
-                                ?></td>
-                        </tr>   
+if (!empty($print_details[0]['print_footer'])) {
+    echo $print_details[0]['print_footer'];
+}
+?></td>
+                        </tr>
                     </table>
 
 
@@ -349,11 +347,13 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
 
 <script type="text/javascript">
 
-    function delete_prescription(id, opdid) {
+
+
+    function delete_prescription(id, opdid,visitid='') {
         console.log(id);
         if (confirm('Are you sure')) {
             $.ajax({
-                url: '<?php echo base_url(); ?>admin/prescription/deletePrescription/' + id + '/' + opdid,
+                url: '<?php echo base_url(); ?>admin/prescription/deletePrescription/' + id + '/' + opdid+'/'+visitid,
                 success: function (res) {
                     window.location.reload(true);
                 },

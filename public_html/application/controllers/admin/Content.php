@@ -6,7 +6,6 @@ if (!defined('BASEPATH'))
 class Content extends Admin_Controller {
 
     function __construct() {
-
         parent::__construct();
     }
 
@@ -23,27 +22,19 @@ class Content extends Admin_Controller {
         $data['content_available'] = $this->customlib->contentAvailabelFor();
         $ght = $this->customlib->getcontenttype();
         $role = json_decode($user_role);
-
         $list = $this->content_model->getContentByRole($this->customlib->getStaffID(), $role->name);
-
-
         $data['list'] = $list;
-
         $userdata = $this->customlib->getUserData();
         $carray = array();
-
         $data['ght'] = $ght;
         $this->form_validation->set_rules('content_title', 'Content Title', 'trim|required|xss_clean');
         $this->form_validation->set_rules('content_type', 'Content Type', 'trim|required|xss_clean');
         $this->form_validation->set_rules('content_available[]', 'Available for', 'trim|required|xss_clean');
         $post_data = $this->input->post();
-
         if (isset($post_data['content_available']) AND ! isset($post_data['visibility']) AND ( in_array("student", $post_data['content_available']))) {
             $this->form_validation->set_rules('class_id', 'Class', 'trim|required|xss_clean');
             $this->form_validation->set_rules('section_id', 'Section', 'trim|required|xss_clean');
         }
-
-
 
         $this->form_validation->set_rules('file', 'Image', 'callback_handle_upload');
         if ($this->form_validation->run() == FALSE) {
@@ -51,7 +42,6 @@ class Content extends Admin_Controller {
             $this->load->view('admin/content/createcontent', $data);
             $this->load->view('layout/footer');
         } else {
-
             $vs = $this->input->post('visibility');
             $content_available = $this->input->post('content_available');
             $visibility = "No";
@@ -66,12 +56,10 @@ class Content extends Admin_Controller {
                 
             }
 
-
             $content_for = array();
             foreach ($content_available as $cont_avail_key => $cont_avail_value) {
                 $content_for[] = array('role' => $cont_avail_value);
             }
-
 
             $data = array(
                 'title' => $this->input->post('content_title'),
@@ -153,15 +141,12 @@ class Content extends Admin_Controller {
             $this->form_validation->set_rules('section_id', 'Section', 'trim|required|xss_clean');
         }
 
-
-
         $this->form_validation->set_rules('file', $this->lang->line('image'), 'callback_handle_upload');
         if ($this->form_validation->run() == FALSE) {
             $this->load->view('layout/header');
             $this->load->view('admin/content/createcontent', $data);
             $this->load->view('layout/footer');
         } else {
-
             $vs = $this->input->post('visibility');
             $content_available = $this->input->post('content_available');
             $visibility = "No";
@@ -175,13 +160,10 @@ class Content extends Admin_Controller {
             } else {
                 
             }
-
-
             $content_for = array();
             foreach ($content_available as $cont_avail_key => $cont_avail_value) {
                 $content_for[] = array('role' => $cont_avail_value);
             }
-
 
             $data = array(
                 'title' => $this->input->post('content_title'),
@@ -231,9 +213,7 @@ class Content extends Admin_Controller {
     }
 
     public function download($file) {
-
         $this->load->helper('download');
-
         $filepath = "./uploads/hospital_content/material/" . $this->uri->segment(7);
         $data = file_get_contents($filepath);
         $name = $this->uri->segment(7);
@@ -301,7 +281,6 @@ class Content extends Admin_Controller {
         $this->content_model->remove($id);
         redirect('admin/content');
     }
-
 }
 
 ?>

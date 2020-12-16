@@ -21,19 +21,14 @@ class User extends Patient_Controller {
         $this->payment_mode = $this->config->item('payment_mode');
         $this->search_type = $this->config->item('search_type');
         $this->blood_group = $this->config->item('bloodgroup');
-
-        $this->charge_type = $this->config->item('charge_type');
+        $this->charge_type = $this->customlib->getChargeMaster();
         $data["charge_type"] = $this->charge_type;
     }
 
     function dashboard() {
-
         $this->session->set_userdata('top_menu', 'Dashboard');
-        $patient_id = $this->customlib->getPatientSessionUserID();
-        print_r($patient_id);
-        die;
+        $patient_id = $this->customlib->getPatientSessionUserID();        
         $student = $this->student_model->get($student_id);
-
         $data = array();
         if (!empty($student)) {
             $student_session_id = $student['student_session_id'];
@@ -44,7 +39,6 @@ class User extends Patient_Controller {
             $data['student_due_fee'] = $student_due_fee;
             $timeline = $this->timeline_model->getStudentTimeline($student["id"], $status = 'yes');
             $data["timeline_list"] = $timeline;
-
             $examList = $this->examschedule_model->getExamByClassandSection($student['class_id'], $student['section_id']);
             $data['examSchedule'] = array();
             if (!empty($examList)) {
@@ -81,7 +75,6 @@ class User extends Patient_Controller {
             $data['gradeList'] = $gradeList;
             $data['student'] = $student;
         }
-
         $this->load->view('layout/patient/header', $data);
         $this->load->view('user/dashboard', $data);
         $this->load->view('layout/patient/footer', $data);
@@ -116,14 +109,12 @@ class User extends Patient_Controller {
             if ($query1) {
                 $query2 = $this->user_model->saveNewPass($newdata);
                 if ($query2) {
-
                     $this->session->set_flashdata('success_msg', $this->lang->line('success_message'));
                     $this->load->view('layout/patient/header', $data);
                     $this->load->view('user/change_password', $data);
                     $this->load->view('layout/patient/footer', $data);
                 }
             } else {
-
                 $this->session->set_flashdata('error_msg', $this->lang->line('invalid_current_password'));
                 $this->load->view('layout/patient/header', $data);
                 $this->load->view('user/change_password', $data);
@@ -141,7 +132,6 @@ class User extends Patient_Controller {
         if ($this->form_validation->run() == FALSE) {
             
         } else {
-
             $data_array = array(
                 'username' => $this->input->post('current_username'),
                 'new_username' => $this->input->post('new_username'),

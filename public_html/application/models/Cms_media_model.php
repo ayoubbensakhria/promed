@@ -7,7 +7,6 @@ class Cms_media_model extends CI_Model {
 
     public function __construct() {
         parent::__construct();
-        $this->current_session = $this->setting_model->getCurrentSession();
     }
 
     /**
@@ -17,7 +16,6 @@ class Cms_media_model extends CI_Model {
      * @return mixed
      */
     public function bulk_add($data = null) {
-
         $this->db->insert_batch('front_cms_media_gallery', $data);
         if ($this->db->affected_rows() > 0)
             return true;

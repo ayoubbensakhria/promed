@@ -58,7 +58,6 @@ class Consultcharge_model extends CI_Model {
     }
 
     public function get_chargedoctorfee() {
-
         $this->db->order_by('id', 'desc');
         $this->db->select('consult_charges.*,staff.name,staff.surname,staff.department,department.department_name');
         $this->db->join('staff', 'consult_charges.doctor = staff.id ', 'INNER');

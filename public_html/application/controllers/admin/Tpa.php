@@ -8,7 +8,10 @@ Class Tpa extends Admin_Controller {
     function __construct() {
         parent::__construct();
         $this->config->load("payroll");
-        $this->charge_type = $this->config->item('charge_type');
+        //$this->charge_type = $this->config->item('charge_type');
+        $this->charge_type = $this->customlib->getChargeMaster();
+       // print_r($this->charge_type);
+      //  exit();
     }
 
     function master($id) {
@@ -17,16 +20,13 @@ Class Tpa extends Admin_Controller {
         }
         $data["charge_type"] = $this->charge_type;
 
-        foreach ($data["charge_type"] as $key => $value) {
+        foreach($data["charge_type"] as $key => $value) {
 
-
-            $data['org'][$key] = $this->tpa_model->org_charge($id, $key);
+            $data['org'][$key] = $this->tpa_model->org_charge($id,$key);
         }
-
 
         $data['result'] = $this->organisation_model->get($id);
         $data['title'] = "TPA Master";
-
         $this->load->view('layout/header');
         $this->load->view('admin/tpamanagement/tpamasters', $data);
         $this->load->view('layout/footer');

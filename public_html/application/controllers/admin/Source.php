@@ -11,19 +11,14 @@ class Source extends Admin_Controller {
     }
 
     function index() {
-        if (!$this->rbac->hasPrivilege('setup_font_office', 'can_view')) {
-            access_denied();
-        }
         $this->form_validation->set_rules('source', $this->lang->line('source'), 'required');
 
         if ($this->form_validation->run() == FALSE) {
             $data['source_list'] = $this->source_model->source_list();
-
             $this->load->view('layout/header');
             $this->load->view('admin/frontoffice/sourceview', $data);
             $this->load->view('layout/footer');
         } else {
-
             $source = array(
                 'source' => $this->input->post('source'),
                 'description' => $this->input->post('description')
@@ -36,7 +31,7 @@ class Source extends Admin_Controller {
 
     function add() {
 
-        if (!$this->rbac->hasPrivilege('setup_font_office', 'can_view')) {
+        if (!$this->rbac->hasPrivilege('setup_front_office', 'can_add')) {
             access_denied();
         }
 
@@ -65,7 +60,7 @@ class Source extends Admin_Controller {
     }
 
     function edit1($source_id) {
-        if (!$this->rbac->hasPrivilege('setup_font_office', 'can_edit')) {
+        if (!$this->rbac->hasPrivilege('setup_front_office', 'can_edit')) {
             access_denied();
         }
         $this->form_validation->set_rules('source', 'Source', 'required');
@@ -90,7 +85,7 @@ class Source extends Admin_Controller {
 
     function edit() {
         $id = $this->input->post('id');
-        if (!$this->rbac->hasPrivilege('setup_font_office', 'can_edit')) {
+        if (!$this->rbac->hasPrivilege('setup_front_office', 'can_edit')) {
             access_denied();
         }
         $this->form_validation->set_rules('source', $this->lang->line('source'), 'required');
@@ -117,7 +112,7 @@ class Source extends Admin_Controller {
     }
 
     function delete($id) {
-        if (!$this->rbac->hasPrivilege('setup_font_office', 'can_delete')) {
+        if (!$this->rbac->hasPrivilege('setup_front_office', 'can_delete')) {
             access_denied();
         }
         $this->source_model->delete($id);

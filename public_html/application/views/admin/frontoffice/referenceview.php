@@ -42,11 +42,9 @@
                                         ?>
                                         <?php
                                     } else {
-                                        foreach ($reference_list as $key => $value) {
-                                            //print_r($value);
+                                        foreach ($reference_list as $key => $value) {                            
                                             ?>
                                             <tr>
-
                                                 <td class="mailbox-name">
                                                     <a href="#" data-toggle="popover" class="detail_popover"><?php echo $value['reference'] ?></a>
 

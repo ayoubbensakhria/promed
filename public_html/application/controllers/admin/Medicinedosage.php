@@ -27,7 +27,6 @@ class Medicinedosage extends Admin_Controller {
         $data["medicineCategory"] = $medicineCategory;
         $this->form_validation->set_rules('medicine_category', $this->lang->line('medicine') . " " . $this->lang->line('category'), 'trim|required|xss_clean');
         $this->form_validation->set_rules('dosage', $this->lang->line('dosage') . " " . $this->lang->line('name'), 'trim|required|xss_clean');
-
         if ($this->form_validation->run()) {
             $medicineName = $this->input->post("medicine_category");
             $medicinedosageid = $this->input->post("id");

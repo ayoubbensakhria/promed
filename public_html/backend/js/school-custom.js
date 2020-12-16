@@ -2,12 +2,7 @@
      $(this).attr('autocomplete', 'off');
  });
  $(document).ready(function() {
-     if ($('.purchasemodal').length <= 0 && chk_validate == "") {
-         $("#activelicmodal").modal('show');
-     }
-     $(document).on('click', '.purchasemodal', function() {
-         $("#activelicmodal").modal('show');
-     });
+
 
      $('#activelicmodal').on('shown.bs.modal', function() {
       $(this).find('input').next('div').html("");

@@ -9,7 +9,7 @@
                         <h3 class="box-title titlefix"><?php echo $this->lang->line('expense_list'); ?></h3>
                         <div class="box-tools pull-right">
                             <?php if ($this->rbac->hasPrivilege('expense', 'can_add')) { ?>
-                                <a data-toggle="modal" data-target="#myModal" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i>  <?php echo $this->lang->line('add_expense'); ?></a> 
+                                <a data-toggle="modal" data-target="#myModal" class="btn btn-primary btn-sm addexpense"><i class="fa fa-plus"></i>  <?php echo $this->lang->line('add_expense'); ?></a> 
                             <?php } ?>
                         </div><!-- /.box-tools -->
                     </div>                  
@@ -290,16 +290,16 @@
     });
 
     function edit(id) {
-
         $('#myModaledit').modal('show');
         $.ajax({
             url: '<?php echo base_url(); ?>admin/expense/getDataByid/' + id,
             success: function (data) {
-
                 $('#edit_expensedata').html(data);
-
             }
         });
-
-    }
+    }	
+	
+$(".addexpense").click(function(){
+	$('#addexpense').trigger("reset");
+});
 </script>

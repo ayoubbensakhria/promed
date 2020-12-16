@@ -16,13 +16,8 @@
     $admin = $this->customlib->getLoggedInUserData();
     ?>
     <!-- New Desgine start -->
-
-
     <!-- Main content -->
-    <section class="content">
-        <?php
-        // print_r($admin);
-        ?>
+    <section class="content">       
         <div class="row">
             <div class="col-md-4">
                 <!-- Horizontal Form -->
@@ -33,15 +28,11 @@
 
                     <form id="form1" action="<?php echo site_url('admin/enquiry/follow_up_edit/' . $id . "/" . $follow_up_data['id']) ?>"   method="post" >
                         <div class="box-body">
-
-
                             <div class="form-group">
                                 <label for="exampleInputEmail1">Follow Up Date --r</label>
                                 <input type="text" id="date" name="date" class="form-control" value="<?php echo set_value('date', $follow_up_data['date']); ?>" readonly="">
                                 <span class="text-danger"><?php echo form_error('date'); ?></span>
-
                             </div>
-
                             <div class="form-group">
                                 <label for="pwd">Next Follow-Up Date --r</label>
                                 <input type="text" id="date_of_call" name="follow_up_date"class="form-control" value="<?php echo set_value('follow_up_date', $follow_up_data['next_date']); ?>" readonly="">
@@ -52,21 +43,11 @@
 
                                 <span class="text-danger"><?php echo form_error('response'); ?></span>
                             </div>
-
-
-
-
                             <div class="form-group">
                                 <label for="pwd"><?php echo $this->lang->line('note'); ?></label> 
                                 <textarea name="note" class="form-control" ><?php echo set_value('note', $follow_up_data['note']); ?></textarea>
-
                             </div>
-
-
-
                         </div><!-- /.box-body -->
-
-
                         <div class="box-footer">
                             <button type="submit" class="btn btn-info pull-right"><?php echo $this->lang->line('save'); ?></button>
                         </div>

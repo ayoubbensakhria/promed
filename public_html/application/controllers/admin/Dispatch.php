@@ -24,7 +24,6 @@ class Dispatch extends Admin_Controller {
             $this->load->view('admin/frontoffice/dispatchview', $data);
             $this->load->view('layout/footer');
         } else {
-
             $dispatch = array(
                 'reference_no' => $this->input->post('ref_no'),
                 'to_title' => $this->input->post('to_title'),
@@ -49,17 +48,14 @@ class Dispatch extends Admin_Controller {
     }
 
     public function add() {
-
         $this->form_validation->set_rules('to_title', $this->lang->line('to_title'), 'required');
         if ($this->form_validation->run() == FALSE) {
-
             $msg = array(
                 'name' => form_error('to_title'),
             );
 
             $array = array('status' => 'fail', 'error' => $msg, 'message' => '');
         } else {
-
             $dispatch = array(
                 'reference_no' => $this->input->post('ref_no'),
                 'to_title' => $this->input->post('to_title'),
@@ -88,7 +84,6 @@ class Dispatch extends Admin_Controller {
             access_denied();
         }
 
-
         $id = $this->input->post('id');
         $this->form_validation->set_rules('to_title', $this->lang->line('to_title'), 'required');
         if ($this->form_validation->run() == FALSE) {
@@ -98,8 +93,6 @@ class Dispatch extends Admin_Controller {
 
             $array = array('status' => 'fail', 'error' => $msg, 'message' => '');
         } else {
-
-
             $dispatch = array(
                 'reference_no' => $this->input->post('ref_no'),
                 'to_title' => $this->input->post('to_title'),
@@ -110,16 +103,13 @@ class Dispatch extends Admin_Controller {
                 'type' => 'dispatch'
             );
 
-
             $this->dispatch_model->update_dispatch('dispatch_receive', $id, 'dispatch', $dispatch);
-
             if (isset($_FILES["file"]) && !empty($_FILES['file']['name'])) {
                 $fileInfo = pathinfo($_FILES["file"]["name"]);
                 $img_name = 'id' . $id . '.' . $fileInfo['extension'];
                 move_uploaded_file($_FILES["file"]["tmp_name"], "./uploads/front_office/dispatch_receive/" . $img_name);
                 $this->dispatch_model->image_update('dispatch', $id, $img_name);
             }
-
             $array = array('status' => 'success', 'error' => '', 'message' => $this->lang->line('update_message'));
         }
         echo json_encode($array);
@@ -137,7 +127,6 @@ class Dispatch extends Admin_Controller {
         if (!$this->rbac->hasPrivilege('postal_dispatch', 'can_delete')) {
             access_denied();
         }
-
         $this->dispatch_model->delete($id);
     }
 
@@ -161,10 +150,7 @@ class Dispatch extends Admin_Controller {
         $a = array(
             'datedd' => date($this->customlib->getSchoolDateFormat(), $this->customlib->dateyyyymmddTodateformat($data['date'])),
         );
-
         $result = array_merge($a, $data);
-
         echo json_encode($result);
     }
-
 }

@@ -63,8 +63,6 @@
                                 <thead>
                                     <tr>                                    
                                         <th><?php echo $this->lang->line('reference'); ?></th>
-
-
                                         <th class="text-right"><?php echo $this->lang->line('action'); ?></th>
                                     </tr>
                                 </thead>
@@ -75,13 +73,10 @@
                                         <?php
                                     } else {
                                         foreach ($reference_list as $key => $value) {
-                                            //print_r($value);
                                             ?>
                                             <tr>
-
                                                 <td class="mailbox-name">
                                                     <a href="#" data-toggle="popover" class="detail_popover"><?php echo $value['reference'] ?></a>
-
                                                     <div class="fee_detail_popover" style="display: none">
                                                         <?php
                                                         if ($value['description'] == "") {
@@ -95,9 +90,6 @@
                                                         }
                                                         ?>
                                                     </div></td>
-
-
-
                                                 <td class="mailbox-date pull-right" "="">
                                                     <?php if ($this->rbac->hasPrivilege('setup_font_office', 'can_edit')) { ?>
                                                         <a href="<?php echo base_url(); ?>admin/reference/edit/<?php echo $value['id']; ?>"  class="btn btn-default btn-xs" data-toggle="tooltip" title="" data-original-title="Edit">

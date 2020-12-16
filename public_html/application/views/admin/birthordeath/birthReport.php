@@ -2,122 +2,38 @@
 $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
 $genderList = $this->customlib->getGender();
 ?>
-<style type="text/css">
-    #easySelectable {/*display: flex; flex-wrap: wrap;*/}
-    #easySelectable li {}
-    #easySelectable li.es-selected {background: #2196F3; color: #fff;}
-    .easySelectable {-webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;}
-</style>
 <div class="content-wrapper">
     <!-- Main content -->
     <section class="content">
         <div class="row">
-
             <div class="col-md-12">
                 <div class="box box-primary">
                     <div class="box-header with-border">
                         <h3 class="box-title titlefix"><?php echo $this->lang->line('birth_record'); ?></h3>
-                        <div class="box-tools pull-right">
+                        <div class="box-tools addmeeting">
                             <?php
                             if ($this->rbac->hasPrivilege('birth_record', 'can_add')) {
                                 ?>
-                                <a data-toggle="modal" onclick="holdModal('myModal')" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> <?php echo $this->lang->line('add') . " " . $this->lang->line('birth_record'); ?></a> 
-                            <?php } ?>
-                            <div class="btn-group">
-                                <ul class="dropdown-menu multi-level pull-right width300" role="menu" aria-labelledby="dropdownMenu1" id="easySelectable">
-                                    <li><a href="#">All</a></li>
-                                    <li><a href="#">Not Sent</a></li> 
-                                    <li><a href="#">Invoiced</a></li>
-                                    <li><a href="#">Not Invoiced</a></li>
-                                    <li class="divider"></li>
-                                    <li><a href="#">Draft</a></li>
-                                    <li class="dropdown-submenu pull-left">
-                                        <a href="#">Sale Agent</a> 
-                                        <ul class="dropdown-menu dropdown-menu-left">
-                                            <li><a href="#">Edward Thomas</a></li>
-                                            <li><a href="#">Robin Peterson</a></li>
-                                            <li><a href="#">Nicolas Fleming</a></li>
-                                            <li><a href="#">Glen Stark</a></li>
-                                            <li><a href="#">Simon Peterson</a></li>
-                                            <li><a href="#">Brian Kohlar</a></li>
-                                            <li><a href="#">Laura Clinton</a></li>
-                                            <li><a href="#">David Heart</a></li>
-                                            <li><a href="#">Emma Thomas</a></li>
-                                            <li><a href="#">Benjamin Gates</a></li>
-                                            <li><a href="#">Kriti Singh</a></li>
-                                        </ul>
-                                    </li>
-                                    <li><a href="#">Sent</a></li>
-                                    <li><a href="#">Expired</a></li>
-                                    <li><a href="#">Declined</a></li>
-                                    <li><a href="#">Accepted</a></li>
-                                </ul>
-                            </div>     
+                                <a data-toggle="modal" onclick="holdModal('myModal')" class="btn btn-primary btn-sm birthrecord"><i class="fa fa-plus"></i> <?php echo $this->lang->line('add') . " " . $this->lang->line('birth_record'); ?></a> 
+                            <?php } ?>							     
                         </div>    
                     </div><!-- /.box-header -->
                     <div class="box-body">
                         <div class="download_label"><?php echo $this->lang->line('birth_record'); ?></div>
-                        <table class="table table-striped table-bordered table-hover example" cellspacing="0" width="100%">
+                        <table class="table table-striped table-bordered table-hover test_ajax" cellspacing="0" width="100%">
                             <thead>
                                 <tr>
-                                    <!--<th><?php echo $this->lang->line('opd_ipd_no'); ?></th>-->
                                     <th><?php echo $this->lang->line('child') . " " . $this->lang->line('name'); ?></th>
                                     <th><?php echo $this->lang->line('gender'); ?></th>
                                     <th><?php echo $this->lang->line('refrence') . " " . $this->lang->line('no'); ?></th>
                                     <th><?php echo $this->lang->line('birth_date'); ?></th>
                                     <th><?php echo $this->lang->line('mother') . " " . $this->lang->line('name'); ?></th>
                                     <th><?php echo $this->lang->line('father') . " " . $this->lang->line('name'); ?></th>
-                                    <th class=""><?php echo $this->lang->line('report'); ?></th>
+                                    <th><?php echo $this->lang->line('report'); ?></th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php
-                                if (empty($resultlist)) {
-                                    ?>
-
-                                    <?php
-                                } else {
-                                    $count = 1;
-                                    foreach ($resultlist as $birth) {
-                                        ?>
-                                        <tr class="">
-                                            <td>
-                                                <?php echo $birth['child_name']; ?> 
-                                                <div class="rowoptionview">
-                                                    <a href="#" 
-                                                       onclick="viewDetail('<?php echo $birth['id'] ?>')"
-                                                       class="btn btn-default btn-xs"  data-toggle="tooltip"
-                                                       title="<?php echo $this->lang->line('show'); ?>" >
-                                                        <i class="fa fa-reorder"></i>
-                                                    </a> 
-                                                    <?php
-                                                    if ($this->rbac->hasPrivilege('birth_record', 'can_edit')) {
-                                                        ?>
-                                                        <a href="#" onclick="getRecord('<?php echo $birth['id'] ?>')" class="btn btn-default btn-xs"  data-toggle="tooltip" title="<?php echo $this->lang->line('edit'); ?>">
-                                                            <i class="fa fa-pencil"></i>
-                                                        </a>      
-                                                    <?php } if ($this->rbac->hasPrivilege('birth_record', 'can_delete')) { ?>
-                                                        <a  class="btn btn-default btn-xs" data-toggle="tooltip" title="" onclick="delete_recordById('<?php echo base_url(); ?>admin/birthordeath/delete/<?php echo $birth['id']; ?>', '<?php echo $this->lang->line('delete_message'); ?>')" data-original-title="<?php echo $this->lang->line('delete'); ?>">
-                                                            <i class="fa fa-trash"></i>
-                                                        </a>    
-                                                    <?php } ?> 
-                                                </div> 
-                                            </td>
-                                            <!--<td class=""><?php echo $birth['child_name']; ?></td>-->
-                                            <td class=""><?php echo $birth['gender']; ?></td>
-                                            <td class=""><?php echo $birth['ref_no']; ?></td>
-                                            <td class=""><?php echo date($this->customlib->getSchoolDateFormat(true, true), strtotime($birth['birth_date'])); ?></td>
-                                            <td class=""><?php echo $birth['patient_name']; ?></td>
-                                            <td class=""><?php echo $birth['father_name']; ?></td>
-                                            <td class=""><?php echo $birth['birth_report']; ?></td>
-                                        </tr>
-                                        <?php
-                                        $count++;
-                                    }
-                                }
-                                ?>
                             </tbody>
-
                         </table>
                     </div>
                 </div>                                                    
@@ -139,7 +55,6 @@ $genderList = $this->customlib->getGender();
                         <form id="formadd" accept-charset="utf-8" method="post" class="ptt10" >
                             <div class="row">
                                 <input type="hidden" id="patient_id" name="mother_name" value=<?php set_value('id') ?>>
-
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label><?php echo $this->lang->line('child') . " " . $this->lang->line('name'); ?></label><small class="req"> *</small> 
@@ -162,9 +77,7 @@ $genderList = $this->customlib->getGender();
                                             ?>
                                         </select>
                                     </div>
-
                                 </div>
-
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label><?php echo $this->lang->line('weight'); ?></label> <small class="req">*</small>
@@ -172,7 +85,6 @@ $genderList = $this->customlib->getGender();
                                         <span class="text-danger"><?php echo form_error('weight'); ?></span>
                                     </div> 
                                 </div>
-
                                 <div class="col-sm-3">
                                     <div class="form-group">
                                         <label for="exampleInputFile">
@@ -183,7 +95,6 @@ $genderList = $this->customlib->getGender();
                                         <span class="text-danger"><?php echo form_error('file'); ?></span>
                                     </div>
                                 </div>
-
                                 <div class="col-sm-3">
                                     <div class="form-group">
                                         <label><?php echo $this->lang->line('birth_date'); ?></label>
@@ -192,7 +103,6 @@ $genderList = $this->customlib->getGender();
                                         <span class="text-danger"><?php echo form_error('birth_date'); ?></span>
                                     </div>
                                 </div>
-
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label><?php echo $this->lang->line('phone'); ?></label>
@@ -200,7 +110,6 @@ $genderList = $this->customlib->getGender();
                                         <span class="text-danger"><?php echo form_error('contact'); ?></span>
                                     </div>
                                 </div>
-
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label><?php echo $this->lang->line('address'); ?></label>
@@ -208,14 +117,6 @@ $genderList = $this->customlib->getGender();
                                         <span class="text-danger"><?php echo form_error('address'); ?></span>
                                     </div>
                                 </div>
-
-                                <!--<div class="col-md-3">
-                                    <div class="form-group">
-                                        <label><?php echo $this->lang->line('mother') . " " . $this->lang->line('name'); ?></label><small class="req"> *</small> 
-                                        <input type="text" name="mother_name" id="mother_name" class="form-control">    
-                                        <span class="text-danger"><?php echo form_error('mother_name'); ?></span>
-                                    </div>
-                                </div>-->
                                 <div class="col-sm-3">
                                     <div class="form-group">
                                         <label for="">
@@ -239,15 +140,11 @@ $genderList = $this->customlib->getGender();
 <?php } ?>
                                             </select>
                                         </div>
-
                                     </div>
                                 </div>
-
                                 <div class="col-md-3">
                                     <div class="form-group">
-                                        <label><?php echo $this->lang->line('ipd') . " / " . $this->lang->line('opd') . " " . $this->lang->line('no');
-;
-?></label>
+                                        <label><?php echo $this->lang->line('ipd') . " / " . $this->lang->line('opd') . " " . $this->lang->line('no');?></label>
                                         <input type="text" name="opd_ipd_no" id="opd_ipd_no" class="form-control">    
                                         <span class="text-danger"><?php echo form_error('ipd'); ?></span>
                                     </div>
@@ -278,16 +175,13 @@ $genderList = $this->customlib->getGender();
                                         </div>
                                         <span class="text-danger"><?php echo form_error('file'); ?></span>
                                     </div>
-                                </div> 
-
-
+                                </div>
                                 <div class="col-sm-6">
                                     <div class="form-group">
                                         <label for="email"><?php echo $this->lang->line('report'); ?></label> 
                                         <textarea name="birth_report" id="birth_report" class="form-control" ><?php echo set_value('birth_report'); ?></textarea>
                                     </div> 
                                 </div>
-
                                 <div class="col-sm-6">
                                     <div class="form-group">
                                         <label for="exampleInputFile">
@@ -298,15 +192,12 @@ $genderList = $this->customlib->getGender();
                                         <span class="text-danger"><?php echo form_error('file'); ?></span>
                                     </div>
                                 </div>
-
                                 <div class="">  
 <?php
 echo display_custom_fields('birth_report');
 ?>
                                 </div>
-
-                            </div><!--./row-->  
-
+                            </div><!--./row-->
                     </div><!--./col-md-12-->  
                     <div class="box-footer" style="clear: both;">
                         <div class="pull-right">
@@ -337,7 +228,6 @@ echo display_custom_fields('birth_report');
                     <div class=" table-responsive">
                         <div class="col-lg-12 col-md-12 col-sm-12">
                             <form id="view" accept-charset="utf-8" method="get" class="ptt10">
-
                                 <table class="table mb0 table-striped table-bordered">
                                     <tr>
                                         <th><?php echo $this->lang->line('child') . " " . $this->lang->line('name'); ?></th>
@@ -351,7 +241,6 @@ echo display_custom_fields('birth_report');
                                     </tr>
                                     <tr>
                                         <td class="">
-
 <?php
 $file = "uploads/patient_images/no_image.png";
 ?> 
@@ -359,8 +248,7 @@ $file = "uploads/patient_images/no_image.png";
                                                 <img class="" src="<?php echo base_url() . $file ?>" id="image" alt="User profile picture">
                                             </div> 
                                             <?php echo $this->lang->line('child') . " " . $this->lang->line('photo'); ?>
-                                        </td> 
-
+                                        </td>
                                         <td class="">
                                             <?php
                                             $file = "uploads/patient_images/no_image.png";
@@ -368,7 +256,6 @@ $file = "uploads/patient_images/no_image.png";
                                             <div class="childimg"><img class="" src="<?php echo base_url() . $file ?>" id="imagem" alt="User profile picture"></div>
                                             <?php echo $this->lang->line('mother') . " " . $this->lang->line('photo'); ?>
                                         </td>
-
                                         <td class="">
                                             <?php
                                             $file = "uploads/patient_images/no_image.png";
@@ -376,9 +263,7 @@ $file = "uploads/patient_images/no_image.png";
                                             <div class="childimg"><img class="" src="<?php echo base_url() . $file ?>" id="imagef" alt="User profile picture"></div>
 <?php echo $this->lang->line('father') . " " . $this->lang->line('photo'); ?>
                                         </td>
-
                                     </tr>
-
                                     <tr>
                                         <th><?php echo $this->lang->line('birth_date'); ?></th>
                                         <td><span id="vbirth_date"></span>
@@ -394,34 +279,25 @@ $file = "uploads/patient_images/no_image.png";
                                         <th><?php echo $this->lang->line('address'); ?></th>
                                         <td><span id='vaddress'></span></td>
                                         <th><?php echo $this->lang->line('document'); ?></th>
-                                        <td><span id='download_document'></span>
-                                       <!--<a href=""class="btn btn-default btn-xs"  data-toggle="tooltip" title="<?php echo $this->lang->line('download'); ?>">
-<?php echo $this->lang->line('download'); ?>
-                                       <i class="fa fa-download"></i>
-                                       </a>-->
-                                        </td>
+                                        <td><span id='download_document'></span> </td>
                                     </tr>
                                     <tr>
                                         <th><?php echo $this->lang->line('report'); ?></th>
                                         <td><span id='vreport'></span></td>
+                                        <th><?php echo $this->lang->line('opd_ipd_no'); ?></th>
+                                        <td><span id='vopdipdno'></span></td>
                                     </tr>
-
-<!--<?php echo base_url(); ?>admin/pharmacy/download/<?php echo $bill['file'] ?>-->
                                     <tr id="field_data">
                                         <th><span id="vcustom_name"></span></th>
                                         <td><span id="vcustom_value"></span></td>
                                     </tr>
-
-
                                 </table>
-
                             </form> 
                         </div>                      
                     </div><!--./col-md-12-->       
                 </div><!--./row--> 
                 <div id="tabledata"></div>
             </div>
-
             <div class="box-footer">
                 <div class="pull-right paddA10">
                 </div>
@@ -442,7 +318,6 @@ $file = "uploads/patient_images/no_image.png";
                         <form id="formedit" accept-charset="utf-8" enctype="multipart/form-data" method="post" class="ptt10">
                             <div class="row">
                                 <input type="hidden" name="id" id="eid" value="<?php echo set_value('id'); ?>">
-
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label><?php echo $this->lang->line('child') . " " . $this->lang->line('name'); ?></label><small class="req"> *</small> 
@@ -473,7 +348,6 @@ $file = "uploads/patient_images/no_image.png";
                                         <span class="text-danger"><?php echo form_error('weight'); ?></span>
                                     </div>
                                 </div>
-
                                 <div class="col-sm-3">
                                     <div class="form-group">
                                         <label for="exampleInputFile">
@@ -492,8 +366,6 @@ $file = "uploads/patient_images/no_image.png";
                                         <span class="text-danger"><?php echo form_error('birth_date'); ?></span>
                                     </div>
                                 </div>
-
-
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label><?php echo $this->lang->line('phone'); ?></label>
@@ -501,7 +373,6 @@ $file = "uploads/patient_images/no_image.png";
                                         <span class="text-danger"><?php echo form_error('contact'); ?></span>
                                     </div>
                                 </div>
-
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label><?php echo $this->lang->line('address'); ?></label>
@@ -509,8 +380,6 @@ $file = "uploads/patient_images/no_image.png";
                                         <span class="text-danger"><?php echo form_error('address'); ?></span>
                                     </div>
                                 </div>
-
-
                                 <div class="col-sm-3">
                                     <div class="form-group">
                                         <label for="">
@@ -526,12 +395,8 @@ $file = "uploads/patient_images/no_image.png";
 <?php } ?>
                                             </select>
                                         </div>
-
                                     </div>
                                 </div>
-
-
-
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label><?php echo $this->lang->line('ipd') . "/" . $this->lang->line('opd') . " " . $this->lang->line('no'); ?></label>
@@ -541,15 +406,13 @@ $file = "uploads/patient_images/no_image.png";
                                 </div>
                                 <div class="col-sm-6">
                                     <div class="form-group">
-                                        <label for="exampleInputFile">
-<?php echo $this->lang->line('mother'); ?>
+                                        <label for="exampleInputFile"><?php echo $this->lang->line('mother'); ?>
                                         </label>
                                         <div><input class="filestyle form-control" type='file' name='mother_pic' id="emother_pic" value="<?php echo set_value('mother_pic'); ?>" size='20' data-height="26" />
                                         </div>
                                         <span class="text-danger"><?php echo form_error('file'); ?></span>
                                     </div>
                                 </div>
-
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label><?php echo $this->lang->line('father') . " " . $this->lang->line('name'); ?></label> 
@@ -557,7 +420,6 @@ $file = "uploads/patient_images/no_image.png";
                                         <span class="text-danger"><?php echo form_error('father_name'); ?></span>
                                     </div>
                                 </div>
-
                                 <div class="col-sm-6">
                                     <div class="form-group">
                                         <label for="exampleInputFile">
@@ -585,25 +447,20 @@ $file = "uploads/patient_images/no_image.png";
                                     </div>
                                 </div>
                             </div>
-
                             <div class="">
                                 <span id="customdata"></span>
                             </div>
-
                     </div><!--./col-md-12--> 
                     <div class="box-footer" style="clear: both;">
-
                         <button type="submit" id="formeditbtn" data-loading-text="<?php echo $this->lang->line('processing') ?>" class="btn btn-info pull-right"><?php echo $this->lang->line('save'); ?></button>
                     </div>      
                 </div><!--./row--> 
             </div> 
             </form>
-
         </div>
     </div>    
 </div>
 </div>
-
 
 <script type="text/javascript">
 
@@ -616,24 +473,15 @@ $file = "uploads/patient_images/no_image.png";
         $('.select2').select2()
     });
     $(function () {
-        $('#easySelectable').easySelectable();
-        //stopPropagation();
+        $('#easySelectable').easySelectable();        
     });
     function apply_to_all() {
-
         var standard_charge = $("#standard_charge").val();
-
-
         $('input name=schedule_charge_id').val(standard_charge);
     }
 
 </script>
-
-
 <script type="text/javascript">
-    /*
-     Author: mee4dy@gmail.com
-     */
     (function ($) {
         //selectable html elements
         $.fn.easySelectable = function (options) {
@@ -737,7 +585,6 @@ $file = "uploads/patient_images/no_image.png";
         }));
     });
 
-
     $(document).ready(function (e) {
         $("#formedit").on('submit', (function (e) {
             $("#formeditbtn").button('loading');
@@ -773,36 +620,26 @@ $file = "uploads/patient_images/no_image.png";
 
     $(document).ready(function (e) {
         var date_format = '<?php echo $result = strtr($this->customlib->getSchoolDateFormat(), ['d' => 'DD', 'm' => 'MM', 'Y' => 'YYYY',]) ?>';
-
-        // var capital_date_format=date_format.toUpperCase();      
-        //  $.fn.dataTable.moment(capital_date_format);
-
         $('#dates_of_birth , #date_of_birth').datepicker();
     });
 
-
-
     function get_PatientDetails(id) {
-        //$("#patient_name").html("patient_name");
-        //$("#schedule_charge").html("schedule_charge");
-
         $.ajax({
             url: '<?php echo base_url(); ?>admin/pharmacy/patientDetails',
             type: "POST",
             data: {id: id},
             dataType: 'json',
             success: function (res) {
-
                 if (res) {
                     $('#patient_name').val(res.patient_name);
                     $('#patient_id').val(res.id);
                 } else {
                     $('#patient_name').val('Null');
-
                 }
             }
         });
     }
+	
     function viewDetail(id) {
         $('#viewModal').modal('show');
         $.ajax({
@@ -811,10 +648,8 @@ $file = "uploads/patient_images/no_image.png";
             data: {id: id},
             dataType: 'json',
             success: function (data) {
-                //    console.log(data);
                 $("#vid").html(data.id);
                 $("#vopd_ipd_no").html(data.opd_ipd_no);
-                //console.log(data.child_name);
                 $("#vchild_name").html(data.child_name);
                 $("#vbirth_date").html(data.birth_date);
                 $("#vweight").html(data.weight);
@@ -822,21 +657,15 @@ $file = "uploads/patient_images/no_image.png";
                 $("#vcontact").html(data.contact);
                 $("#vaddress").html(data.address);
                 $("#vreport").html(data.birth_report);
+                $("#vopdipdno").html(data.opd_ipd_no);
                 $("#vgender").html(data.gender);
                 $("#vfather_name").html(data.father_name);
-                //$("#vmother_pic").html(data.mother_pic);
-                // $("#vfather_pic").html(data.father_pic);
                 $("#vbirth_report").html(data.birth_report);
                 $("#image").attr("src", '<?php echo base_url() ?>' + data.child_pic);
                 $("#imagem").attr("src", '<?php echo base_url() ?>' + data.mother_pic);
                 $("#imagef").attr("src", '<?php echo base_url() ?>' + data.father_pic);
-                //$("#imaged").attr("src",'<?php echo base_url() ?>'+data.document);
-                /// var downloadid = html(data.document);
                 var downloadid = data.document;
-
                 var table_html = '';
-
-
                 $.each(data.field_data, function (i, obj)
                 {
                     if (obj.field_value == null) {
@@ -855,9 +684,6 @@ $file = "uploads/patient_images/no_image.png";
         });
     }
 
-
-
-
     function getRecord(id) {
         $('#myModaledit').modal('show');
         $.ajax({
@@ -866,46 +692,30 @@ $file = "uploads/patient_images/no_image.png";
             data: {id: id},
             dataType: 'json',
             success: function (data) {
-                //console.log(data.field_data);
                 $("#eid").val(data.id);
-                // console.log(id);
                 var $exampleDestroy = $('#emother_name').select2();
-
                 var table_html = '';
                 $.each(data.field_data, function (i, obj)
                 {
-
-
                     if (obj.field_value == null) {
                         var field_value = "";
                     } else {
                         var field_value = obj.field_value;
                     }
                     table_html += "<div class='form-group'><label for='exampleInputFile'>" + obj.name + "</label><div><input class='form-control' type='text' name='custom_field_value[]'  value='" + field_value + "'  size='20' data-height='26' /></div><span class='text-danger'></span><input type='hidden' name='custom_field_id[]' value='" + obj.cid + "'><input type='hidden' name='custom_field[]' value='" + obj.name + "'><input type='hidden' name='belong_table_id' value='" + obj.belong_table_id + "'></div>";
-
                 });
-
-                //console.log(belong_table_id);
+				
                 $("#customdata").html(table_html);
-                //$("#evid").html(data.id);
-                //console.log(data.id);
                 $("#eopd_ipd_no").val(data.opd_ipd_no);
                 $exampleDestroy.val(data.mother_name).select2('').select2();
-                // console.log(data.mother_name);
                 $("#echild_name").val(data.child_name);
-
                 $("#ebirth_date").val(data.birth_date);
-
                 $("#eweight").val(data.weight);
                 $("#gender").val(data.gender);
-                //$("#emother_name").val(data.mother_name);
                 $("#econtact").val(data.contact);
                 $("#eaddress").val(data.address);
                 $("#efather_name").val(data.father_name);
-                //$("#emother_pic").val(data.mother_pic);
-                // $("#efather_pic").val(data.father_pic);
                 $("#ebirth_report").val(data.birth_report);
-
             },
         });
     }
@@ -925,24 +735,17 @@ $file = "uploads/patient_images/no_image.png";
         }
     }
 
-
-
     function printData(id) {
-
         var base_url = '<?php echo base_url() ?>';
         $.ajax({
             url: base_url + 'admin/birthordeath/getBirthprintDetails/' + id,
             type: 'POST',
             data: {id: id, print: 'yes'},
             success: function (result) {
-                // $("#testdata").html(result);
                 popup(result);
-
             }
         });
     }
-
-
 
     function popup(data)
     {
@@ -980,6 +783,7 @@ $file = "uploads/patient_images/no_image.png";
         }, 500);
         return true;
     }
+	
     function apply_to_all() {
         var total = 0;
         var standard_charge = $("#standard_charge").val();
@@ -989,6 +793,7 @@ $file = "uploads/patient_images/no_image.png";
             inp.value = standard_charge;
         }
     }
+	
     function holdModal(modalId) {
         $('#' + modalId).modal({
             backdrop: 'static',
@@ -996,4 +801,94 @@ $file = "uploads/patient_images/no_image.png";
             show: true
         });
     }
+</script>
+<script type="text/javascript">
+    $(document).ready(function() {
+    $('.test_ajax').DataTable({
+        "processing": true,
+        "serverSide": true,
+        "ajax": {
+            "url": base_url+"admin/searchdatatable/birth_record",
+            "type": "POST"
+        },
+           responsive: 'true',
+            dom: "Bfrtip",
+         buttons: [
+
+                {
+                    extend: 'copyHtml5',
+                    text: '<i class="fa fa-files-o"></i>',
+                    titleAttr: 'Copy',
+                    title: $('.download_label').html(),
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                },
+
+                {
+                    extend: 'excelHtml5',
+                    text: '<i class="fa fa-file-excel-o"></i>',
+                    titleAttr: 'Excel',
+                   
+                    title: $('.download_label').html(),
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                },
+
+                {
+                    extend: 'csvHtml5',
+                    text: '<i class="fa fa-file-text-o"></i>',
+                    titleAttr: 'CSV',
+                    title: $('.download_label').html(),
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                },
+
+                {
+                    extend: 'pdfHtml5',
+                    text: '<i class="fa fa-file-pdf-o"></i>',
+                    titleAttr: 'PDF',
+                    title: $('.download_label').html(),
+                    exportOptions: {
+                        columns: ':visible'
+                        
+                    }
+                },
+
+                {
+                    extend: 'print',
+                    text: '<i class="fa fa-print"></i>',
+                    titleAttr: 'Print',
+                    title: $('.download_label').html(),
+                        customize: function ( win ) {
+                    $(win.document.body)
+                        .css( 'font-size', '10pt' );
+ 
+                    $(win.document.body).find( 'table' )
+                        .addClass( 'compact' )
+                        .css( 'font-size','inherit');
+                },
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                },
+
+                {
+                    extend: 'colvis',
+                    text: '<i class="fa fa-columns"></i>',
+                    titleAttr: 'Columns',
+                    title: $('.download_label').html(),
+                    postfixButtons: ['colvisRestore']
+                },
+            ]
+    });
+});
+
+$(".birthrecord").click(function(){
+		$('#formadd').trigger("reset");
+		$('#select2-14fy-container').html('');
+		$(".dropify-clear").trigger("click");
+});
 </script>

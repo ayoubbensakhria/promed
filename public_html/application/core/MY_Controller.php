@@ -10,24 +10,25 @@ class MY_Controller extends CI_Controller {
     function __construct() {
         parent::__construct();
         $lang_array = array();
+		$this->load->helper('lang');
         $this->load->helper('language');
         $this->load->config('license');
         $this->load->library('auth');
         $this->load->library('module_lib');
         $this->load->helper('directory');
         $this->load->model('setting_model');
-        if ($this->session->has_userdata('admin')) {
-            $admin = $this->session->userdata('admin');
+       if ($this->session->has_userdata('hospitaladmin')) {
+            $admin = $this->session->userdata('hospitaladmin');
             $language = ($admin['language']['language']);
         } else if ($this->session->has_userdata('patient')) {
-            $student = $this->session->userdata('patient');
+            $student = $this->session->userdata('patient');       
             $language = ($student['language']['language']);
         } else {
             $sss = $this->setting_model->get();
             $language = $sss[0]['language'];
         }
 
-        $this->config->set_item('language', $language);
+          $this->config->set_item('language', strtotime($language));
         $map = directory_map(APPPATH . "./language/" . $language . "/app_files");
         foreach ($map as $lang_key => $lang_value) {
             $lang_array[] = 'app_files/' . str_replace(".php", "", $lang_value);
@@ -43,9 +44,57 @@ class Admin_Controller extends MY_Controller {
         parent::__construct();
         $this->load->library('rbac');
         $this->auth->is_logged_in();
+             $this->check_license();
+    }
+
+      public function check_license()
+    {
+
+        $license = $this->config->item('SHLK');
+
+        if (!empty($license)) {
+
+            $regex = "/^[A-Z0-9]{6}-[A-Z0-9]{6}-[A-Z0-9]{6}-/";
+
+            if (preg_match($regex, $license)) {
+                $valid_string = $this->aes->validchk('encrypt', base_url());
+
+                if (strpos($license, $valid_string) !== false) {
+
+                    true; //valid
+                } else {
+                    $this->update_ss_routine();
+                }
+            } else {
+
+                $this->update_ss_routine();
+
+            }
+
+        }
+
+    }
+    public function update_ss_routine()
+    {
+
+        $license       = $this->config->item('SHLK');
+        $fname         = APPPATH . 'config/license.php';
+        $update_handle = fopen($fname, "r");
+        $content       = fread($update_handle, filesize($fname));
+        $file_contents = str_replace('$config[\'SHLK\'] = \'' . $license . '\'', '$config[\'SHLK\'] = \'\'', $content);
+        $update_handle = fopen($fname, 'w') or die("can't open file");
+        if (fwrite($update_handle, $file_contents)) {
+
+        }
+        fclose($update_handle);
+
+        $this->config->set_item('SHLK', '');
     }
 
 }
+
+
+
 
 class Patient_Controller extends MY_Controller {
 
@@ -85,7 +134,7 @@ class Front_Controller extends CI_Controller {
     function __construct() {
 
         parent::__construct();
-        // load language to communicate dring the login
+		$this->load->helper('lang');
         $this->load->helper('language');
         $this->check_installation();
         if ($this->config->item('installed') == true) {
@@ -93,7 +142,6 @@ class Front_Controller extends CI_Controller {
         }
 
         $this->school_details = $this->setting_model->getSchoolDetail();
-
         $this->load->model('frontcms_setting_model');
         $this->front_setting = $this->frontcms_setting_model->get();
         if (!$this->front_setting->is_active_front_cms) {
@@ -139,13 +187,11 @@ class Front_Controller extends CI_Controller {
 
         $this->data['base_assets_url'] = BASE_URI . $this->base_assets_url;
 
-
         $this->data['content'] = (is_null($content)) ? '' : $this->load->view(THEMES_DIR . '/' . $this->theme_path . '/' . $content, $this->data, TRUE);
         $this->load->view(THEMES_DIR . '/' . $this->theme_path . '/layout', $this->data);
     }
 
     protected function load_theme_form($content = null, $layout = true) {
-
         $this->data['main_menus'] = '';
         $this->data['school_setting'] = $this->school_details;
         $this->data['front_setting'] = $this->front_setting;
@@ -167,7 +213,6 @@ class Front_Controller extends CI_Controller {
         $this->base_assets_url = 'backend/' . THEMES_DIR . '/' . $this->theme_path . '/';
 
         $this->data['base_assets_url'] = BASE_URI . $this->base_assets_url;
-
 
         $this->data['content'] = (is_null($content)) ? '' : $this->load->view(THEMES_DIR . '/' . $this->theme_path . '/' . $content, $this->data, TRUE);
 

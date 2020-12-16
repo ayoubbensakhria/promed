@@ -1,24 +1,18 @@
-<div class="content-wrapper" style="min-height: 946px;">  
-
+<div class="content-wrapper" style="min-height: 946px;"> 
     <!-- Main content -->
     <section class="content">
-        <div class="row">        
-
-            <div class="col-md-12">            
+        <div class="row"> 
+			<div class="col-md-12">            
                 <div class="nav-tabs-custom">
                     <ul class="nav nav-tabs pull-right">
-
                         <li><a href="#tab_patient" data-toggle="tab"><?php echo $this->lang->line('patient'); ?></a></li>
                         <li><a href="#tab_staff" data-toggle="tab"><?php echo $this->lang->line('staff') ?></a></li>
                         <li class="active"><a href="#tab_allusers" data-toggle="tab"><?php echo $this->lang->line('all_users'); ?></a></li>
-
                         <li class="pull-left header"> <?php echo $this->lang->line('user_log'); ?></li>
                     </ul>
                     <form role="form" action="<?php echo site_url('admin/userlog') ?>" method="post" class="">
                         <div class="box-body row">
-
                             <?php echo $this->customlib->getCSRF(); ?>
-
                             <div class="col-sm-6 col-md-4" >
                                 <div class="form-group">
                                     <label><?php echo $this->lang->line('search') . " " . $this->lang->line('type'); ?></label>
@@ -57,12 +51,9 @@
                             </div>
                         </div>
                     </form>
-
                     <div class="tabsborderbg"></div>  
                     <div class="tab-content">
-
                         <div class="tab-pane active table-responsive" id="tab_allusers">
-
                             <div class="download_label"><?php echo $this->lang->line('user_log'); ?></div>
                             <table class="table table-striped table-bordered table-hover example" cellspacing="0" width="100%">
                                 <thead>
@@ -71,7 +62,7 @@
                                         <th><?php echo $this->lang->line('role'); ?></th>
                                         <th><?php echo $this->lang->line('ip_address'); ?></th>
                                         <th><?php echo $this->lang->line('login_time'); ?></th>
-                                        <th><?php echo $this->lang->line('user_agent'); ?></th>                                        
+                                        <th><?php echo $this->lang->line('user_agent'); ?></th>                                       
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -81,7 +72,7 @@
                                         foreach ($userlogList as $userlog) {
                                             ?>
                                             <tr>
-                                                <td><?php echo $userlog['user']; ?></td>                                                
+                                                <td><?php echo $userlog['user']; ?></td>                                       
                                                 <td><?php echo ucfirst($userlog['role']); ?></td>
                                                 <td><?php echo $userlog['ipaddress']; ?></td>
                                                 <td>
@@ -91,7 +82,6 @@
                                                     $time = date('H:i:s', $date_time);
                                                     echo date($this->customlib->getSchoolDateFormat(), $this->customlib->dateyyyymmddTodateformat($date)) . " " . $time;
                                                     ?>
-
                                                 </td>
                                                 <td><?php echo $userlog['user_agent']; ?></td>  
                                             </tr>
@@ -103,8 +93,6 @@
                                 </tbody>
                             </table>
                         </div>
-
-
                         <!-- /.tab-pane -->
                         <div class="tab-pane table-responsive" id="tab_staff">
                             <table class="table table-striped table-bordered table-hover example" cellspacing="0" width="100%">
@@ -114,7 +102,7 @@
                                         <th><?php echo $this->lang->line('role'); ?></th>
                                         <th><?php echo $this->lang->line('ip_address'); ?></th>
                                         <th><?php echo $this->lang->line('login_time'); ?></th>
-                                        <th><?php echo $this->lang->line('user_agent'); ?></th>                                        
+                                        <th><?php echo $this->lang->line('user_agent'); ?></th>                                       
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -124,7 +112,7 @@
                                         foreach ($userlogStaffList as $userlogAdmin) {
                                             ?>
                                             <tr>
-                                                <td><?php echo $userlogAdmin['user']; ?></td>                                                
+                                                <td><?php echo $userlogAdmin['user']; ?></td>                                  
                                                 <td><?php echo ucfirst($userlogAdmin['role']); ?></td>
                                                 <td><?php echo $userlogAdmin['ipaddress']; ?></td>
                                                 <td>
@@ -134,9 +122,7 @@
                                                     $time = date('H:i:s', $date_time);
                                                     echo date($this->customlib->getSchoolDateFormat(), $this->customlib->dateyyyymmddTodateformat($date)) . " " . $time;
                                                     ?>
-
-
-                                                </td>
+												</td>
                                                 <td><?php echo $userlogAdmin['user_agent']; ?></td>  
                                             </tr>
                                             <?php
@@ -147,10 +133,6 @@
                                 </tbody>
                             </table>
                         </div>
-
-
-
-
                         <!-- /.tab-pane -->
                         <div class="tab-pane table-responsive" id="tab_patient">
                             <table class="table table-striped table-bordered table-hover example" cellspacing="0" width="100%">
@@ -160,7 +142,7 @@
                                         <th><?php echo $this->lang->line('role'); ?></th>
                                         <th><?php echo $this->lang->line('ip_address'); ?></th>
                                         <th><?php echo $this->lang->line('login_time'); ?></th>
-                                        <th><?php echo $this->lang->line('user_agent'); ?></th>                                        
+                                        <th><?php echo $this->lang->line('user_agent'); ?></th>                                  
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -170,7 +152,7 @@
                                         foreach ($userlogPatientList as $userlogPatient) {
                                             ?>
                                             <tr>
-                                                <td><?php echo $userlogPatient['user']; ?></td>                                                
+                                                <td><?php echo $userlogPatient['user']; ?></td>                               
                                                 <td><?php echo ucfirst($userlogPatient['role']); ?></td>
                                                 <td><?php echo $userlogPatient['ipaddress']; ?></td>
                                                 <td>
@@ -180,7 +162,6 @@
                                                     $time = date('H:i:s', $date_time);
                                                     echo date($this->customlib->getSchoolDateFormat(), $this->customlib->dateyyyymmddTodateformat($date)) . " " . $time;
                                                     ?>
-
                                                 </td>
                                                 <td><?php echo $userlogPatient['user_agent']; ?></td>  
                                             </tr>
@@ -200,15 +181,12 @@
     </section>
 </div>
 
-
 <script type="text/javascript">
     $(document).ready(function (e) {
-
         showdate('<?php echo $search_type; ?>');
     });
 
     function showdate(value) {
-
         if (value == 'period') {
             $('#fromdate').show();
             $('#todate').show();

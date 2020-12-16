@@ -6,4 +6,4 @@ if (!defined('BASEPATH')) {
 
 $config['envato_market_purchase_code'] = 'valid';
 $config['envato_market_username'] = 'valid';
-$config['SHLK'] = '1';
+$config['SHLK'] = '';

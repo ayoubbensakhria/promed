@@ -32,38 +32,8 @@ $genderList = $this->customlib->getGender();
                             <?php
                             if ($this->rbac->hasPrivilege('birth_death_customfields', 'can_add')) {
                                 ?>
-                                <a data-toggle="modal" onclick="holdModal('myModal')" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> <?php echo $this->lang->line('add'); ?></a> 
-                            <?php } ?>
-                            <div class="btn-group">
-                                <ul class="dropdown-menu multi-level pull-right width300" role="menu" aria-labelledby="dropdownMenu1" id="easySelectable">
-                                    <li><a href="#">All</a></li>
-                                    <li><a href="#">Not Sent</a></li> 
-                                    <li><a href="#">Invoiced</a></li>
-                                    <li><a href="#">Not Invoiced</a></li>
-                                    <li class="divider"></li>
-                                    <li><a href="#">Draft</a></li>
-                                    <li class="dropdown-submenu pull-left">
-                                        <a href="#">Sale Agent</a> 
-                                        <ul class="dropdown-menu dropdown-menu-left">
-                                            <li><a href="#">Edward Thomas</a></li>
-                                            <li><a href="#">Robin Peterson</a></li>
-                                            <li><a href="#">Nicolas Fleming</a></li>
-                                            <li><a href="#">Glen Stark</a></li>
-                                            <li><a href="#">Simon Peterson</a></li>
-                                            <li><a href="#">Brian Kohlar</a></li>
-                                            <li><a href="#">Laura Clinton</a></li>
-                                            <li><a href="#">David Heart</a></li>
-                                            <li><a href="#">Emma Thomas</a></li>
-                                            <li><a href="#">Benjamin Gates</a></li>
-                                            <li><a href="#">Kriti Singh</a></li>
-                                        </ul>
-                                    </li>
-                                    <li><a href="#">Sent</a></li>
-                                    <li><a href="#">Expired</a></li>
-                                    <li><a href="#">Declined</a></li>
-                                    <li><a href="#">Accepted</a></li>
-                                </ul>
-                            </div>     
+                                <a data-toggle="modal" onclick="holdModal('myModal')" class="btn btn-primary btn-sm birth_record"><i class="fa fa-plus"></i> <?php echo $this->lang->line('add'); ?></a> 
+                            <?php } ?>     
                         </div>    
                     </div><!-- /.box-header -->
                     <div class="box-body">
@@ -72,8 +42,7 @@ $genderList = $this->customlib->getGender();
                             <thead>
                                 <tr>
                                     <th><?php echo $this->lang->line('fields') . " " . $this->lang->line('name'); ?></th>
-
-                                </tr>
+								</tr>
                             </thead>
                             <tbody>
                                 <?php
@@ -87,9 +56,8 @@ $genderList = $this->customlib->getGender();
                                         ?>
                                         <tr class="">
                                             <td>
-                                                <a href="#"><?php echo $birth['name']; ?> </a> 
+                                                <?php echo $birth['name']; ?>
                                                 <div class="rowoptionview">
-
                                                     <?php
                                                     if ($this->rbac->hasPrivilege('birth_death_customfields', 'can_edit')) {
                                                         ?>
@@ -114,7 +82,7 @@ $genderList = $this->customlib->getGender();
                         </table>
                     </div>
                 </div>                                                    
-            </div>                                                                                                                                          
+            </div>                                                                                                           
         </div>  
     </section>
 </div>
@@ -128,10 +96,6 @@ $genderList = $this->customlib->getGender();
             <form id="form1" action="<?php echo site_url('admin/birthordeathcustom') ?>" accept-charset="utf-8" method="post" class="" >
                 <div class="modal-body pt0 pb0">
                     <div class="ptt10">
-
-
-
-
                         <?php echo validation_errors(); ?>
                         <?php if ($this->session->flashdata('msg')) { ?>
                             <?php echo $this->session->flashdata('msg') ?>
@@ -142,14 +106,11 @@ $genderList = $this->customlib->getGender();
                         }
                         ?>
                         <?php echo $this->customlib->getCSRF(); ?>
-
-
                         <div class="form-group">
                             <label for="exampleInputEmail1"><?php echo $this->lang->line('name'); ?></label> <small class="req">*</small>
                             <input id="name" name="name" placeholder="" type="text" class="form-control"  value="<?php echo set_value('name'); ?>" />
                             <span class="text-danger"><?php echo form_error('name'); ?></span>
                         </div>
-
                         <div class="form-group"> 
                             <label class="control-label"><?php echo $this->lang->line('visiblility') ?></label>
                             <div class="checkbox">
@@ -159,20 +120,14 @@ $genderList = $this->customlib->getGender();
                                 </label>
                             </div>
                         </div>
-
-                    </div><!--./row-->  
-
-                </div><!--./col-md-12-->  
-
-
+                    </div><!--./row--> 
+                </div><!--./col-md-12-->
                 <div class="box-footer">
                     <button type="submit" class="btn btn-info pull-right"><?php echo $this->lang->line('save'); ?></button>
                 </div>
-
             </form>     
         </div>
     </div>  
-
 </div>
 <!-- dd -->
 <div class="modal fade" id="myModaledit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
@@ -201,7 +156,6 @@ $genderList = $this->customlib->getGender();
                         <input id="ename" value="<?php echo set_value('name'); ?>" name="name" placeholder="" type="text" class="form-control"  />
                         <span class="text-danger"><?php echo form_error('name'); ?></span>
                     </div>
-
                     <div class="form-group"> 
                         <label class="control-label"><?php echo $this->lang->line('visiblility') ?></label>
                         <div class="checkbox">
@@ -211,8 +165,6 @@ $genderList = $this->customlib->getGender();
                             </label>
                         </div>
                     </div>
-
-
                 </div> 
                 <div class="box-footer">
                     <button type="submit" id="" data-loading-text="<?php echo $this->lang->line('processing') ?>" class="btn btn-info pull-right"><?php echo $this->lang->line('save'); ?></button>
@@ -263,19 +215,11 @@ $genderList = $this->customlib->getGender();
                 </div><!--./row--> 
                 <div id="tabledata"></div>
             </div>
-
-            <!-- <div class="box-footer">
-                <div class="pull-right paddA10">
-                                </div>
-            </div> -->
         </div>
     </div>    
 </div>
 
 <script type="text/javascript">
-
-
-
 
     $('#myModal').on('hidden.bs.modal', function (e) {
         $(this).find('#formadd')[0].reset();
@@ -283,25 +227,18 @@ $genderList = $this->customlib->getGender();
 
     $(function () {
         $('#easySelectable').easySelectable();
-        $('.select2').select2()
-//stopPropagation();
+        $('.select2').select2();
     })
 
     function apply_to_all() {
-
         var standard_charge = $("#standard_charge").val();
-
-
         $('input name=schedule_charge_id').val(standard_charge);
     }
 
 </script>
 
 
-<script type="text/javascript">
-    /*
-     Author: mee4dy@gmail.com
-     */
+<script type="text/javascript">    
     (function ($) {
         //selectable html elements
         $.fn.easySelectable = function (options) {
@@ -372,7 +309,6 @@ $genderList = $this->customlib->getGender();
     })(jQuery);
 
 </script>
-
 <script type="text/javascript">
     function getChargeCategory(charge_type, charge_category) {
         console.log(charge_category)
@@ -396,6 +332,7 @@ $genderList = $this->customlib->getGender();
             }
         });
     }
+	
     function getcharge_category(id, htmlid) {
         var div_data = "";
         $("#" + htmlid).html("<option value='l'><?php echo $this->lang->line('loading') ?></option>");
@@ -415,7 +352,6 @@ $genderList = $this->customlib->getGender();
             }
         });
     }
-
 
     $(document).ready(function (e) {
         $("#form1").on('submit', (function (e) {
@@ -447,6 +383,7 @@ $genderList = $this->customlib->getGender();
             });
         }));
     });
+	
     $(document).ready(function (e) {
         $("#form11").on('submit', (function (e) {
             $("#formeditbtn").button('loading');
@@ -478,6 +415,7 @@ $genderList = $this->customlib->getGender();
             });
         }));
     });
+    
     $(document).ready(function (e) {
         var date_format = '<?php echo $result = strtr($this->customlib->getSchoolDateFormat(), ['d' => 'DD', 'm' => 'MM', 'Y' => 'YYYY',]) ?>';
         $('#dates_of_birth , #date_of_birth').datepicker();
@@ -496,13 +434,11 @@ $genderList = $this->customlib->getGender();
                 //console.log(data.child_name);
                 $("#edisplay_tbl").val(data.display_tbl);
                 if (data.visible_on_table == '0') {
-                    //$("#evisible_check").attr('checked', false);
+                    $("#evisible_check").attr('checked', false);
                 } else
                 {
                     $("#evisible_check").attr('checked', true);
                 }
-
-
             },
         });
     }
@@ -517,7 +453,6 @@ $genderList = $this->customlib->getGender();
             success: function (data) {
                 $("#vid").html(data.id);
                 $("#vopd_ipd_no").html(data.opd_ipd_no);
-                //console.log(data.child_name);
                 $("#vchild_name").html(data.child_name);
                 $("#vbirth_date").html(data.birth_date);
                 $("#vweight").html(data.weight);
@@ -541,11 +476,16 @@ $genderList = $this->customlib->getGender();
             inp.value = standard_charge;
         }
     }
+	
     function holdModal(modalId) {
         $('#' + modalId).modal({
             backdrop: 'static',
             keyboard: false,
             show: true
         });
-    }
+    }	
+	
+$(".birth_record").click(function(){
+	$('#form1').trigger("reset");
+});
 </script>

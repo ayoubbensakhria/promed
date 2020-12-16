@@ -1,6 +1,4 @@
-
-<div class="content-wrapper" style="min-height: 348px;">  
-
+<div class="content-wrapper" style="min-height: 348px;"> 
     <section class="content">
         <div class="row">
             <div class="col-md-2">
@@ -15,13 +13,10 @@
                         <h3 class="box-title titlefix"><?php echo $this->lang->line('floor') . " " . $this->lang->line('list'); ?></h3>
                         <div class="box-tools pull-right">
                             <?php if ($this->rbac->hasPrivilege('bed', 'can_add')) { ?>
-                                <a data-toggle="modal" data-target="#myModal" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> <?php echo $this->lang->line('add'); ?></a> 
+                                <a data-toggle="modal" data-target="#myModal" class="btn btn-primary btn-sm floor"><i class="fa fa-plus"></i> <?php echo $this->lang->line('add'); ?></a> 
                             <?php } ?>
-
-
                         </div><!-- /.box-tools -->
                     </div>
-
                     <div class="box-body">
                         <div class="download_label"><?php echo $this->lang->line('floor') . " " . $this->lang->line('list'); ?></div>
                         <div class="table-responsive mailbox-messages">
@@ -29,7 +24,6 @@
                                 <thead>
                                     <tr>                                    
                                         <th><?php echo $this->lang->line('name'); ?></th>
-
                                         <th><?php echo $this->lang->line('description'); ?></th>
                                         <th class="text-right"><?php echo $this->lang->line('action'); ?></th>
                                     </tr>
@@ -163,7 +157,6 @@
                 cache: false,
                 processData: false,
                 success: function (data) {
-                    //alert(data);
                     if (data.status == "fail") {
                         var message = "";
                         $.each(data.error, function (index, value) {
@@ -189,9 +182,12 @@
         $.ajax({
             url: '<?php echo base_url(); ?>admin/setup/floor/getDataByid/' + id,
             success: function (data) {
-                // alert(data);
                 $('#edit_floor').html(data);
             }
         });
-    }
+    }	
+	
+$(".floor").click(function(){
+	$('#addfloor').trigger("reset");	
+});
 </script>

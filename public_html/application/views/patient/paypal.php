@@ -63,7 +63,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                     <td><?php echo $patient['credit_limit']; ?>
                                     </td>
                                     <th><?php echo $this->lang->line('opd_ipd_no'); ?></th>
-                                    <td><?php echo $patient['ipd_no']; ?>
+                                    <td><?php if(isset($patient['ipd_no'])) { echo $patient['ipd_no']; }else{ echo $patient['opd_no']; }  ?>
                                     </td>
                                 </tr>
 
@@ -110,7 +110,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
 
 
                             <input type="text" hidden="" name="total" value="<?php echo $amount; ?>">
-
+                               <input type="hidden" name="payment_type" value="<?php echo $payment_type; ?>">
 
                             <button type="submit"  class="btn btn-primary submit_button pull-right"><i class="fa fa fa-money"></i> <?php echo $this->lang->line('make_payment') ?></button> 
 

@@ -7,7 +7,6 @@ class Itemstock_model extends CI_Model {
 
     public function __construct() {
         parent::__construct();
-        $this->current_session = $this->setting_model->getCurrentSession();
     }
 
     public function get($id = null) {
@@ -73,45 +72,33 @@ class Itemstock_model extends CI_Model {
             } else {
                 $from_date = $this->input->post('date_from');
                 $to_date = $this->input->post('date_to');
-
                 $date_from = date("Y-m-d", $this->customlib->datetostrtotime($from_date));
                 $date_to = date("Y-m-d", $this->customlib->datetostrtotime($to_date));
                 $start_date = $date_from;
                 $end_date = $date_to;
             }
         } else if ($search_type == 'today') {
-
             $today = strtotime('today');
-
             $first_date = date('Y-m-d', $today);
-
-
             $start_date = $first_date;
             $end_date = $first_date;
         } else if ($search_type == 'this_week') {
-
             $this_week_start = strtotime('-1 week monday');
             $this_week_end = strtotime('sunday');
-
             $first_date = date('Y-m-d', $this_week_start);
             $last_date = date('Y-m-d', $this_week_end);
-
             $start_date = $first_date;
             $end_date = $last_date;
         } else if ($search_type == 'last_week') {
-
             $last_week_start = strtotime('-2 week monday');
             $last_week_end = strtotime('-1 week sunday');
-
             $first_date = date('Y-m-d', $last_week_start);
             $last_date = date('Y-m-d', $last_week_end);
-
             $start_date = $first_date;
             $end_date = $last_date;
         } else if ($search_type == 'this_month') {
             $first_date = date('Y-m-01');
             $last_date = date('Y-m-t');
-
             $start_date = $first_date;
             $end_date = $last_date;
         } else if ($search_type == 'last_month') {
@@ -148,9 +135,7 @@ class Itemstock_model extends CI_Model {
             $start_date = $first_date;
             $end_date = $last_date;
         } else if ($search_type == 'this_year') {
-
             $search_year = date('Y');
-
             $first_date = '01-01-' . $search_year;
             $last_date = '31-12-' . $search_year;
             $start_date = $first_date;
@@ -162,12 +147,10 @@ class Itemstock_model extends CI_Model {
             $condition = " and date_format(item_stock.date,'%Y-%m-%d') between '" . $start_date . "' and '" . $end_date . "'";
         }
 
-
         $sql = "SELECT `item_stock`.*, `item`.`name`, `item`.`item_category_id`, `item`.`description` as `des`, `item_category`.`item_category`, `item_supplier`.`item_supplier`, `item_store`.`item_store` FROM `item_stock` JOIN `item` ON `item`.`id` = `item_stock`.`item_id` JOIN `item_category` ON `item`.`item_category_id` = `item_category`.`id` JOIN `item_supplier` ON `item_stock`.`supplier_id` = `item_supplier`.`id` LEFT OUTER JOIN `item_store` ON `item_store`.`id` = `item_stock`.`store_id` where 1 " . $condition . " ORDER BY `item_stock`.`id` DESC";
         $query = $this->db->query($sql);
         return $query->result();
     }
-
 }
 
 ?>

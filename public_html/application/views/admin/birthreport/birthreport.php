@@ -85,12 +85,9 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                     <div class="box-header with-border">
                         <h3 class="box-title"><?php echo $this->lang->line('birth_report'); ?></h3>
                     </div>
-
                     <form role="form" action="<?php echo site_url('admin/birthordeath/birthreport') ?>" method="post" class="">
                         <div class="box-body row">
-
                             <?php echo $this->customlib->getCSRF(); ?>
-
                             <div class="col-sm-6 col-md-4" >
                                 <div class="form-group">
                                     <label><?php echo $this->lang->line('search') . " " . $this->lang->line('type'); ?></label>
@@ -127,10 +124,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                     <button type="submit" name="search" value="search_filter" class="btn btn-primary btn-sm checkbox-toggle pull-right"><i class="fa fa-search"></i> <?php echo $this->lang->line('search'); ?></button>
                                 </div>
                             </div>
-
                     </form>
-
-
                     <div class="box border0 clear">
                         <div class="box-header ptbnull"></div>
                         <div class="box-body table-responsive">
@@ -153,13 +147,13 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                         <?php
                                     } else {
                                         $count = 0;
-                                        //$total = 0;
                                         foreach ($listCall as $data) {
                                             ?>
                                             <tr class="">
                                                 <td><?php echo $data['opd_ipd_no'] ?></td>
                                                 <td><?php echo $data['child_name'] ?></td>
-                                                <td><?php echo $data['birth_date'] ?></td>
+                                               <!--  <td><?php echo $data['birth_date'] ?></td> -->
+                                                <td> <?php echo date($this->customlib->getSchoolDateFormat(true, true), strtotime($data['birth_date'])); ?></td>
                                                 <td><?php echo $data['weight']; ?></td>
                                                 <td><?php echo $data['patient_name']; ?></td> 
                                                 <td><?php echo $data['father_name']; ?></td>
@@ -170,24 +164,19 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                         }
                                     }
                                     ?>
-
-
                                 </tbody>
                             </table>
                         </div>
                     </div>
-
                 </div>
             </div>  
         </div>   
-</div>  
+	</div>  
 </section>
 </div>
 
-
 <script type="text/javascript">
     $(document).ready(function (e) {
-
         showdate('<?php echo $search_type; ?>');
     });
 

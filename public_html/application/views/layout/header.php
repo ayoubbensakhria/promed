@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html <?php //echo $this->customlib->getRTL();     ?>>
+<html>
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -42,7 +42,6 @@
         <link rel="stylesheet" href="<?php echo base_url(); ?>backend/dist/css/dropify.min.css">
         <!--file nprogress-->
         <link href="<?php echo base_url(); ?>backend/dist/css/nprogress.css" rel="stylesheet">
-
         <!--print table-->
         <link href="<?php echo base_url(); ?>backend/dist/datatables/css/jquery.dataTables.min.css" rel="stylesheet">
         <link href="<?php echo base_url(); ?>backend/dist/datatables/css/buttons.dataTables.min.css" rel="stylesheet">
@@ -51,7 +50,6 @@
         <link href="<?php echo base_url(); ?>backend/dist/datatables/css/responsive.dataTables.min.css" rel="stylesheet">
         <link href="<?php echo base_url(); ?>backend/dist/datatables/css/rowReorder.dataTables.min.css" rel="stylesheet">
         <script src="<?php echo base_url(); ?>backend/custom/jquery.min.js"></script>
-
         <script src="<?php echo base_url(); ?>backend/plugins/colorpicker/bootstrap-colorpicker.js"></script>
         <script src="<?php echo base_url(); ?>backend/datepicker/date.js"></script>       
         <script src="<?php echo base_url(); ?>backend/dist/js/jquery-ui.min.js"></script>
@@ -66,6 +64,9 @@
             <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
             <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
             <![endif]-->
+            <!--language css-->
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/0.8.2/css/flag-icon.min.css">
+        <link rel="stylesheet" type="text/css" href="<?php echo base_url() ?>/backend/dist/css/bootstrap-select.min.css">
 
     </head>
     <script type="text/javascript">
@@ -75,7 +76,7 @@
         var chk_validate = "<?php echo $this->config->item('SHLK') ?>";
     </script>
 
-    <body class="hold-transition skin-blue fixed sidebar-mini" >
+    <body class="hold-transition skin-blue fixed sidebar-mini">
         <?php
         if ($this->config->item('SHLK') == "") {
             ?>
@@ -83,7 +84,7 @@
                 <div class="slidealert">
                     <div class="alert alert-dismissible topaleart-inside">
                         <!-- <button type="button" class="close" data-dismiss="alert" aria-label="close">&times;</button> -->
-                        <p class="palert">Alert! You are using unregistered version of Smart Hospital. Please <a  href="#" class="purchasemodal">click here</a> to register your purchase code for Smart Hospital.</p>
+                        <p class="palert">Alerte ! Vous utilisez une version d'essai de Promed DELUXE. Veuillez nous contacter pour acheter une licence.</p>
                     </div></div>
             </div>
             <?php
@@ -110,7 +111,7 @@
                     sessionStorage.setItem('sidebar-toggle-collapsed', '1');
                 }
 
-            }
+            } 
 
             function checksidebar() {
                 if (Boolean(sessionStorage.getItem('sidebar-toggle-collapsed'))) {
@@ -147,12 +148,12 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </a>
-                    <div class="col-md-5 col-sm-3 col-xs-5"> 
+                    <div class="col-lg-5 col-md-4 col-sm-3 col-xs-4"> 
                         <span href="#" class="sidebar-session">
-                            <?php echo $this->setting_model->getCurrentSchoolName(); ?>
+                            <?php echo $this->setting_model->getCurrentHospitalName(); ?>
                         </span>
                     </div>
-                    <div class="col-md-7 col-sm-9 col-xs-7">
+                    <div class="col-lg-7 col-md-8 col-sm-9 col-xs-8">
                         <div class="pull-right">    
                             <?php if (($this->rbac->hasPrivilege('patient', 'can_view'))) { ?>
                                 <form class="navbar-form navbar-left search-form" role="search"  action="<?php echo site_url('admin/admin/search'); ?>" method="POST">
@@ -166,6 +167,15 @@
                                 </form>
                             <?php } ?>
                             <div class="navbar-custom-menu">
+                                 <?php  if($this->rbac->hasPrivilege('language_switcher','can_view')){
+                                    ?>
+                                    <div class="langdiv"><select class="languageselectpicker" onchange="set_languages(this.value)"  type="text" id="languageSwitcher" >
+                                          
+                                           <?php $this->load->view('admin/language/languageSwitcher')?>
+
+                                        </select></div> 
+                                    <?php
+                                } ?>
                                 <ul class="nav navbar-nav headertopmenu"> 
                                     <?php if ($this->rbac->hasPrivilege('notification_center', 'can_view')) {
                                          $systemnotifications = $this->notification_model->getUnreadNotification();
@@ -267,7 +277,8 @@
                                                         <a href="<?php echo base_url() . "admin/staff/profile/" . $id ?>" data-toggle="tooltip" title="" data-original-title="<?php echo $this->lang->line('my_profile'); ?>"><i class="fa fa-user"></i><?php echo $this->lang->line('profile'); ?></a> 
                                                         <a class="pl25" href="<?php echo base_url(); ?>admin/admin/changepass" data-toggle="tooltip" title="" data-original-title="<?php echo $this->lang->line('change_password') ?>"><i class="fa fa-key"></i><?php echo $this->lang->line('password'); ?></a> <a class="pull-right" href="<?php echo base_url(); ?>site/logout"><i class="fa fa-sign-out fa-fw"></i><?php echo $this->lang->line('logout'); ?></a>
                                                     </div>  
-                                                </div><!--./sstopuser--></li>
+                                                </div><!--./sstopuser-->
+                                            </li>
                                         </ul>                             
                                     </li>   
                                 </ul>
@@ -276,6 +287,44 @@
                     </div>   
                 </nav>
             </header>
+<script>
 
+    function defoult(id){
+      var defoult=  $('#languageSwitcher').val();
+   
+
+        $.ajax({
+            type: "POST",
+            url: base_url + "admin/language/defoult_language/"+id,
+            data: {},
+            //dataType: "json",
+            success: function (data) {
+                successMsg("Status Change Successfully");
+              $('#languageSwitcher').html(data);
+
+            }
+        });
+
+        window.location.reload('true');
+        //alert(id);
+    }
+
+    function set_languages(lang_id){
+       
+        $.ajax({
+            type: "POST",
+            url: base_url + "admin/language/user_language/"+lang_id,
+            data: {},
+            //dataType: "json",
+            success: function (data) { 
+                successMsg("Status Change Successfully");
+                 window.location.reload('true');
+
+            }
+        });
+
+    }
+
+</script>
             <?php $this->load->view('layout/sidebar'); ?>
 

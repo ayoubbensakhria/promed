@@ -180,7 +180,5 @@ class Medicine_category_model extends CI_model {
     public function deletesupplier($id) {
         $this->db->where("id", $id)->delete("supplier_category");
     }
-
 }
-
 ?>

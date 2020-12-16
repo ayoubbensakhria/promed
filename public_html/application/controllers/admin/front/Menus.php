@@ -18,11 +18,8 @@ class Menus extends Admin_Controller {
         $data['title_list'] = 'Book Details';
         $this->session->set_userdata('top_menu', 'Front CMS');
         $this->session->set_userdata('sub_menu', 'admin/front/menus');
-
         $listMenus = $this->cms_menu_model->get();
-
         $data['listMenus'] = $listMenus;
-
         $this->form_validation->set_rules(
                 'menu', 'Menu', array(
             'required',

@@ -155,6 +155,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                 <thead>
                                     <tr>
                                         <th><?php echo $this->lang->line('date'); ?></th>
+                                        <th><?php echo $this->lang->line('discharged')." ".$this->lang->line('date'); ?></th>
                                         <th><?php echo $this->lang->line('ipd') . " " . $this->lang->line('no'); ?></th>
                                         <th><?php echo $this->lang->line('patient') . " " . $this->lang->line('id'); ?></th>
                                         <th><?php echo $this->lang->line('patient') . " " . $this->lang->line('name'); ?></th>
@@ -190,11 +191,13 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                             ?>
                                             <tr>
                                                 <td><?php echo date($this->customlib->getSchoolDateFormat(), strtotime($report['payment_date'])) ?></td>
+                                                
+                                                 <td><?php echo date($this->customlib->getSchoolDateFormat(), strtotime($report['discharged_date'])) ?></td>
                                                 <td><?php echo $report['ipd_no']; ?></td>
 
                                                 <td><?php echo $report['patient_unique_id']; ?></td>
                                                 <td>
-                                                    <a href="<?php echo base_url(); ?>admin/patient/ipdprofile/<?php echo $report['pid']; ?>"><?php echo $report['patient_name'] ?>
+                                                    <a href="<?php echo base_url(); ?>admin/patient/ipdprofile/<?php echo $report['pid']; ?>/<?php echo $report['id']; ?>"><?php echo $report['patient_name'] ?>
                                                     </a>
                                                 </td> 
                                                  <!-- <td><?php echo $report['patient_name']; ?></td> -->
@@ -220,7 +223,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
     ?>
                                     </tbody>
                                     <tr class="box box-solid total-bg">
-                                        <td class="text-right" colspan='18'><?php echo $this->lang->line('total') . " :" . $currency_symbol . $total; ?>
+                                        <td class="text-right" colspan='19'><?php echo $this->lang->line('total') . " :" . $currency_symbol . $total; ?>
                                         </td>
                                     </tr> 
 <?php } ?>

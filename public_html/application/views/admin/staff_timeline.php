@@ -1,7 +1,6 @@
 <?php if (!empty($result)) {
     ?>
     <ul class="timeline timeline-inverse">
-
         <?php
         foreach ($result as $key => $value) {
             ?>      
@@ -22,9 +21,7 @@
                     <h3 class="timeline-header text-aqua"> <?php echo $value['title']; ?> </h3>
                     <div class="timeline-body">
                         <?php echo $value['description']; ?> 
-
                     </div>
-
                 </div>
             </li>
         <?php } ?>      

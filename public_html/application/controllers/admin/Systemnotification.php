@@ -46,7 +46,7 @@ class Systemnotification extends Admin_Controller {
         $this->load->view('layout/footer', $data);
     }
 
-//-------------------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------------
     public function updateStatus() {
         $notification_id = $this->input->post("id");
 
@@ -178,6 +178,27 @@ class Systemnotification extends Admin_Controller {
         redirect("admin/patient/ipdprofile/" . $patient_id);
     }
 
+
+public function moveipdpresnotification($patientid,$id,$presid) {
+
+        $details = $this->patient_model->getIpdnotiDetails($id);
+        $ipdid = $details['id'];
+        $patient_id = $details['patient_id'];
+
+        $ipdnpres_data = array(
+            'id' => $ipdid,
+            'patient_id' => $patient_id,
+            'presid'=> $presid,
+        );
+
+        if (!empty($ipdid)) {
+            $data['ipdnpres_data'] = $ipdnpres_data;
+        }
+
+        $this->session->set_flashdata('ipdnpres_data', $data);
+        redirect("admin/patient/ipdprofile/" . $patient_id ."#prescription");
+    }
+
 //-------------------------------------------------------------------------------------------------------------
     public function moveopdnotification($patientid, $id) {
 
@@ -195,6 +216,26 @@ class Systemnotification extends Admin_Controller {
         }
 
         $this->session->set_flashdata('opdn_data', $data);
+        redirect("admin/patient/profile/" . $patient_id);
+    }
+
+//-------------------------------------------------------------------------------------------------------------
+    public function moveopdpresnotification($patientid, $id) {
+
+        $details = $this->patient_model->getOpdnotiDetails($id);
+        $opdid = $details['id'];
+        $patient_id = $details['patient_id'];
+
+        $opdnpres_data = array(
+            'id' => $opdid,
+            'patient_id' => $patient_id,
+        );
+
+        if (!empty($opdid)) {
+            $data['opdnpres_data'] = $opdnpres_data;
+        }
+
+        $this->session->set_flashdata('opdnpres_data', $data);
         redirect("admin/patient/profile/" . $patient_id);
     }
 

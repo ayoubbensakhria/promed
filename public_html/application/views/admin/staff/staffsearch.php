@@ -7,25 +7,19 @@ $logged_in_User = $this->customlib->getLoggedInUserData();
 $logged_in_User_Role = json_decode($this->customlib->getStaffRole());
 
 ?>
-<style type="text/css">
 
-</style>
-
-<div class="content-wrapper" style="min-height: 946px;">  
-
+<div class="content-wrapper">  
     <!-- Main content -->
     <section class="content">
         <div class="row">
             <div class="col-md-12">
                 <div class="box box-primary">
                     <div class="box-header with-border">
-                        <h3 class="box-title"> <?php echo $this->lang->line('staff_directory'); ?></h3>
-
-                        <small class="pull-right">
+                        <h3 class="box-title titlefix"> <?php echo $this->lang->line('staff_directory'); ?></h3>
+                        <div class="box-tools pull-right">
                             <?php if ($this->rbac->hasPrivilege('staff', 'can_add')) { ?>
-                                <div class="btn-group" style="margin-left:4px;">
-
-                                    <a href="<?php echo site_url('admin/staff/create'); ?>" style="border-radius:2px 0px 0px 2px" class="btn btn-primary btn-sm"><?php echo $this->lang->line('add_staff'); ?></a>
+                                <div class="btn-group">
+                                    <a href="<?php echo site_url('admin/staff/create'); ?>" style="border-radius:2px 0px 0px 2px" class="btn btn-primary btn-sm btnMDb2"><?php echo $this->lang->line('add_staff'); ?></a>
                                     <?php if ($this->rbac->hasPrivilege('disable_staff', 'can_view')) { ?>
                                         <button type="button" style="border-left: 1px solid #2e6da4;" class="btn btn-primary dropdown-toggle btn-sm" data-toggle="dropdown">
                                             <span class="caret"></span>
@@ -42,22 +36,22 @@ $logged_in_User_Role = json_decode($this->customlib->getStaffRole());
                                 </div>
                             <?php } ?>
 
-                            <?php if ($this->rbac->hasPrivilege('staff_attendance', 'can_add')) { ?>
-                                <a href="<?php echo base_url(); ?>admin/staffattendance" class="btn btn-primary btn-sm"   >
+                            <?php if ($this->rbac->hasPrivilege('staff_attendance', 'can_view')) { ?>
+                                <a href="<?php echo base_url(); ?>admin/staffattendance" class="btn btn-primary btn-sm btnMDb2">
                                     <i class="fa fa-reorder"></i> <?php echo $this->lang->line('staff_attendance'); ?>
                                 </a>
                             <?php } ?>
-                            <?php if ($this->rbac->hasPrivilege('staff_payroll', 'can_add')) { ?>
+                            <?php if ($this->rbac->hasPrivilege('staff_payroll', 'can_view')) { ?>
                                 <a href="<?php echo base_url(); ?>admin/payroll" class="btn btn-primary btn-sm">
                                     <i class="fa fa-reorder"></i> <?php echo $this->lang->line('payroll'); ?>
                                 </a>
                             <?php } ?>
-                            <?php if ($this->rbac->hasPrivilege('apply_leave', 'can_add')) { ?>
-                                <a href="<?php echo base_url(); ?>admin/staff/leaverequest" class="btn btn-primary btn-sm"   >
+                            <?php if ($this->rbac->hasPrivilege('apply_leave', 'can_view')) { ?>
+                                <a href="<?php echo base_url(); ?>admin/staff/leaverequest" class="btn btn-primary btn-sm">
                                     <i class="fa fa-reorder"></i> <?php echo $this->lang->line('leaves'); ?>
                                 </a>
                             <?php } ?>
-                        </small>
+                        </div>
                         <?php //} ?>
                     </div>
                     <div class="box-body">
@@ -139,7 +133,7 @@ $logged_in_User_Role = json_decode($this->customlib->getStaffRole());
                                                     <th><?php echo $this->lang->line('department'); ?></th>
                                                     <th><?php echo $this->lang->line('designation'); ?></th>
                                                     <th><?php echo $this->lang->line('mobile_no'); ?></th>
-                                                    <th><?php echo $this->lang->line('action'); ?></th>
+                                                    <th class="text-right"><?php echo $this->lang->line('action'); ?></th>
 
                                                 </tr>
                                             </thead>
@@ -154,7 +148,7 @@ $logged_in_User_Role = json_decode($this->customlib->getStaffRole());
                                                         <td><?php echo $staff["department"] ?></td>
                                                         <td><?php echo $staff["designation"] ?></td>
                                                         <td><?php echo $staff["contact_no"] ?></td>
-                                                        <td> <?php
+                                                        <td class="pull-right"><?php
                                                             if ($this->rbac->hasPrivilege('can_see_other_users_profile', 'can_view')) {
 
                                                         $a = false;
@@ -169,16 +163,20 @@ $logged_in_User_Role = json_decode($this->customlib->getStaffRole());
                                                         } 
                                                              
                                                                 if ($this->rbac->hasPrivilege('staff', 'can_edit')) {
+                                                                   
                                                                      if($a){    
                                                                     ?>
                                                                     <a href="<?php echo base_url() . "admin/staff/edit/" . $staff['id'] ?>"  class="btn btn-default btn-xs"  data-toggle="tooltip" title="<?php echo $this->lang->line('edit'); ?>">
                                                                         <i class="fa fa-pencil"></i>
-                                                                    </a> <?php } }
+                                                                    </a> <?php } } 
                                                             }
+                                                              if ($this->rbac->hasPrivilege('can_see_other_users_profile', 'can_view')) {
                                                             ?>
                                                             <a href="<?php echo base_url() . "admin/staff/profile/" . $staff['id'] ?>"  class="btn btn-default btn-xs"  data-toggle="tooltip" title="<?php echo $this->lang->line('show'); ?>">
                                                                 <i class="fa fa-reorder"></i>
-                                                            </a></td>
+                                                            </a>
+                                                        <?php } ?>
+                                                        </td>
                                                     </tr>
     <?php } ?>
                                             </tbody>
@@ -228,9 +226,11 @@ $logged_in_User_Role = json_decode($this->customlib->getStaffRole());
                                                                 </div>
                                                                 <div class="overlay3">
                                                                     <div class="stafficons">
-                                                                        <?php if ($this->rbac->hasPrivilege('can_see_other_users_profile', 'can_view')) { ?>
+                                                                        <?php if ($this->rbac->hasPrivilege('staff', 'can_view')) {
+                                                                            if ($this->rbac->hasPrivilege('can_see_other_users_profile', 'can_view')) { ?>
                                                                             <a title="<?php echo $this->lang->line('show') ?>"  href="<?php echo base_url() . "admin/staff/profile/" . $staff["id"] ?>"><i class="fa fa-navicon"></i></a>
-                                                                        <?php } 
+                                                                        <?php } }
+
                                                                          $a = false;
                                                         if ($staff['id'] == $logged_in_User['id']) {
                                                         $a = true;
@@ -243,7 +243,9 @@ $logged_in_User_Role = json_decode($this->customlib->getStaffRole());
                                                         } 
 
                                                                         ?>
-                                                                            <?php if($a){ if ($this->rbac->hasPrivilege('staff', 'can_edit')) { ?>
+                                                                            <?php if($a){ 
+
+                                                                                if ($this->rbac->hasPrivilege('staff', 'can_edit')) { ?>
                                                                             <a title="<?php echo $this->lang->line('edit') ?>"  href="<?php echo base_url() . "admin/staff/edit/" . $staff["id"] ?>"><i class=" fa fa-pencil"></i></a>
                                                                          <?php } } ?>
                                                                     </div>

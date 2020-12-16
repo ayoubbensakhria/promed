@@ -18,14 +18,12 @@ $genderList = $this->customlib->getGender();
                         <h3 class="box-title titlefix"><?php echo $this->lang->line('ambulance_call_list'); ?></h3>
                         <div class="box-tools pull-right">
                             <?php if ($this->rbac->hasPrivilege('ambulance_call', 'can_add')) { ?> 
-                                <a data-toggle="modal" onclick="holdModal('myModal')" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> <?php echo $this->lang->line('add') . " " . $this->lang->line('ambulance_call'); ?></a>
+                                <a data-toggle="modal" onclick="holdModal('myModal')" class="btn btn-primary btn-sm ambulancecall"><i class="fa fa-plus"></i> <?php echo $this->lang->line('add') . " " . $this->lang->line('ambulance_call'); ?></a>
                             <?php } ?>
                         </div>
                     </div><!-- /.box-header -->
-
                     <div class="box-body">
                         <div class="download_label"><?php echo $this->lang->line('ambulance_call_list'); ?>
-
                         </div>
                         <table class="table table-striped table-bordered table-hover example" cellspacing="0" width="100%">
                             <thead>
@@ -93,7 +91,7 @@ $genderList = $this->customlib->getGender();
                         </table>
                     </div>
                 </div>                                                    
-            </div>                                                                                                                                          
+            </div>                                                                                                         
         </div>  
     </section>
 </div>
@@ -104,7 +102,7 @@ $genderList = $this->customlib->getGender();
             <div class="modal-header modal-media-header">
                 <button type="button" class="close pt4" data-dismiss="modal">&times;</button>
                 <div class="row">
-                    <div class="col-sm-6 col-xs-8" >
+                    <div class="col-sm-6 col-xs-6">
                         <div class="form-group15">
                            <div>
                                 <select onchange="get_PatientDetails(this.value)" style="width:100%" class="form-control select2"  name='patient_id' id="addpatient_id" >
@@ -122,7 +120,7 @@ $genderList = $this->customlib->getGender();
                             <span class="text-danger"><?php echo form_error('refference'); ?></span>
                         </div>
                     </div><!--./col-sm-8-->
-                    <div class="col-sm-4 col-xs-3">
+                    <div class="col-sm-4 col-xs-5">
                         <div class="form-group15">
                             <?php if ($this->rbac->hasPrivilege('patient', 'can_add')) { ?>
                                 <a data-toggle="modal" id="add" onclick="holdModal('myModalpa')" class="modalbtnpatient"><i class="fa fa-plus"></i>  <span><?php echo $this->lang->line('new') . " " . $this->lang->line('patient') ?></span></a> 
@@ -150,12 +148,6 @@ $genderList = $this->customlib->getGender();
                                     <span class="text-danger"><?php echo form_error('vehicle_no'); ?></span>
                                 </div>
                             </div>
-                            <!-- <div class="col-sm-4">
-                              <div class="form-group">
-                                  <label for="exampleInputEmail1"><?php echo $this->lang->line('vehicle_model'); ?></label>
-                                  <input name="vehicle_model" id="vehicle_model_search" readonly type="text" class="form-control" />
-                              </div>
-                            </div> -->
                             <div class="col-sm-12">
                                 <div class="form-group">
                                     <label for="exampleInputEmail1"><?php echo $this->lang->line('driver_name'); ?></label>
@@ -217,10 +209,7 @@ $genderList = $this->customlib->getGender();
                         <button type="button"  data-loading-text="<?php echo $this->lang->line('processing') ?>" class="btn btn-info pull-right printsavebtn"><?php echo $this->lang->line('save') . " & " . $this->lang->line('print'); ?></button>
                     </div>
                 </div>
-
             </form>
-
-
         </div>    
     </div>
 </div>
@@ -243,21 +232,13 @@ $genderList = $this->customlib->getGender();
                     <?php } ?>
                             </select> 
                         </div>
-                    </div><!--./col-sm-9-->  
-                    <!--<div class="col-sm-3">
-<?php if ($this->rbac->hasPrivilege('patient', 'can_add')) { ?>
-                                <a data-toggle="modal" id="add" onclick="holdModal('myModalpa')" class="btn btn-default btn-sm" style="height: 28px;padding-top: 6px"><i class="fa fa-plus"></i>  <?php echo $this->lang->line('new') . " " . $this->lang->line('patient') ?></a> 
-<?php } ?> 
-                    </div>--><!--./col-sm-3-->
-
-
-                </div><!--./row-->  
+                    </div><!--./col-sm-9--> 
+				</div><!--./row-->  
             </div>
             <form  id="formedit" method="post" accept-charset="utf-8">    
                 <div class="modal-body pt0 pb0">
                     <div class="ptt10">
                         <div class="row">
-
                             <input name="patient_name" id="patienteditid" type="hidden" class="form-control" value="<?php echo set_value('patient_name'); ?>"/>
                             <input  name="id" id="id" type="hidden" class="form-control" value="<?php echo set_value('id'); ?>" />
                             <div class="col-sm-12">                     
@@ -270,11 +251,9 @@ $genderList = $this->customlib->getGender();
                                             <option value="<?php echo $vehicle["id"] ?>"><?php echo $vehicle["vehicle_model"] . " - " . $vehicle["vehicle_no"] ?></option>
 <?php } ?>
                                     </select>
-
                                     <span class="text-danger"><?php echo form_error('vehicle_model'); ?></span>
                                 </div>
                             </div>
-
                             <div class="col-sm-12">
                                 <div class="form-group">
                                     <label for="exampleInputEmail1"><?php echo $this->lang->line('driver_name'); ?></label>
@@ -293,35 +272,12 @@ $genderList = $this->customlib->getGender();
                                     <input name="amount" id="amount" type="text" class="form-control" value="<?php echo set_value('amount'); ?>"/>
                                 </div>
                             </div>
-                            <!--<div class="col-sm-3">
-                                <div class="form-group">
-                                    <input  name="id" id="id" type="hidden" class="form-control" value="<?php echo set_value('id'); ?>" />
-                                    <label for="exampleInputEmail1"><?php echo $this->lang->line('patient') . " " . $this->lang->line('name'); ?></label><small class="req"> *</small>
-                                    <input  name="patient_name" id="patient_name" type="text" class="form-control" value="<?php echo set_value('patient_name'); ?>"/>
-                                    <span class="text-danger"><?php echo form_error('patient_name'); ?></span>
-                                </div>
-                            </div>-->
-                            <!-- <div class="col-sm-3">
-                                 <div class="form-group">
-                                     <label for="exampleInputEmail1"><?php echo $this->lang->line('contact') . " " . $this->lang->line('no'); ?></label>
-                                     <input name="contact_no" id="contact_no" type="text" class="form-control" value="<?php echo set_value('contact_no'); ?>" />
-                                 </div>
-                             </div>
-                             <div class="col-sm-6">
-                                 <div class="form-group">
-                                     <label for="exampleInputEmail1"><?php echo $this->lang->line('address'); ?></label>
-                                     <textarea class="form-control" name="address" id="address" row='2'><?php echo set_value('address'); ?></textarea>
-                                 </div>
-                             </div>-->
-
                         </div>
                     </div>
                 </div>   
                 <div class="box-footer">
                     <button type="submit" data-loading-text="<?php echo $this->lang->line('processing') ?>" id="formeditbtn" class="btn btn-info pull-right"><?php echo $this->lang->line('save'); ?></button>
                 </div>
-
-
             </form> 
         </div>    
     </div>
@@ -335,7 +291,6 @@ $genderList = $this->customlib->getGender();
                 <div class="modalicon"> 
                     <div id='edit_deletebill'>
                         <a href="#"  data-target="#edit_prescription"  data-toggle="modal" title="" data-original-title="<?php echo $this->lang->line('edit'); ?>"><i class="fa fa-pencil"></i></a>
-
                         <a href="#" data-toggle="tooltip" title="" data-original-title="<?php echo $this->lang->line('delete'); ?>"><i class="fa fa-trash"></i></a>
                     </div>
                 </div>
@@ -352,13 +307,10 @@ $genderList = $this->customlib->getGender();
     $(function () {
         $('#easySelectable').easySelectable();
         $('.select2').select2()
-//stopPropagation();
+
     })
 </script>
-<script type="text/javascript">
-            /*
-             Author: mee4dy@gmail.com
-             */
+<script type="text/javascript">            
                     (function ($) {
                         //selectable html elements
                         $.fn.easySelectable = function (options) {
@@ -429,18 +381,15 @@ $genderList = $this->customlib->getGender();
                     })(jQuery);
 </script>
 <script type="text/javascript">
-
             $(document).ready(function (e) {
 
-                $(".printsavebtn").on('click', (function (e) {
-                    // $(this).submit();
+                $(".printsavebtn").on('click', (function (e) {                    
                     var form = $(this).parents('form').attr('id');
                     var str = $("#" + form).serializeArray();
                     var postData = new FormData();
                     $.each(str, function (i, val) {
                         postData.append(val.name, val.value);
-                    });
-                    //  $("#"+form).submit();
+                    });                   
 
                     $("#formcallbtn").button('loading');
                     e.preventDefault();
@@ -460,33 +409,25 @@ $genderList = $this->customlib->getGender();
                                 });
                                 errorMsg(message);
                             } else {
-                                //var insertid = insert_id;
-                                //console.log(insert_id);
                                 successMsg(data.message);
                                 printData(data.id);
-
-                                // window.location.reload(true);
                             }
                             $("#formcallbtn").button('reset');
                         },
                         error: function () {
-                            //  alert("Fail")
+							
                         }
                     });
-
-
                 }));
             });
 
             function printData(id) {
-
                 var base_url = '<?php echo base_url() ?>';
                 $.ajax({
                     url: base_url + 'admin/vehicle/getBillDetails/' + id,
                     type: 'POST',
                     data: {id: id, print: 'yes'},
-                    success: function (result) {
-                        // $("#testdata").html(result);
+                    success: function (result) {                        
                         popup(result);
                     }
                 });
@@ -527,8 +468,6 @@ $genderList = $this->customlib->getGender();
                     frame1.remove();
                     window.location.reload(true);
                 }, 500);
-
-
                 return true;
             }
 
@@ -558,24 +497,21 @@ $genderList = $this->customlib->getGender();
                             $("#formcallbtn").button('reset');
                         },
                         error: function () {
-                            //  alert("Fail")
+							
                         }
                     });
                 }));
             });
 
             function get_PatientDetails(id) {
-
                 $.ajax({
                     url: '<?php echo base_url(); ?>admin/patient/patientDetails',
                     type: "POST",
                     data: {id: id},
                     dataType: 'json',
-                    success: function (res) {
-                        //console.log(res);
+                    success: function (res) {                       
                         if (res) {
-                            $('#patientid').val(res.id);
-                            //$('#patientname').val(res.patient_name);
+                            $('#patientid').val(res.id);                            
 
                         }
                     }
@@ -594,8 +530,8 @@ $genderList = $this->customlib->getGender();
                     },
                 });
             }
+			
             function getRecord(id) {
-
                 $.ajax({
                     url: '<?php echo base_url(); ?>admin/vehicle/editCall',
                     type: "POST",
@@ -604,12 +540,9 @@ $genderList = $this->customlib->getGender();
                     success: function (data) {
                         var patientDestroy = $('#addpatientid').select2();
                         var vehicleDestroy = $('#vehicleno').select2();
-
                         patientDestroy.val(data.patient_name).select2('').select2();
                         vehicleDestroy.val(data.vehicle_no).select2('').select2();
                         $("#id").val(data.id);
-                        //$("#vehicle_no").val(data.id);
-                        //$("#vehicleno").val(data.vehicle_model);
                         $("#driver_name").val(data.driver);
                         $("#patienteditid").val(data.patient_name);
                         $("#contact_no").val(data.contact_no);
@@ -631,29 +564,21 @@ $genderList = $this->customlib->getGender();
                     data: {id: id},
                     dataType: 'json',
                     success: function (data) {
-                        //console.log(data)
                         $("#" + dr).val(data.driver_name);
                         $("#" + vh).val(data.vehicle_model);
                     },
                 });
             }
 
-
-
             function get_PatienteditDetails(id) {
-
                 $.ajax({
                     url: '<?php echo base_url(); ?>admin/patient/patientDetails',
                     type: "POST",
                     data: {id: id},
                     dataType: 'json',
                     success: function (res) {
-                        //console.log(res);
-
                         if (res) {
                             $('#patienteditid').val(res.id);
-                            //console.log(res.id);
-
                         }
                     }
                 });
@@ -685,25 +610,28 @@ $genderList = $this->customlib->getGender();
                             $("#formeditbtn").button('reset');
                         },
                         error: function () {
-                            //  alert("Fail")
+							
                         }
                     });
                 }));
             });
 
-            // $(document).ready(function (e) {
-            //     var date_format = '<?php echo $result = strtr($this->customlib->getSchoolDateFormat(), ['d' => 'DD', 'm' => 'MM', 'Y' => 'YYYY',]) ?>';
-            //     $('#report_dayssport_date,#report_date').datetimepicker();
-            // });
-
             function holdModal(modalId) {
-
                 $('#' + modalId).modal({
                     backdrop: 'static',
                     keyboard: false,
                     show: true
                 });
-            }
-            // action="<?php //echo site_url('admin/vehicle/edit/' . $id)     ?>"
+            }			
+			
+$(".ambulancecall").click(function(){
+	$('#formcall').trigger("reset");
+	$('#select2-addpatient_id-container').html("");
+});	
+
+$(".modalbtnpatient").click(function(){	
+	$('#formaddpa').trigger("reset");
+	$(".dropify-clear").trigger("click");
+});		
 </script>
 <?php $this->load->view('admin/patient/patientaddmodal') ?>

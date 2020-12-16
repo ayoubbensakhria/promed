@@ -44,14 +44,12 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                             if ($j == 0) {
                                 echo "active";
                             }
-                            ?>"><a href="#<?php echo $ckey ?>" data-toggle="tab" aria-expanded="true"><?php echo $value ?></a></li>
+                            ?>"><a href="#<?php echo $j ?>" data-toggle="tab" aria-expanded="true"><?php echo $value ?></a></li>
                                 <?php
                                 $j++;
                             }
                             ?>
-
                     </ul>
-
                     <div class="tab-content">
                         <?php
                         $i = 0;
@@ -61,7 +59,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                             if ($i == 0) {
                                 echo "active";
                             }
-                            ?>" id="<?php echo $key ?>">
+                            ?>" id="<?php echo $i ?>">
                                 <div class="table-responsive">
                                     <div class="download_label"><?php echo $result['organisation_name'] . " " . $this->lang->line('charge') . " " . $this->lang->line('details'); ?></div>
                                     <table class="table table-striped table-bordered table-hover example" cellspacing="0" width="100%">
@@ -120,15 +118,14 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                 <h4 class="box-title"><?php echo $this->lang->line('edit') . " " . $this->lang->line('organisation') . " " . $this->lang->line('charge'); ?></h4>
             </div>
             <div class="modal-body pt0 pb0" >
-                <div class="table-responsive ptt10">
-                    <form id="edit_org_form" method="POST" action="<?php echo base_url(); ?>admin/tpa/edit_org">               			                        
-                </div> 
+                
+            <form id="edit_org_form" method="POST" action="<?php echo base_url(); ?>admin/tpa/edit_org">                
+               <div class="table-responsive ptt10">
                 <table class="table table-striped table-bordered">                     
                     <thead>
                     <th><?php echo $this->lang->line('charge') . " " . $this->lang->line('category'); ?></th>
                     <th><?php echo $this->lang->line('code'); ?></th>
                     <th><?php echo $this->lang->line('description'); ?></th>
-
                     <th class="text-right"><?php echo $this->lang->line('standard') . " " . $this->lang->line('charge') . " (" . $currency_symbol . ")"; ?></th>
                     <th class="text-right"><?php echo $this->lang->line('organisation') . " " . $this->lang->line('charge') . " (" . $currency_symbol . ")"; ?></th>       
                     </thead>
@@ -140,18 +137,20 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                             <td class="text-right" id="standard_charge_data"></td>
                             <td class="text-right">                                                
                                 <input type="text" name="org_charge" id="org_charge_data" class="form-control text-right">
-                                <input type="hidden" name="org_charge_id" id="org_charge_id_data" class="form-control">                                               
+                                <input type="hidden" name="org_charge_id" id="org_charge_id_data" class="form-control">                                       
                             </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
+              
             <div class="box-footer clear">
                 <div class="pull-right">
                     <button type="submit" id="edit_org_btn" data-loading-text="<?php echo $this->lang->line('processing') ?>"  class="btn btn-info pull-right"><?php echo $this->lang->line('save'); ?></button>
                 </div>
             </div>
             </form>
+         </div> 
         </div>
     </div>
 </div>
@@ -212,7 +211,6 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
     });
 
     $(document).ready(function (e) {
-
         $(function () {
             var hash = window.location.hash;
             hash && $('ul.nav-tabs a[href="' + hash + '"]').tab('show');
@@ -224,8 +222,5 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                 $('html,body').scrollTop(scrollmem);
             });
         });
-
-
     });
 </script>
-

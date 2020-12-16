@@ -22,7 +22,7 @@ $genderList = $this->customlib->getGender();
                         <h3 class="box-title titlefix"><?php echo $this->lang->line('medicines') . " " . $this->lang->line('purchase') . " " . $this->lang->line('list'); ?></h3>
                         <div class="box-tools pull-right">
                             <?php if ($this->rbac->hasPrivilege('medicine_purchase', 'can_add')) { ?>
-                                <a data-toggle="modal" onclick="holdModal('myModal')" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> <?php echo $this->lang->line('purchase') . " " . $this->lang->line('medicine'); ?></a> 
+                                <a data-toggle="modal" onclick="holdModal('myModal')" class="btn btn-primary btn-sm addpurchase"><i class="fa fa-plus"></i> <?php echo $this->lang->line('purchase') . " " . $this->lang->line('medicine'); ?></a> 
                             <?php } ?>
 
                         </div>
@@ -33,12 +33,13 @@ $genderList = $this->customlib->getGender();
                             <thead>
                                 <tr>
                                     <th><?php echo $this->lang->line('purchase') . " " . $this->lang->line('no'); ?></th>
+                                    <th><?php echo $this->lang->line('invoice_no');?></th>
                                     <th><?php echo $this->lang->line('supplier') . " " . $this->lang->line('name'); ?></th>
-                                    <th><?php echo $this->lang->line('amount'); ?></th>
-                                    <th><?php echo $this->lang->line('tax'); ?></th>
-                                    <th><?php echo $this->lang->line('discount'); ?></th>
-                                    <th><?php echo $this->lang->line('total'); ?></th>
-                                    <th><?php echo $this->lang->line('action'); ?></th>
+                                    <th><?php echo $this->lang->line('amount')." (".$currency_symbol.")"; ?></th>
+                                    <th><?php echo $this->lang->line('tax')." (".$currency_symbol.")"; ?></th>
+                                    <th><?php echo $this->lang->line('discount')." (".$currency_symbol.")"; ?></th>
+                                    <th><?php echo $this->lang->line('total')." (".$currency_symbol.")"; ?></th>
+                                    <th class="text-right"><?php echo $this->lang->line('action'); ?></th>
                                 </tr>
                             </thead>
 
@@ -53,16 +54,16 @@ $genderList = $this->customlib->getGender();
                                                    data-toggle="tooltip"  title="<?php echo $this->lang->line('show'); ?>" ><?php echo $pharmacy['purchase_no']; ?></a> 
                                                <?php } ?> 
                                         </td>
-
+                                        <td><?php echo $pharmacy['invoice_no']; ?></td>
                                         <td><?php echo $pharmacy['supplier_category']; ?></td>
                                         <td><?php echo $pharmacy['total']; ?></td>
                                         <td><?php echo $pharmacy['tax']; ?></td>
                                         <td><?php echo $pharmacy['discount']; ?></td>
                                         <td><?php echo $pharmacy['net_amount']; ?></td>
-                                        <td class="">
+                                        <td class="text-right">
 
                                             <a href="#" 
-                                               onclick="viewDetail(<?php echo $pharmacy['id'] ?>,<?php echo $pharmacy['purchase_no'] ?>,<?php echo $pharmacy['supplier_id'] ?>)"
+                                               onclick="viewDetail(<?php echo $pharmacy['id'] ?>,<?php echo $pharmacy['purchase_no'] ?>,<?php echo $pharmacy['supplier_id'] ?>,<?php echo $pharmacy['invoice_no'] ?>)"
                                                class="btn btn-default btn-xs"  data-toggle="tooltip"
                                                title="<?php echo $this->lang->line('show'); ?>" >
                                                 <i class="fa fa-reorder"></i>
@@ -95,7 +96,7 @@ $genderList = $this->customlib->getGender();
         <div class="modal-content modal-media-content">
             <div class="modal-header modal-media-header">
                 <div class="row modalbillform">
-                    <div class="col-lg-4 col-sm-5">
+                    <div class="col-lg-3 col-sm-4">
                         <!--  <label for="">
                         <?php echo $this->lang->line('supplier'); ?>
                                             </label>
@@ -119,13 +120,24 @@ $genderList = $this->customlib->getGender();
 
                         <span class="text-danger"><?php echo form_error('refference'); ?></span>
 
-                    </div><!--./col-sm-5-->  
-                    <div class="col-lg-6 col-sm-6"> 
+                    </div><!--./col-sm-5--> 
+                    <div class="col-lg-4 col-sm-3"> 
                         <div class="row">        
-                            <div class="col-lg-3 col-sm-4 col-xs-5">
+                            <div class="col-lg-4 col-sm-4 col-xs-4">
+                                <label><?php echo $this->lang->line('invoice_no'); ?></label>
+                            </div><!--./col-sm-6-->
+                            <div class="col-lg-4 col-sm-4 col-xs-4">                 
+                                <input name="invoice_no" id="invoice_no"  type="text" value="" class="form-control"/>
+                                <span class="text-danger"><?php echo form_error('invoice_no'); ?></span>
+                            </div><!--./col-sm-6-->
+                        </div><!--./row-->    
+                    </div><!--./col-sm-6--> 
+                    <div class="col-lg-4 col-sm-3"> 
+                        <div class="row">        
+                            <div class="col-lg-4 col-sm-4 col-xs-4">
                                 <label><?php echo $this->lang->line('purchase') . " " . $this->lang->line('date'); ?></label>
                             </div><!--./col-sm-6-->
-                            <div class="col-lg-5 col-sm-4 col-xs-7">                 
+                            <div class="col-lg-6 col-sm-6 col-xs-6">                 
                                 <input name="date" id="date_supplier"  type="text" value="<?php echo date($this->customlib->getSchoolDateFormat(true, true)) ?>" class="form-control datetime"/>
                                 <span class="text-danger"><?php echo form_error('date'); ?></span>
                             </div><!--./col-sm-6-->
@@ -144,42 +156,8 @@ $genderList = $this->customlib->getGender();
 
                             <div class="row">
                                 <input name="supplier_id" id="supplierid" type="hidden" class="form-control"/>
-                                <!--  
-                                 <div class="col-sm-2">
-                                     <div class="form-group">
-                                         <label> <th><?php echo $this->lang->line('purchase') . " " . $this->lang->line('date'); ?></th></label>
-                                         <small class="req" style="color:red;"> *</small> 
-                                         <input name="date"  type="text" value="<?php echo date($this->customlib->getSchoolDateFormat(true, true)) ?>" class="form-control datetime"/>
-                                         <span class="text-danger"><?php echo form_error('date'); ?></span>
-                                     </div>
-                                 </div> -->
-
-                                <!-- <div class="col-sm-2">
-    <div class="form-group">
-        <label for="">
-<?php echo $this->lang->line('supplier'); ?>
-                                                </label>
-                                                <small class="req" style="color:red;"> *</small>
-        <div>
-                                                        <select style="width:100%" onchange="get_SupplierDetails(this.value)" 	class="form-control select2" <?php
-if ($disable_option == true) {
-    echo "disabled";
-}
-?>  id="" name='supplier_id' >
-                                                                <option value=""><?php echo $this->lang->line('select') ?></option>
-                                <?php foreach ($supplierCategory as $dkey => $dvalue) {
-                                    ?>
-                                                                        <option value="<?php echo $dvalue["id"]; ?>" <?php
-                                    if ((isset($supplier_select)) && ($supplier_select == $dvalue["id"])) {
-                                        echo "selected";
-                                    }
-                                    ?>><?php echo $dvalue["supplier_category"]; ?></option>   
-<?php } ?>
-                                                        </select>
-                                                </div>
-                                                <span class="text-danger"><?php echo form_error('refference'); ?></span>
-                                        </div>
-                                </div> -->
+                           
+                           <input name="invoiceno"  id="invoiceno" type="hidden" class="form-control"/>
                                 <input name="date"  id="date_result" type="hidden" class="form-control"/>
                                 <div class="col-sm-2" hidden>
                                     <div class="form-group">
@@ -192,8 +170,8 @@ if ($disable_option == true) {
                                 </div>
 
                                 <div class="col-md-12" style="clear: both;">
-                                    <div class="">
-                                        <table class="table table-striped table-bordered table-hover" id="tableID">
+                                    <div class="table-responsive">
+                                        <table class="table tableover table-striped table-bordered table-hover mb10" id="tableID">
                                             <tr>
                                                 <th width="12%"><?php echo $this->lang->line('medicine') . " " . $this->lang->line('category'); ?><small class="req" style="color:red;"> *</small></th>
                                                 <th width="14%"><?php echo $this->lang->line('medicine') . " " . $this->lang->line('name'); ?><small class="req" style="color:red;"> *</small></th>
@@ -207,7 +185,7 @@ if ($disable_option == true) {
 
                                                 <th style="width:75px" class="text-right;"><?php echo $this->lang->line('quantity'); ?><small class="req" style="color:red;"> *</small> </th>
                                                 <th style="width:155px" class="text-right"><?php echo $this->lang->line('purchase') . " " . $this->lang->line('price') . " " . ' (' . $currency_symbol . ')'; ?><small class="req" style="color:red;"> *</small></th>
-                                                <th style="width:100px" class="text-right"><?php echo $this->lang->line('amount') . " (" . $currency_symbol . ")"; ?><small class="req" style="color:red;"> *</small></th>
+                                                <th class="text-right"><?php echo $this->lang->line('amount') . " (" . $currency_symbol . ")"; ?><small class="req" style="color:red;"> *</small></th>
                                             </tr>
                                             <tr id="row0">
                                                 <td>      
@@ -303,13 +281,13 @@ if ($disable_option == true) {
                                         <div class="col-sm-6">
                                             <table class="printablea4">
                                                 <tr>
-                                                    <th width="50%"><?php echo $this->lang->line('total') . " (" . $currency_symbol . ")"; ?></th>
-                                                    <td width="40%" colspan="2" class="text-right ipdbilltable"><input type="text" placeholder="Total" value="0" name="total" id="total" style="width: 30%; float: right" class="form-control"/></td>
+                                                    <th width="40%"><?php echo $this->lang->line('total') . " (" . $currency_symbol . ")"; ?></th>
+                                                    <td width="60%" colspan="2" class="text-right ipdbilltable"><input type="text" placeholder="Total" value="0" name="total" id="total" style="width: 30%; float: right" class="form-control"/></td>
                                                 </tr>
 
                                                 <tr>
                                                     <th><?php echo $this->lang->line('discount') . " (" . $currency_symbol . ")"; ?></th>
-                                                    <td class="text-right ipdbilltable"><h4 style="float: right;font-size: 12px; padding-left: 5px;"> %</h4><input type="text" placeholder="Discount" value="" name="discount_percent" id="discount_percent" style="width: 50%; float: right;font-size: 12px;" class="form-control"/></td>
+                                                    <td class="text-right ipdbilltable"><h4 style="float: right;font-size: 12px; padding-left: 5px;"> %</h4><input type="text" placeholder="Discount" value="" name="discount_percent" id="discount_percent" style="width: 70%; float: right;font-size: 12px;" class="form-control"/></td>
 
                                                     <td class="text-right ipdbilltable"><input type="text" placeholder="Discount" value="0" name="discount" id="discount" style="width: 50%; float: right" class="form-control"/></td>
                                                 </tr>
@@ -317,7 +295,7 @@ if ($disable_option == true) {
                                                 <tr>
                                                     <th><?php echo $this->lang->line('tax') . " (" . $currency_symbol . ")"; ?></th>
                                                     <td class="text-right ipdbilltable">
-                                                        <h4 style="float: right;font-size: 12px;     padding-left: 5px;"> %</h4><input type="text" placeholder="Tax" name="tax_percent" value="" id="tax_percent" style="width: 50%; float: right;font-size: 12px;" class="form-control"/>
+                                                        <h4 style="float: right;font-size: 12px;padding-left: 5px;"> %</h4><input type="text" placeholder="Tax" name="tax_percent" value="" id="tax_percent" style="width: 50%; float: right;font-size: 12px;" class="form-control"/>
                                                     </td>
 
                                                     <td class="text-right ipdbilltable">
@@ -379,7 +357,7 @@ if ($disable_option == true) {
         <div class="modal-content modal-media-content">
             <div class="modal-header modal-media-header">
                 <div class="row modalbillform">
-                    <div class="col-sm-3">
+                    <div class="col-sm-2">
                         <select style="width:100%" onchange="get_SupplierDetails(this.value)"   class="form-control select2"   id="editsupplier" name='supplier' >
                             <option value=""><?php echo $this->lang->line('select') . " " . $this->lang->line('supplier') ?></option>
                             <?php foreach ($supplierCategory as $dkey => $dvalue) { ?>
@@ -388,7 +366,7 @@ if ($disable_option == true) {
                                             echo "selected";
                                         }
                                         ?>><?php echo $dvalue["supplier_category"]; ?></option>   
-<?php } ?>
+                         <?php } ?>
                         </select>
 
                         <span class="text-danger"><?php echo form_error('refference'); ?></span>
@@ -396,7 +374,7 @@ if ($disable_option == true) {
                     </div><!--./col-sm-5-->  
 
 
-                    <div class="col-sm-4"> 
+                    <div class="col-sm-3"> 
                         <div class="row">        
                             <div class="col-lg-4 col-sm-5 col-xs-6">
                                 <label><?php echo $this->lang->line('purchase') . " " . $this->lang->line('no'); ?></label>
@@ -407,10 +385,21 @@ if ($disable_option == true) {
                             </div><!--./col-sm-6-->
                         </div><!--./row-->    
                     </div><!--./col-sm-6--> 
-
-                    <div class="col-sm-4"> 
+                     <div class="col-sm-3"> 
                         <div class="row">        
-                            <div class="col-lg-4 col-sm-6 col-xs-5">
+                            <div class="col-lg-6 col-sm-5 col-xs-6">
+                                <label><?php echo $this->lang->line('invoice_no'); ?></label>
+                            </div><!--./col-sm-6-->
+                            <div class="col-lg-5 col-sm-5 col-xs-6">                 
+                                <input name="invoice_no" id="invoicenoup" type="text" class="form-control" value="" />
+                                <span class="text-danger"><?php echo form_error('invoice_no'); ?></span>
+                            </div><!--./col-sm-6-->
+                        </div><!--./row-->    
+                    </div><!--./col-sm-6--> 
+
+                    <div class="col-sm-3"> 
+                        <div class="row">        
+                            <div class="col-lg-6 col-sm-6 col-xs-5">
                                 <label><?php echo $this->lang->line('purchase') . " " . $this->lang->line('date'); ?></label>
                             </div><!--./col-sm-6-->
                             <div class="col-lg-5 col-sm-6 col-xs-7">                 
@@ -557,7 +546,7 @@ if ($disable_option == true) {
                 });
             }
 
-            function edit_bill(id, purchase_no, supplier_id) {
+            function edit_bill(id, purchase_no, supplier_id, invoiceno) {
             $.ajax({
             url: '<?php echo base_url(); ?>admin/pharmacy/getindate',
             type: "POST",
@@ -570,6 +559,8 @@ if ($disable_option == true) {
             $('#dateedit_supplier').val(indate);
             $('#editsupplier').val(data.supplier_id);
            $('#purchaseno').val(data.purchase_no);
+           $('#invoicenoup').val(invoiceno);
+
                $.ajax({
                     url: '<?php echo base_url(); ?>admin/pharmacy/editSupplierBill/' + id,
                     success: function (res) {
@@ -690,6 +681,8 @@ if ($disable_option == true) {
                 $("#net_amount").val(cnet_amount);
                 var editdate = $("#date_supplier").val();
                 $("#date_result").val(editdate);
+                var invoiceno = $("#invoice_no").val();
+                $("#invoiceno").val(invoiceno);
                 $("#billsave").show();
                 $(".printsavebtn").show();
             }
@@ -763,7 +756,7 @@ if ($disable_option == true) {
                 });
             });
 
-            function viewDetail(id, purchase_no, supplier_id) {
+            function viewDetail(id, purchase_no, supplier_id, invoiceno) {
 
                 $.ajax({
                     url: '<?php echo base_url() ?>admin/pharmacy/getSupplierDetails/' + id,
@@ -771,7 +764,7 @@ if ($disable_option == true) {
                     data: {id: id},
                     success: function (data) {
                         $('#reportdata').html(data);
-                        $('#edit_deletebill').html("<?php if ($this->rbac->hasPrivilege('medicine_purchase', 'can_view')) { ?><a href='#' data-toggle='tooltip' onclick='printData(" + id + ")'   data-original-title='<?php echo $this->lang->line('print'); ?>'><i class='fa fa-print'></i></a> <?php } ?><?php if ($this->rbac->hasPrivilege('medicine_purchase', 'can_edit')) { ?><a href='#'' onclick='edit_bill(" + id + "," + purchase_no + "," + supplier_id + ")' data-toggle='tooltip'  data-original-title='<?php echo $this->lang->line('edit'); ?>'><i class='fa fa-pencil'></i></a><?php } ?><?php if ($this->rbac->hasPrivilege('medicine_purchase', 'can_delete')) { ?><a onclick='delete_bill(" + id + ")'  href='#'  data-toggle='tooltip'  data-original-title='<?php echo $this->lang->line('delete'); ?>'><i class='fa fa-trash'></i></a><?php } ?>");
+                        $('#edit_deletebill').html("<?php if ($this->rbac->hasPrivilege('medicine_purchase', 'can_view')) { ?><a href='#' data-toggle='tooltip' onclick='printData(" + id + ")'   data-original-title='<?php echo $this->lang->line('print'); ?>'><i class='fa fa-print'></i></a> <?php } ?><?php if ($this->rbac->hasPrivilege('medicine_purchase', 'can_edit')) { ?><a href='#'' onclick='edit_bill(" + id + "," + purchase_no + "," + supplier_id + ","+invoiceno+")' data-toggle='tooltip'  data-original-title='<?php echo $this->lang->line('edit'); ?>'><i class='fa fa-pencil'></i></a><?php } ?><?php if ($this->rbac->hasPrivilege('medicine_purchase', 'can_delete')) { ?><a onclick='delete_bill(" + id + ")'  href='#'  data-toggle='tooltip'  data-original-title='<?php echo $this->lang->line('delete'); ?>'><i class='fa fa-trash'></i></a><?php } ?>");
                         holdModal('viewModal');
                     },
                 });
@@ -827,20 +820,15 @@ if ($disable_option == true) {
             }
 
             function getbatchnolist(id, rowid) {
-
-                // var batch_no = $("#batch_no"+id).val();
-                //$('#medicine_name'+rowid).select2("val", '');
                 var div_data = "";
-                //$('#quantity').html(data.available_quantity);
                 $('#totalqty' + rowid).html("<span class='input-group-addon text-danger' style='font-size:10pt'  id='totalqty" + rowid + "'></span>");
                 $('#available_quantity' + rowid).val('');
                 $('#purchase_price' + rowid).val('');
                 $('#expiry_date' + rowid).val('');
                 $('#amount' + rowid).val('');
                 $('#quantity' + rowid).val('');
-                //      $("#batch_no" + rowid).html("<option value=''>Select</option>");
                 $("#batch_no" + rowid).html("<option value='l'><?php echo $this->lang->line('loading') ?></option>");
-                //  $('#batch_no' + rowid).select2("val", 'l');
+            
                 $.ajax({
                     type: "POST",
                     url: base_url + "admin/pharmacy/getBatchNoList",
@@ -854,8 +842,6 @@ if ($disable_option == true) {
                             div_data += "<option value='" + obj.batch_no + "'>" + obj.batch_no + "</option>";
                         });
                         $("#batch_no" + rowid).html("<option value=''>Select</option>");
-//       $('#batch_no' + rowid).select2("val", 'l');
-
                         $('#batch_no' + rowid).append(div_data);
                     }
                 });
@@ -863,8 +849,6 @@ if ($disable_option == true) {
 
             function get_PatientDetails(id) {
                 $("#patient_name").html("patient_name");
-                //$("#schedule_charge").html("schedule_charge");
-
                 $.ajax({
                     url: '<?php echo base_url(); ?>admin/pharmacy/patientDetails',
                     type: "POST",
@@ -881,5 +865,18 @@ if ($disable_option == true) {
                         }
                     }
                 });
-            }
+            }			
+			
+$(".addpurchase").click(function(){	
+	$('#bill').trigger("reset");
+	$(".dropify-clear").trigger("click");
+	$('#select2-hifc-container').html('');
+	$('#invoice_no').val('');	
+	$('#select2-medicine_name0-container').html('');
+	var table = document.getElementById("tableID");
+    var table_len = (table.rows.length);	
+	for (i = 1; i < table_len; i++) {			
+		delete_row(i);
+	}
+});
 </script>

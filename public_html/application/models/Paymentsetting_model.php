@@ -31,19 +31,15 @@ class Paymentsetting_model extends CI_Model {
     public function add($data) {
         $this->db->where('payment_type', $data['payment_type']);
         $q = $this->db->get('payment_settings');
-
         if ($q->num_rows() > 0) {
-
             $this->db->where('id', $q->row()->id);
             $this->db->update('payment_settings', $data);
         } else {
-
             $this->db->insert('payment_settings', $data);
         }
     }
 
     public function valid_paymentsetting() {
-
         $payment_setting = $this->input->post('payment_setting');
         if ($payment_setting == "none") {
             return true;
@@ -67,8 +63,6 @@ class Paymentsetting_model extends CI_Model {
     }
 
     public function active($data, $other = false) {
-
-
         if (!$other) {
             $this->db->where('payment_type', $data['payment_type']);
             $this->db->update('payment_settings', $data);
@@ -78,7 +72,6 @@ class Paymentsetting_model extends CI_Model {
             $this->db->where('payment_type !=', $payment_type);
             $this->db->update('payment_settings', $data);
         } else {
-
             $this->db->update('payment_settings', $data);
         }
     }

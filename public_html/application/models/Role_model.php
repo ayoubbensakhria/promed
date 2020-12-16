@@ -7,7 +7,6 @@ class Role_model extends CI_Model {
 
     public function __construct() {
         parent::__construct();
-        $this->current_session = $this->setting_model->getCurrentSession();
     }
 
     /**
@@ -28,13 +27,12 @@ class Role_model extends CI_Model {
             $result = $query->row_array();
         } else {
             $result = $query->result_array();
-
-
             if ($this->session->has_userdata('hospitaladmin')) {
                 $superadmin_rest = $this->session->userdata['hospitaladmin']['superadmin_restriction'];
                 if ($superadmin_rest == 'disabled') {
                     $search = in_array(7, array_column($result, 'id'));
-                    $search_key = array_search(7, array_column($result, 'id'));
+                    $search_key = array_search(7, array_column($result, 'id'));          
+
                     if (!empty($search)) {
                         unset($result[$search_key]);
                         $result = array_values($result);
@@ -74,7 +72,6 @@ class Role_model extends CI_Model {
     public function valid_check_exists($str) {
         $name = $this->input->post('name');
         $id = $this->input->post('id');
-
         if (!isset($id)) {
             $id = 0;
         }
@@ -88,7 +85,6 @@ class Role_model extends CI_Model {
 
     function check_data_exists($name, $id) {
         $this->db->where('name', $name);
-
         $this->db->where('id !=', $id);
         $query = $this->db->get('roles');
         if ($query->num_rows() > 0) {
@@ -103,9 +99,7 @@ class Role_model extends CI_Model {
     public function find($role_id = null) {
         $this->db->select()->from('permission_group');
         $this->db->order_by('permission_group.sort_order');
-
         $query = $this->db->get();
-
         $result = $query->result();
         foreach ($result as $key => $value) {
             $value->permission_category = $this->getPermissions($value->id, $role_id);
@@ -116,7 +110,6 @@ class Role_model extends CI_Model {
     public function getPermissions($group_id, $role_id) {
         $sql = "SELECT permission_category.*,IFNULL(roles_permissions.id,0) as `roles_permissions_id`,roles_permissions.can_view,roles_permissions.can_add ,roles_permissions.can_edit ,roles_permissions.can_delete FROM `permission_category` LEFT JOIN roles_permissions on permission_category.id = roles_permissions.perm_cat_id and roles_permissions.role_id= $role_id WHERE permission_category.perm_group_id = $group_id ORDER BY `permission_category`.`id`";
         $query = $this->db->query($sql);
-
         return $query->result();
     }
 
@@ -127,10 +120,8 @@ class Role_model extends CI_Model {
             $this->db->insert_batch('roles_permissions', $to_be_insert);
         }
         if (!empty($to_be_update)) {
-
             $this->db->update_batch('roles_permissions', $to_be_update, 'id');
         }
-
 
 // # Updating data
         if (!empty($to_be_delete)) {
@@ -139,23 +130,24 @@ class Role_model extends CI_Model {
             $this->db->delete('roles_permissions');
         }
         $this->db->trans_complete();
-
         if ($this->db->trans_status() === FALSE) {
-
             $this->db->trans_rollback();
             return FALSE;
         } else {
-
             $this->db->trans_commit();
             return TRUE;
         }
     }
 
     public function count_roles($id) {
-
         $query = $this->db->select("*")->join("staff", "staff.id = staff_roles.staff_id")->where("staff_roles.role_id", $id)->where("staff.is_active", 1)->get("staff_roles");
-
         return $query->num_rows();
+    }
+
+    public function getRolefromid($id)
+    {
+         $query = $this->db->select("roles.*,staff.id as staff_id")->join("roles", "roles.id = staff_roles.role_id")->join("staff", "staff.id = staff_roles.staff_id")->where("staff_roles.role_id", $id)->get("staff_roles");
+        return $query->result_array();
     }
 
 }

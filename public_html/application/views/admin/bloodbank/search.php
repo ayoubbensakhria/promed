@@ -2,12 +2,7 @@
 $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
 $genderList = $this->customlib->getGender();
 ?>
-<style type="text/css">
-    #easySelectable {/*display: flex; flex-wrap: wrap;*/}
-    #easySelectable li {}
-    #easySelectable li.es-selected {background: #2196F3; color: #fff;}
-    .easySelectable {-webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;}
-</style>
+
 <div class="content-wrapper">
     <!-- Main content -->
     <section class="content">
@@ -15,14 +10,14 @@ $genderList = $this->customlib->getGender();
             <div class="col-md-12">
                 <div class="box box-primary">
                     <div class="box-header with-border">
-                        <h3 class="box-title titlefix"> <?php echo $this->lang->line('donor') . " " . $this->lang->line('details'); ?></h3>
+                        <h3 class="box-title titlefix"> <?php echo $this->lang->line('donor') . " " . $this->lang->line('details'); ?>
+                        </h3>
                         <div class="box-tools pull-right">
                             <?php if ($this->rbac->hasPrivilege('blood_donor', 'can_add')) { ?>
-                                <a data-toggle="modal" onclick="holdModal('myModal')" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> <?php echo $this->lang->line('add') . " " . $this->lang->line('blood') . " " . $this->lang->line('donor'); ?></a> 
+                                <a data-toggle="modal" onclick="holdModal('myModal')" class="btn btn-primary btn-sm addblood"><i class="fa fa-plus"></i> <?php echo $this->lang->line('add') . " " . $this->lang->line('blood') . " " . $this->lang->line('donor'); ?></a> 
                             <?php } ?>
                         </div>    
                     </div><!-- /.box-header -->
-
                     <div class="box-body">
                         <div class="download_label"><?php echo $this->lang->line('donor') . " " . $this->lang->line('details') . " " . $this->lang->line('list(varname)'); ?></div>
                         <table class="table table-striped table-bordered table-hover example" cellspacing="0" width="100%">
@@ -51,8 +46,8 @@ $genderList = $this->customlib->getGender();
                                                     <a  onclick="viewDetail('<?php echo $student['id'] ?>')"><?php echo $student['donor_name']; ?></a> 
                                                 <?php } ?>
                                                 <div class="rowoptionview">
-                                                    <?php if ($this->rbac->hasPrivilege('blood_donor', 'can_add')) { ?>
-                                                        <a href="#" onclick="addDonorBlood('<?php echo $student['id'] ?>')" class="btn btn-default btn-xs"  data-toggle="tooltip" title="<?php echo $this->lang->line('donor') . " " . $this->lang->line('blood') . " " . $this->lang->line('details'); ?>">
+                                                    <?php if ($this->rbac->hasPrivilege('donate_blood', 'can_add')) { ?>
+                                                        <a href="#" onclick="addDonorBlood('<?php echo $student['id'] ?>')" class="btn btn-default btn-xs addDonorBlood"  data-toggle="tooltip" title="<?php echo $this->lang->line('donor') . " " . $this->lang->line('blood') . " " . $this->lang->line('details'); ?>">
                                                             <i class="fa fa-plus-square" aria-hidden="true"></i>
                                                         </a>
                                                     <?php } if ($this->rbac->hasPrivilege('blood_donor', 'can_view')) { ?> 
@@ -89,7 +84,7 @@ $genderList = $this->customlib->getGender();
                         </table>
                     </div>
                 </div>                                                    
-            </div>                                                                                                                                          
+            </div>                                                                                                           
         </div>  
     </section>
 </div>
@@ -103,8 +98,6 @@ $genderList = $this->customlib->getGender();
             <form id="formadd" accept-charset="utf-8" method="post" class="">   
                 <div class="modal-body pt0 pb0">
                     <div class="ptt10">
-
-
                         <div class="row">
                             <div class="col-sm-3">
                                 <div class="form-group">
@@ -174,7 +167,6 @@ $genderList = $this->customlib->getGender();
                                     <textarea name="address"  class="form-control" ></textarea>
                                 </div>
                             </div>
-
                         </div><!--./row--> 
                     </div><!--./row--> 
                 </div>      
@@ -185,9 +177,6 @@ $genderList = $this->customlib->getGender();
                     </div>
                 </div>
             </form>
-
-
-
         </div>
     </div>    
 </div>
@@ -199,7 +188,6 @@ $genderList = $this->customlib->getGender();
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                 <h4 class="box-title"><?php echo $this->lang->line('edit') . " " . $this->lang->line('donor') . " " . $this->lang->line('information'); ?></h4> 
             </div>
-
             <div class="modal-body pt0 pb0">
                 <div class="row">
                     <div class="col-lg-12 col-md-12 col-sm-12 paddlr">
@@ -264,7 +252,6 @@ $genderList = $this->customlib->getGender();
                                 <div class="col-sm-3">
                                     <div class="form-group">
                                         <label><?php echo $this->lang->line('contact_no'); ?></label>
-
                                         <input type="text" name="contact_no" id="contact_no" value="<?php echo set_value('contact_no'); ?>" class="form-control">
                                         <span class="text-danger"><?php echo form_error('contact_no'); ?></span>
                                     </div>
@@ -276,7 +263,6 @@ $genderList = $this->customlib->getGender();
                                     </div>
                                 </div>
                             </div><!--./row-->
-
                     </div><!--./col-md-12-->       
                 </div><!--./row--> 
             </div>
@@ -331,20 +317,16 @@ $genderList = $this->customlib->getGender();
                                         <span class="text-danger"><?php echo form_error('quantity'); ?></span>
                                     </div>
                                 </div>
-
                                 <div class="col-sm-12">
                                     <div class="form-group">
                                         <label><?php echo $this->lang->line('institution'); ?></label>
                                         <input  name="institution"  type="text" class="form-control"/>
                                     </div>
                                 </div>
-                            </div><!--./row-->   
-
-                    </div><!--./col-md-12-->       
-
+                            </div><!--./row-->  
+                    </div><!--./col-md-12--> 
                 </div><!--./row--> 
-
-            </div>
+			</div>
             <div class="box-footer">
                 <div class="pull-right">
                     <button type="submit" data-loading-text="<?php echo $this->lang->line('processing') ?>" id="donorbloodbtn" class="btn btn-info pull-right" ><?php echo $this->lang->line('save'); ?></button>
@@ -366,7 +348,6 @@ $genderList = $this->customlib->getGender();
                 </div>
                 <h4 class="box-title"><?php echo $this->lang->line('donor') . " " . $this->lang->line('information'); ?></h4> 
             </div>
-
             <div class="modal-body pt0 pb0">
                 <div class="row">
                     <div class="col-lg-12 col-md-12 col-sm-12 paddlr">
@@ -393,14 +374,11 @@ $genderList = $this->customlib->getGender();
                                         </td>
                                         <th><?php echo $this->lang->line('contact_no'); ?></th>
                                         <td><span id="contact_nos"></span>
-
                                     </tr>
-
                                     <tr>
                                         <th><?php echo $this->lang->line('address'); ?></th>
                                         <td><span id='addresss'></span></td>
                                     </tr>
-
                                 </table>
                             </div>
                         </form>                                   
@@ -416,12 +394,7 @@ $genderList = $this->customlib->getGender();
         $('#easySelectable').easySelectable();
     })
 </script>
-
-
-<script type="text/javascript">
-            /*
-             Author: mee4dy@gmail.com
-             */
+<script type="text/javascript">            
                     (function ($) {
                         //selectable html elements
                         $.fn.easySelectable = function (options) {
@@ -490,7 +463,6 @@ $genderList = $this->customlib->getGender();
                             }
                         };
                     })(jQuery);
-
 </script>
 <script>
             $(document).ready(function (e) {
@@ -549,7 +521,7 @@ $genderList = $this->customlib->getGender();
                             $("#formeditbtn").button('reset');
                         },
                         error: function () {
-                            //  alert("Fail")
+                            
                         }
                     });
                 }));
@@ -568,7 +540,6 @@ $genderList = $this->customlib->getGender();
                         $("#month").val(data.month);
                         $("#blood_group").val(data.blood_group);
                         $("#gender").val(data.gender);
-                        // $("#date_of_birth").val(data.date_of_birth);
                         $("#father_name").val(data.father_name);
                         $("#address").val(data.address);
                         $("#city").val(data.city);
@@ -612,7 +583,7 @@ $genderList = $this->customlib->getGender();
                         $("#father_names").html(data.father_name);
                         $("#contact_nos").html(data.contact_no);
                         $("#addresss").html(data.address);
-                        $("#edit_delete").html("<a href='#' onclick='getRecord(" + id + ")' data-toggle='tooltip' title='' data-original-title='Edit'><i class='fa fa-pencil'></i></a><a onclick='delete_record(" + id + ")'  href='#'  data-toggle='tooltip'  data-original-title='Delete'><i class='fa fa-trash'></i></a>");
+                        $("#edit_delete").html("<?php if ($this->rbac->hasPrivilege('blood_donor', 'can_edit')) { ?><a href='#' onclick='getRecord(" + id + ")' data-toggle='tooltip' title='' data-original-title='Edit'><i class='fa fa-pencil'></i></a><?php } if ($this->rbac->hasPrivilege('blood_donor', 'can_delete')) { ?><a onclick='delete_record(" + id + ")'  href='#'  data-toggle='tooltip'  data-original-title='Delete'><i class='fa fa-trash'></i></a><?php } ?>");
                         holdModal('viewModal');
                     },
                 });
@@ -670,7 +641,7 @@ $genderList = $this->customlib->getGender();
                             $("#donorbloodbtn").button('reset');
                         },
                         error: function () {
-                            //  alert("Fail")
+                            
                         }
                     });
                 }));
@@ -681,5 +652,13 @@ $genderList = $this->customlib->getGender();
                     keyboard: false,
                     show: true
                 });
-            }
+            }			
+
+$(".addblood").click(function(){
+	$('#formadd').trigger("reset");	
+});
+
+$(".addDonorBlood").click(function(){
+	$('#donorblood').trigger("reset");	
+});
 </script>

@@ -55,7 +55,9 @@ class Rbac {
         }
 
         // echo  "<pre>";
-        // print_r($this->permissions);
+         //print_r($this->permissions);
+         // echo "</pre>";
+
         // exit;
         // if(!$this->rbac->hasPrivilege('student','can_view')){
         //   access_denied();

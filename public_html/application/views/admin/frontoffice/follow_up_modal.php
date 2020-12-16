@@ -56,7 +56,6 @@
     </div><!--/.col (left) -->
     <div class="col-lg-4 col-md-4 col-sm-4 col-eq">
         <div class="taskside">
-            <?php //print_r($enquiry_data);  ?>
             <h4><?php echo $this->lang->line('summary'); ?>
                 <div style="font-size: 15px;" class="box-tools pull-right">
                     <label>Status</label>

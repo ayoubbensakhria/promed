@@ -7,18 +7,16 @@ class Expense extends Admin_Controller {
 
     function __construct() {
         parent::__construct();
-
         $this->load->library('Customlib');
         $this->config->load("payroll");
         $this->config->load("image_valid");
-
         $this->search_type = $this->config->item('search_type');
     }
 
     function index() {
-        if (!$this->rbac->hasPrivilege('expense', 'can_view')) {
+         if (!$this->module_lib->hasActive('expense')) { 
             access_denied();
-        }
+         }
         $this->session->set_userdata('top_menu', 'finance');
         $this->session->set_userdata('sub_menu', 'expense/index');
         $data['title'] = 'Add Expense';
@@ -68,7 +66,6 @@ class Expense extends Admin_Controller {
         $this->form_validation->set_rules('exdate', $this->lang->line('date'), 'trim|required|xss_clean');
         $this->form_validation->set_rules('documents', $this->lang->line('documents'), 'callback_handle_upload');
         if ($this->form_validation->run() == FALSE) {
-
             $msg = array(
                 'exp_head_id' => form_error('exp_head_id'),
                 'name' => form_error('name'),
@@ -76,7 +73,6 @@ class Expense extends Admin_Controller {
                 'amount' => form_error('amount'),
                 'documents' => form_error('documents'),
             );
-
             $array = array('status' => 'fail', 'error' => $msg, 'message' => '');
         } else {
             $data = array(
@@ -102,11 +98,8 @@ class Expense extends Admin_Controller {
     }
 
     public function handle_upload() {
-
         $image_validate = $this->config->item('file_validate');
-
         if (isset($_FILES["documents"]) && !empty($_FILES['documents']['name'])) {
-
             $file_type = $_FILES["documents"]['type'];
             $file_size = $_FILES["documents"]["size"];
             $file_name = $_FILES["documents"]["name"];
@@ -114,7 +107,6 @@ class Expense extends Admin_Controller {
             $ext = pathinfo($file_name, PATHINFO_EXTENSION);
             $allowed_mime_type = $image_validate['allowed_mime_type'];
             if ($files = @filesize($_FILES['documents']['tmp_name'])) {
-
                 if (!in_array($file_type, $allowed_mime_type)) {
                     $this->form_validation->set_message('handle_upload', 'File Type Not Allowed');
                     return false;
@@ -132,7 +124,6 @@ class Expense extends Admin_Controller {
                 $this->form_validation->set_message('handle_upload', "Error File Uploading");
                 return false;
             }
-
             return true;
         }
         return true;
@@ -188,7 +179,6 @@ class Expense extends Admin_Controller {
     }
 
     function getDataByid($id) {
-
         $data['title'] = 'Edit Fees Master';
         $data['id'] = $id;
         $expense = $this->expense_model->get($id);
@@ -196,7 +186,6 @@ class Expense extends Admin_Controller {
         $data['title_list'] = 'Fees Master List';
         $expnseHead = $this->expensehead_model->get();
         $data['expheadlist'] = $expnseHead;
-
         $this->load->view('admin/expense/editexpenseModal', $data);
     }
 
@@ -226,12 +215,9 @@ class Expense extends Admin_Controller {
                 'date' => form_error('date'),
                 'documents' => form_error('documents')
             );
-
             $array = array('status' => 'fail', 'error' => $msg, 'message' => '');
         } else {
-
             $exdate = $this->input->post('date');
-
             $data = array(
                 'id' => $id,
                 'exp_head_id' => $this->input->post('exp_head_id'),
@@ -265,20 +251,16 @@ class Expense extends Admin_Controller {
         $join = array('JOIN expense_head ON expenses.exp_head_id = expense_head.id');
         $table_name = "expenses";
 
-
         $search_type = $this->input->post("search_type");
         if (isset($search_type)) {
             $search_type = $this->input->post("search_type");
         } else {
             $search_type = "this_month";
         }
-
         if (empty($search_type)) {
-
             $search_type = "";
             $listMessage = $this->report_model->getReport($select, $join, $table_name);
         } else {
-
             $search_table = "expenses";
             $search_column = "date";
             $additional = array();
@@ -294,33 +276,23 @@ class Expense extends Admin_Controller {
     }
 
     public function expensegroup() {
-
         $this->session->set_userdata('top_menu', 'Reports');
         $this->session->set_userdata('sub_menu', 'reports/expensegroup');
-
-
-
         if (isset($_POST['search_type'])) {
-
             $search_type = $this->input->post("search_type");
         } else {
-
             $search_type = "this_month";
         }
 
         $data["searchlist"] = $this->search_type;
         $data["search_type"] = $search_type;
         $data['head_id'] = $head_id = "";
-
         if (isset($_POST['head']) && $_POST['head'] != '') {
             $data['head_id'] = $head_id = $_POST['head'];
         }
 
-
         $result = $this->expense_model->searchexpensegroup($search_type, $head_id);
-
         $data['headlist'] = $this->expensehead_model->get();
-
         $data['expenselist'] = $result;
         $this->load->view('layout/header', $data);
         $this->load->view('admin/expense/groupexpenseReport', $data);

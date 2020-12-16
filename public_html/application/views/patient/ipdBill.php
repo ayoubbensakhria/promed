@@ -16,21 +16,6 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
             <!-- left column -->
             <div class="col-md-12">
                 <div class="">
-                    <!--table width="100%">
-                    <?php
-                    //echo "<pre>";
-                    //print_r($result); 
-                    ?>
-                        <tr>
-                            <td align="center">
-                               <h3 style="margin: 0;"><?php
-                    if (!empty($print_details[0]['print_header'])) {
-                        echo $print_details[0]['print_header'];
-                    }
-                    ?></h3>
-                            </td>
-                        </tr>
-                    </table-->
                     <div class="pprinta4">
                         <?php if (!empty($print_details[0]['print_header'])) { ?>
                             <img style="height:100px" class="img-responsive" src="<?php echo base_url() . $print_details[0]["print_header"] ?>">
@@ -40,7 +25,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                     <table width="100%" class="printablea4">
                         <tr>
                             <td align="text-left"><h5><?php echo $this->lang->line('bill') . " #" ?><?php echo $result["ipdid"] ?></h5></td>
-                            <td align="right"><h5><?php echo $this->lang->line('date') . " : " ?><?php echo date($this->customlib->getSchoolDateFormat(true, true), strtotime($result['date'])) ?></h5></td>
+                            <td align="right"><h5><?php echo $this->lang->line('date') . " : " ?><?php echo date($this->customlib->getSchoolDateFormat(true, false), strtotime($result['date'])) ?></h5></td>
                         </tr>
                     </table>
                     <hr style="height: 1px; clear: both;margin-bottom: 10px; margin-top: 10px">
@@ -84,7 +69,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                             <tr>
                                 <td><?php echo $charge["charge_type"]; ?></td> 
                                 <td><?php echo $charge["charge_category"]; ?></td>
-                                <td><?php echo date($this->customlib->getSchoolDateFormat(), strtotime($charge["created_at"])); ?></td>
+                                <td><?php echo date($this->customlib->getSchoolDateFormat(), strtotime($charge["date"])); ?></td>
                                 <td class="pttright reborder text-right"><?php echo $charge["apply_charge"]; ?></td>
                             </tr>
                             <?php

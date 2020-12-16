@@ -27,7 +27,6 @@ class Mailsms extends Admin_Controller {
         $join = array();
         $table_name = "messages";
 
-
         $search_type = $this->input->post("search_type");
 
         if (isset($search_type)) {
@@ -43,7 +42,7 @@ class Mailsms extends Admin_Controller {
             $search_type = "";
             $listMessage = $this->report_model->getReport($select, $join, $table_name);
         } else {
-
+            
             $search_table = "messages";
             $search_column = "created_at";
             $additional = array();
@@ -159,6 +158,8 @@ class Mailsms extends Admin_Controller {
         $this->form_validation->set_rules('individual_send_by[]', 'Send Through', 'required');
         if ($this->form_validation->run()) {
             $userlisting = json_decode($this->input->post('user_list'));
+            // print_r($userlisting);
+            // exit();
             $user_array = array();
             foreach ($userlisting as $userlisting_key => $userlisting_value) {
                 $array = array(
@@ -166,13 +167,17 @@ class Mailsms extends Admin_Controller {
                     'user_id' => $userlisting_value[0]->record_id,
                     'email' => $userlisting_value[0]->email,
                     'mobileno' => $userlisting_value[0]->mobileno,
+                    'app_key'  => $userlisting_value[0]->app_key,
+                   // 'app_key' => 'd6isjDozdEY:APA91bHLMTwvT-SN8vOKaIxmae9XBi8_aadj8SB8d1NYItjxXrA8NnYGWYE9KQzOFeO2Ee15XTltqCB4udcacukni9Q9yQRK8CEpwPsQw-q-MKEd_LGX5LyMO6YPZafh-BphTvO8M-Cf',
                 );
                 $user_array[] = $array;
             }
-
+            //  print_r($array);
+            //  exit();
             $sms_mail = $this->input->post('individual_send_by[]');
             $send_mail = in_array('mail', $sms_mail) ? 1 : 0;
             $send_sms = in_array('sms', $sms_mail) ? 1 : 0;
+            $send_mobileapp = in_array('push', $sms_mail) ? 1 : 0;
             $message = $this->input->post('individual_message');
             $message_title = $this->input->post('individual_title');
             $data = array(
@@ -181,11 +186,12 @@ class Mailsms extends Admin_Controller {
                 'message' => $message,
                 'send_mail' => $send_mail,
                 'send_sms' => $send_sms,
+                //'send_mobileapp' => $send_mobileapp,
                 'user_list' => json_encode($user_array)
             );
-
             $this->messages_model->add($data);
             if (!empty($user_array)) {
+
                 if ($send_mail) {
                     if (!empty($this->mail_config)) {
                         foreach ($user_array as $user_mail_key => $user_mail_value) {
@@ -195,12 +201,26 @@ class Mailsms extends Admin_Controller {
                         }
                     }
                 }
+
                 if ($send_sms) {
                     foreach ($user_array as $user_mail_key => $user_mail_value) {
                         if ($user_mail_value['mobileno'] != "") {
                             $this->smsgateway->sendSMS($user_mail_value['mobileno'], strip_tags($message));
                         }
                     }
+                }
+
+                if ($send_mobileapp) {
+                    foreach ($user_array as $user_mail_key => $user_mail_value) {
+                          $push_array = array(
+                            'title' => $message_title,
+                            'body'  => $this->customlib->getLimitChar($message));
+                        if ($user_mail_value['app_key'] != "") {
+                             $this->pushnotification->send($user_mail_value['app_key'], $push_array, "mail_sms");
+                        }
+                      // print_r($push_array);
+                    }
+                  //exit();
                 }
             }
             echo json_encode(array('status' => 0, 'msg' => "Message sent successfully"));
@@ -227,11 +247,10 @@ class Mailsms extends Admin_Controller {
         $this->form_validation->set_rules('group_send_by[]', $this->lang->line('send_through'), 'required');
         if ($this->form_validation->run()) {
             $user_array = array();
-
-
             $sms_mail = $this->input->post('group_send_by[]');
             $send_mail = in_array('mail', $sms_mail) ? 1 : 0;
             $send_sms = in_array('sms', $sms_mail) ? 1 : 0;
+            $send_mobileapp = in_array('push', $sms_mail) ? 1 : 0;
             $message = $this->input->post('group_message');
             $message_title = $this->input->post('group_title');
             $data = array(
@@ -243,8 +262,6 @@ class Mailsms extends Admin_Controller {
                 'group_list' => json_encode(array())
             );
             $this->messages_model->add($data);
-
-
 
             $userlisting = $this->input->post('user[]');
             foreach ($userlisting as $users_key => $users_value) {
@@ -269,6 +286,8 @@ class Mailsms extends Admin_Controller {
                                 'user_id' => $parent_value['id'],
                                 'email' => $parent_value['email'],
                                 'mobileno' => $parent_value['mobileno'],
+                                'app_key' => $parent_value['app_key']
+
                             );
                             $user_array[] = $array;
                         }
@@ -290,8 +309,10 @@ class Mailsms extends Admin_Controller {
                 }
             }
 
-
+// print_r($user_array);
+// exit();
             if (!empty($user_array)) {
+                
                 if ($send_mail) {
                     if (!empty($this->mail_config)) {
                         foreach ($user_array as $user_mail_key => $user_mail_value) {
@@ -301,6 +322,7 @@ class Mailsms extends Admin_Controller {
                         }
                     }
                 }
+
                 if ($send_sms) {
                     foreach ($user_array as $user_mail_key => $user_mail_value) {
                         if ($user_mail_value['mobileno'] != "") {
@@ -308,6 +330,20 @@ class Mailsms extends Admin_Controller {
                         }
                     }
                 }
+
+                if ($send_mobileapp) {
+                    foreach ($user_array as $user_mail_key => $user_mail_value) {
+                          $push_array = array(
+                            'title' => $message_title,
+                            'body'  => $this->customlib->getLimitChar($message));
+                        if ($user_mail_value['app_key'] != "") {
+                            
+                             $this->pushnotification->send($user_mail_value['app_key'], $push_array, "mail_sms");
+                        }
+                    }
+                    //print_r($user_mail_value);
+                }
+               // exit();
             }
 
 

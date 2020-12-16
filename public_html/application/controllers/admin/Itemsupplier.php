@@ -48,7 +48,6 @@ class Itemsupplier extends Admin_Controller {
         $this->form_validation->set_rules('contact_person_phone', 'Phone', 'trim|numeric|xss_clean');
         $this->form_validation->set_rules('contact_person_email', 'Email', 'trim|xss_clean|valid_email');
 
-
         if ($this->form_validation->run() == FALSE) {
             $this->load->view('layout/header', $data);
             $this->load->view('admin/itemsupplier/itemsupplierList', $data);
@@ -82,8 +81,6 @@ class Itemsupplier extends Admin_Controller {
         $this->form_validation->set_rules('email', $this->lang->line('email'), 'trim|xss_clean|valid_email');
         $this->form_validation->set_rules('contact_person_phone', $this->lang->line('contact') . " " . $this->lang->line('person') . " " . $this->lang->line('phone'), 'trim|numeric|xss_clean');
         $this->form_validation->set_rules('contact_person_email', $this->lang->line('email'), 'trim|xss_clean|valid_email');
-
-
         if ($this->form_validation->run() == FALSE) {
 
             $msg = array(
@@ -112,7 +109,6 @@ class Itemsupplier extends Admin_Controller {
 
             $array = array('status' => 'success', 'error' => '', 'message' => $this->lang->line('success_message'));
         }
-
         echo json_encode($array);
     }
 
@@ -132,14 +128,11 @@ class Itemsupplier extends Admin_Controller {
         $this->form_validation->set_rules('email', 'Email', 'trim|xss_clean|valid_email');
         $this->form_validation->set_rules('contact_person_phone', 'Phone', 'trim|numeric|xss_clean');
         $this->form_validation->set_rules('contact_person_email', 'Email', 'trim|xss_clean|valid_email');
-
         if ($this->form_validation->run() == FALSE) {
             $this->load->view('layout/header', $data);
             $this->load->view('admin/itemsupplier/itemsupplierEdit', $data);
             $this->load->view('layout/footer', $data);
         } else {
-
-
             $data = array(
                 'id' => $id,
                 'phone' => $this->input->post('phone'),
@@ -168,7 +161,6 @@ class Itemsupplier extends Admin_Controller {
         $this->form_validation->set_rules('email', $this->lang->line('email'), 'trim|xss_clean|valid_email');
         $this->form_validation->set_rules('contact_person_phone', $this->lang->line('contact') . " " . $this->lang->line('person') . " " . $this->lang->line('phone'), 'trim|numeric|xss_clean');
         $this->form_validation->set_rules('contact_person_email', $this->lang->line('email'), 'trim|xss_clean|valid_email');
-
         if ($this->form_validation->run() == FALSE) {
 
             $msg = array(
@@ -194,7 +186,6 @@ class Itemsupplier extends Admin_Controller {
                 'description' => $this->input->post('description'),
             );
             $this->itemsupplier_model->add($data);
-
             $array = array('status' => 'success', 'error' => '', 'message' => $this->lang->line('update_message'));
         }
 

@@ -35,7 +35,7 @@
                         <h3 class="box-title titlefix"><?php echo $this->lang->line('designation'); ?> <?php echo $this->lang->line('list'); ?></h3>
                         <div class="box-tools pull-right">
                             <?php if ($this->rbac->hasPrivilege('designation', 'can_add')) { ?>
-                                <a data-toggle="modal" data-target="#myModal" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i>  <?php echo $this->lang->line('add'); ?> <?php echo $this->lang->line('designation'); ?></a>  
+                                <a data-toggle="modal" data-target="#myModal" class="btn btn-primary btn-sm designation"><i class="fa fa-plus"></i>  <?php echo $this->lang->line('add'); ?> <?php echo $this->lang->line('designation'); ?></a>  
                             <?php } ?>   
                         </div>
                     </div>
@@ -274,13 +274,12 @@
 
                 }
             });
-
-
         }));
-
     });
 
-
+$(".designation").click(function(){
+	$('#formadd').trigger("reset");
+});
 </script>
 
 

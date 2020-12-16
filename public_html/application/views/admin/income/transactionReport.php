@@ -132,8 +132,6 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
 
                                                     foreach ($result2 as $key4 => $result) {    
                                                         $surname = "";
-                                                        //print_r($result);
-                                                        //echo   $patient_type = $result['patient_type'];
                                                         if (!empty($result["amount"])) {
                                                             $payment = $result["amount"];
 
@@ -181,7 +179,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                                         } else {
                                                             ?>
                                                             <tr>
-                                                                <td><?php echo $result["patient_name"] . " " . $surname . $patient_id ?></td>
+                                                                <td><?php echo $result["patient_name"] . " " . $patient_id ?></td>
                                                                 <td><?php echo $refference ?></td>
                                                                 <td style="text-transform:capitalize;"><?php echo $key1 ?></td>
                                                                 <td><?php echo date($this->customlib->getSchoolDateFormat(), strtotime($result['date'])); ?></td>
@@ -224,7 +222,8 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                                     $tot[$value["label"]] = 0;
                                                     foreach ($value["resultList"] as $key2 => $transaction) {
                                                         # code...
-                                                        $tabsurname = "";
+
+                                                        $surname = "";
                                                         if ($value["label"] == "Payroll") {
                                                             $surname = $transaction["surname"];
                                                         }
@@ -243,7 +242,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                                         }
                                                         ?>
                                                         <tr>
-                                                            <td><?php echo $transaction["patient_name"] . " " . $surname . $patient_id ?></td>
+                                                            <td><?php echo $transaction["patient_name"]  ." ".$surname." ". $patient_id ?></td>
                                                             <td><?php echo $reff; ?></td>
                                                             <td style="text-transform: capitalize;"><?php echo $value["label"] ?></td>
                                                             <td><?php echo date($this->customlib->getSchoolDateFormat(), strtotime($transaction['date'])); ?></td>

@@ -18,19 +18,14 @@ class Notification_model extends CI_Model {
      * @return mixed
      */
     public function get($id = null) {
-
         $userdata = $this->customlib->getUserData();
-
         $role_id = $userdata["role_id"];
         $sql = "SELECT * from send_notification  JOIN (SELECT send_notification_id, GROUP_CONCAT(role_id) as roles  FROM notification_roles  group by send_notification_id) as notification_roles on notification_roles.send_notification_id = send_notification.id ";
-
         if ($id != null) {
-
             $sql .= "where send_notification.id =" . $id;
         }
 
         $query = $this->db->query($sql);
-
         if ($id != null) {
             return $query->row_array();
         } else {
@@ -39,24 +34,20 @@ class Notification_model extends CI_Model {
     }
 
     public function getRole($arr) {
-
         $query = $this->db->where_in("id", $arr)->get("roles");
         return $query->result_array();
     }
 
     public function getUnreadStaffNotification($staffid = null, $role_id = null) {
 
-
-        $sql = "select send_notification.* from send_notification INNER JOIN notification_roles on notification_roles.send_notification_id = send_notification.id left JOIN read_notification on read_notification.staff_id=" . $this->db->escape($staffid) . " and read_notification.notification_id = send_notification.id WHERE send_notification.created_id !=" . $this->db->escape($staffid) . " and send_notification.visible_staff='yes' and read_notification.id IS NULL and notification_roles.role_id=" . $this->db->escape($role_id) . " order by send_notification.id desc";
-        $query = $this->db->query($sql);
-
+        $sql = "select send_notification.* from send_notification INNER JOIN notification_roles on notification_roles.send_notification_id = send_notification.id left JOIN read_notification on read_notification.staff_id=" . $this->db->escape($staffid) . " and read_notification.notification_id = send_notification.id WHERE send_notification.visible_staff='yes' and read_notification.id IS NULL and notification_roles.role_id=" . $this->db->escape($role_id) . " order by send_notification.id desc";
+        $query = $this->db->query($sql);      
         return $query->result();
     }
 
     public function getNotificationForStudent($studentid = null) {
         $date = date('Y-m-d');
-        $query = $this->db->query("SELECT
-        send_notification.id,send_notification.title,send_notification.publish_date,send_notification.date,send_notification.message,
+        $query = $this->db->query("SELECT        send_notification.id,send_notification.title,send_notification.publish_date,send_notification.date,send_notification.message,
         IF (read_notification.id IS NULL,'unread','read') as notification_id
         FROM send_notification
         LEFT JOIN read_notification ON send_notification.id = read_notification.notification_id and read_notification.student_id=" . $this->db->escape($studentid) . " where send_notification.visible_student='Yes' order by send_notification.publish_date desc");
@@ -65,8 +56,7 @@ class Notification_model extends CI_Model {
 
     public function getNotificationForParent($parentid = null) {
         $date = date('Y-m-d');
-        $query = $this->db->query("SELECT
-        send_notification.id,send_notification.title,send_notification.publish_date,send_notification.date,send_notification.message,
+        $query = $this->db->query("SELECT        send_notification.id,send_notification.title,send_notification.publish_date,send_notification.date,send_notification.message,
 IF (read_notification.id IS NULL,'unread','read') as notification_id
 FROM send_notification
 LEFT JOIN read_notification ON send_notification.id = read_notification.notification_id and read_notification.parent_id=" . $this->db->escape($parentid) . " where send_notification.visible_parent='Yes' order by send_notification.publish_date desc");
@@ -111,10 +101,8 @@ LEFT JOIN read_notification ON send_notification.id = read_notification.notifica
     }
 
     public function insertBatch($data, $staff_roles, $delete_array = array()) {
-
         $this->db->trans_start();
         $this->db->trans_strict(FALSE);
-
         if (isset($data['id'])) {
             $insert_id = $data['id'];
             $this->db->where('id', $data['id']);
@@ -123,31 +111,23 @@ LEFT JOIN read_notification ON send_notification.id = read_notification.notifica
             $this->db->insert('send_notification', $data);
             $insert_id = $this->db->insert_id();
         }
-
-
         if (!empty($staff_roles)) {
             foreach ($staff_roles as $stf_role_key => $stf_role_value) {
                 $staff_roles[$stf_role_key]['send_notification_id'] = $insert_id;
             }
-
             $this->db->insert_batch('notification_roles', $staff_roles);
         }
         if (!empty($delete_array)) {
-
             $this->db->where('send_notification_id', $insert_id);
             $this->db->where_in('role_id', $delete_array);
             $this->db->delete('notification_roles');
         }
 
-
         $this->db->trans_complete();
-
         if ($this->db->trans_status() === FALSE) {
-
             $this->db->trans_rollback();
             return FALSE;
         } else {
-
             $this->db->trans_commit();
             return TRUE;
         }
@@ -216,22 +196,19 @@ LEFT JOIN read_notification ON send_notification.id = read_notification.notifica
             $this->db->where("id", $data["id"])->update("system_notification", $data);
         } else {
             $this->db->insert("system_notification", $data);
+            
         }
     }
 
     public function getSystemNotification($limit = '', $start = '') {
         $userdata = $this->customlib->getUserData();
-
         $userid = $userdata["id"];
         $role_id = $userdata["role_id"];
-
-
         $role_query = $this->db->select("roles.name")
                 ->where("id", $role_id)
                 ->get("roles");
         $result = $role_query->row_array();
         $role = $result["name"];
-
         if ($role_id != 7) {
             $this->db->where(array('system_notification.notification_for' => $role, 'system_notification.receiver_id' => $userid));
         } else {
@@ -249,10 +226,8 @@ LEFT JOIN read_notification ON send_notification.id = read_notification.notifica
     }
 
     public function getPatientSystemNotification($limit = '', $start = '') {
-
         $patient_data = $this->session->userdata('patient');
         $userid = $patient_data["patient_id"];
-
         if ((!empty($limit)) && ((!empty($start) || ($start >= 0) ))) {
             $this->db->limit($limit, $start);
         }
@@ -267,7 +242,6 @@ LEFT JOIN read_notification ON send_notification.id = read_notification.notifica
 
     public function getUnreadNotification() {
         $userdata = $this->customlib->getUserData();
-
         $userid = $userdata["id"];
         $role_id = $userdata["role_id"];
         $data = array();
@@ -288,9 +262,7 @@ LEFT JOIN read_notification ON send_notification.id = read_notification.notifica
                 ->where("is_active", "yes")
                 ->get("system_notification");
         $result = $query->result_array();
-
         foreach ($result as $key => $value) {
-
             $read_query = $this->db->select("read_systemnotification.*")
                     ->where("notification_id", $value["id"])
                     ->where("receiver_id", $userid)
@@ -307,17 +279,13 @@ LEFT JOIN read_notification ON send_notification.id = read_notification.notifica
     public function getPatientUnreadNotification() {
         $patient_data = $this->session->userdata('patient');
         $userid = $patient_data["patient_id"];
-
         $data = array();
-
         $query = $this->db->select("system_notification.*")
                 ->where(array('notification_for' => "Patient", 'receiver_id' => $userid))
                 ->where("is_active", "yes")
                 ->get("system_notification");
         $result = $query->result_array();
-
         foreach ($result as $key => $value) {
-
             $read_query = $this->db->select("read_systemnotification.*")
                     ->where("notification_id", $value["id"])
                     ->where("receiver_id", $userid)
@@ -332,6 +300,12 @@ LEFT JOIN read_notification ON send_notification.id = read_notification.notifica
 
     public function updateReadNotification($data) {
         $this->db->insert("read_systemnotification", $data);
+    }
+    
+    public function getcreatedByName($id)
+    {
+      $query = $this->db->select('staff.name,staff.surname')->where("id",$id)->get("staff");
+      return $query->row_array();
     }
 
 }

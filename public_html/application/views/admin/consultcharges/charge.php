@@ -22,7 +22,12 @@ $genderList = $this->customlib->getGender();
                             <li><a href="<?php echo base_url(); ?>admin/chargecategory/charges" ><?php echo $this->lang->line('charge') . " " . $this->lang->line('category'); ?></a></li>
                         <?php } ?>  
                         <?php if ($this->rbac->hasPrivilege('doctor_opd_charges', 'can_view')) { ?>
-                            <li><a href="<?php echo base_url(); ?>admin/consultcharges" class="active"><?php echo $this->lang->line('doctor') . " " . $this->lang->line('opd') . " " . $this->lang->line('charge'); ?></a></li>  <?php } ?>                                                              
+                            <li><a href="<?php echo base_url(); ?>admin/consultcharges" class="active"><?php echo $this->lang->line('doctor') . " " . $this->lang->line('opd') . " " . $this->lang->line('charge'); ?></a></li>  <?php } ?> 
+
+                               <?php if ($this->rbac->hasPrivilege('charge_type', 'can_view')) { ?> 
+                            <li><a href="<?php echo base_url(); ?>admin/chargetype" ><?php echo $this->lang->line('charge') . " " . $this->lang->line('type') ; ?></a></li>
+                        <?php } ?> 
+                                                                                  
                     </ul>
                 </div>
             </div>
@@ -32,9 +37,9 @@ $genderList = $this->customlib->getGender();
                         <h3 class="box-title titlefix"><?php echo $this->lang->line('doctor') . " " . $this->lang->line('opd') . " " . $this->lang->line('charge'); ?></h3>
                         <div class="box-tools pull-right">
                             <?php
-                            if ($this->rbac->hasPrivilege('doctor_OPD_charges', 'can_add')) {
+                            if ($this->rbac->hasPrivilege('doctor_opd_charges', 'can_add')) {
                                 ?>
-                                <a data-toggle="modal" onclick="holdModal('myModal')" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> <?php echo $this->lang->line('add') . " " . $this->lang->line('charge'); ?></a> 
+                                <a data-toggle="modal" onclick="holdModal('myModal')" class="btn btn-primary btn-sm charge"><i class="fa fa-plus"></i> <?php echo $this->lang->line('add') . " " . $this->lang->line('charge'); ?></a> 
                             <?php } ?>
                             <div class="btn-group">
                                 <ul class="dropdown-menu multi-level pull-right width300" role="menu" aria-labelledby="dropdownMenu1" id="easySelectable">
@@ -99,12 +104,12 @@ $genderList = $this->customlib->getGender();
                                                         <i class="fa fa-reorder"></i>
                                                     </a> 
                                                     <?php
-                                                    if ($this->rbac->hasPrivilege('doctor_OPD_charges', 'can_edit')) {
+                                                    if ($this->rbac->hasPrivilege('doctor_opd_charges', 'can_edit')) {
                                                         ?>
                                                         <a href="#" onclick="getRecord('<?php echo $charge['id'] ?>')" class="btn btn-default btn-xs"  data-toggle="tooltip" title="<?php echo $this->lang->line('edit'); ?>">
                                                             <i class="fa fa-pencil"></i>
                                                         </a>      
-                                                    <?php } if ($this->rbac->hasPrivilege('doctor_OPD_charges', 'can_delete')) { ?>
+                                                    <?php } if ($this->rbac->hasPrivilege('doctor_opd_charges', 'can_delete')) { ?>
                                                         <a  class="btn btn-default btn-xs" data-toggle="tooltip" title="" onclick="delete_recordById('<?php echo base_url(); ?>admin/consultcharges/delete/<?php echo $charge['id']; ?>', '<?php echo $this->lang->line('delete_message'); ?>')" data-original-title="<?php echo $this->lang->line('delete'); ?>">
                                                             <i class="fa fa-trash"></i>
                                                         </a>    
@@ -146,7 +151,7 @@ $genderList = $this->customlib->getGender();
                                     <div class="form-group">
                                         <label for="exampleInputFile"><?php echo $this->lang->line('doctor'); ?></label>
                                         <small class="req"> *</small> 
-                                        <div>
+                                        <div>                                            
                                             <select class="form-control select2" <?php
                                             if ((isset($disable_option)) && ($disable_option == true)) {
                                                 echo 'disabled';
@@ -155,7 +160,7 @@ $genderList = $this->customlib->getGender();
                                                 <option value="<?php echo set_value('doctor'); ?>"><?php echo $this->lang->line('select') ?></option>
                                                 <?php foreach ($doctors as $dkey => $dvalue) {
                                                     ?>
-                                                    <option value="<?php echo $dvalue["id"]; ?>"><?php echo $dvalue["name"] . " " . $dvalue["surname"] ?></option>   
+                                                    <option value="<?php echo $dvalue["id"]; ?>"><?php echo $dvalue["name"] ." ".$dvalue["surname"]."". "( " . $dvalue["employee_id"].")" ?></option>   
 <?php } ?>
                                             </select>
                                         </div>
@@ -282,8 +287,8 @@ $genderList = $this->customlib->getGender();
                                     <tr>
                                         <th><?php echo $this->lang->line('doctor') ?></th>
                                         <td><span id='consdoctor'></span></td>
-                                        <th><?php echo $this->lang->line('standard') . " " . $this->lang->line('charge') . " (" . $currency_symbol . ")"; ?></th>
-                                        <td><span id="standard_charges"></span>
+                                        <th class="text-right"><?php echo $this->lang->line('standard') . " " . $this->lang->line('charge') . " (" . $currency_symbol . ")"; ?></th>
+                                        <td class="text-right"><span id="standard_charges"></span>
                                         </td>
                                     </tr>
                                 </table>
@@ -580,4 +585,10 @@ $genderList = $this->customlib->getGender();
             show: true
         });
     }
+	
+	
+$(".charge").click(function(){
+	$('#formadd').trigger("reset");	
+	$('#select2-doctor-ga-container').html('');	
+});
 </script>

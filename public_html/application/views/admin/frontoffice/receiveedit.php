@@ -94,8 +94,7 @@
                                         ?>
                                         <?php
                                     } else {
-                                        foreach ($receiveList as $key => $value) {
-                                            //print_r($value);
+                                        foreach ($receiveList as $key => $value) {                                     
                                             ?>
                                             <tr>                                              
                                                 <td class="mailbox-name"><?php echo $value->from_title; ?></td>

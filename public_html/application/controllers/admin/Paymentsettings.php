@@ -10,7 +10,7 @@ class Paymentsettings extends Admin_Controller {
     }
 
     function index() {
-        if (!$this->rbac->hasPrivilege('payment_methods', 'can_edit')) {
+        if (!$this->rbac->hasPrivilege('payment_methods', 'can_view')) {
             access_denied();
         }
         $this->session->set_userdata('top_menu', 'setup');
@@ -146,6 +146,76 @@ class Paymentsettings extends Admin_Controller {
         }
     }
 
+
+    
+
+public function paytm(){
+    
+             $this->form_validation->set_error_delimiters('', '');
+
+            $this->form_validation->set_rules('paytm_merchantid', $this->lang->line('key'), 'trim|required|xss_clean');
+            $this->form_validation->set_rules('paytm_merchantkey', $this->lang->line('key'), 'trim|required|xss_clean');
+            $this->form_validation->set_rules('paytm_website', $this->lang->line('key'), 'trim|required|xss_clean');
+            $this->form_validation->set_rules('paytm_industrytype', $this->lang->line('key'), 'trim|required|xss_clean');
+           
+            
+            if ($this->form_validation->run()) {
+
+                $data = array(
+                    'api_secret_key' => $this->input->post('paytm_merchantkey'),
+                    'api_publishable_key' => $this->input->post('paytm_merchantid'),
+                    'paytm_website'=>$this->input->post('paytm_website'),
+                    'paytm_industrytype'=>$this->input->post('paytm_industrytype'),
+                    'payment_type' => 'paytm',
+                );
+
+                $this->paymentsetting_model->add($data);
+                echo json_encode(array('st' => 0, 'msg' => $this->lang->line('update_message')));
+
+            } else {
+
+                $data = array(
+                    'paytm_merchantkey' => form_error('paytm_merchantkey'),
+                    'paytm_merchantid' => form_error('paytm_merchantid'),
+                    'paytm_website' => form_error('paytm_website'),
+                    'paytm_industrytype' => form_error('paytm_industrytype'),
+                    
+                   
+                );
+                echo json_encode(array('st' => 1, 'msg' => $data));
+            }
+        }
+        public function midtrans(){
+    
+             $this->form_validation->set_error_delimiters('', '');
+
+            $this->form_validation->set_rules('midtrans_serverkey', $this->lang->line('key'), 'trim|required|xss_clean');
+            
+           
+            
+            if ($this->form_validation->run()) {
+
+                $data = array(
+                    'api_secret_key' => $this->input->post('midtrans_serverkey'),
+                   
+                    'payment_type' => 'midtrans',
+                );
+
+                $this->paymentsetting_model->add($data);
+                echo json_encode(array('st' => 0, 'msg' => $this->lang->line('update_message')));
+
+            } else {
+
+                $data = array(
+                    'midtrans_serverkey' => form_error('midtrans_serverkey'),
+                   
+                    
+                   
+                );
+                echo json_encode(array('st' => 1, 'msg' => $data));
+            }
+        }
+        
     public function setting() {
 
         $this->form_validation->set_error_delimiters('', '');
@@ -183,6 +253,90 @@ class Paymentsettings extends Admin_Controller {
         }
     }
 
+
+     public function paystack() {
+        $this->form_validation->set_error_delimiters('', '');
+
+        $this->form_validation->set_rules('paystack_secretkey', $this->lang->line('key'), 'trim|required|xss_clean');
+        
+        if ($this->form_validation->run()) {
+            $data = array(
+                'api_secret_key' => $this->input->post('paystack_secretkey'),
+               'payment_type' => 'paystack',
+            );
+            $this->paymentsetting_model->add($data);
+            echo json_encode(array('st' => 0, 'msg' => $this->lang->line('update_message')));
+        } else {
+            $data = array(
+                'paystack_secretkey' => form_error('paystack_secretkey'),
+               
+            );
+            echo json_encode(array('st' => 1, 'msg' => $data));
+        }
+    }
+
+     public function instamojo() {
+       
+        $this->form_validation->set_error_delimiters('', '');
+
+        $this->form_validation->set_rules('instamojo_apikey', $this->lang->line('key'), 'trim|required|xss_clean');
+        $this->form_validation->set_rules('instamojo_authtoken', $this->lang->line('key'), 'trim|required|xss_clean');
+        $this->form_validation->set_rules('instamojo_salt', $this->lang->line('key'), 'trim|required|xss_clean');
+        
+        if ($this->form_validation->run()) {
+
+            $data = array(
+                'api_secret_key' => $this->input->post('instamojo_apikey'),
+                'api_publishable_key' => $this->input->post('instamojo_authtoken'),
+                'salt' => $this->input->post('instamojo_salt'),
+               'payment_type' => 'instamojo',
+            );
+
+            $this->paymentsetting_model->add($data);
+            echo json_encode(array('st' => 0, 'msg' => $this->lang->line('update_message')));
+
+        } else {
+
+            $data = array(
+                'instamojo_apikey' => form_error('instamojo_apikey'),
+                'instamojo_authtoken' => form_error('instamojo_authtoken'),
+                'instamojo_salt' => form_error('instamojo_salt'),
+               
+            );
+            echo json_encode(array('st' => 1, 'msg' => $data));
+        }
+    }
+
+
+     public function razorpay(){
+             $this->form_validation->set_error_delimiters('', '');
+
+            $this->form_validation->set_rules('razorpay_keyid', $this->lang->line('key'), 'trim|required|xss_clean');
+            $this->form_validation->set_rules('razorpay_secretkey', $this->lang->line('key'), 'trim|required|xss_clean');
+           
+            
+            if ($this->form_validation->run()) {
+
+                $data = array(
+                    'api_secret_key' => $this->input->post('razorpay_secretkey'),
+                    'api_publishable_key' => $this->input->post('razorpay_keyid'),
+                   'payment_type' => 'razorpay',
+                );
+
+                $this->paymentsetting_model->add($data);
+                echo json_encode(array('st' => 0, 'msg' => $this->lang->line('update_message')));
+
+            } else {
+
+                $data = array(
+                    'razorpay_keyid' => form_error('razorpay_keyid'),
+                    'razorpay_secretkey' => form_error('razorpay_secretkey'),
+                    
+                   
+                );
+                echo json_encode(array('st' => 1, 'msg' => $data));
+            }
+        }
 }
 
 ?>

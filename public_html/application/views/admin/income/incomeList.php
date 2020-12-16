@@ -8,7 +8,7 @@
                         <h3 class="box-title titlefix"> <?php echo $this->lang->line('income_list'); ?></h3>
                         <div class="box-tools pull-right">
                             <?php if ($this->rbac->hasPrivilege('income', 'can_add')) { ?>
-                                <a data-toggle="modal" data-target="#myModal" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i>  <?php echo $this->lang->line('add_income'); ?></a>
+                                <a data-toggle="modal" data-target="#myModal" class="btn btn-primary btn-sm addincome"><i class="fa fa-plus"></i>  <?php echo $this->lang->line('add_income'); ?></a>
                             <?php } ?> 
 
                         </div>
@@ -45,7 +45,7 @@
                                             ?>
                                             <tr>
                                                 <td class="mailbox-name">
-                                                    <a href="#" data-toggle="popover" class="detail_popover"><?php echo $income['name'] ?></a>
+                                                    <a href="#" data-toggle="" class=""><?php echo $income['name'] ?></a>
                                                     <div class="rowoptionview">       
                                                         <?php if ($income['documents']) {
                                                             ?>
@@ -184,7 +184,7 @@
                                 <div class="col-sm-6">
                                     <div class="form-group">
                                         <label for="exampleInputEmail1"><?php echo $this->lang->line('date'); ?><small class="req"> *</small></label>
-                                        <input id="date" name="date" placeholder="" type="text" class="form-control"  value="<?php echo set_value('date'); ?>" readonly="readonly" />
+                                        <input id="date" name="date" placeholder="" type="text" class="form-control"  value="<?php echo set_value('date', date($this->customlib->getSchoolDateFormat())); ?>" readonly="readonly" />
 
                                     </div>
                                 </div>
@@ -319,4 +319,9 @@
             }
         });
     }
+	
+	
+$(".addincome").click(function(){
+	$('#add_income').trigger("reset");
+});
 </script>

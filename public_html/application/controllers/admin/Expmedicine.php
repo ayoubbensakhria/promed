@@ -8,7 +8,7 @@ class Expmedicine extends Admin_Controller {
     function __construct() {
         parent::__construct();
         $this->config->load("payroll");
-        $this->search_type = $this->config->item('search_type');
+        $this->search_type = $this->config->item('search_type_expiry');
     }
 
     public function search() {
@@ -220,7 +220,6 @@ class Expmedicine extends Admin_Controller {
     }
 
     public function expmedicinereport() {
-
         if (!$this->rbac->hasPrivilege('expiry_medicine_report', 'can_view')) {
             access_denied();
         }
@@ -228,15 +227,12 @@ class Expmedicine extends Admin_Controller {
         $this->session->set_userdata('top_menu', 'Reports');
         $this->session->set_userdata('sub_menu', 'admin/expmedicine/expmedicinereport');
         $this->session->set_userdata('top_menu', 'Reports');
-        $select = 'medicine_batch_details.*,pharmacy.medicine_name,pharmacy.medicine_company,pharmacy.supplier,pharmacy.medicine_group,medicine_category.medicine_category';
+        $select = 'medicine_batch_details.*,pharmacy.medicine_name,pharmacy.medicine_company,pharmacy.supplier,pharmacy.medicine_group,medicine_category.medicine_category,supplier_bill_basic.supplier_id,supplier_bill_basic.supplier_name';
         $join = array(
-            'JOIN pharmacy ON medicine_batch_details.pharmacy_id = pharmacy.id', 'JOIN medicine_category ON pharmacy.medicine_category_id = medicine_category.id'
+            'JOIN pharmacy ON medicine_batch_details.pharmacy_id = pharmacy.id', 'JOIN medicine_category ON pharmacy.medicine_category_id = medicine_category.id','JOIN supplier_bill_basic ON medicine_batch_details.supplier_bill_basic_id = supplier_bill_basic.supplier_id'
         );
         $table_name = "medicine_batch_details";
-
-        $where = array(
-            "medicine_batch_details.expiry_date_format <= '" . date('Y-m-d') . "' ",
-        );
+            $where =   array();
 
         $search_type = $this->input->post("search_type");
         if (isset($search_type)) {
@@ -246,20 +242,19 @@ class Expmedicine extends Admin_Controller {
         }
 
         if (empty($search_type)) {
-
             $search_type = "";
             $resultlist = $this->report_model->getReport($select, $join, $table_name, $where);
+            
         } else {
 
             $search_table = "medicine_batch_details";
-            $search_column = "expiry_date_format";
-            $resultlist = $this->report_model->searchReport($select, $join, $table_name, $search_type, $search_table, $search_column, $where);
+            $search_column = "expiry_date";
+            $resultlist = $this->report_model->searchReportexpiry($select, $join, $table_name, $search_type, $search_table, $search_column, $where);           
         }
 
         $data["searchlist"] = $this->search_type;
         $data["search_type"] = $search_type;
         $data["listCall"] = $resultlist;
-
         $this->load->view('layout/header');
         $this->load->view('admin/expmedicine/expmedicinereport.php', $data);
         $this->load->view('layout/footer');

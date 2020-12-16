@@ -1,8 +1,5 @@
 <?php
 
-/**
- * 
- */
 class Medicine_dosage_model extends CI_model {
 
     public function addMedicineDosage($data) {
@@ -16,7 +13,6 @@ class Medicine_dosage_model extends CI_model {
     }
 
     public function getMedicineDosage($id = null) {
-
         if (!empty($id)) {
             $query = $this->db->select('medicine_dosage.*,medicine_category.medicine_category')
                     ->join('medicine_category', 'medicine_dosage.medicine_category_id = medicine_category.id')
@@ -27,7 +23,6 @@ class Medicine_dosage_model extends CI_model {
             $query = $this->db->select('medicine_dosage.*,medicine_category.medicine_category')
                     ->join('medicine_category', 'medicine_dosage.medicine_category_id = medicine_category.id')
                     ->get('medicine_dosage');
-
             return $query->result_array();
         }
     }
@@ -39,7 +34,5 @@ class Medicine_dosage_model extends CI_model {
     public function delete($id) {
         $this->db->where("id", $id)->delete("medicine_dosage");
     }
-
 }
-
 ?>

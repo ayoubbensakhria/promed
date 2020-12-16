@@ -33,8 +33,11 @@
                                             ?>
                                             <div class='col-sm-3 col-md-2 col-xs-6 img_div_modal gallery_img div_record_<?php echo $banner_image_value->id ?>'>
                                                 <div class='fadeoverlay'>
+                                                     <?php
+                                                    if ($this->rbac->hasPrivilege('banner_images', 'can_view')) {
+                                                        ?>
                                                     <img class='img-responsive' data-fid='<?php echo $banner_image_value->id ?>' data-content_name='<?php echo $banner_image_value->img_name; ?>' data-img='<?php echo base_url($banner_image_value->thumb_path . $banner_image_value->img_name) ?>' src='<?php echo base_url($banner_image_value->thumb_path . $banner_image_value->img_name) ?>'>
-                                                    <?php
+                                                    <?php }
                                                     if ($this->rbac->hasPrivilege('banner_images', 'can_delete')) {
                                                         ?>
                                                         <div class='overlay3'>

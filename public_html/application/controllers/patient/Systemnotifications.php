@@ -1,10 +1,6 @@
 <?php
 
-/**
- * 
- */
 class Systemnotifications extends Patient_Controller {
-
     public $school_name;
     public $school_setting;
     public $setting;
@@ -24,12 +20,11 @@ class Systemnotifications extends Patient_Controller {
         $this->search_type = $this->config->item('search_type');
         $this->blood_group = $this->config->item('bloodgroup');
         $this->notificationicon = $this->config->item('notification_icon');
-        $this->charge_type = $this->config->item('charge_type');
+        $this->charge_type = $this->customlib->getChargeMaster();
         $data["charge_type"] = $this->charge_type;
     }
 
     public function index() {
-
         $notifications = $this->notification_model->getPatientSystemNotification();
         $config['base_url'] = base_url() . "patient/systemnotifications/index";
         $config['total_rows'] = sizeof($notifications);
@@ -55,16 +50,31 @@ class Systemnotifications extends Patient_Controller {
         $data["notifications"] = $notificationlist;
         $data['notificationicon'] = $this->notificationicon;
         $this->pagination->initialize($config);
-
-
         $this->load->view('layout/patient/header');
         $this->load->view('patient/systemnotification', $data);
         $this->load->view('layout/patient/footer', $data);
     }
 
+	public function moveipdpresnotification($id,$presid) {
+        $details = $this->patient_model->getIpdnotiDetails($id);
+        $ipdid = $details['id'];
+        $patient_id = $details['patient_id'];
+        $ipdnpres_data = array(
+            'id' => $ipdid,
+            'patient_id' => $patient_id,
+            'presid'=> $presid,
+        );
+
+        if (!empty($ipdid)) {
+            $data['ipdnpres_data'] = $ipdnpres_data;
+        }
+
+        $this->session->set_flashdata('ipdnpres_data', $data);
+        redirect("patient/dashboard/ipdprofile/" . $ipdid ."/".$presid."#prescription");
+    }
+
     public function updateStatus() {
         $notification_id = $this->input->post("id");
-
         $patient_data = $this->session->userdata('patient');
         $userid = $patient_data["patient_id"];
         $data = array('notification_id' => $notification_id,
@@ -76,10 +86,7 @@ class Systemnotifications extends Patient_Controller {
     }
 
     public function unreadNotification() {
-        $result = $this->notification_model->getUnreadNotification();
-        print_r($result);
+        $result = $this->notification_model->getUnreadNotification();        
     }
-
 }
-
 ?>

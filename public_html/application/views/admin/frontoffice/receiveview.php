@@ -8,17 +8,11 @@
                 <div class="box box-primary">
                     <div class="box-header ptbnull">
                         <h3 class="box-title titlefix"> <?php echo $this->lang->line('postal_receive'); ?> <?php echo $this->lang->line('list'); ?></h3>
-                        <div class="box-tools pull-right">
                             <div class="box-tools pull-right">
-                                <div class="box-tools pull-right">
                                     <?php if ($this->rbac->hasPrivilege('postal_receive', 'can_add')) { ?>
-                                        <a data-toggle="modal" data-target="#myModal" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> <?php echo $this->lang->line('add'); ?> <?php echo $this->lang->line('receive'); ?> </a> 
-
+                                        <a data-toggle="modal" data-target="#myModal" class="btn btn-primary btn-sm receive"><i class="fa fa-plus"></i> <?php echo $this->lang->line('add'); ?> <?php echo $this->lang->line('receive'); ?> </a> 
                                     <?php } ?>
-
-                                </div>
                             </div><!-- /.box-tools -->
-                        </div><!-- /.box-tools -->
                     </div><!-- /.box-header -->
                     <div class="box-body">
                         <div class="download_label"><?php echo $this->lang->line('postal_receive'); ?> <?php echo $this->lang->line('list'); ?></div>
@@ -45,16 +39,13 @@
                                         <?php
                                     } else {
                                         foreach ($ReceiveList as $key => $value) {
-                                            //print_r($value);
                                             ?>
                                             <tr>
                                                 <td class="mailbox-name"> <?php echo $value->from_title; ?></td>
-
                                                 <td class="mailbox-name"><?php echo $value->reference_no; ?></td>
                                                 <td class="mailbox-name"><?php echo $value->to_title; ?></td>
                                                 <td class="mailbox-name"> <?php echo date($this->customlib->getSchoolDateFormat(), $this->customlib->dateyyyymmddTodateformat($value->date)); ?></td>
                                                 <td class="mailbox-date pull-right" "="">
-
                                                     <a  onclick="getRecord(<?php echo $value->id; ?>)" class="btn btn-default btn-xs" data-target="#receviedetails" data-toggle="tooltip"  data-original-title="<?php echo $this->lang->line('view'); ?>"><i class="fa fa-reorder"></i></a>
                                                     <?php if ($value->image !== "") { ?><a href="<?php echo base_url(); ?>admin/dispatch/download/<?php echo $value->image; ?>" class="btn btn-default btn-xs" data-toggle="tooltip" title="" data-original-title="<?php echo $this->lang->line('download'); ?>">
                                                             <i class="fa fa-download"></i>
@@ -441,4 +432,8 @@
 
         }));
     });
+
+$(".receive").click(function(){	
+	$('#formadd').trigger("reset");
+});	
 </script>

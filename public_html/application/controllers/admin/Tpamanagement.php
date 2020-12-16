@@ -18,7 +18,6 @@ class Tpamanagement extends Admin_Controller {
         $this->session->set_userdata('top_menu', 'tpa_management');
         $data['title'] = 'TPA Management';
         $data['resultlist'] = $this->organisation_model->get();
-
         $this->load->view('layout/header');
         $this->load->view('admin/tpamanagement/index', $data);
         $this->load->view('layout/footer');
@@ -206,6 +205,10 @@ class Tpamanagement extends Admin_Controller {
             $ipd_additional_where = array('ipd_details.cons_doctor =' . $doctorid);
         }
 
+         if (!empty($orgnid)) {
+                $ipd_additional_where = array("patients.organisation = '" . $orgnid . "' ");
+            }
+
         $resultList2 = $this->report_model->searchReport($select = 'ipd_details.ipd_no,ipd_billing.date,ipd_billing.net_amount as amount,patients.id as pid,patients.patient_name,ipd_details.ipd_no as reff,patients.patient_unique_id,staff.name,staff.surname,organisation.organisation_name', $join = array('JOIN staff ON ipd_details.cons_doctor = staff.id',
             'JOIN patients ON ipd_details.patient_id = patients.id',
             'JOIN payment ON payment.patient_id = patients.id',
@@ -218,6 +221,9 @@ class Tpamanagement extends Admin_Controller {
             array_push($rd["IPD"], $resultList2[0]);
             array_push($data['parameter']["IPD"]['resultList'], $resultList2[0]);
         }
+
+        //echo $this->db->last_query();
+        //exit();
 
         $data["resultlist"] = $rd;
         $data["searchlist"] = $this->search_type;

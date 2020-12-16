@@ -13,10 +13,13 @@ class Prescription extends Patient_Controller {
     }
 
     function getPrescription($id, $opdid, $visitid = '') {
-        $result = $this->prescription_model->get($id);
+        if ($visitid > 0) {
+             $result = $this->prescription_model->getvisit($visitid);
+        }else{
+            $result = $this->prescription_model->get($id);
+        }
 
         $prescription_list = $this->prescription_model->getPrescriptionByOPD($result['opd_id'], $visitid);
-
         $data["print_details"] = $this->printing_model->get('', 'opd');
         $data["result"] = $result;
         $data["id"] = $id;
@@ -32,7 +35,7 @@ class Prescription extends Patient_Controller {
 
      function getIPDPrescription($id, $ipdid, $visitid = '') {
         $result = $this->prescription_model->getIPD($id);
-        $prescription_list = $this->prescription_model->getPrescriptionByIPD($ipdid, $visitid);
+        $prescription_list = $this->prescription_model->getPrescriptionByIPD($id,$ipdid, $visitid);
         $data["print_details"] = $this->printing_model->get('', 'ipdpres');
         $data["result"] = $result;
         $data["id"] = $id;
@@ -45,7 +48,5 @@ class Prescription extends Patient_Controller {
         $data["prescription_list"] = $prescription_list;
         $this->load->view("patient/ipdprescription", $data);
     }
-
 }
-
 ?>

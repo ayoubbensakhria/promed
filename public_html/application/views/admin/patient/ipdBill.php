@@ -1,8 +1,6 @@
 <?php
 $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
-//echo "<pre>";
-//print_r($result);
-//exit();
+
 ?>
 <style type="text/css">
 
@@ -31,7 +29,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                             <td align="text-left"><h5><?php echo $this->lang->line('bill') . " #" ?><?php echo $result["ipdid"] ?></h5></td>
                             <td align="right"><h5><?php echo $this->lang->line('date') . " : " ?><?php
                                     if (!empty($result['date'])) {
-                                        echo date($this->customlib->getSchoolDateFormat(true, true), strtotime($result['date']));
+                                        echo date($this->customlib->getSchoolDateFormat(true, false), strtotime($result['discharge_date']));
                                     }
                                     ?></h5></td>
                         </tr>

@@ -14,10 +14,8 @@ class Department extends Admin_Controller {
     }
 
     function index() {
-
         $this->session->set_userdata('top_menu', 'setup');
         $this->session->set_userdata('sub_menu', 'hr/index');
-
         $this->form_validation->set_rules(
                 'type', 'Department Name', array('required',
             array('check_exists', array($this->department_model, 'valid_department'))
@@ -26,17 +24,14 @@ class Department extends Admin_Controller {
 
         $data["title"] = "Add Department";
         if ($this->form_validation->run()) {
-
             $type = $this->input->post("type");
             $departmenttypeid = $this->input->post("departmenttypeid");
             $status = $this->input->post("status");
             if (empty($departmenttypeid)) {
-
                 if (!$this->rbac->hasPrivilege('department', 'can_add')) {
                     access_denied();
                 }
             } else {
-
                 if (!$this->rbac->hasPrivilege('department', 'can_edit')) {
                     access_denied();
                 }
@@ -44,14 +39,12 @@ class Department extends Admin_Controller {
             if (!empty($departmenttypeid)) {
                 $data = array('department_name' => $type, 'is_active' => 'yes', 'id' => $departmenttypeid);
             } else {
-
                 $data = array('department_name' => $type, 'is_active' => 'yes');
             }
             $insert_id = $this->department_model->addDepartmentType($data);
             $this->session->set_flashdata('msg', '<div class="alert alert-success">Record added Successfully</div>');
             redirect("admin/department");
         } else {
-
             $this->load->view("layout/header");
             $this->load->view("admin/staff/departmentType", $data);
             $this->load->view("layout/footer");
@@ -65,21 +58,17 @@ class Department extends Admin_Controller {
                 )
         );
         if ($this->form_validation->run() == FALSE) {
-
             $msg = array(
                 'name' => form_error('type'),
             );
 
             $array = array('status' => 'fail', 'error' => $msg, 'message' => '');
         } else {
-
             $type = $this->input->post("type");
             $data = array('department_name' => $type, 'is_active' => 'yes');
             $insert_id = $this->department_model->addDepartmentType($data);
-
             $array = array('status' => 'success', 'error' => '', 'message' => $this->lang->line('success_message'));
         }
-
         echo json_encode($array);
     }
 
@@ -90,7 +79,7 @@ class Department extends Admin_Controller {
 
     function get_data($id) {
         $result = $this->department_model->getDepartmentType($id);
-        echo json_encode($result);
+        echo json_encode($result);  
     }
 
     function edit() {
@@ -100,7 +89,6 @@ class Department extends Admin_Controller {
                 )
         );
         if ($this->form_validation->run() == FALSE) {
-
             $msg = array(
                 'name' => form_error('type'),
             );
@@ -111,21 +99,17 @@ class Department extends Admin_Controller {
             $type = $this->input->post("type");
             $data = array('department_name' => $type, 'is_active' => 'yes', 'id' => $departmenttypeid);
             $this->department_model->addDepartmentType($data);
-
             $array = array('status' => 'success', 'error' => '', 'message' => $this->lang->line('update_message'));
         }
-
         echo json_encode($array);
     }
 
     function departmentdelete($id) {
-
         if (!empty($id)) {
             $this->department_model->deleteDepartment($id);
         }
         redirect("admin/department");
     }
-
 }
 
 ?>

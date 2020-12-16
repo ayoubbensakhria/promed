@@ -1,5 +1,4 @@
-<div class="content-wrapper" style="min-height: 946px;">  
-
+<div class="content-wrapper" style="min-height: 946px;"> 
     <!-- Main content -->
     <section class="content">
         <div class="row">
@@ -16,7 +15,10 @@
                         <?php if ($this->rbac->hasPrivilege('doctor_opd_charges', 'can_view')) { ?> 
                             <li><a href="<?php echo base_url(); ?>admin/consultcharges"><?php echo $this->lang->line('doctor') . " " . $this->lang->line('opd') . " " . $this->lang->line('charge'); ?></a></li>
                         <?php } ?> 
-                                                                                 
+
+                           <?php if ($this->rbac->hasPrivilege('charge_type', 'can_view')) { ?> 
+                            <li><a href="<?php echo base_url(); ?>admin/chargetype" ><?php echo $this->lang->line('charge') . " " . $this->lang->line('type') ; ?></a></li>
+                        <?php } ?>                                                                                  
                     </ul>
                 </div>
             </div>
@@ -26,7 +28,7 @@
                         <h3 class="box-title titlefix"><?php echo $this->lang->line('charge_category') . " " . $this->lang->line('list'); ?></h3>
                         <div class="box-tools pull-right">
                             <?php if ($this->rbac->hasPrivilege('charge_category', 'can_add')) { ?> 
-                                <a data-toggle="modal" data-target="#myModal" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> <?php echo $this->lang->line('add') . " " . $this->lang->line('charge_category'); ?></a>  
+                                <a data-toggle="modal" data-target="#myModal" class="btn btn-primary btn-sm charge_category"><i class="fa fa-plus"></i> <?php echo $this->lang->line('add') . " " . $this->lang->line('charge_category'); ?></a>  
                             <?php } ?>   
                         </div>
                     </div>
@@ -73,7 +75,6 @@
                             </table>
                         </div>
                     </div>
-
                     <div class="">
                         <div class="mailbox-controls">
                         </div>
@@ -84,7 +85,6 @@
     </section>
 </div>
 
-
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog modal-mid" role="document">
         <div class="modal-content modal-media-content">
@@ -92,9 +92,7 @@
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                 <h4 class="box-title"> <?php echo $this->lang->line('add') . " " . $this->lang->line('charge_category') ?></h4> 
             </div>
-
             <div class="modal-body pt0 pb0">
-
                 <form id="formadd" action="<?php echo site_url('admin/chargecategory/add') ?>"  id="employeeform" name="employeeform" method="post" accept-charset="utf-8">
                     <div class="ptt10">
                         <div class="form-group">
@@ -127,7 +125,6 @@
                             </select>
                             <span class="text-danger"><?php echo form_error('charge_type'); ?></span>
                         </div>
-
                     </div>
                     <div class="row">
                         <div class="box-footer">
@@ -135,12 +132,10 @@
                         </div>
                     </div>  
                 </form>
-
             </div><!--./col-md-12-->       
         </div><!--./row--> 
     </div>
 </div>
-
 
 <div class="modal fade" id="editmyModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog modal-mid" role="document">
@@ -149,9 +144,7 @@
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                 <h4 class="box-title"><?php echo $this->lang->line('edit') . " " . $this->lang->line('charge_category'); ?></h4> 
             </div>
-
             <div class="modal-body pt0 pb0">
-
                 <form id="editformadd" action="<?php echo site_url('admin/chargecategory/add') ?>" name="employeeform" method="post" accept-charset="utf-8"  enctype="multipart/form-data">
                     <div class="ptt10">
                         <div class="form-group">
@@ -184,16 +177,14 @@
                             </select>
                             <input type="hidden" id="chargecategory_id" name="id" >
                             <span class="text-danger"><?php echo form_error('charge_type'); ?></span>
-                        </div>                             
-
-                    </div>
+                        </div> 
+					</div>
                     <div class="row">
                         <div class="box-footer">
                             <button type="submit" data-loading-text="<?php echo $this->lang->line('processing') ?>" id="editformaddbtn" class="btn btn-info pull-right"><?php echo $this->lang->line('save'); ?></button>
                         </div>
                     </div>    
                 </form>
-
             </div><!--./col-md-12-->       
         </div><!--./row--> 
     </div>
@@ -213,17 +204,13 @@
                 cache: false,
                 processData: false,
                 success: function (data) {
-
                     if (data.status == "fail") {
-
                         var message = "";
                         $.each(data.error, function (index, value) {
-
                             message += value;
                         });
                         errorMsg(message);
                     } else {
-
                         successMsg(data.message);
                         window.location.reload(true);
                     }
@@ -233,37 +220,24 @@
 
                 }
             });
-
-
         }));
-
     });
-
-
+	
     function get(id) {
         $('#editmyModal').modal('show');
-
         $.ajax({
-
             dataType: 'json',
-
             url: '<?php echo base_url(); ?>admin/chargecategory/get_data/' + id,
-
             success: function (result) {
                 $('#chargecategory_id').val(result.id);
                 $('#description1').val(result.description);
                 $('#charge_type1').val(result.charge_type);
                 $('#type1').val(result.name);
-
             }
-
         });
-
     }
-
-
+	
     $(document).ready(function (e) {
-
         $('#editformadd').on('submit', (function (e) {
             e.preventDefault();
             $("#editformaddbtn").button('loading');
@@ -276,17 +250,13 @@
                 cache: false,
                 processData: false,
                 success: function (data) {
-
                     if (data.status == "fail") {
-
                         var message = "";
                         $.each(data.error, function (index, value) {
-
                             message += value;
                         });
                         errorMsg(message);
                     } else {
-
                         successMsg(data.message);
                         window.location.reload(true);
                     }
@@ -296,9 +266,10 @@
 
                 }
             });
-
-
         }));
-
-    });
+    });	
+	
+$(".charge_category").click(function(){
+	$('#formadd').trigger("reset");	
+});
 </script>

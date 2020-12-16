@@ -33,6 +33,10 @@
 
                <li> <a href="<?php echo site_url('admin/printing/ambulanceprinting') ?>" class="<?php echo set_sidebar_Submenu('admin/printing/ambulanceprinting'); ?>"><?php echo $this->lang->line('ambulance'); ?></a></li>
 
+        <?php } if ($this->rbac->hasPrivilege('discharged_summary_print_header_footer', 'can_view')) { ?>
+
+               <li> <a href="<?php echo site_url('admin/printing/summaryprinting') ?>" class="<?php echo set_sidebar_Submenu('admin/printing/summaryprinting'); ?>"><?php echo $this->lang->line('discharged')." ".$this->lang->line('summary'); ?></a></li>
+
         <?php } ?>
        
     </ul>

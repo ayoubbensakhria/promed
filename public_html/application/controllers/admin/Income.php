@@ -10,20 +10,18 @@ class Income extends Admin_Controller {
         $this->load->helper('form');
         $this->config->load("payroll");
         $this->config->load("image_valid");
-
         $this->search_type = $this->config->item('search_type');
     }
 
     function index() {
-        if (!$this->rbac->hasPrivilege('income', 'can_view')) {
-            access_denied();
+
+        if (!$this->module_lib->hasActive('income')) {
+             access_denied();   
         }
         $this->session->set_userdata('top_menu', 'finance');
         $this->session->set_userdata('sub_menu', 'income/index');
         $data['title'] = 'Add Income';
         $data['title_list'] = 'Recent Incomes';
-
-
         $income_result = $this->income_model->get();
         $data['incomelist'] = $income_result;
         $incomeHead = $this->incomehead_model->get();
@@ -123,11 +121,8 @@ class Income extends Admin_Controller {
     }
 
     public function handle_upload() {
-
         $image_validate = $this->config->item('file_validate');
-
         if (isset($_FILES["documents"]) && !empty($_FILES['documents']['name'])) {
-
             $file_type = $_FILES["documents"]['type'];
             $file_size = $_FILES["documents"]["size"];
             $file_name = $_FILES["documents"]["name"];
@@ -135,7 +130,6 @@ class Income extends Admin_Controller {
             $ext = pathinfo($file_name, PATHINFO_EXTENSION);
             $allowed_mime_type = $image_validate['allowed_mime_type'];
             if ($files = @filesize($_FILES['documents']['tmp_name'])) {
-
                 if (!in_array($file_type, $allowed_mime_type)) {
                     $this->form_validation->set_message('handle_upload', 'File Type Not Allowed');
                     return false;
@@ -160,7 +154,6 @@ class Income extends Admin_Controller {
     }
 
     function getDataByid($id) {
-
         $data['title'] = 'Edit Fees Master';
         $data['id'] = $id;
         $income = $this->income_model->get($id);
@@ -171,7 +164,6 @@ class Income extends Admin_Controller {
     }
 
     function edit($id) {
-
         $data['title'] = 'Edit Fees Master';
         $data['id'] = $id;
         $income = $this->income_model->get($id);
@@ -188,7 +180,6 @@ class Income extends Admin_Controller {
         $this->form_validation->set_rules('date', $this->lang->line('date'), 'trim|required|xss_clean');
         $this->form_validation->set_rules('documents', $this->lang->line('documents'), 'callback_handle_upload');
         if ($this->form_validation->run() == FALSE) {
-
             $msg = array(
                 'inc_head_id[]' => form_error('inc_head_id[]'),
                 'amount' => form_error('amount'),
@@ -209,7 +200,6 @@ class Income extends Admin_Controller {
                 'note' => $this->input->post('description')
             );
             $insert_id = $this->income_model->add($data);
-
             if (isset($_FILES["documents"]) && !empty($_FILES['documents']['name'])) {
                 $fileInfo = pathinfo($_FILES["documents"]["name"]);
                 $img_name = $id . '.' . $fileInfo['extension'];
@@ -217,7 +207,6 @@ class Income extends Admin_Controller {
                 $data_img = array('id' => $id, 'documents' => 'uploads/hospital_income/' . $img_name);
                 $this->income_model->add($data_img);
             }
-
             $array = array('status' => 'success', 'error' => '', 'message' => $this->lang->line('update_message'));
         }
 
@@ -231,11 +220,9 @@ class Income extends Admin_Controller {
 
         $this->session->set_userdata('top_menu', 'Reports');
         $this->session->set_userdata('sub_menu', 'admin/income/incomesearch');
-
         $select = 'income.id,income.date,income.name,income.invoice_no,income.amount,income.documents,income.note,income_head.income_category,income.inc_head_id';
         $join = array('JOIN income_head ON income.inc_head_id = income_head.id');
         $table_name = "income";
-
 
         $search_type = $this->input->post("search_type");
         if (isset($search_type)) {
@@ -245,11 +232,9 @@ class Income extends Admin_Controller {
         }
 
         if (empty($search_type)) {
-
             $search_type = "";
             $listMessage = $this->report_model->getReport($select, $join, $table_name);
         } else {
-
             $search_table = "income";
             $search_column = "date";
             $additional = array();
@@ -265,7 +250,6 @@ class Income extends Admin_Controller {
     }
 
     public function transactionreport($value = '') {
-
         if (!$this->rbac->hasPrivilege('transaction_report', 'can_view')) {
             access_denied();
         }
@@ -299,15 +283,15 @@ class Income extends Admin_Controller {
             ),
             'Pathology' => array('label' => 'Pathology', 'table' => 'pathology_report', 'search_table' => 'pathology_report',
                 'search_column' => 'reporting_date',
-                'select' => 'pathology_report.*, pathology_report.apply_charge as amount,pathology_report.reporting_date as date,pathology.id, pathology.short_name,charges.id as cid,charges.charge_category,charges.standard_charge,patients.patient_name',
+                'select' => 'pathology_report.*, pathology_report.apply_charge as amount,pathology_report.id as reff,pathology_report.reporting_date as date,pathology.id, pathology.short_name,charges.id as cid,charges.charge_category,charges.standard_charge,patients.patient_name',
                 'join' => array(
                     'JOIN pathology ON pathology_report.pathology_id = pathology.id',
                     'LEFT JOIN staff ON pathology_report.consultant_doctor = staff.id',
                     'JOIN charges ON charges.id = pathology.charge_id', 'JOIN patients ON pathology_report.patient_id=patients.id',)
-            ),
+                       ),
             'Radiology' => array('label' => 'Radiology', 'table' => 'radiology_report', 'search_table' => 'radiology_report',
                 'search_column' => 'reporting_date',
-                'select' => 'radiology_report.*,radiology_report.apply_charge as amount,radiology_report.reporting_date as date, radio.id, radio.short_name,charges.id as cid,charges.charge_category,charges.standard_charge,patients.patient_name',
+                'select' => 'radiology_report.*,radiology_report.apply_charge as amount,radiology_report.reporting_date as date, radiology_report.id as reff,radio.id, radio.short_name,charges.id as cid,charges.charge_category,charges.standard_charge,patients.patient_name',
                 'join' => array(
                     'JOIN radio ON radiology_report.radiology_id = radio.id',
                     'JOIN staff ON radiology_report.consultant_doctor = staff.id',
@@ -315,7 +299,7 @@ class Income extends Admin_Controller {
                 )),
             'Operation_Theatre' => array('label' => 'Operation Theatre', 'table' => 'operation_theatre', 'search_table' => 'operation_theatre',
                 'search_column' => 'date',
-                'select' => 'operation_theatre.*,patients.id as pid,patients.patient_unique_id,patients.patient_name,charges.id as cid,charges.charge_category,charges.code,charges.description,charges.standard_charge, operation_theatre.apply_charge as amount',
+                'select' => 'operation_theatre.*,operation_theatre.id as reff,patients.id as pid,patients.patient_unique_id,patients.patient_name,charges.id as cid,charges.charge_category,charges.code,charges.description,charges.standard_charge, operation_theatre.apply_charge as amount',
                 'join' => array(
                     'JOIN patients ON operation_theatre.patient_id=patients.id',
                     'JOIN staff ON staff.id = operation_theatre.consultant_doctor',
@@ -323,11 +307,11 @@ class Income extends Admin_Controller {
                 )),
             'Blood_Bank' => array('label' => 'Blood Bank', 'table' => 'blood_issue',
                 'search_column' => 'created_at', 'search_table' => 'blood_issue',
-                'select' => 'blood_issue.*,blood_issue.created_at as date,patients.patient_name',
+                'select' => 'blood_issue.*,blood_issue.id as reff,blood_issue.created_at as date,patients.patient_name',
                 'join' => array('JOIN patients ON blood_issue.recieve_to=patients.id',)),
             'ambulance' => array('label' => 'Ambulance', 'table' => 'ambulance_call', 'search_table' => 'ambulance_call',
                 'search_column' => 'date',
-                'select' => 'ambulance_call.*,patients.patient_name',
+                'select' => 'ambulance_call.*,ambulance_call.id as reff,patients.patient_name',
                 'join' => array('JOIN patients ON ambulance_call.patient_name=patients.id',)),
             'income' => array('label' => 'General Income', 'table' => 'income', 'search_table' => 'income',
                 'search_column' => 'date',
@@ -353,8 +337,6 @@ class Income extends Admin_Controller {
             $join = $parameter[$key]['join'];
             $table_name = $parameter[$key]['table'];
 
-
-
             if (empty($search_type)) {
 
                 $search_type = "";
@@ -366,13 +348,10 @@ class Income extends Admin_Controller {
                 $additional = array();
                 $additional_where = array();
                 $resultList = $this->report_model->searchReport($select, $join, $table_name, $search_type, $search_table, $search_column);
-            }
-            // echo $this->db->last_query();
-    
+            }    
 
             $rd[$parameter[$key]['label']] = $resultList;
             $data['parameter'][$key]['resultList'] = $resultList;
-
             $i++;
         }
 
@@ -380,9 +359,7 @@ class Income extends Admin_Controller {
             'LEFT JOIN patients ON ipd_details.patient_id = patients.id',
             //'LEFT  JOIN payment ON payment.ipd_id = ipd_details.id',
             'LEFT JOIN ipd_billing ON ipd_billing.ipd_id = ipd_details.id',
-                ), $table_name = 'ipd_details', $search_type, $search_table = 'ipd_billing', $search_column = 'date');
-
-  
+                ), $table_name = 'ipd_details', $search_type, $search_table = 'ipd_billing', $search_column = 'date');  
     
         if (!empty($resultList2)) {
         foreach ($resultList2 as $key => $value) {
@@ -417,32 +394,22 @@ class Income extends Admin_Controller {
             array_push($data['parameter']["OPD"]['resultList'], $value);
             }
                       
-        }
-       
-     
-//   exit;
+        } 
+		
         $data["resultlist"] = $rd;
-
         $data["searchlist"] = $this->search_type;
         $data["search_type"] = $search_type;
-
-
         $this->load->view('layout/header', $data);
         $this->load->view('admin/income/transactionReport', $data);
         $this->load->view('layout/footer', $data);
     }
 
     public function incomegroup() {
-
-
         $this->session->set_userdata('top_menu', 'Reports');
         $this->session->set_userdata('sub_menu', 'reports/incomegroup');
-
         if (isset($_POST['search_type'])) {
-
             $search_type = $this->input->post("search_type");
         } else {
-
             $search_type = "this_month";
         }
         $data['head_id'] = $head_id = "";
@@ -452,15 +419,12 @@ class Income extends Admin_Controller {
         $data["searchlist"] = $this->search_type;
         $data["search_type"] = $search_type;
         $incomeList = $this->income_model->searchincomegroup($search_type, $head_id);
-
         $data['headlist'] = $this->incomehead_model->get();
-
         $data['incomeList'] = $incomeList;
         $this->load->view('layout/header', $data);
         $this->load->view('admin/income/groupincomeReport', $data);
         $this->load->view('layout/footer', $data);
     }
-
 }
 
 ?>

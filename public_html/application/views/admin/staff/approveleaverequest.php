@@ -11,7 +11,7 @@
                         <?php
                         if ($this->rbac->hasPrivilege('approve_leave_request', 'can_add')) {
                             ?>
-                            <small class="pull-right"><a href="#addleave" onclick="addLeave()" role="button" class="btn btn-primary btn-sm checkbox-toggle pull-right edit_setting"  /> <i class="fa fa-plus"></i> <?php echo $this->lang->line('add'); ?> <?php echo $this->lang->line('leave_request'); ?></a></small>
+                            <div class="box-tools pull-right"><a href="#addleave" onclick="addLeave()" role="button" class="btn btn-primary btn-sm checkbox-toggle edit_setting" /> <i class="fa fa-plus"></i> <?php echo $this->lang->line('add'); ?> <?php echo $this->lang->line('leave_request'); ?></a></div>
                         <?php } ?>
                     </div><!-- /.box-header -->
                     <div class="box-body">
@@ -35,10 +35,22 @@
                                             <?php
                                             $i = 0;
                                             foreach ($leave_request as $key => $value) {
+                                                if (!empty ($value['designation'])) {
+                                                    
+                                                    $designation = "(".$value['designation']." - ".$value["employee_id"].")";
+                                                }else{
+                                                    if(!empty($value["employee_id"])){
+
+                                                     $designation = "(".$value["employee_id"].")";
+                                                    }else{
+
+                                                        $designation = '';
+                                                    }
+                                                }
                                                 ?>
                                                 <tr>   
 
-                                                    <td><span data-toggle="popover" class="detail_popover" data-original-title="" title=""><?php echo $value['name'] . " " . $value['surname']; ?></span>
+                                                    <td><span data-toggle="popover" class="detail_popover" data-original-title="" title=""><?php echo $value['name'] . " " . $value['surname'].$designation ; ?></span>
                                                         <div class="fee_detail_popover" style="display: none"><?php echo $this->lang->line('staff_id'); ?>: <?php echo $value['employee_id']; ?></div></td>
                                                     <td><?php echo $value["type"] ?></td>
                                                     <td><?php echo date($this->customlib->getSchoolDateFormat(), strtotime($value["leave_from"])) ?> - <?php echo date($this->customlib->getSchoolDateFormat(), strtotime($value["leave_to"])) ?></td>
@@ -101,79 +113,82 @@
                 <h4 class="modal-title"><?php echo $this->lang->line('details'); ?></h4>
             </div>
             <div class="modal-body">
-
+                
                 <div class="row">
                     <form role="form" id="leavedetails_form" action="">
-                        <div class="col-md-12 table-responsive">  
-                            <table class="table mb0 table-striped table-bordered examples">
-                                <tr>
-                                    <th width="15%"><?php echo $this->lang->line('name'); ?></th>
-                                    <td width="35%"><span id='name'></span></td>
-                                    <th width="15%"><?php echo $this->lang->line('staff_id'); ?></th>
-                                    <td width="35%"><span id="employee_id"></span>
-                                        <span class="text-danger"><?php echo form_error('leave_request_id'); ?></span>
-                                    </td>
-
-                                </tr>
-                                <tr>
-
-                                    <th><?php echo $this->lang->line('submitted_by'); ?></th>
-                                    <td><span id="appliedby"></span></td>
-                                    <th><?php echo $this->lang->line('leave_type'); ?></th>
-                                    <td><span id="leave_type"></span>
-                                        <input id="leave_request_id" name="leave_request_id" placeholder="" type="hidden" class="form-control" />
-                                        <span class="text-danger"><?php echo form_error('leave_request_id'); ?></span></td>
-                                </tr>
-                                <tr>
-                                    <th><?php echo $this->lang->line('leave'); ?></th>
-                                    <td><span id='leave_from'></span> - <label> </label><span id='leave_to'> </span> (<span id='days'></span>)
-                                        <span class="text-danger"><?php echo form_error('leave_from'); ?></span></td>
-                                    <th><?php echo $this->lang->line('apply'); ?> <?php echo $this->lang->line('date'); ?></th>
-                                    <td><span id="applied_date"></span></td>
-                                </tr>
-                                <tr>
-
-                                    <th><?php echo $this->lang->line('status'); ?></th>
-                                    <td>
-                                        <label class="radio-inline">
-                                            <input type="radio" value="<?php echo "pending"; ?>" name="status" checked ><?php echo $status["pending"]; ?>
-                                        </label>
-                                        <label class="radio-inline">
-                                            <input type="radio" value="<?php echo "approve"; ?>" name="status"><?php echo $status["approve"]; ?>
-                                        </label>
-                                        <label class="radio-inline">
-                                            <input type="radio" value="<?php echo "disapprove"; ?>" name="status"><?php echo $status["disapprove"]; ?> 
-                                        </label>
-                                        <span class="text-danger"><?php echo form_error('status'); ?></span>
-                                    </td>
-                                    <th><?php echo $this->lang->line('reason'); ?></th>
-                                    <td><span id="remark"> </span></td>
-                                </tr> 
-                                <tr>
-
-
-                                    <th><?php echo $this->lang->line('note'); ?></th>
-                                </tr>
-                                <tr>
-                                    <td colspan=" 4">
-                                        <div id="reason">
-                                            <textarea class="form-control" style="resize: none;" rows="2" id="detailremark" name="detailremark" placeholder=""></textarea>
-                                            <span class="text-danger"><?php echo form_error('address'); ?></span>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <?php
-                                    if ($this->rbac->hasPrivilege('approve_leave_request', 'can_edit')) {
-                                        ?> 
-                                        <td colspan="4">
-                                            <button type="button" class="btn btn-primary submit_schsetting pull-right" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> Processing"> <?php echo $this->lang->line('save'); ?></button>
+                        <div class="col-md-12">  
+                            <div class="table-responsive">
+                                <table class="table mb0 table-striped table-bordered">
+                                    <tr>
+                                        <th width="15%"><?php echo $this->lang->line('name'); ?></th>
+                                        <td width="35%"><span id='name'></span></td>
+                                        <th width="15%"><?php echo $this->lang->line('staff_id'); ?></th>
+                                        <td width="35%"><span id="employee_id"></span>
+                                            <span class="text-danger"><?php echo form_error('leave_request_id'); ?></span>
                                         </td>
-                                    <?php } ?>
-                                </tr>
-                            </table>
+
+                                    </tr>
+                                    <tr>
+
+                                        <th><?php echo $this->lang->line('submitted_by'); ?></th>
+                                        <td><span id="appliedby"></span></td>
+                                        <th><?php echo $this->lang->line('leave_type'); ?></th>
+                                        <td><span id="leave_type"></span>
+                                            <input id="leave_request_id" name="leave_request_id" placeholder="" type="hidden" class="form-control" />
+                                            <span class="text-danger"><?php echo form_error('leave_request_id'); ?></span></td>
+                                    </tr>
+                                    <tr>
+                                        <th><?php echo $this->lang->line('leave'); ?></th>
+                                        <td><span id='leave_from'></span> - <label> </label><span id='leave_to'> </span> (<span id='days'></span>)
+                                            <span class="text-danger"><?php echo form_error('leave_from'); ?></span></td>
+                                        <th><?php echo $this->lang->line('apply'); ?> <?php echo $this->lang->line('date'); ?></th>
+                                        <td><span id="applied_date"></span></td>
+                                    </tr>
+                                    <tr>
+
+                                        <th><?php echo $this->lang->line('status'); ?></th>
+                                        <td>
+                                            <label class="radio-inline">
+                                                <input type="radio" value="<?php echo "pending"; ?>" name="status" checked ><?php echo $status["pending"]; ?>
+                                            </label>
+                                            <label class="radio-inline">
+                                                <input type="radio" value="<?php echo "approve"; ?>" name="status"><?php echo $status["approve"]; ?>
+                                            </label>
+                                            <label class="radio-inline">
+                                                <input type="radio" value="<?php echo "disapprove"; ?>" name="status"><?php echo $status["disapprove"]; ?> 
+                                            </label>
+                                            <span class="text-danger"><?php echo form_error('status'); ?></span>
+                                        </td>
+                                        <th><?php echo $this->lang->line('reason'); ?></th>
+                                        <td><span id="remark"> </span></td>
+                                    </tr> 
+                                    <tr>
+
+
+                                        <th><?php echo $this->lang->line('note'); ?></th>
+                                    </tr>
+                                    <tr>
+                                        <td colspan=" 4">
+                                            <div id="reason">
+                                                <textarea class="form-control" style="resize: none;" rows="2" id="detailremark" name="detailremark" placeholder=""></textarea>
+                                                <span class="text-danger"><?php echo form_error('address'); ?></span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <?php
+                                        if ($this->rbac->hasPrivilege('approve_leave_request', 'can_edit')) {
+                                            ?> 
+                                            <td colspan="4">
+                                                <button type="button" class="btn btn-primary submit_schsetting pull-right" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> Processing"> <?php echo $this->lang->line('save'); ?></button>
+                                            </td>
+                                        <?php } ?>
+                                    </tr>
+                                </table>
+                            </div>     
                         </div>
-                    </form>                  
+                    </form> 
+                                    
                 </div>
             </div>
         </div>
@@ -181,7 +196,7 @@
 </div>
 
 
-<div id="addleave" class="modal fade " role="dialog">
+<div id="addleave" class="modal fade" role="dialog">
     <div class="modal-dialog modal-dialog2 modal-lg">
         <div class="modal-content">
             <div class="modal-header">

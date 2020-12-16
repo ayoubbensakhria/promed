@@ -5,9 +5,8 @@
         $('.select2').select2();
     });
 
-    function geteditMedicineName(id, selectid = '') {
-        console.log(id);
-
+    function geteditMedicineName(id, selectid = '',dos='') {
+       // console.log(id);
         var category_selected = $("#editmedicine_cat" + id).val();
         var arr = category_selected.split('-');
         var category_set = arr[0];
@@ -20,7 +19,7 @@
             data: {'medicine_category_id': category_selected},
             dataType: 'json',
             success: function (res) {
-                console.log(res);
+              //  console.log(res);
                 $.each(res, function (i, obj)
                 {
                     var sel = "";
@@ -30,24 +29,23 @@
                 $("#editsearch-query" + id).html("<option value=''>Select</option>");
                 $('#editsearch-query' + id).append(div_data);
                 $('#editsearch-query' + id).select2().select2("val", selectid);
-                geteditMedicineDosage(id);
+                
+                geteditMedicineDosage(id,dos);
             }
         });
     }
     ;
 
     function geteditMedicineDosage(id, selectid = '') {
-        //  alert(category_selected)
-        // alert(id);
         var category_selected = $("#editmedicine_cat" + id).val();
+        console.log(category_selected);
         var arr = category_selected.split('-');
         var category_set = arr[0];
 
         div_data = '';
-
+        
         $("#editsearch-dosage" + id).html("<option value='l'><?php echo $this->lang->line('loading') ?></option>");
         $('#editsearch-dosage' + id).select2("val", +id);
-
         $.ajax({
             type: "POST",
             url: base_url + "admin/pharmacy/get_medicine_dosage",
@@ -61,57 +59,58 @@
                     if (selectid == obj.dosage) {
                         sel = "selected";
                     }
-
                     div_data += "<option '" + sel + "' value='" + obj.dosage + "'>" + obj.dosage + "</option>";
-
+                    console.log(div_data);
                 });
                 $("#editsearch-dosage" + id).html("<option value=''>Select</option>");
                 $('#editsearch-dosage' + id).append(div_data);
-                //$("#search-dosage" + id).select2();
                 $('#editsearch-dosage' + id).select2("val", selectid);
-
             }
         });
 
     }
     ;
 </script>
-<div class="row">
-    <div class="col-lg-12 col-md-12 col-sm-12 paddlr">
-        <form id="update_prescription" accept-charset="utf-8"  enctype="multipart/form-data" method="post" class="ptt10">
+
+    <form id="update_prescription" accept-charset="utf-8" enctype="multipart/form-data" method="post" class="">
+        <div class="">
             <div class="row">
+                <div class="col-sm-9 col-md-9 col-lg-9">
+                    <div class="ptt10">
+                        <div class="row">
+                             <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label><?php echo $this->lang->line('header_note'); ?></label> 
+                                    <textarea name="header_note" class="form-control editor" id="compose-textarea" style="height:50px"><?php echo $result["header_note"] ?></textarea>
+                                    <input type="hidden" name="opd_id" value="<?php echo $result['opd_id'] ?>">
 
-                <div class="col-sm-12">
-                    <div class="form-group">
-                        <label><?php echo $this->lang->line('header_note'); ?></label> 
-                        <textarea name="header_note" class="form-control editor" id="compose-textarea" style="height:50px"><?php echo $result["header_note"] ?></textarea>
-                        <input type="hidden" name="opd_id" value="<?php echo $result['opd_id'] ?>">
+                                </div> 
+                            </div>
 
-                    </div> 
-                </div>
-
-                <?php foreach ($prescription_list as $pkey => $pvalue) {
-                    ?>
-                    <input type="hidden" name="previous_pres_id[]" value="<?php echo $pvalue['id'] ?>">
-                    <input type="hidden" name="visit_id" value="<?php echo $pvalue['visit_id'] ?>">
-                <?php } ?>
-                <div class="col-md-12">  
-                    <div style="max-height: 300px;overflow-x: hidden; margin-bottom: 20px;">   
-                        <table style="width: 100%;" id="edittableID">
-
+                        <?php 
+                        if(!empty($prescription_list)){
+                        foreach ($prescription_list as $pkey => $pvalue) {
+                        ?>
+                        <input type="hidden" name="previous_pres_id[]" value="<?php echo $pvalue['id'] ?>">
+                        <input type="hidden" name="opd_no_value" value="<?php echo $result['opd_no'] ?>">
+                        <input type="hidden" name="visit_id" value="<?php echo $pvalue['visit_id'] ?>">
+                         <?php } }else{ ?>
+                        <input type="hidden" name="opd_no_value" value="<?php echo $result['opd_no'] ?>">
+                        <input type="hidden" name="visit_id" value="0">
+                        <?php  } ?>
+                        <table class="fullwidthtable" id="edittableID">
                             <?php
                             $i = 0;
+                            if(!empty($prescription_list)){
 
                             foreach ($prescription_list as $key => $value) {
                                 ?>
-                               
-                               
                                 <tr id="row<?php echo $i ?>">
                                     <td>      
                                         <div class="col-sm-3">
                                             <div class="form-group">
                                                 <?php if ($i == 0) { ?>
-                                                    <label><?php echo $this->lang->line('medicine') . " " . $this->lang->line("category"); ?></label> 
+                                                    <label><?php echo $this->lang->line('medicine') . " " . $this->lang->line("category"); ?></label> <small class="req"> *</small>
                                                 <?php } ?>
                                                 <select class="form-control select2" style="width: 100%" name='medicine_cat[]' onchange="geteditMedicineName(0)"  id="editmedicine_cat<?php echo $i ?>">
                                                     <option value="<?php echo set_value('medicine_category_id'); ?>"><?php echo $this->lang->line('select') ?>
@@ -138,8 +137,8 @@
                                                 <select class="form-control select2" style="width: 100%"  name="medicine[]" id="editsearch-query<?php echo $i ?>">
                                                     <option value="l"><?php echo $this->lang->line('select') ?></option>
                                                 </select>
-                                                 <script type="text/javascript">
-                                    geteditMedicineName('<?php echo $i ?>', '<?php echo $value['medicine'] ?>');
+                                                <script type="text/javascript">
+                                    geteditMedicineName('<?php echo $i ?>', '<?php echo $value['medicine'] ?>', '<?php echo $value['dosage'] ?>');
                                     
                                 </script>
                                                 <input type="hidden" value="<?php echo $value['id'] ?>" name="prescription_id[]" class="form-control" id="report_type" />
@@ -151,14 +150,11 @@
                                                 <?php if ($i == 0) { ?>
                                                 
                                                     <label><?php echo $this->lang->line('dosage'); ?></label> 
-    <?php } ?>
+                                        <?php } ?>
                                                 <select   class="form-control select2" style="width: 100%"  name="dosage[]" id="editsearch-dosage<?php echo $i ?>">
                                                     <option value="l"><?php echo $this->lang->line('select') ?></option>
                                                 </select>
-                                                  <!-- <script type="text/javascript">
-                                  
-                                    geteditMedicineDosage('<?php echo $i ?>', '<?php echo $value['dosage'] ?>');
-                                </script> -->
+                                      
                                             </div> 
                                         </div>
                                         <div class="col-sm-3">
@@ -173,37 +169,109 @@
                                         </div>
                                     </td>
 
-    <?php if ($i != 0) { ?>
-                                        <td><button type='button' onclick="delete_row('<?php echo $i ?>')" class='modaltableclosebtn'><i class='fa fa-remove'></i></button></td>
-                                    <?php } else {
-                                        ?>
-                                        <td><button type="button" onclick="edit_more()" style="color: #2196f3" class="modaltableclosebtn"><i class="fa fa-plus"></i></button>
+    <?php if (($i == 0) || (sizeof($prescription_list) == 1)) { ?>
+                                        <td><button type="button" onclick="edit_more()" style="color: #2196f3; margin-top: 9px;" class="modaltableclosebtn"><i class="fa fa-plus"></i></button>
                                         </td>
+                                    <?php } else {
+                                        
+                                        ?>
+                                       <td><button type='button' onclick="delete_row('<?php echo $i ?>')" class='modaltableclosebtn' style='margin-top: -17px;
+    display: block;'><i class='fa fa-remove'></i></button></td>     
+                                       
     <?php } ?>
                                 </tr>
-                              <!--   <tr>
-                                     <td colspan="3" style="text-align: right;"><button type="button" onclick="edit_more()" style="color: #2196f3" class="modaltableclosebtn"><i class="fa fa-plus"></i></button>
-                                        </td>
-                                </tr> -->
+                             
     <?php
     $i++;
-}
+} }else{ ?>
+
+    <tr id="row0">
+                                    <td>           
+                                        <div class="col-sm-3">
+                                            <div class="form-group">
+                                                <label>
+                                                    <?php echo $this->lang->line('medicine') . " " . $this->lang->line("category"); ?></label> <small class="req"> *</small>
+                                                <select class="form-control select2" style="width: 100%" name='medicine_cat[]' onchange="geteditMedicineName(0)"  id="editmedicine_cat0">
+                                                    <option value="<?php echo set_value('medicine_category_id'); ?>"><?php echo $this->lang->line('select') ?>
+                                                    </option>
+                                                    <?php foreach ($medicineCategory as $dkey => $dvalue) {
+                                                        ?>
+                                                        <option value="<?php echo $dvalue["id"]; ?>"><?php echo $dvalue["medicine_category"] ?>
+                                                        </option>   
+                                                    <?php } ?>
+                                                </select>
+                                            </div>
+                                        </div>                     
+                                        <div class="col-sm-3">
+                                            <div class="form-group">
+                                                <label><?php echo $this->lang->line('medicine'); ?></label> 
+                                                <select class="form-control select2" style="width: 100%"  name="medicine[]" id="editsearch-query0">
+                                                    <option value="l"><?php echo $this->lang->line('select') ?></option>
+                                                </select>
+                                                <div id="suggesstion-box0"></div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <div class="form-group">
+                                                <label><?php echo $this->lang->line('dosage'); ?></label> 
+
+                                                <select class="form-control select2" style="width: 100%"  name="dosage[]" id="editsearch-dosage0">
+                                                    <option value="l"><?php echo $this->lang->line('select') ?></option>
+                                                </select>
+                                            </div> 
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <div class="form-group">
+                                                <label><?php echo $this->lang->line('instruction'); ?></label> 
+                                                <textarea name="instruction[]" style="height: 28px;" class="form-control" ></textarea>
+                                            </div> 
+                                        </div>
+                                    </td>
+                                    <td><button type="button" onclick="edit_more()" style="color: #2196f3" class="modaltableclosebtn"><i class="fa fa-plus"></i></button></td>
+                                </tr>
+                            
+
+<?php }
 ?>
                         </table>
-                    </div>
-                </div>
 
-                <div class="col-sm-12">
-                    <div class="form-group">
-                        <label><?php echo $this->lang->line('footer_note'); ?></label> 
-                        <textarea name="footer_note" class="form-control editor" id="compose-textareaold" style="height:50px"><?php echo $result["footer_note"] ?></textarea>
+
+           
+                            <hr/>
+
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label><?php echo $this->lang->line('footer_note'); ?></label> 
+                                    <textarea name="footer_note" class="form-control editor" id="compose-textareaold" style="height:50px"><?php echo $result["footer_note"] ?></textarea>
+                                </div> 
+                            </div>  
+
+                        </div>
                     </div> 
+                </div>
+                <div class="col-sm-3 col-md-3 col-lg-3">
+                     <div class="ptt10">
+                        <label><?php echo $this->lang->line('notification')." ".$this->lang->line('to'); ?></label>
+                             <?php
+                                foreach ($roles as $role_key => $role_value) {
+                                            $userdata = $this->customlib->getUserData();
+                                            $role_id = $userdata["role_id"];
+                                            ?>
+                                                <div class="checkbox">
+                                                    <label><input type="checkbox" name="visible[]" value="<?php echo $role_value['id']; ?>" <?php
+                                                        if ($role_value["id"] == $role_id) {
+                                                            echo "checked onclick='return false;'";
+                                                        }
+                                                        ?>  <?php echo set_checkbox('visible[]', $role_value['id'], false) ?> /> <b><?php echo $role_value['name']; ?></b> </label>
+                                                </div>
+                                                <?php
+                                            }
+                                            ?>
+
+                     </div>
+                </div>
                 </div>  
-
-
-            </div>
-
-
+                </div> <!--./modal-body--> 
             <div class="box-footer">
                 <div class="pull-right">
                     <button type="submit" class="btn btn-info pull-right"><?php echo $this->lang->line('save'); ?></button>
@@ -211,9 +279,8 @@
                 </div>
             </div>
 
-        </form>
-    </div>
-</div>
+
+            </form>
 <script type="text/javascript">
     $(function () {
         $("#compose-textarea,#compose-textareaold").wysihtml5({

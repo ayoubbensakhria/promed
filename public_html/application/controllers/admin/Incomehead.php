@@ -52,7 +52,7 @@ class Incomehead extends Admin_Controller {
         $data['title'] = 'Add Income Head';
         $category_result = $this->incomehead_model->get();
         $data['categorylist'] = $category_result;
-        $this->form_validation->set_rules('incomehead', 'Income Head', 'trim|required|xss_clean');
+        $this->form_validation->set_rules('incomehead', $this->lang->line('income_head'), 'trim|required|xss_clean');
         if ($this->form_validation->run() == FALSE) {
             $this->load->view('layout/header', $data);
             $this->load->view('admin/incomehead/incomeheadList', $data);
@@ -69,23 +69,18 @@ class Incomehead extends Admin_Controller {
     }
 
     function add() {
-
-        $this->form_validation->set_rules('incomehead', 'Income Head', 'trim|required|xss_clean');
+        $this->form_validation->set_rules('incomehead', $this->lang->line('income_head'), 'trim|required|xss_clean');
         if ($this->form_validation->run() == FALSE) {
-
             $msg = array(
                 'name' => form_error('incomehead'),
             );
-
             $array = array('status' => 'fail', 'error' => $msg, 'message' => '');
         } else {
-
             $data = array(
                 'income_category' => $this->input->post('incomehead'),
                 'description' => $this->input->post('description'),
             );
             $this->incomehead_model->add($data);
-
             $array = array('status' => 'success', 'error' => '', 'message' => 'New Income Head Successfully Inserted');
         }
 
@@ -102,7 +97,7 @@ class Incomehead extends Admin_Controller {
         $data['id'] = $id;
         $category = $this->incomehead_model->get($id);
         $data['incomehead'] = $category;
-        $this->form_validation->set_rules('incomehead', 'Income Head', 'trim|required|xss_clean');
+        $this->form_validation->set_rules('incomehead', $this->lang->line('income_head'), 'trim|required|xss_clean');
         if ($this->form_validation->run() == FALSE) {
             $this->load->view('layout/header', $data);
             $this->load->view('admin/incomehead/incomeheadEdit', $data);
@@ -125,7 +120,7 @@ class Incomehead extends Admin_Controller {
         }
 
         $id = $this->input->post('income_id');
-        $this->form_validation->set_rules('incomehead', 'Income Head', 'trim|required|xss_clean');
+        $this->form_validation->set_rules('incomehead', $this->lang->line('income_head'), 'trim|required|xss_clean');
         if ($this->form_validation->run() == FALSE) {
             $msg = array(
                 'name' => form_error('expensehead'),
@@ -133,7 +128,6 @@ class Incomehead extends Admin_Controller {
 
             $array = array('status' => 'fail', 'error' => $msg, 'message' => '');
         } else {
-
             $data = array(
                 'id' => $id,
                 'income_category' => $this->input->post('incomehead'),
@@ -141,7 +135,6 @@ class Incomehead extends Admin_Controller {
             );
 
             $this->incomehead_model->add($data);
-
             $array = array('status' => 'success', 'error' => '', 'message' => 'Expense Head Successfully Updated');
         }
 
@@ -149,7 +142,6 @@ class Incomehead extends Admin_Controller {
     }
 
     function get_data($id) {
-
         $category_result = $this->incomehead_model->get($id);
         echo json_encode($category_result);
     }

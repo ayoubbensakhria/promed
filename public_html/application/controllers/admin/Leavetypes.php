@@ -6,15 +6,12 @@ if (!defined('BASEPATH'))
 class LeaveTypes extends Admin_Controller {
 
     function __construct() {
-
         parent::__construct();
-
         $this->load->helper('file');
         $this->config->load("payroll");
     }
 
     function index() {
-
         $this->session->set_userdata('top_menu', 'setup');
         $this->session->set_userdata('sub_menu', 'hr/index');
         $data["title"] = "Add Leave Type";
@@ -26,8 +23,6 @@ class LeaveTypes extends Admin_Controller {
     }
 
     function createLeaveType() {
-
-
         $this->form_validation->set_rules(
                 'type', $this->lang->line('leave_type'), array('required',
             array('check_exists', array($this->leavetypes_model, 'valid_leave_type'))
@@ -40,12 +35,10 @@ class LeaveTypes extends Admin_Controller {
             $leavetypeid = $this->input->post("leavetypeid");
             $status = $this->input->post("status");
             if (empty($leavetypeid)) {
-
                 if (!$this->rbac->hasPrivilege('leave_types', 'can_add')) {
                     access_denied();
                 }
             } else {
-
                 if (!$this->rbac->hasPrivilege('leave_types', 'can_edit')) {
                     access_denied();
                 }
@@ -54,14 +47,12 @@ class LeaveTypes extends Admin_Controller {
             if (!empty($leavetypeid)) {
                 $data = array('type' => $type, 'is_active' => 'yes', 'id' => $leavetypeid);
             } else {
-
                 $data = array('type' => $type, 'is_active' => 'yes');
             }
 
             $insert_id = $this->leavetypes_model->addLeaveType($data);
             $array = array('status' => 'success', 'error' => '', 'message' => $this->lang->line('success_message'));
         } else {
-
             $msg = array(
                 'e1' => form_error('type'),
             );
@@ -72,7 +63,6 @@ class LeaveTypes extends Admin_Controller {
     }
 
     function leaveedit() {
-
         $this->form_validation->set_rules(
                 'type', $this->lang->line('leave_type'), array('required',
             array('check_exists', array($this->leavetypes_model, 'valid_leave_type'))
@@ -80,39 +70,32 @@ class LeaveTypes extends Admin_Controller {
         );
         $data["title"] = "Add Leave Type";
         if ($this->form_validation->run() == FALSE) {
-
             $msg = array(
                 'e1' => form_error('type'),
             );
 
             $array = array('status' => 'fail', 'error' => $msg, 'message' => '');
         } else {
-
             $type = $this->input->post("type");
             $leavetypeid = $this->input->post("leavetypeid");
             $status = $this->input->post("status");
             if (empty($leavetypeid)) {
-
                 if (!$this->rbac->hasPrivilege('leave_types', 'can_add')) {
                     access_denied();
                 }
             } else {
-
                 if (!$this->rbac->hasPrivilege('leave_types', 'can_edit')) {
                     access_denied();
                 }
             }
 
             if (!empty($leavetypeid)) {
-
                 $data = array('type' => $type, 'is_active' => 'yes', 'id' => $leavetypeid);
             } else {
-
                 $data = array('type' => $type, 'is_active' => 'yes');
             }
 
             $insert_id = $this->leavetypes_model->addLeaveType($data);
-
             $array = array('status' => 'success', 'error' => '', 'message' => $this->lang->line('update_message'));
         }
 
@@ -125,7 +108,6 @@ class LeaveTypes extends Admin_Controller {
     }
 
     function leavedelete($id) {
-
         $this->leavetypes_model->deleteLeaveType($id);
     }
 

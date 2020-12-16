@@ -15,14 +15,13 @@ $genderList = $this->customlib->getGender();
             <div class="col-md-12">
                 <div class="box box-primary">
                     <div class="box-header with-border">
-                        <h3 class="box-title titlefix"> <?php echo $this->lang->line('patient') . " " . $this->lang->line('report'); ?></h3>
+                        <h3 class="box-title titlefix"> <?php echo $this->lang->line('radiology') . " " .$this->lang->line('test') . " " . $this->lang->line('report'); ?></h3>
                     </div><!-- /.box-header -->
                     <div class="box-body">
                         <div class="download_label"><?php echo $this->lang->line('radiology') . " " . $this->lang->line('test') . " " . $this->lang->line('reports'); ?></div>
                         <table class="table table-striped table-bordered table-hover example" id="testreport" cellspacing="0" width="100%">
                             <thead >
                                 <tr>
-
                                     <th><?php echo $this->lang->line('bill') . " " . $this->lang->line('no'); ?></th>
                                     <th><?php echo $this->lang->line('reporting') . " " . $this->lang->line('date'); ?></th>
                                     <th><?php echo $this->lang->line('patient') . " " . $this->lang->line('name'); ?></th>
@@ -33,7 +32,6 @@ $genderList = $this->customlib->getGender();
                                     <th><?php echo $this->lang->line('charge') . " " . $this->lang->line('category'); ?></th>
                                     <th class="text-right" ><?php echo $this->lang->line('applied') . " " . $this->lang->line('charge') . ' (' . $currency_symbol . ')'; ?></th>
                                     <th class="text-right"><?php echo $this->lang->line('action') ?></th>
-
                                 </tr>
                             </thead>
                             <tbody>
@@ -65,14 +63,25 @@ $genderList = $this->customlib->getGender();
                                                 }
                                                 ?></td>
                                             <td class="pull-right">
+                                                <?php if (!empty($detail->radiology_report)) { ?>
+                                                            <a href="<?php echo base_url(); ?>patient/dashboard/radio_download/<?php echo $detail->radiology_report; ?>" class="btn btn-default btn-xs"  data-toggle="tooltip" title="<?php echo $this->lang->line('download'); ?>">
+                                                                <i class="fa fa-download"></i>
+                                                            </a>
+                                                <?php } ?>
                                                 <a href="#" 
-                                                   onclick="viewDetail('<?php echo $detail->id ?>')"
+                                                   onclick="viewDetailReport('<?php echo $detail->id ?>','<?php echo $detail->radiology_id ?>')"
                                                    class="btn btn-default btn-xs"  data-toggle="tooltip"
-                                                   title="<?php echo $this->lang->line('print'); ?>" >
+                                                   title="<?php echo $this->lang->line('print'). " " . $this->lang->line('report'); ?>" >
                                                     <i class="fa fa-print"></i>
                                                 </a> 
+                                                <a href="#" 
+                                                   onclick="viewDetail('<?php echo $detail->id ?>','<?php echo $detail->radiology_id ?>')"
+                                                   class="btn btn-default btn-xs"  data-toggle="tooltip"
+                                                   title="<?php echo $this->lang->line('print'). " " . $this->lang->line('bill');?>" >
+                                                    <i class="fa fa-print"></i>
+                                                </a> 
+                                                
                                             </td>
-
                                         </tr>
                                         <?php
                                         $count++;
@@ -100,40 +109,15 @@ $genderList = $this->customlib->getGender();
                         <form id="updatetest" enctype="multipart/form-data" accept-charset="utf-8"  method="post" class="ptt10" >
                             <input type="hidden" name="id" id="report_id" >
                             <div class="row">
-                                <!-- <div class="col-sm-4">
-                                  <div class="form-group">
-                                    <label class="radio-inline">
-                                      <input type="radio" name="opd_ipd_patient_type" value="opd">Opd Patient
-                                    </label>
-                                    <label class="radio-inline">
-                                      <input type="radio" name="opd_ipd_patient_type" value="ipd">Ipd Patient
-                                    </label>
-                                  </div>
-                                </div> -->
                                 <div class="col-sm-3">
                                     <div class="form-group">
                                         <label for="exampleInputFile">
                                             <?php echo $this->lang->line('customer') . " " . $this->lang->line('type'); ?></label>
                                         <div>
                                             <input class="form-control" style="text-transform: capitalize;" type="text" name="customer_type" id='customer_types' readonly>
-                                            <!-- <select class="form-control" name='customer_type' id='customer_types' >
-                                              <<option><?php echo $this->lang->line('select') ?></option>
-                                              <option value="<?php echo "direct"; ?>" selected><?php echo $this->lang->line('direct'); ?></option>
-                                              <option value="<?php echo "opd"; ?>"><?php echo $this->lang->line('opd'); ?></option>   
-                                              <option value="<?php echo "ipd"; ?>"><?php echo $this->lang->line('ipd'); ?></option> 
-                                            </select> -->
                                         </div>
                                     </div>
                                 </div>
-
-                                <!-- <div class="col-sm-3">
-                                  <div class="form-group">
-                                      <label><?php echo $this->lang->line('opd_ipd_no'); ?></label>
-                                      <input type="text" name="opd_ipd_no" class="form-control" id="opdipd" onchange="getPatientIdName(this.value)">
-                                      <input type="hidden" name="patient_id" id="patient_id">
-                                  </div>
-                                </div>   -->
-
                                 <div class="col-sm-3">
                                     <div class="form-group">
                                         <label><?php echo $this->lang->line('patient') . " " . $this->lang->line('name'); ?></label>
@@ -247,6 +231,27 @@ $genderList = $this->customlib->getGender();
     </div>    
 </div>
 
+<div class="modal fade" id="viewModalReport"  role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content modal-media-content">
+            <div class="modal-header modal-media-header">
+                <button type="button" class="close" data-toggle="tooltip" title="<?php echo $this->lang->line('clase'); ?>" data-dismiss="modal">&times;</button>
+                <div class="modalicon"> 
+                    <div id='edit_deletereport'>
+                        <a href="#"  data-target="#edit_prescription"  data-toggle="modal" title="" data-original-title="<?php echo $this->lang->line('edit'); ?>"><i class="fa fa-pencil"></i></a>
+
+                        <a href="#" data-toggle="tooltip" title="" data-original-title="<?php echo $this->lang->line('delete'); ?>"><i class="fa fa-trash"></i></a>
+                    </div>
+                </div>
+                <h4 class="box-title"><?php echo $this->lang->line('report') . " " . $this->lang->line('details'); ?></h4> 
+            </div>
+            <div class="modal-body pt0 pb0">
+                <div id="reportdatareport"></div>
+            </div>
+        </div>
+    </div>    
+</div>
+
 <script type="text/javascript">
     function holdModal(modalId) {
         $('#' + modalId).modal({
@@ -255,15 +260,29 @@ $genderList = $this->customlib->getGender();
             show: true
         });
     }
-    function viewDetail(id) {
+
+    function viewDetail(id,radiology_id) {
         $.ajax({
-            url: '<?php echo base_url() ?>patient/dashboard/getBillDetailsRadio/' + id,
+            url: '<?php echo base_url() ?>patient/dashboard/getBillDetailsRadio/' + id +'/'+ radiology_id,
             type: "GET",
             data: {id: id},
             success: function (data) {
                 $('#reportdata').html(data);
-                $('#edit_deletebill').html("<a href='#' data-toggle='tooltip' onclick='printData(" + id + ")'   data-original-title='<?php echo $this->lang->line('print'); ?>'><i class='fa fa-print'></i></a>");
+                $('#edit_deletebill').html("<a href='#' data-toggle='tooltip' onclick='printData(" + id + ","+ radiology_id +")'   data-original-title='<?php echo $this->lang->line('print'); ?>'><i class='fa fa-print'></i></a>");
                 holdModal('viewModal');
+            },
+        });
+    }
+
+    function viewDetailReport(id,radiology_id) {
+        $.ajax({
+            url: '<?php echo base_url() ?>patient/dashboard/getReportDetailsRadio/' + id +'/'+ radiology_id,
+            type: "GET",
+            data: {id: id},
+            success: function (data) {
+                $('#reportdatareport').html(data);
+                $('#edit_deletereport').html("<a href='#' data-toggle='tooltip' onclick='printData(" + id + ","+ radiology_id +")'   data-original-title='<?php echo $this->lang->line('print'); ?>'><i class='fa fa-print'></i></a>");
+                holdModal('viewModalReport');
             },
         });
     }

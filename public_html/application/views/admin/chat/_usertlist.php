@@ -1,5 +1,3 @@
-
-
 <?php
 if (!empty($staff)) {
     foreach ($staff as $value) {
@@ -10,7 +8,6 @@ if (!empty($staff)) {
                     <a href="#" onclick="start_chat('<?php echo $value['id'] ?>', '<?php echo $sender_id; ?>', '1')" >
                         <?php echo $value['name'] . " (" . $value['role'] . ")"; ?></a>
                 </div>
-
             </div>
             <?php
         }
@@ -26,7 +23,6 @@ if (!empty($parent)) {
                     <a onclick="start_chat('<?php echo $value['parent_id'] ?>', '<?php echo $sender_id; ?>', '3')" ><?php echo $value['father_name'] . " (" . $value['role'] . ")"; ?></a>
 
                 </div>
-
             </div>
             <?php
         }
@@ -41,7 +37,6 @@ if (!empty($student)) {
                     <a onclick="start_chat('<?php echo $value['id'] ?>', '<?php echo $sender_id; ?>', '2')" ><?php echo $value['firstname'] . " " . $value['lastname'] . " (" . $value['role'] . ")"; ?></a>
 
                 </div>
-
             </div>
             <?php
         }
@@ -50,13 +45,9 @@ if (!empty($student)) {
 ?>
 <input type="hidden" value="<?php echo $start_status ?>" id="start_status">
 <script>
-
     function start_chat(receiver_id, sender_id, type) {
-        //load_page(sender_id,receiver_id,type);
         var message = 'Hii';
-
         var start_status = $('#start_status').val();
-
         $.ajax({
             type: "POST",
             url: "<?php echo base_url(); ?>admin/chat/reply",
@@ -68,7 +59,6 @@ if (!empty($student)) {
             },
 
             success: function (data) {
-
                 $('#user_name').val('');
                 $('#users').html('');
                 if (data == 0) {
@@ -78,18 +68,7 @@ if (!empty($student)) {
                     $('#message').val('');
                     load_page(sender_id, receiver_id, type);
                 }
-
-
-
-
-
-
             }
         });
-
-
-
     }
-
 </script>
-

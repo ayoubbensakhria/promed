@@ -7,7 +7,6 @@ class Cms_menu_model extends CI_Model {
 
     public function __construct() {
         parent::__construct();
-        $this->current_session = $this->setting_model->getCurrentSession();
     }
 
     /**
@@ -48,8 +47,6 @@ class Cms_menu_model extends CI_Model {
         }
         $query = $this->db->get();
         $result = $query->row_array();
-
-
         return $result;
     }
 
@@ -58,14 +55,12 @@ class Cms_menu_model extends CI_Model {
         $this->db->where('menu', $menu);
         $query = $this->db->get();
         $result = $query->row_array();
-
         return $result;
     }
 
     public function valid_check_exists($str) {
         $menu = $this->input->post('menu');
         $id = $this->input->post('id');
-
         if (!isset($id)) {
             $id = 0;
         }
@@ -89,7 +84,6 @@ class Cms_menu_model extends CI_Model {
     }
 
     public function removeBySlug($slug) {
-
         $this->db->where('slug', $slug);
         $this->db->delete('front_cms_menus');
     }

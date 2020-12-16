@@ -1,8 +1,5 @@
 <?php
 $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
-//echo "<pre>";
-//print_r($result);
-//exit();
 ?>
 <style type="text/css">
 
@@ -160,7 +157,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                             <th width="20%"><?php echo $this->lang->line('gross') . " " . $this->lang->line('total') . " (" . $currency_symbol . ")" ?> </th> 
                             <td align="right" width=""><?php
                                 if (empty($result['gross_total'])) {
-                                    echo $gross_total;
+                                    echo $total - $paid_amount;
                                 } else {
                                     echo $result['gross_total'];
                                 }
@@ -207,8 +204,8 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                         <tr>
                             <th width="50%"><?php echo $this->lang->line('net_payable') . " " . $this->lang->line('amount') . " (" . $status . ")" ?></th> 
                             <td align="right"><?php
-                                if (empty($result['net_amount'])) {
-                                    echo $net_amount;
+                                if(empty($result['net_amount'])) {
+                                    echo $total - $paid_amount;
                                 } else {
                                     echo $result['net_amount'];
                                 }

@@ -15,7 +15,6 @@ class Designation_model extends CI_model {
     }
 
     public function valid_designation() {
-
         $type = $this->input->post('type');
         $id = $this->input->post('designationid');
         if (!isset($id)) {
@@ -30,7 +29,6 @@ class Designation_model extends CI_model {
     }
 
     function check_designation_exists($name, $id) {
-
         if ($id != 0) {
             $data = array('id != ' => $id, 'designation' => $name);
             $query = $this->db->where($data)->get('staff_designation');
@@ -40,7 +38,6 @@ class Designation_model extends CI_model {
                 return FALSE;
             }
         } else {
-
             $this->db->where('designation', $name);
             $query = $this->db->get('staff_designation');
             if ($query->num_rows() > 0) {
@@ -52,21 +49,15 @@ class Designation_model extends CI_model {
     }
 
     function deleteDesignation($id) {
-
         $this->db->where("id", $id)->delete("staff_designation");
     }
 
     function addDesignation($data) {
-
         if (isset($data["id"])) {
-
             $this->db->where("id", $data["id"])->update("staff_designation", $data);
         } else {
-
             $this->db->insert("staff_designation", $data);
         }
     }
-
 }
-
 ?>

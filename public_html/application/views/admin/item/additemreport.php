@@ -70,7 +70,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                             </div>
                         </div>
                         <div class="table-responsive mailbox-messages">
-                            <div class="download_label"><?php echo $this->lang->line('inventory') . " " . $this->lang->line('stock') . ' ' . $this->lang->line('report'); ?></div>
+                            <div class="download_label"><?php echo $this->lang->line('inventory') . " " . $this->lang->line('item') . ' ' . $this->lang->line('report'); ?></div>
                             <table class="table table-striped table-bordered table-hover example">
                                 <thead>
                                     <tr>
@@ -79,7 +79,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                         <th><?php echo $this->lang->line('supplier'); ?></th>
                                         <th><?php echo $this->lang->line('store'); ?></th>
                                         <th><?php echo $this->lang->line('quantity'); ?></th>
-                                        <th><?php echo $this->lang->line('purchase') . " " . $this->lang->line('price'); ?></th>
+                                        <th><?php echo $this->lang->line('purchase') . " " . $this->lang->line('price')." (".$currency_symbol.")"; ?></th>
                                         <th><?php echo $this->lang->line('date'); ?></th>
                                     </tr>
                                 </thead>

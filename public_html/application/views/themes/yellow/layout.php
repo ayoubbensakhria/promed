@@ -103,7 +103,7 @@
 
                                                     foreach ($banner_notices as $banner_notice_key => $banner_notice_value) {
                                                         ?>
-                                                        <li><a href="<?php echo site_url('read/' . $banner_notice_value['slug']) ?>"><div class="date"><?php echo date('d', strtotime($banner_notice_value['publish_date'])); ?><span><?php echo date('F', strtotime($banner_notice_value['publish_date'])); ?></span></div><?php echo $banner_notice_value['title']; ?>
+                                                        <li><a href="<?php echo site_url('read/' . $banner_notice_value['slug']) ?>"><div class="date"><?php echo date('d', strtotime($banner_notice_value['date'])); ?><span><?php echo date('F', strtotime($banner_notice_value['date'])); ?></span></div><?php echo $banner_notice_value['title']; ?>
                                                             </a></li>
                                                         <?php
                                                     }

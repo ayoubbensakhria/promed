@@ -87,8 +87,6 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                         </th>
                                         <th><?php echo $this->lang->line('individual'); ?></th>
                                         <th><?php echo $this->lang->line('class'); ?></th>
-
-
                                     </tr>
                                 </thead>
                                 <tbody>

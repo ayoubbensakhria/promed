@@ -17,13 +17,13 @@
             <div class="col-md-2">
                 <div class="box border0">
                     <ul class="tablists">
-                        <?php if ($this->rbac->hasPrivilege('item_category', 'can_add')) { ?>
+                        <?php if ($this->rbac->hasPrivilege('item_category', 'can_view')) { ?>
                             <li><a href="<?php echo base_url(); ?>admin/itemcategory" class="active"><?php echo $this->lang->line('item_category'); ?></a></li>
                         <?php } ?>
-                        <?php if ($this->rbac->hasPrivilege('store', 'can_add')) { ?>
+                        <?php if ($this->rbac->hasPrivilege('store', 'can_view')) { ?>
                             <li><a href="<?php echo base_url(); ?>admin/itemstore"><?php echo $this->lang->line('item_store'); ?></a></li>
                         <?php } ?>
-                        <?php if ($this->rbac->hasPrivilege('supplier', 'can_add')) { ?>
+                        <?php if ($this->rbac->hasPrivilege('supplier', 'can_view')) { ?>
                             <li><a href="<?php echo base_url(); ?>admin/itemsupplier"><?php echo $this->lang->line('item_supplier'); ?></a></li>
                         <?php } ?>
 
@@ -37,8 +37,10 @@
                 <div class="box box-primary" id="exphead">
                     <div class="box-header ptbnull">
                         <h3 class="box-title titlefix"><?php echo $this->lang->line('item_category_list'); ?></h3>
-                        <div class="box-tools pull-right">
-                            <a data-toggle="modal" data-target="#myModal" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i>  <?php echo $this->lang->line('add'); ?> <?php echo $this->lang->line('item_category'); ?></a>     
+                        <div class="box-tools addmeeting">
+                            <?php if ($this->rbac->hasPrivilege('item_category', 'can_add')) { ?> 
+                            <a data-toggle="modal" data-target="#myModal" class="btn btn-primary btn-sm itemcategory"><i class="fa fa-plus"></i>  <?php echo $this->lang->line('add'); ?> <?php echo $this->lang->line('item_category'); ?></a> 
+                            <?php } ?>    
                         </div>
                     </div><!-- /.box-header -->
                     <div class="box-body  ">
@@ -359,7 +361,9 @@
 
     });
 
-
+$(".itemcategory").click(function(){
+	$('#formadd').trigger("reset");
+});
 </script>
 
 

@@ -4,13 +4,8 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
 <div class="content-wrapper">
     <section class="content">
         <div class="row">
-
             <div class="col-md-3">                
-                <div class="box box-primary" <?php
-                // if ($result["is_active"] == 0) {
-                //     echo "style='background-color:#f0dddd;'";
-                // }
-                ?>>
+                <div class="box box-primary">
                     <div class="box-body box-profile">
                         <?php
                         $image = $result['image'];
@@ -68,13 +63,10 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                     <ul class="nav nav-tabs">
                         <li class="active"><a href="#activity" data-toggle="tab" aria-expanded="true"><i class="far fa-caret-square-down"></i> <?php echo $this->lang->line('visits'); ?></a></li>
                         <li><a href="#diagnosis" data-toggle="tab" aria-expanded="true"><i class="fas fa-diagnoses"></i> <?php echo $this->lang->line('diagnosis'); ?></a></li>
-                        <!-- <li><a href="#prescription" data-toggle="tab" aria-expanded="true">Prescription --r</a></li> -->
                         <li><a href="#timeline" data-toggle="tab" aria-expanded="true"><i class="far fa-calendar-check"></i> <?php echo $this->lang->line('timeline'); ?></a></li>
+                        <li><a href="#live_consult" data-toggle="tab" aria-expanded="true"><i class="fa fa-video-camera ftlayer"></i> <?php echo $this->lang->line('live_consult'); ?></a></li>
                     </ul>   
                     <div class="impbtnview">
-
-
-
                     </div>
                     <div class="tab-content">
                         <div class="tab-pane active" id="activity">
@@ -92,10 +84,10 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                         <?php
 
                                         function chkexist($prescription_detail, $opdid) {
-
                                             foreach ($prescription_detail as $key => $value) {
-                                                if ($value["opd_id"] == $opdid) {
+                                                if(!empty($value["opd_id"])){
                                                     return true;
+                                                
                                                 } else {
                                                     return false;
                                                 }
@@ -112,8 +104,8 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                                     <td><?php echo $value["name"] . " " . $value["surname"];
                                                 ?></td>
                                                     <td><?php echo $value['refference']; ?></td>
-                                                    <td><?php echo $value['symptoms']; ?></td>
-                                                    <td class="pull-right">
+                                                    <td><?php echo nl2br($value['symptoms']) ; ?></td>
+                                                    <td class="pull-right">                                                    
                                                         <?php if ($value["prescription"] == 'yes') { ?>
                                                             <?php if (chkexist($prescription_detail, $value["id"])) { ?>
                                                                 <span data-toggle="modal" data-target="#prescriptionview"> 
@@ -123,12 +115,9 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                                             <?php }
                                                         }
                                                         ?>
-
                                                         <a href="#" class="btn btn-default btn-xs" data-toggle="tooltip" title="<?php echo $this->lang->line('show'); ?>" onclick="getRecord('<?php echo $result["id"]; ?>', '<?php echo $value["id"]; ?>')" >
                                                             <i class="fa fa-reorder"></i>
                                                         </a>
-
-                                                                            <!-- <a href="#" class="btn btn-default btn-xs" onclick="getRecord('<?php echo $result["id"] ?>')" data-toggle="tooltip"><i class="fa fa-reorder" title="<?php echo $this->lang->line('my_details'); ?>"></i></a> -->
 
                                                     </td>
                                                 </tr>
@@ -181,11 +170,10 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                     if (empty($timeline_list)) {
                                         ?>
                                         <br/>
-                                        <div class="alert alert-info"><?php echo $this->lang->line('no_record_found'); ?></div>
+                                    <div class="alert alert-info"><?php echo $this->lang->line('no_record_found'); ?></div>
                                     <?php } else {
                                         ?>
                                         <ul class="timeline timeline-inverse">
-
                                             <?php
                                             foreach ($timeline_list as $key => $value) {
                                                 ?>      
@@ -199,7 +187,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                                     <div class="timeline-item">
 
                                                         <?php if (!empty($value["document"])) { ?>
-                                                            <span class="time"><a class="defaults-c text-right" data-toggle="tooltip" title="" href="<?php echo base_url() . "patient/dashboard/report_download/" . $value["id"] . "/" . $value["document"] ?>" data-original-title="Download"><i class="fa fa-download"></i></a></span>
+                                                            <span class="time"><a class="defaults-c text-right" data-toggle="tooltip" title="" href="<?php echo base_url() . "patient/dashboard/download_patient_timeline/" . $value["id"] . "/" . $value["document"] ?>" data-original-title="Download"><i class="fa fa-download"></i></a></span>
         <?php } ?>
                                                         <h3 class="timeline-header text-aqua"> <?php echo $value['title']; ?> </h3>
                                                         <div class="timeline-body">
@@ -218,47 +206,143 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                             </div>
                         </div>  
                         <!-- -->
-                        <!--   <div class="tab-pane" id="prescription">
-                          <div class="table-responsive">
-                                            <table class="table table-striped table-bordered table-hover example">
-                                               
-        
-                                                    <thead>
-                                                        <th>OPD Id --r</th>
-                                                         <th>Appointment Date --r </th>
-                                                        <th>Note --r </th>
-                                                        <th class="text-right">Action </th>
-                                                        
-                                                                  
-                                                    </thead>
-                                                     <tbody>
-                        <?php
-                        if (!empty($prescription_detail)) {
-                            foreach ($prescription_detail as $prescription_key => $prescription_value) {
 
-                                //print_r($value);
-                                ?>  
-                                                                                    <tr>
-                                                                                       <td><?php echo $prescription_value["opd_id"] ?></td>
-                                                                                        <td><?php echo $prescription_value["appointment_date"] ?></td>
-                                                                                        <td><?php echo $prescription_value["note"] ?></td>
-                                                                                        <th class="pull-right"><a href="#" data-target="#prescriptionview" data-toggle='modal' onclick="view_prescription('<?php echo $prescription_value["id"] ?>','<?php echo $prescription_value["opd_id"] ?>')"><i class="fa fa-eye"></i></a></th>
-                                                                                    </tr>
-                                <?php
-                            }
-                        }
-                        ?> 
-        
-                                                </tbody>
-                                            </table>
-                                        </div> 
-                                      </div>    
-                        <!-- -->
+
+                          <div class="tab-pane" id="live_consult">
+                           
+                            <div class="download_label"><?php echo $result['patient_name'] . " " . $this->lang->line('opd') . " " . $this->lang->line('details'); ?></div>
+                            <div class="table-responsive">
+                                <table class="table table-striped table-bordered table-hover example">
+                                    <thead>
+                                    <th><?php echo $this->lang->line('consult').' '.$this->lang->line('title'); ?></th>
+                                        <th><?php echo $this->lang->line('date'); ?></th>
+                                        <th><?php echo $this->lang->line('created_by'); ?> </th>
+                                        <th><?php echo $this->lang->line('created_for'); ?></th>
+                                        <th><?php echo $this->lang->line('patient'); ?></th>
+                                        <th><?php echo $this->lang->line('status'); ?></th>
+                                        <th class="text-right"><?php echo $this->lang->line('action'); ?></th>
+                                    </thead>
+                                    <tbody>
+                                        <?php
+                                    if (empty($opdconferences)) {
+                                        ?>
+
+                                        <?php
+                                    } else {
+                                        foreach ($opdconferences as $conference_key => $conference_value) {
+
+                                            $return_response = json_decode($conference_value->return_response);
+                                            ?>
+                                            <tr>
+                                                <td class="mailbox-name">
+                                                    <a href="#" data-toggle="popover" class="detail_popover"><?php echo $conference_value->title; ?></a>
+
+                                                    <div class="fee_detail_popover" style="display: none">
+                                                        <?php
+                                                        if ($conference_value->description == "") {
+                                                            ?>
+                                                            <p class="text text-danger"><?php echo $this->lang->line('no_description'); ?></p>
+                                                            <?php
+                                                        } else {
+                                                            ?>
+                                                            <p class="text text-info"><?php echo $conference_value->description; ?></p>
+                                                            <?php
+                                                        }
+                                                        ?>
+                                                    </div>
+                                                </td>
+
+                                                <td class="mailbox-name">
+                                                <?php echo date($this->customlib->getSchoolDateFormat(true, true), strtotime($conference_value->date))?>
+                                            
+                                                    </td>
+                                                 <td class="mailbox-name">
+
+                                                    <?php
+                                                   
+                                                        $name= ($conference_value->create_by_surname == "") ? $conference_value->create_by_name : $conference_value->create_by_name . " " . $conference_value->create_by_surname;
+                                                        
+       // echo  $name. " (".$conference_value->create_by_role_name." : ".$conference_value->create_by_employee_id.")";
+        if ($name =='Super Admin') {
+             echo  $name;
+            # code...
+        }else{
+             echo  $name. " (".$conference_value->create_by_role_name.": ".$conference_value->create_by_employee_id.")";
+        }
+                                                    
+                                                    ?></td> 
+
+                                                <td class="mailbox-name">
+                                                    <?php
+
+                                                          $name= ($conference_value->create_for_surname == "") ? $conference_value->create_for_name : $conference_value->create_for_name . " " . $conference_value->create_for_surname;
+        echo  $name. " (".$conference_value->create_for_role_name.": ".$conference_value->create_for_employee_id.")";
+
+                                                    ?>
+                                                </td>
+
+                                                <td class="mailbox-name">
+                                                     <?php
+
+                                                          $name= ($conference_value->patient_name == "") ? $conference_value->patient_name : $conference_value->patient_name ;
+        echo  $name. " (".$conference_value->patient_unique_id.")"; ?>
+
+                                                </td>
+                                              <td class="mailbox-name">
+                                                <form class="chgstatus_form"  method="POST" action="<?php echo site_url('admin/conference/chgstatus')?>">
+                                                    <input type="hidden" name="conference_id"  value="<?php echo $conference_value->id;?>">
+                                                 <select class="form-control chgstatus_dropdown" disabled name="chg_status">
+                                                     <option value="0" <?php if($conference_value->status==0) echo "selected='selected'" ?>><?php echo $this->lang->line('awaited'); ?></option>
+                                                     <option value="1" <?php if($conference_value->status==1) echo "selected='selected'" ?>><?php echo $this->lang->line('cancelled'); ?> </option>
+                                                     <option value="2" <?php if($conference_value->status==2) echo "selected='selected'" ?>><?php echo $this->lang->line('finished'); ?> </option>
+                                                 </select>
+                                                </form>
+                                                </td>
+                                                <td class="mailbox-date pull-right">
+                                                    <?php   
+                                        if($conference_value->status == 0){
+                                            ?>
+                                        <a data-placement="left" href="#" class="btn btn-xs label-success p0" data-toggle="modal" data-target="#modal-chkstatus" data-id="<?php echo $conference_value->id; ?>">
+                                                      <span class="label" ><i class="fa fa-video-camera"></i> <?php echo $this->lang->line('join') ?></span>
+                                            <?php
+                                        }
+                                                     ?>
+                                                    
+                                                  
+
+                                                </td>
+                                            </tr>
+                                            <?php
+                                        }
+                                    }
+                                    ?>
+
+                                    </tbody>
+                                </table>
+                            </div> 
+                        </div>
+                       
                     </div>
                 </div>
             </div>
         </div>
     </section>
+</div>
+
+<div id="modal-chkstatus"  class="modal fade" role="dialog">
+    <div class="modal-dialog modal-dialog2 modal-lg">
+    <form id="form-chkstatus" action="" method="POST">
+        <div class="modal-content">
+            <div class="">
+                <button type="button" class="close modalclosezoom" data-dismiss="modal">&times;</button>
+               
+            </div>
+            <div class="modal-body" id="zoom_details">
+
+            </div>
+        </div>
+    </form>
+    </div>
 </div>
 
 <div class="modal fade" id="prescriptionview" tabindex="-1" role="dialog" aria-labelledby="follow_up">
@@ -269,8 +353,6 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                 <div class="modalicon"> 
                     <div id='edit_deleteprescription'>
                         <a href="#" id='print_id' data-toggle="modal" ><i class="fa fa-print"></i></a>
-
-
                     </div>
                 </div>
                 <h4 class="box-title"><?php echo $this->lang->line('prescription'); ?></h4>
@@ -338,7 +420,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                         <td width="35%"><span id="refference"></span></td>
                                     </tr>
                                     <tr>
-                                        <th width="15%"><?php echo $this->lang->line('amount'); ?></th>
+                                        <th width="15%"><?php echo $this->lang->line('amount').' ('.$currency_symbol.')'; ?></th>
                                         <td width="35%"><span id='amount'></span></td>
                                         <th width="15%"><?php echo $this->lang->line('payment') . " " . $this->lang->line('mode'); ?></th>
                                         <td width="35%"><span id="payment_mode"></span></td>
@@ -349,11 +431,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                     </div><!--./col-md-12-->       
                 </div><!--./row--> 
             </div>
-            <!--<div class="box-footer">
-             <div class="pull-right paddA10">
-              <a  onclick="saveEnquiry()" class="btn btn-info pull-right"><?php //echo $this->lang->line('save');     ?></a> 
-             </div>
-           </div>-->
+          
         </div>
     </div>    
 </div>
@@ -381,6 +459,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                 if (data.month != '') {
                     month = data.month + ' Month ';
                 }
+                var doc = data.name + ' '+data.surname ;
                 $("#age").html(age);
                 $("#month").html(month);
                 $("#guardian_name").html(data.guardian_name);
@@ -389,7 +468,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                 $("#symptoms").html(data.symptoms);
                 $("#known_allergies").html(data.known_allergies);
                 $("#refference").html(data.refference);
-                $("#cons_doctor").html(data.name);
+                $("#cons_doctor").html(doc);
                 $("#amount").html(data.amount);
                 $("#tax").html(data.tax);
                 $("#payment_mode").html(data.payment_mode);
@@ -423,6 +502,37 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
             }
         });
     }
+
+     $('#modal-chkstatus').on('shown.bs.modal', function (e) {
+            var $modalDiv = $(e.delegateTarget);
+          
+              var id=$(e.relatedTarget).data('id');
+
+
+            $.ajax({
+                type: "POST",
+                url: '<?php echo site_url("patient/dashboard/getlivestatus") ?>',
+                data: {'id':id},
+                dataType: "JSON",
+                beforeSend: function () {
+                $('#zoom_details').html("");
+                    $modalDiv.addClass('modal_loading');
+                },
+                success: function (data) {
+                    
+
+                   $('#zoom_details').html(data.page);
+                    $modalDiv.removeClass('modal_loading');
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    $modalDiv.removeClass('modal_loading');
+                },
+                complete: function (data) {
+                    $modalDiv.removeClass('modal_loading');
+                }
+            });
+        })
+
     function popup(data) {
         var base_url = '<?php echo base_url() ?>';
         var frame1 = $('<iframe />');

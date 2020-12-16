@@ -7,7 +7,6 @@ class Content_model extends CI_Model {
 
     public function __construct() {
         parent::__construct();
-        $this->current_session = $this->setting_model->getCurrentSession();
     }
 
     /**
@@ -32,7 +31,7 @@ class Content_model extends CI_Model {
     }
 
     public function getContentByRole($id = null, $role = null) {
-        $query = "SELECT contents.* FROM  contents GROUP by contents.id";
+        $query = "SELECT contents.* FROM  contents GROUP by contents.id ORDER BY contents.date DESC; ";        
         $query = $this->db->query($query);
         return $query->result_array();
     }
@@ -47,14 +46,11 @@ class Content_model extends CI_Model {
     }
 
     public function getListByCategoryforUser($class_id, $section_id, $category = '') {
-
         if (empty($class_id)) {
-
             $class_id = "0";
         }
 
         if (empty($section_id)) {
-
             $section_id = "0";
         }
         $query = "SELECT contents.*,class_sections.id as `class_section_id`,classes.class,sections.section FROM `content_for` INNER JOIN contents on content_for.content_id=contents.id left JOIN class_sections on class_sections.id=contents.cls_sec_id left join classes on classes.id=class_sections.class_id LEFT JOIN sections on sections.id=class_sections.section_id WHERE  (role='student' and contents.type='" . $category . "' and contents.is_public='yes') or (classes.id =" . $class_id . " and sections.id=" . $section_id . " and role='student' and contents.type='" . $category . "')";
@@ -91,11 +87,8 @@ class Content_model extends CI_Model {
         } else {
             $this->db->insert('contents', $data);
             $insert_id = $this->db->insert_id();
-
             return $insert_id;
         }
     }
-
 }
-
 ?>

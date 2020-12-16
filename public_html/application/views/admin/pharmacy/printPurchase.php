@@ -9,10 +9,10 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
             .printablea4{width: 100%;}
             /*.printablea4 p{margin-bottom: 0;}*/
             .printablea4>tbody>tr>th,
-            .printablea4>tbody>tr>td{padding:2px 0; line-height: 1.42857143;vertical-align: top; font-size: 12px;}
+            .printablea4>tbody>tr>td{padding:5px; line-height: 1.42857143;vertical-align: top; font-size: 12px;}
         </style>
     </head>
-    <div id="html-2-pdfwrapper" class="pup100">
+    <div id="html-2-pdfwrapper">
         <div class="row">
             <!-- left column -->
             <div class="col-md-12">
@@ -28,34 +28,38 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                     <?php } ?>
                     <table width="100%" class="printablea4">
                         <tr>
-                            <td align="text-left"><h5><?php echo $this->lang->line('purchase') . " " . $this->lang->line('no') . " #"; ?><?php echo $result["purchase_no"] ?></h5>
+                            <td align="text-left"><h5><?php echo $this->lang->line('purchase') . " " . $this->lang->line('no') . "#"; ?><?php echo $result["purchase_no"] ?></h5>
                             </td>
-                            <td align="right"><h5><?php echo $this->lang->line('date') . " : "; ?><?php echo date($this->customlib->getSchoolDateFormat(true, true), strtotime($result['date'])) ?></h5>
+                            <td align="text-left"><h5><?php echo $this->lang->line('invoice_no') ."#"; ?><?php echo $result["invoice_no"] ?></h5>
+                            </td>
+                            <td align="right"><h5><?php echo $this->lang->line('date') . " : "; ?><?php echo date($this->customlib->getSchoolDateFormat(), strtotime($result['date'])) ?></h5>
                             </td>
                         </tr>
                     </table>
                     <hr style="height: 1px; clear: both;margin-bottom: 10px; margin-top: 10px">
-                    <table class="printablea4" cellspacing="0" cellpadding="0" width="100%">
-                        <tr>
-                            <th width="20%"><?php echo $this->lang->line('supplier') . " " . $this->lang->line('name'); ?></th>
-                            <td width="25%"><?php echo $result["supplier_category"]; ?></td>
-                            <th width="25%"><?php echo $this->lang->line('contact') . " " . $this->lang->line('no'); ?></th>
-                            <td width="30%" align="left"><?php echo $result["contact"]; ?></td>
-                        </tr>
-                        <tr>
-                            <th width="20%"><?php echo $this->lang->line('contact') . " " . $this->lang->line('person'); ?></th>
-                            <td width="25%"><?php echo $result["supplier_person"]; ?></td>
-                            <th width="25%"><?php echo $this->lang->line('address'); ?></th>
-                            <td width="30%" align="left"><?php echo $result['address']; ?></td> 
-                        </tr> 
-                    </table>
+                    <div class="table-responsive">
+                        <table class="printablea4" cellspacing="0" cellpadding="0" width="100%">
+                            <tr>
+                                <th width="20%"><?php echo $this->lang->line('supplier') . " " . $this->lang->line('name'); ?></th>
+                                <td width="25%"><?php echo $result["supplier_category"]; ?></td>
+                                <th width="25%"><?php echo $this->lang->line('contact') . " " . $this->lang->line('no'); ?></th>
+                                <td width="30%" align="left"><?php echo $result["contact"]; ?></td>
+                            </tr>
+                            <tr>
+                                <th width="20%"><?php echo $this->lang->line('contact') . " " . $this->lang->line('person'); ?></th>
+                                <td width="25%"><?php echo $result["supplier_person"]; ?></td>
+                                <th width="25%"><?php echo $this->lang->line('address'); ?></th>
+                                <td width="30%" align="left"><?php echo $result['address']; ?></td> 
+                            </tr> 
+                        </table>
+                     </div>   
                     <hr style="height: 1px; clear: both;margin-bottom: 10px; margin-top: 10px">
-                    <table class="printablea4" id="testreport" width="100%">
+                    <div class="table-responsive">
+                       <table class="printablea4" id="testreport" width="100%">
                         <tr>
                             <th><?php echo $this->lang->line('medicine') . " " . $this->lang->line('category'); ?></th>
                             <th width=""><?php echo $this->lang->line('medicine') . " " . $this->lang->line('name'); ?></th> 
                             <th><?php echo $this->lang->line('batch') . " " . $this->lang->line('no'); ?></th>
-
                             <th><?php echo $this->lang->line('expire') . " " . $this->lang->line('date'); ?></th>
                             <th><?php echo $this->lang->line('mrp'); ?></th>
                             <th><?php echo $this->lang->line('batch') . " " . $this->lang->line('amt'); ?></th>
@@ -88,6 +92,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                         ?>
 
                     </table> 
+                </div>
                     <hr style="height: 1px; clear: both;margin-bottom: 10px; margin-top: 10px">
 
                     <table class="printablea4" width="100%" style="width:30%;float:right;">

@@ -23,12 +23,10 @@ class User_model extends CI_Model {
     {
        $query = $this->db->select("users.id")->where("user_id",$id)->get("users");
        $result = $query->row_array();
-
         $user_data = array(
             'id' => $result['id'],
             'is_active' => $status,
         );
-
         $this->add($user_data);
     }
 
@@ -41,11 +39,9 @@ class User_model extends CI_Model {
         $this->student_model->add($student_data);
         $this->db->trans_complete();
         if ($this->db->trans_status() === FALSE) {
-
             $this->db->trans_rollback();
             return FALSE;
         } else {
-
             $this->db->trans_commit();
             return TRUE;
         }
@@ -58,7 +54,6 @@ class User_model extends CI_Model {
         $this->db->where('password', ($data['password']));
         $this->db->limit(1);
         $query = $this->db->get();
-
         if ($query->num_rows() == 1) {
             return $query->result();
         } else {
@@ -67,11 +62,8 @@ class User_model extends CI_Model {
     }
 
     public function checkLoginParent($data) {
-
         $sql = "SELECT users.*,students.admission_no,students.admission_no ,students.guardian_name, students.roll_no,students.admission_date,students.firstname, students.lastname,students.image,students.father_pic,students.mother_pic,students.guardian_pic,students.guardian_relation, students.mobileno, students.email ,students.state , students.city , students.pincode , students.religion, students.dob ,students.current_address, students.permanent_address FROM `users` INNER JOIN (select * from students) as students on students.parent_id= users.id WHERE `username` = " . $this->db->escape($data['username']) . " AND `password` = " . $this->db->escape($data['password']) . " LIMIT 0,1";
-
         $query = $this->db->query($sql);
-
         if ($query->num_rows() == 1) {
             return $query->result();
         } else {
@@ -79,11 +71,11 @@ class User_model extends CI_Model {
         }
     }
 
-    public function read_user_information($users_id) {
-        $this->db->select('users.*,patients.patient_name,patients.image,patients.guardian_name,patients.patient_type');
+   public function read_user_information($users_id) {
+        $this->db->select('users.*,patients.patient_name,patients.image,patients.guardian_name,patients.patient_type,languages.id as lang_id,languages.language');
         $this->db->from('users');
         $this->db->join('patients', 'patients.id = users.user_id');
-
+         $this->db->join('languages', 'patients.lang_id = languages.id','left');
         $this->db->where('users.id', $users_id);
         $this->db->limit(1);
         $query = $this->db->get();
@@ -226,7 +218,6 @@ class User_model extends CI_Model {
     }
 
     public function getStudentLoginDetails($student_id) {
-
         $sql = "SELECT users.* FROM users WHERE id in (select students.parent_id from users INNER JOIN students on students.id =users.user_id WHERE users.user_id=" . $this->db->escape($student_id) . " AND users.role ='student') UNION select users.* from users INNER JOIN students on students.id =users.user_id WHERE users.user_id=" . $this->db->escape($student_id) . " AND users.role ='student'";
         $query = $this->db->query($sql);
         return $query->result();
@@ -305,8 +296,6 @@ class User_model extends CI_Model {
         $this->db->join('users', 'users.user_id = ' . $table . '.id', 'left');
         $this->db->where('users.role', $role);
         $this->db->where('users.verification_code', $code);
-
-
         $query = $this->db->get();
         if ($code != null) {
             return $query->row();
@@ -326,7 +315,6 @@ class User_model extends CI_Model {
             $role = "parent";
             $result = $this->getUserByEmail($table, $role, $email);
         } elseif ($usertype == 'teacher') {
-
             $table = "teachers";
             $role = "teacher";
             $result = $this->getUserByEmail($table, $role, $email);
@@ -348,7 +336,6 @@ class User_model extends CI_Model {
 
     public function getUserByCodeUsertype($usertype, $code) {
         $result = false;
-
         if ($usertype == 'student') {
             $table = "students";
             $role = "student";
@@ -358,7 +345,6 @@ class User_model extends CI_Model {
             $role = "parent";
             $result = $this->getUserValidCode($table, $role, $code);
         } elseif ($usertype == 'teacher') {
-
             $table = "teachers";
             $role = "teacher";
             $result = $this->getUserValidCode($table, $role, $code);
@@ -384,14 +370,12 @@ class User_model extends CI_Model {
     }
 
     public function getUserLoginDetails($student_id) {
-
         $sql = "SELECT users.* FROM users WHERE user_id =" . $student_id . " and role = 'student'";
         $query = $this->db->query($sql);
         return $query->row_array();
     }
 
     public function getParentLoginDetails($student_id) {
-
         $sql = "SELECT users.* FROM `users` join students on students.parent_id = users.id WHERE students.id = " . $student_id;
         $query = $this->db->query($sql);
         return $query->row_array();

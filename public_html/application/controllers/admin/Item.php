@@ -13,39 +13,22 @@ class Item extends Admin_Controller {
     }
 
     function index() {
-        if (!$this->rbac->hasPrivilege('item', 'can_view')) {
-            access_denied();
-        }
         $this->session->set_userdata('top_menu', 'Inventory');
         $this->session->set_userdata('sub_menu', 'Item/index');
         $data['title'] = 'Add Item';
         $data['title_list'] = 'Recent Items';
-
-
         $item_result = $this->item_model->get();
-
         $data['itemlist'] = $item_result;
-
-
         $itemcategory = $this->itemcategory_model->get();
         $data['itemcatlist'] = $itemcategory;
-
         $this->load->view('layout/header', $data);
         $this->load->view('admin/item/itemList', $data);
         $this->load->view('layout/footer', $data);
     }
 
     function add() {
-
-
-        if (!$this->rbac->hasPrivilege('item', 'can_view')) {
-            access_denied();
-        }
-
-        $this->form_validation->set_rules('name', $this->lang->line('name'), 'trim|required|xss_clean');
+        $this->form_validation->set_rules('name', $this->lang->line('item'), 'trim|required|xss_clean');
         $this->form_validation->set_rules('unit', $this->lang->line('unit'), 'trim|required|xss_clean');
-
-
         $this->form_validation->set_rules(
                 'item_category_id', $this->lang->line('item') . " " . $this->lang->line('category'), array(
             'required',
@@ -54,7 +37,6 @@ class Item extends Admin_Controller {
         );
 
         if ($this->form_validation->run() == FALSE) {
-
             $msg = array(
                 'name' => form_error('name'),
                 'unit' => form_error('unit'),
@@ -72,11 +54,8 @@ class Item extends Admin_Controller {
             );
 
             $insert_id = $this->item_model->add($data);
-
-
             $array = array('status' => 'success', 'error' => '', 'message' => 'New Item Successfully Inserted');
         }
-
         echo json_encode($array);
     }
 
@@ -101,7 +80,6 @@ class Item extends Admin_Controller {
         $item_id = $this->input->get('item_id');
         $data = $this->item_model->getItemAvailable($item_id);
         $available = ($data['added_stock'] - $data['issued']);
-
         echo json_encode(array('available' => $available));
     }
 
@@ -116,18 +94,14 @@ class Item extends Admin_Controller {
             if ($_FILES["file"]["type"] != 'image/gif' &&
                     $_FILES["file"]["type"] != 'image/jpeg' &&
                     $_FILES["file"]["type"] != 'image/png') {
-
                 $this->form_validation->set_message('handle_upload', 'File type not allowed');
                 return false;
             }
             if (!in_array(strtolower($extension), $allowedExts)) {
-
                 $this->form_validation->set_message('handle_upload', 'Extension not allowed');
                 return false;
             }
-
             if ($_FILES["file"]["size"] > 10240000) {
-
                 $this->form_validation->set_message('handle_upload', 'File size shoud be less than 100 kB');
                 return false;
             }
@@ -141,7 +115,6 @@ class Item extends Admin_Controller {
 
     function get_data($id) {
         $item = $this->item_model->get($id);
-
         $data = array(
             'id' => $item['id'],
             'item_category_id' => $item['item_category_id'],
@@ -154,11 +127,8 @@ class Item extends Admin_Controller {
     }
 
     function edit() {
-
         $this->form_validation->set_rules('name', $this->lang->line('name'), 'trim|required|xss_clean');
         $this->form_validation->set_rules('unit', $this->lang->line('unit'), 'trim|required|xss_clean');
-
-
         $this->form_validation->set_rules(
                 'item_category_id', $this->lang->line('item') . " " . $this->lang->line('category'), array(
             'required',
@@ -167,7 +137,6 @@ class Item extends Admin_Controller {
         );
 
         if ($this->form_validation->run() == FALSE) {
-
             $msg = array(
                 'name' => form_error('name'),
                 'unit' => form_error('unit'),
@@ -176,7 +145,6 @@ class Item extends Admin_Controller {
 
             $array = array('status' => 'fail', 'error' => $msg);
         } else {
-
             $data = array(
                 'id' => $this->input->post('id'),
                 'name'=>$this->input->post('name'),
@@ -186,32 +154,24 @@ class Item extends Admin_Controller {
             );
 
             $insert_id = $this->item_model->add($data);
-
-
             $array = array('status' => 'success', 'error' => '', 'message' => 'New Item Successfully Inserted');
         }
-
         echo json_encode($array);
     }
 
     public function itemreport() {
-
         $this->session->set_userdata('top_menu', 'Reports');
         $this->session->set_userdata('sub_menu', 'Reports/itemreport');
         $search_type = $this->input->post("search_type");
-
         if (isset($search_type)) {
-
             $search_type = $this->input->post("search_type");
         } else {
-
             $search_type = "this_month";
         }
 
         $data["searchlist"] = $this->search_type;
         $data["search_type"] = $search_type;
         $data['stockresult'] = $this->itemstock_model->get_currentstock();
-
         $this->load->view('layout/header');
         $this->load->view('admin/item/itemreport', $data);
         $this->load->view('layout/footer');
@@ -221,22 +181,15 @@ class Item extends Admin_Controller {
         $this->session->set_userdata('top_menu', 'Reports');
         $this->session->set_userdata('sub_menu', 'Reports/additemreport');
         $search_type = $this->input->post("search_type");
-
         if (isset($search_type)) {
-
             $search_type = $this->input->post("search_type");
         } else {
-
             $search_type = "this_month";
         }
 
         $data["searchlist"] = $this->search_type;
-
         $data["search_type"] = $search_type;
-
         $data['itemresult'] = $this->itemstock_model->get_ItemByBetweenDate($search_type);
-
-
         $this->load->view('layout/header');
         $this->load->view('admin/item/additemreport', $data);
         $this->load->view('layout/footer');

@@ -7,7 +7,6 @@ class Staffroles_model extends CI_Model {
 
     public function __construct() {
         parent::__construct();
-        $this->current_session = $this->setting_model->getCurrentSession();
     }
 
     public function getStaffRoles($staffid) {
@@ -18,5 +17,4 @@ class Staffroles_model extends CI_Model {
         $query = $this->db->get();
         return $query->result();
     }
-
 }

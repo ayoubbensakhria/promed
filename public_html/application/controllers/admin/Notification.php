@@ -9,37 +9,86 @@ class Notification extends Admin_Controller {
         parent::__construct();
     }
 
-    function index() {
+       public function push()
+    {
+        $this->load->library('pushnotification');
+        $push_array=array('title'=>'testhospital','body'=>'bodhospital');
+        $this->pushnotification->send('dpi51ZNvteI:APA91bGfsyhapyfAOpSDtvsAWQNqO_fq0Ai4A8RoNhjiG7KnlJTZ9t64g43Wa4VFwgBv_DgOen9G4y7uy8JE5hglkS03iNYhBox8n1rpV5ReqdpWWTgl6sNTVRA-mgPaHbstywSvGmib', $push_array, "mail_sms");
+       
+    }
+
+    function index() {         
+        
         if (!$this->rbac->hasPrivilege('notice_board', 'can_view')) {
             access_denied();
         }
+       
+        //$this->customlib->dateyyyymmddTodateformat($notification['publish_date']);
         $this->session->set_userdata('top_menu', 'Messaging');
         $this->session->set_userdata('sub_menu', 'notification/index');
         $data['title'] = 'Notifications';
-
-
         $notifications = $this->notification_model->get();
         $userdata = $this->customlib->getUserData();
+        $user_role = json_decode($this->customlib->getStaffRole());
         $role_id = $userdata["role_id"];
         $user_id = $userdata["id"];
         $data["user_id"] = $user_id;
 
-        if (!empty($notifications)) {
+        // if (!empty($notifications)) {
+        //     foreach ($notifications as $key => $value) {
+        //         $roles = $value["roles"];
+
+        //         $arr = explode(",", $roles);
+
+        //         if ((in_array($role_id, $arr)) || ($value["created_id"] == $user_id)) {
+
+        //             $rname = $this->notification_model->getRole($arr);
+
+        //             $data['notificationlist'][$key] = $notifications[$key];
+        //             $data['notificationlist'][$key]["role_name"] = $rname;
+        //         }
+        //     }
+        // }
+         $notification_status=false;
+          if (!empty($notifications)) {
             foreach ($notifications as $key => $value) {
-                $roles = $value["roles"];
-
+                $created_by_name = $this->notification_model->getcreatedByName($value["created_id"]);
+                $roles           = $value["roles"];
+                //print_r($value);die;
                 $arr = explode(",", $roles);
-
-                if ((in_array($role_id, $arr)) || ($value["created_id"] == $user_id)) {
-
+                if ($user_role->name == "Super Admin") {
+              
+                    
                     $rname = $this->notification_model->getRole($arr);
-
-                    $data['notificationlist'][$key] = $notifications[$key];
+                    $data['notificationlist'][$key]              = $notifications[$key];
                     $data['notificationlist'][$key]["role_name"] = $rname;
+                      $data['notificationlist'][$key]["createdby_name"] = $created_by_name["name"] . " " . $created_by_name["surname"];
+                     $notification_status=true;
+               
+
+                } elseif ((in_array($role_id, $arr)) && ($value["created_id"] == $user_id)) {
+                
+                    $notification_status=true;
+                    $rname = $this->notification_model->getRole($arr);
+                    $data['notificationlist'][$key]              = $notifications[$key];
+                    $data['notificationlist'][$key]["role_name"] = $rname;
+                      $data['notificationlist'][$key]["createdby_name"] = $created_by_name["name"] . " " . $created_by_name["surname"];
+                }elseif((in_array($role_id, $arr)) && (date($this->customlib->getSchoolDateFormat()) >= date($this->customlib->getSchoolDateFormat(), $this->customlib->dateyyyymmddTodateformat($value['publish_date'])))){
+                    
+                    $notification_status=true;
+                    $rname = $this->notification_model->getRole($arr);
+                    $data['notificationlist'][$key]              = $notifications[$key];
+                    $data['notificationlist'][$key]["role_name"] = $rname;
+                    $data['notificationlist'][$key]["createdby_name"] = $created_by_name["name"] . " " . $created_by_name["surname"];
+                    
                 }
+              
             }
         }
-
+        if(!$notification_status){
+            $data['notificationlist']=array();
+        }
+      
 
         $this->load->view('layout/header', $data);
         $this->load->view('admin/notification/notificationList', $data);
@@ -69,25 +118,21 @@ class Notification extends Admin_Controller {
             $parent = "No";
             $staff_roles = array();
             $visible = $this->input->post('visible');
-            if (array_search(7, $visible)) {
+            // print_r($visible);
+            // exit();
+            // if (array_search(7, $visible)) {
                 
-            } else {
-                array_push($visible, 7);
-            }
+            // } else {
+            //     array_push($visible, 7);
+            // }
             foreach ($visible as $key => $value) {
-
-                if ($value == "student") {
-                    $student = "Yes";
-                } else if ($value == "parent") {
-                    $parent = "Yes";
-                } else if (is_numeric($value)) {
-
-                    $staff_roles[] = array('role_id' => $value, 'send_notification_id' => '');
-                    $staff = "Yes";
-                }
+              // if (is_numeric($value)) {
+               
+                $staff_roles[] = array('role_id' => $value, 'send_notification_id' => '');
+                $staff = "Yes";
+              //  }
             }
-            // print_r($staff_roles);
-            // exit;
+           
             $data = array(
                 'message' => $this->input->post('message'),
                 'title' => $this->input->post('title'),
@@ -99,12 +144,13 @@ class Notification extends Admin_Controller {
                 'visible_parent' => $parent,
                 'publish_date' => date('Y-m-d', $this->customlib->datetostrtotime($this->input->post('publish_date'))),
             );
-
-
             $this->notification_model->insertBatch($data, $staff_roles);
             $this->session->set_flashdata('msg', '<div class="alert alert-success">' . $this->lang->line('success_message') . '</div>');
-            redirect('admin/notification/index');
+          redirect('admin/notification/add');
         }
+
+       $data['roles'] = $this->role_model->get();
+
         $this->load->view('layout/header', $data);
         $this->load->view('admin/notification/notificationAdd', $data);
         $this->load->view('layout/footer', $data);
@@ -130,7 +176,7 @@ class Notification extends Admin_Controller {
         $this->form_validation->set_rules('message', $this->lang->line('message'), 'trim|required|xss_clean');
         $this->form_validation->set_rules('date', $this->lang->line('notice_date'), 'trim|required|xss_clean');
         $this->form_validation->set_rules('publish_date', $this->lang->line('publish_date'), 'trim|required|xss_clean');
-
+		$this->form_validation->set_rules('visible[]', $this->lang->line('message_to'), 'trim|required|xss_clean');
         if ($this->form_validation->run() == FALSE) {
             
         } else {
@@ -206,15 +252,17 @@ class Notification extends Admin_Controller {
     }
 
     function setting() {
-        if (!$this->rbac->hasPrivilege('notification_setting', 'can_edit')) {
-            access_denied();
-        }
+         if (!$this->rbac->hasPrivilege('notification_setting', 'can_view')) {
+             access_denied();
+         }
         $this->session->set_userdata('top_menu', 'setup');
         $this->session->set_userdata('sub_menu', 'schsettings/index');
         $this->session->set_userdata('inner_menu', 'notification/setting');
         $data = array();
         $data['title'] = 'Email Config List';
-        $data['notificationMethods'] = $this->customlib->getNotificationModes();
+        $notificationMethods = $this->customlib->getNotificationModes();
+        $data['notificationMethods'] = $notificationMethods;
+       
         $notificationlist = $this->notificationsetting_model->get();
         $data['notificationlist'] = $notificationlist;
         $this->form_validation->set_rules('email_type', $this->lang->line('email') . " " . $this->lang->line('type'), 'required');
@@ -223,6 +271,7 @@ class Notification extends Admin_Controller {
             foreach ($student_admission_array as $student_admission_array_key => $student_admission_array_value) {
                 $is_mail = 0;
                 $is_sms = 0;
+                $is_mobileapp = 0;
                 $a = $this->input->post($student_admission_array_value . '_mail');
 
                 if (isset($a)) {
@@ -234,10 +283,17 @@ class Notification extends Admin_Controller {
                     $is_sms = 1;
                 }
 
+                 $c = $this->input->post($student_admission_array_value . '_mobileapp');
+
+                if (isset($c)) {
+                    $is_mobileapp = 1;
+                }
+
                 $data_insert = array(
                     'type' => $student_admission_array_value,
                     'is_mail' => $is_mail,
-                    'is_sms' => $is_sms
+                    'is_sms' => $is_sms,
+                    'is_mobileapp' => $is_mobileapp
                 );
                 $this->notificationsetting_model->add($data_insert);
             }
@@ -258,7 +314,7 @@ class Notification extends Admin_Controller {
         if ($notification_id != "") {
             $staffid = $this->customlib->getStaffID();
             $data = $this->notification_model->updateStatusforStaff($notification_id, $staffid);
-            $array = array('status' => "success", 'data' => $data, 'msg' => $this->lang->line('success_message'));
+            $array = array('status' => "success", 'data' => $data, 'msg' => $this->lang->line('delete_success_message'));
         }
 
         echo json_encode($array);

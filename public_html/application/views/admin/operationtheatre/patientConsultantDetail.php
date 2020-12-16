@@ -21,9 +21,9 @@
                 <td><?php echo $detail->name . " " . $detail->surname; ?></td>
                 <td><?php echo $detail->instruction; ?></td>
                 <td class="text-right">
-                    <?php if ($detail->consultant == 'yes') { ?>
+                    <?php if ($detail->consultant == 'yes') { if ($this->rbac->hasPrivilege('ot_consultant_instruction','can_delete')){  ?>
                         <a href="#" data-toggle="tooltip" class="btn btn-default btn-xs" title="<?php echo $this->lang->line('delete'); ?>" onclick="deleteRecord('<?php echo $detail->id ?>')"><i class="fa fa-trash"></i></a>
-                        <?php } ?>
+                        <?php } }?>
                 </td>
             </tr>
             <?php

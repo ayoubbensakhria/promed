@@ -7,9 +7,6 @@ class Dispatch_model extends CI_Model {
 
     public function __construct() {
         parent::__construct();
-        $this->current_session = $this->setting_model->getCurrentSession();
-        $this->current_session_name = $this->setting_model->getCurrentSessionName();
-        $this->start_month = $this->setting_model->getStartMonth();
     }
 
     public function insert($table, $data) {
@@ -85,7 +82,5 @@ class Dispatch_model extends CI_Model {
         $this->db->delete('dispatch_receive');
         $controller_name = $this->uri->segment(2);
     }
-
 }
-
 ?>

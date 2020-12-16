@@ -61,14 +61,23 @@
         <!-- fullCalendar -->
         <link rel="stylesheet" href="<?php echo base_url() ?>backend/fullcalendar/dist/fullcalendar.min.css">
         <link rel="stylesheet" href="<?php echo base_url() ?>backend/fullcalendar/dist/fullcalendar.print.min.css" media="print">
+    <!--language css-->
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/0.8.2/css/flag-icon.min.css">
+        <link rel="stylesheet" type="text/css" href="<?php echo base_url() ?>/backend/dist/css/bootstrap-select.min.css">
+        <script type="text/javascript" src="<?php echo base_url(); ?>backend/dist/js/bootstrap-select.min.js"></script>
 
+ <script type="text/javascript">
+    $(function(){
+      $('.languageselectpicker').selectpicker();
+   });
+</script>
         <script type="text/javascript">
             var baseurl = "<?php echo base_url(); ?>";
             var chk_validate = "";
         </script>
 
     </head>
-    <body class="hold-transition skin-blue fixed sidebar-mini ">
+    <body class="hold-transition skin-blue fixed sidebar-mini">
         <script type="text/javascript">
             function collapseSidebar() {
 
@@ -113,8 +122,8 @@
                 ?>
 
                 <a href="<?php echo base_url() . $url; ?>" class="logo">             
-                    <span class="logo-mini"><img width="50" height="50" src="<?php echo $mini_logo; ?>" alt="<?php echo $this->customlib->getAppName() ?>" /></span>                   
-                    <span class="logo-lg"><img src="<?php echo $logo_image; ?>" alt="<?php echo $this->customlib->getAppName() ?>" width="150" /></span>
+                    <span class="logo-mini"><img width="31" height="19" src="<?php echo $mini_logo; ?>" alt="<?php echo $this->customlib->getAppName() ?>" /></span>                   
+                    <span class="logo-lg"><img src="<?php echo $logo_image; ?>" alt="<?php echo $this->customlib->getAppName() ?>" /></span>
                 </a>             
                 <nav class="navbar navbar-static-top" role="navigation">                  
                     <a href="#" class="sidebar-toggle" onclick="collapseSidebar()" data-toggle="offcanvas" role="button">
@@ -123,14 +132,22 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </a>
-                    <div class="col-md-5 col-sm-3 col-xs-5">   
+                    <div class="col-md-5 col-sm-3 col-xs-4">   
                         <span href="#" class="sidebar-session">
-                            <?php echo $this->setting_model->getCurrentSchoolName(); ?>
+                       <?php echo $this->setting_model->getCurrentHospitalName(); ?>
                         </span>
                     </div>   
-                    <div class="col-md-7 col-sm-9 col-xs-7">
+                    <div class="col-md-7 col-sm-9 col-xs-8">
                         <div class="pull-right"> 
                             <div class="navbar-custom-menu">
+                                 <div class="langdiv">
+                                        <select class="languageselectpicker" onchange="set_languages(this.value)"  type="text" id="languageSwitcher" class="form-control search-form search-form3 langselect"  >
+                                            
+                                           <?php $this->load->view('patient/languageSwitcher')?>
+
+                                        </select>
+                                       
+                                    </div>
                                 <ul class="nav navbar-nav headertopmenu"> 
                                     <?php  
                                     $systemnotifications = $this->notification_model->getPatientUnreadNotification();
@@ -186,13 +203,18 @@
             </header>
             <aside class="main-sidebar" id="alert2">   
                 <section class="sidebar" id="sibe-box">
-                    <ul class="sidebar-menu verttop">
-                        <li class="treeview <?php echo set_Topmenu('myprofile'); ?>">
-                            <a href="<?php echo base_url(); ?>patient/dashboard/appointment"><i class="fas fa-hospital-alt"></i><span><?php echo $this->lang->line('my_appointments'); ?></span>
-                            </a>
-                        </li>
+                    <ul class="sidebar-menu verttop2">
+                       
                         <?php if ($_SESSION['patient'] == true) {  
-                            if ($this->module_lib->hasActive('OPD')) {?>
+
+                            if ($this->module_lib->hasActive('front_office')) { ?>
+
+                                   <li class="treeview <?php echo set_Topmenu('myprofile'); ?>">
+                                        <a href="<?php echo base_url(); ?>patient/dashboard/appointment"><i class="fas fa-hospital-alt"></i><span><?php echo $this->lang->line('my_appointments'); ?></span>
+                                        </a>
+                                    </li>
+                                <?php 
+                            } if ($this->module_lib->hasActive('OPD')) {?>
 
                                     <li class="treeview <?php echo set_Topmenu('profile'); ?>">
                                         <a href="<?php echo base_url(); ?>patient/dashboard/profile">
@@ -201,7 +223,7 @@
 
                                     </li>
                                 <?php 
-                            }if ($this->module_lib->hasActive('IPD')) {
+                            } if ($this->module_lib->hasActive('IPD')) {
                             ?>
 
                              
@@ -225,8 +247,6 @@
                                 <?php 
                             } if ($this->module_lib->hasActive('pathology')) {
                             ?>
-
-                            
                                     <li class="treeview <?php echo set_Topmenu('pathology'); ?>">
                                         <a href="<?php echo base_url(); ?>patient/dashboard/search">
                                             <i class="fas fa-flask"></i> <span> <?php echo $this->lang->line('pathology'); ?></span> 
@@ -275,12 +295,56 @@
                                     </li>
                                 <?php 
                             }
+
+
                         }
                             ?>
-                           
+                           <li class="treeview <?php echo set_Topmenu('live_consult'); ?>">
+                                <a href="<?php echo base_url(); ?>patient/dashboard/liveconsult">
+                                <i class="fa fa-video-camera" aria-hidden="true"></i> <span> <?php echo $this->lang->line('live_consult'); ?></span> 
+                                </a>
 
-                      
+                            </li>
 
                     </ul>  
                 </section>             
             </aside>  
+            <script>
+                
+    var base_url="<?php echo base_url(); ?>";
+     function defoult(id){
+      var defoult=  $('#languageSwitcher').val();
+   
+
+        $.ajax({
+            type: "POST",
+            url: base_url + "patient/defoult_language/"+id,
+            data: {},
+            //dataType: "json",
+            success: function (data) {
+                successMsg("Status Change Successfully");
+              $('#languageSwitcher').html(data);
+
+            }
+        });
+
+        window.location.reload('true');
+        //alert(id);
+    }
+
+    function set_languages(lang_id){
+       
+        $.ajax({
+            type: "POST",
+            url: base_url + "patient/dashboard/user_language/"+lang_id,
+            data: {},
+            //dataType: "json",
+            success: function (data) { 
+                successMsg("Status Change Successfully");
+                window.location.reload('true');
+
+            }
+        });
+
+    }
+            </script>

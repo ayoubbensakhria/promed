@@ -19,15 +19,12 @@ class Language_model extends CI_Model {
         $this->db->select('*');
         $this->db->from('languages');
         $this->db->order_by('created_at', 'desc');
-
         if (array_key_exists("start", $params) && array_key_exists("limit", $params)) {
             $this->db->limit($params['limit'], $params['start']);
         } elseif (!array_key_exists("start", $params) && array_key_exists("limit", $params)) {
             $this->db->limit($params['limit']);
         }
-
         $query = $this->db->get();
-
         return ($query->num_rows() > 0) ? $query->result_array() : FALSE;
     }
 
@@ -44,6 +41,11 @@ class Language_model extends CI_Model {
         } else {
             return $query->result_array();
         }
+    }
+	
+	function set_userlang($id,$data){
+            $this->db->where('id', $id);          
+            $this->db->update('staff', $data);
     }
 
     /**
@@ -73,7 +75,6 @@ class Language_model extends CI_Model {
     public function valid_check_exists($str) {
         $language = $this->input->post('language');
         $id = $this->input->post('id');
-
         if (!isset($id) && $id == "") {
             $id = 0;
         }
@@ -83,11 +84,10 @@ class Language_model extends CI_Model {
         } else {
             return TRUE;
         }
-    }
+    } 
 
     function check_data_exists($name, $id) {
         $this->db->where('language', $name);
-
         $this->db->where('id !=', $id);
         $query = $this->db->get('languages');
         if ($query->num_rows() > 0) {
@@ -97,4 +97,14 @@ class Language_model extends CI_Model {
         }
     }
 
+    public function getEnable_languages(){
+        $languages_id=$this->db->select('languages')->from('sch_settings')->get()->row_array();        
+        $query=$this->db->select()->from('languages')->where_in('id',json_decode($languages_id['languages']))->get()->result_array();
+        return $query;
+    }
+
+    public function set_patientlang($id, $data){
+        $this->db->where('id', $id);          
+            $this->db->update('patients', $data);
+    }
 }

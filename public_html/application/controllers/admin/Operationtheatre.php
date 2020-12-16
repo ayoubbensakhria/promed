@@ -19,7 +19,8 @@ class Operationtheatre extends Admin_Controller {
         $this->payment_mode = $this->config->item('payment_mode');
         $this->search_type = $this->config->item('search_type');
         $this->blood_group = $this->config->item('bloodgroup');
-        $this->charge_type = $this->config->item('charge_type');
+        //$this->charge_type = $this->config->item('charge_type');
+        $this->charge_type = $this->customlib->getChargeMaster();
         $data["charge_type"] = $this->charge_type;
         $this->patient_login_prefix = "pat";
     }
@@ -146,6 +147,7 @@ class Operationtheatre extends Admin_Controller {
     }
 
     public function add() {
+
         if (!$this->rbac->hasPrivilege('ot_patient', 'can_add')) {
             access_denied();
         }
@@ -181,16 +183,17 @@ class Operationtheatre extends Admin_Controller {
             if (($opd_ipd_patient_type != 'opd') && ($opd_ipd_patient_type != 'ipd')) {
                 $check_patient_id = $this->patient_model->getMaxId();
                 $patient_id = $check_patient_id + 1;
+                $patient_info = $this->input->post('patient_id');
+               // $patient_unique_id = $this->input->post('patient_unique_id');
                 $patient_data = array(
-                    'patient_unique_id' => $patient_id,
+                    'id' => $patient_info,
+                    //'patient_unique_id' => $patient_unique_id,
                     'patient_type' => 'OT',
                     'organisation' => $this->input->post('organisation'),
-                    'guardian_address' => $this->input->post('guardian_address'),
+                   // 'guardian_address' => $this->input->post('guardian_address'),
                     'is_active' => 'yes',
                 );
-
-                $patient_info = $this->input->post('patient_id');
-
+                $p_id = $this->patient_model->add_patient($patient_data);
                 $bill_no = $this->operationtheatre_model->getMaxId();
                 if (empty($bill_no)) {
                     $bill_no = 0;
@@ -220,16 +223,18 @@ class Operationtheatre extends Admin_Controller {
                         'height' => $this->input->post('height'),
                         'weight' => $this->input->post('weight'),
                         'bp' => $this->input->post('bp'),
+                        'pulse' => $this->input->post('pulse'),
+                        'temperature' => $this->input->post('temperature'),
+                        'respiration ' => $this->input->post('respiration'),
                         'symptoms' => $this->input->post('symptoms'),
                         'generated_by' => $this->session->userdata('hospitaladmin')['id'],
                         'apply_charge' => $this->input->post('apply_charge')
                     );
-                    $insert_id = $this->operationtheatre_model->operation_detail($operation_detail);
+                   // $insert_id = $this->operationtheatre_model->operation_detail($operation_detail);
                 }
             } else {
                 $patient_id = $this->input->post('patient_id');
                 $date = $this->input->post("date");
-
                 $operation_detail = array(
                     'bill_no' => $bill,
                     'patient_id' => $patient_id,
@@ -249,9 +254,13 @@ class Operationtheatre extends Admin_Controller {
                     'remark' => $this->input->post('remark'),
                     'apply_charge' => $this->input->post('apply_charge')
                 );
-                $insert_id = $this->operationtheatre_model->operation_detail($operation_detail);
+               // $insert_id = $this->operationtheatre_model->operation_detail($operation_detail);
             }
-
+            // echo "<pre>";
+            // print_r($operation_detail);
+            // echo "</pre>";
+            // exit();
+            $insert_id = $this->operationtheatre_model->operation_detail($operation_detail);
             $array = array('status' => 'success', 'error' => '', 'message' => $this->lang->line('success_message'), 'id' => $insert_id);
 
             $notificationurl = $this->notificationurl;
@@ -307,6 +316,13 @@ class Operationtheatre extends Admin_Controller {
         }
     }
 
+    public function test() {
+         $doctors = $this->staff_model->getStaffbyrole(3);
+        $data["doctors"] = $doctors;
+        $this->load->view('layout/header');
+        $this->load->view('admin/operationtheatre/test.php', $data);
+        $this->load->view('layout/footer');
+    }
     public function otsearch($id = '') {
         if (!$this->rbac->hasPrivilege('ot_patient', 'can_view')) {
             access_denied();
@@ -322,7 +338,10 @@ class Operationtheatre extends Admin_Controller {
 
         $doctors = $this->staff_model->getStaffbyrole(3);
         $data["doctors"] = $doctors;
-
+        $symptoms_result = $this->symptoms_model->get();
+        $data['symptomsresult'] = $symptoms_result;
+         $symptoms_resulttype = $this->symptoms_model->getsymtype();
+        $data['symptomsresulttype'] = $symptoms_resulttype;
         $patients = $this->patient_model->getPatientListall();
         $data["patients"] = $patients;
 
@@ -354,6 +373,10 @@ class Operationtheatre extends Admin_Controller {
         }
         $id = $this->input->post("patient_id");
         $result = $this->operationtheatre_model->getDetails($id);
+         if($result['symptoms']){
+            $result['symptoms'] = nl2br($result['symptoms']);
+        }
+
         if (($result['patient_type'] == 'Inpatient') || ($result['patient_type'] == 'Outpatient')) {
             $opd_ipd_no = $this->operationtheatre_model->getopdipdDetails($id, $result['patient_type']);
             $result['opd_ipd_no'] = $opd_ipd_no;
@@ -393,31 +416,34 @@ class Operationtheatre extends Admin_Controller {
 
         $this->form_validation->set_rules('operation_name', $this->lang->line('operation') . " " . $this->lang->line('name'), 'required');
         $this->form_validation->set_rules('date', $this->lang->line('date'), 'required');
-        $this->form_validation->set_rules('consultant_doctor', $this->lang->line('consultant') . " " . $this->lang->line('doctor'), 'required');
+        $this->form_validation->set_rules('cons_name', $this->lang->line('consultant') . " " . $this->lang->line('doctor'), 'required');
         $this->form_validation->set_rules('charge_category_id', $this->lang->line('charge') . " " . $this->lang->line('category'), 'required');
         if ($this->form_validation->run() == FALSE) {
             $msg = array(
                 'patient_name' => form_error('patient_name'),
                 'date' => form_error('date'),
                 'operation_name' => form_error('operation_name'),
-                'consultant_doctor' => form_error('consultant_doctor'),
+                'cons_name' => form_error('cons_name'),
                 'charge_category_id' => form_error('charge_category_id'),
                 'charge_category_id' => form_error('apply_charge'),
             );
             $array = array('status' => 'fail', 'error' => $msg, 'message' => '');
         } else {
+
+
             $id = $this->input->post('patientid');
 
             $charge_category_id = $this->input->post('charge_category_id');
             $date = $this->input->post("date");
             $otid = $this->input->post('otid');
+
             $operation_detail = array(
                 'id' => $otid,
                 'patient_id' => $id,
                 'operation_name' => $this->input->post('operation_name'),
                 'date' => date('Y-m-d H:i:s', $this->customlib->datetostrtotime($date)),
                 'operation_type' => $this->input->post('operation_type'),
-                'consultant_doctor' => $this->input->post('consultant_doctor'),
+                'consultant_doctor' => $this->input->post('cons_name'),
                 'ass_consultant_1' => $this->input->post('ass_consultant_1'),
                 'ass_consultant_2' => $this->input->post('ass_consultant_2'),
                 'anesthetist' => $this->input->post('anesthetist'),
@@ -430,9 +456,19 @@ class Operationtheatre extends Admin_Controller {
                 'height' => $this->input->post('height'),
                 'weight' => $this->input->post('weight'),
                 'bp' => $this->input->post('bp'),
+                'pulse' => $this->input->post('pulse'),
+                'temperature' => $this->input->post('temperature'),
+                'respiration' => $this->input->post('respiration'),
                 'symptoms' => $this->input->post('symptoms'),
                 'apply_charge' => $this->input->post('apply_charge'),
             );
+            $patient_data = array(
+                    'id' => $id,
+                    'patient_type' => 'OT',
+                    'organisation' => $this->input->post('organisation'),
+                    'is_active' => 'yes',
+                );
+            $this->patient_model->add_patient($patient_data);
             $this->operationtheatre_model->update_operation_detail($operation_detail);
             $array = array('status' => 'success', 'error' => '', 'message' => $this->lang->line('success_message'));
         }
@@ -444,7 +480,8 @@ class Operationtheatre extends Admin_Controller {
             access_denied();
         }
         if (!empty($id)) {
-            $this->operationtheatre_model->delete($id);
+            $patient_id = $this->input->post("patient_id");
+            $this->operationtheatre_model->delete($id,$patient_id);
             $array = array('status' => 'success', 'error' => '', 'message' => 'Record deleted Successfully');
         } else {
             $array = array('status' => 'fail', 'error' => '', 'message' => '');
@@ -491,6 +528,8 @@ class Operationtheatre extends Admin_Controller {
                 $data[] = $details;
                 $i++;
             }
+            // print_r($data);
+            // exit();
             $this->operationtheatre_model->add_ot_consultantInstruction($data);
             $array = array('status' => 'success', 'error' => '', 'message' => $this->lang->line('success_message'));
         }
@@ -524,7 +563,7 @@ class Operationtheatre extends Admin_Controller {
             'JOIN charges ON operation_theatre.charge_id = charges.id'
         );
         $where = array(
-            "patients.is_active = 'yes' ",
+            "patients.is_active = 'yes'",
             "operation_theatre.patient_id = patients.id "
         );
 

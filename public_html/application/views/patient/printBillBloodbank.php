@@ -57,7 +57,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                         </tr>
                         <tr>
 
-                            <td><?php echo $result["amount"]; ?></td>
+                            <td><?php echo $currency_symbol." ".$result["amount"]; ?></td>
                         </tr>
                     </table> 
 

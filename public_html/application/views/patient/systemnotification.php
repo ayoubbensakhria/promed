@@ -2,170 +2,6 @@
 $this->config->load("mailsms");
 $this->notificationicon = $this->config->item('notification_icon');
 ?>
-<style>
-
-    .ui-accordion{border: 1px solid #f4f4f4;}    
-    .panel-heading {
-        padding: 0;
-        border: 0;
-    }
-    .panel-title > a,
-    .panel-title > a:active {
-        display: block;
-        padding: 15px;
-        color: #555;
-        font-weight: bold;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        word-spacing: 3px;
-        text-decoration: none;
-    }
-    .panel-heading a:before {
-        font-family: 'FontAwesome';
-        content: "\f106";
-        float: right;
-        transition: all 0.5s;
-    }
-    .panel-heading.active a:before {
-        -webkit-transform: rotate(180deg);
-        -moz-transform: rotate(180deg);
-        transform: rotate(180deg);
-    }
-
-    .accordianheader {
-        color: #000;
-        background: #fff;
-        padding: 10px 10px;
-        margin-bottom: 0px;
-        border: 1px solid #f4f4f4;
-        position: relative;
-        overflow: hidden;
-        outline: 0;
-        cursor: pointer;
-    }
-    .accordianbody {
-        background: #f4f4f4;
-    }
-    /*.accordianbody ul {
-      margin: 0;
-      list-style: none;
-      padding: 0;
-    }
-    .accordianbody ul li {
-      padding: 10px;
-      border-bottom: 1px solid lightgrey;
-    }*/
-
-    .accordianbody i {
-        color: #fff !important;
-        position: absolute;
-        right: 20px;
-        top: 14px;
-        -webkit-transition: all 300ms ease-in 0s;
-        -moz-transition: all 300ms ease-in 0s;
-        -o-transition: all 300ms ease-in 0s;
-        transition: all 300ms ease-in 0s;
-    }
-
-    .ui-state-active i {
-        color: #000;
-        -webkit-transform: rotate(180deg);
-        -moz-transform: rotate(180deg);
-        -o-transform: rotate(180deg);
-        -ms-transform: rotate(180deg);
-        transform: rotate(180deg);
-    }
-
-    .unreadbg{background:#fff;}
-    .readbg{background:#f5f5f5;}
-
-    /*.more-less{color: #000;font-size: 20px;position: absolute; right: 30px;}
-    .rotate {
-      -moz-transform: rotate(-180deg);
-      -ms-transform: rotate(-180deg);
-      -webkit-transform: rotate(-180deg);
-      transform: rotate(-180deg);
-    }
-    
-    .icon-rotate {
-      -moz-transition-duration: 0.4s;
-      -o-transition-duration: 0.4s;
-      -webkit-transition-duration: 0.4s;
-      transition-duration: 0.4s;
-      display: inline-block;
-    }
-    
-    .collapsed{background: #eff4f9;}
-    .noselected{background:#fff;}*/
-    /* Style the element that is used to open and close the accordion class */
-    /*.accordion-toggle{position: relative;}
-    .accordion-toggle:after {
-        font-family: 'FontAwesome';
-        content: "\f106";    
-        font-size: 18px;
-        position: absolute; right:20px; top:20px;
-    }
-    .accordion-opened .accordion-toggle:after {    
-        content: "\f107";    
-    }
-    */
-
-    /*.accordion {
-        color: #444;
-        cursor: pointer;
-        width: 100%;
-        text-align: left;
-        border: none;
-        outline: none;
-        transition: 0.4s;
-    }*/
-
-    /* Add a background color to the accordion if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
-    /*p.accordion.active, p.accordion:hover {
-        background-color: #ddd;
-    }*/
-
-    /* Unicode character for "plus" sign (+) */
-    /*.table.notetable tr:hover .accordion:after{opacity: 100;}
-    .accordion:after {
-        content: "\f106"; 
-        font-size: 20px;
-        color: #777;
-        float: right;
-        opacity: 0;
-        margin-left: 5px;
-        transition: all 0.3s;
-        position: absolute;right: 30px;
-        font-family:"FontAwesome";
-    }*/
-
-    /* Unicode character for "minus" sign (-) */
-    /*.accordion.active:after {opacity: 100;}
-    .accordion.active:after {
-        content: "\f106";
-        transform: rotate(180deg);
-    }*/
-
-    /* Style the element that is used for the panel class */
-    /*.selected{background: #eff4f9;}
-    div.panel {
-        max-height: 0;
-        overflow: hidden;
-        transition: 0.4s ease-in-out;
-        opacity: 0;
-        background: transparent;
-        box-shadow: none;
-        transition: all 0.3s;
-    }
-    
-    div.panel.show {
-        opacity: 1;
-        max-height: 500px;
-    }*/
-
-
-</style>
-
 <script>
     function updateStatus(id) {
         var base_url = '<?php echo base_url() ?>';
@@ -213,17 +49,14 @@ $this->notificationicon = $this->config->item('notification_icon');
             <div class="col-md-12">
                 <div class="box box-primary">
                     <div class="box-header with-border">
-                        <h3 class="box-title titlefix"><i class="fa fa-bell-o"></i> <?php echo $this->lang->line('notifications'); ?></h3>
+                        <h3 class="box-title titlefix"><?php echo $this->lang->line('notifications'); ?></h3>
                     </div>
                     <div class="box-body">
-
-
-
                         <div id="accordion">
-                            <div style="background: #fafafa; padding: 10px; overflow: hidden;">   
-                                <div style="width: 8%; float: left;font-weight: bold;"><?php echo $this->lang->line('type'); ?></div>
-                                <div style="width: 70%; float: left;font-weight: bold;"><?php echo $this->lang->line('subject'); ?></div>
-                                <div style="width: 22%; float: left;font-weight: bold;"><?php echo $this->lang->line('date'); ?></div>
+                            <div class="sysnbg">   
+                                <div class="sysm-main sysmleft font-weight-bold"><?php echo $this->lang->line('type'); ?></div>
+                                <div class="sysm-main sysmmiddle font-weight-bold"><?php echo $this->lang->line('subject'); ?></div>
+                                <div class="sysm-main sysmlast font-weight-bold"><?php echo $this->lang->line('date'); ?></div>
                             </div>   
                             <!-- yeah, yeah, I spelled Accordion wrong,  do something about it.  - G  -->
                             <?php if (empty($notifications)) { ?>
@@ -240,7 +73,7 @@ $this->notificationicon = $this->config->item('notification_icon');
                                     }
                                     ?>
                                     <div class="accordianheader <?php echo $class ?>" data-noticeid="<?php echo $result['id'] ?>">
-                                        <div style="width: 8%; float: left">
+                                        <div class="sysm-main sysmleft">
                                             <div class="bellcircle">
                                                 <?php
                                                 if ($result['notification_type'] == 'opd') {
@@ -264,13 +97,13 @@ $this->notificationicon = $this->config->item('notification_icon');
                                             </div>
                                         </div>
 
-                                        <div style="width: 70%; float: left;padding-top: 10px;"><?php echo $result['notification_title']; ?></div>
-                                        <div style="width: 22%; float: left;padding-top: 10px;"><?php echo date($this->customlib->getSchoolDateFormat(true, true), strtotime($result['date'])); ?></div>
-                                        <div style="position: absolute; right:20px; font-size: 18px; top:20px;"><i class="fa fa-angle-down" ></i>
+                                        <div class="sysm-main sysmmiddle sysmtop10"><?php echo $result['notification_title']; ?></div>
+                                        <div class="sysm-main sysmlast sysmtop10"><?php echo date($this->customlib->getSchoolDateFormat(true, true), strtotime($result['date'])); ?></div>
+                                        <div class="sysmangle"><i class="fa fa-angle-down" ></i>
                                         </div>
                                     </div>
-                                    <div class="accordianbody" style="position: relative;">
-                                        <div style="padding-left: 9%;"> 
+                                    <div class="accordianbody relative">
+                                        <div class="sysbottomcontent"> 
                                             <?php echo $result['notification_desc']; ?>
 
                                         </div>

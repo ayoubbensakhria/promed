@@ -142,7 +142,6 @@
                                         <?php
                                     } else {
                                         foreach ($visitor_list as $key => $value) {
-                                            //print_r($value);
                                             ?>
                                             <tr>
                                                 <td class="mailbox-name"><?php echo $value['purpose']; ?></td>

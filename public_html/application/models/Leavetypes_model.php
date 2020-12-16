@@ -3,12 +3,10 @@
 class Leavetypes_model extends CI_model {
 
     function __construct() {
-        $this->current_session = $this->setting_model->getCurrentSession();
         $this->current_date = $this->setting_model->getDateYmd();
     }
 
     public function addLeaveType($data) {
-
         if (isset($data['id'])) {
             $this->db->where('id', $data['id']);
             $this->db->update('leave_types', $data);
@@ -19,13 +17,11 @@ class Leavetypes_model extends CI_model {
     }
 
     public function getLeaveType() {
-
         $query = $this->db->get('leave_types');
         return $query->result_array();
     }
 
     public function deleteLeaveType($id) {
-
         $this->db->where('id', $id);
         $this->db->delete('leave_types');
     }
@@ -45,7 +41,6 @@ class Leavetypes_model extends CI_model {
     }
 
     function check_data_exists($name, $id) {
-
         if ($id != 0) {
             $data = array('id != ' => $id, 'type' => $name);
             $query = $this->db->where($data)->get('leave_types');

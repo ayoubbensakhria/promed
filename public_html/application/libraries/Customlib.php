@@ -499,12 +499,19 @@ class Customlib {
         return $studentUsername;
     }
 
+     function getPatientSessionUserName() {
+        $student_session = $this->CI->session->all_userdata();
+        $session_Array = $this->CI->session->userdata('patient');
+        $studentUsername = $session_Array['name'];
+        return $studentUsername;
+    }
+
     function getAdminSessionUserName() {
         $student_session = $this->CI->session->userdata('hospitaladmin');
         $username = $student_session['username'];
 
         return $username;
-    }
+    }   
 
     function getUserRole() {
 
@@ -556,8 +563,7 @@ class Customlib {
     }
 
     function getAppVersion() {
-		//Build: 200120
-        $appVersion = "2.1";
+        $appVersion = "3.0";
         return $appVersion;
     }
 
@@ -709,18 +715,22 @@ class Customlib {
         if ($this->CI->module_lib->hasActive('front_office')) {
             $notification['appointment'] = $this->CI->lang->line('appointment') . " " . $this->CI->lang->line('approved');
         }
+         if ($this->CI->module_lib->hasActive('zoom_live_meeting')) {
+            $notification['live_meeting'] = $this->CI->lang->line('live_meeting');
+        }
+        if ($this->CI->module_lib->hasActive('zoom_live_meeting')) {
+            $notification['live_consult'] = $this->CI->lang->line('live_consult');
+        }
         return $notification;
     }
 
     function sendMailSMS($find) {
 
         $notifications = $this->CI->notificationsetting_model->get();
-
-
         if (!empty($notifications)) {
             foreach ($notifications as $note_key => $note_value) {
                 if ($note_value->type == $find) {
-                    return array('mail' => $note_value->is_mail, 'sms' => $note_value->is_sms);
+                    return array('mail' => $note_value->is_mail, 'sms' => $note_value->is_sms, 'mobileapp' => $note_value->is_mobileapp );
                 }
             }
         }
@@ -817,6 +827,45 @@ class Customlib {
         return $result;
     }
 
+    public function getChargeMaster() {
+        $result = $this->CI->setting_model->getChargeMaster();
+         $arr = array();
+        $charge_type = array_column($result, 'charge_type');
+
+        foreach ($charge_type as $key => $value) {
+            if($key == 3){
+                $arr[$value] = $this->CI->lang->line('operation_theatre');
+            }else
+
+            if(($key <= 4) && ($key != 3)){
+                
+                $arr[$value] = $this->CI->lang->line(strtolower($value));
+            }else {
+                 $arr[$value] = $value;
+            }
+            
+
+            
+        }
+        return $arr;
+    }
+    
+     public function getLimitChar($string, $str_length = 50)
+    {
+
+        $string = strip_tags($string);
+        if (strlen($string) > $str_length) {
+
+            // truncate string
+            $stringCut = substr($string, 0, $str_length);
+            $endPoint  = strrpos($stringCut, ' ');
+
+            //if the string doesn't contain any space then it will cut without word basis.
+            $string = $endPoint ? substr($stringCut, 0, $endPoint) : substr($stringCut, 0);
+            $string .= '...';
+        }
+        return $string;
+    }
 //========================
 //========================
 }

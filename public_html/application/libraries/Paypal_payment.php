@@ -23,6 +23,9 @@ class Paypal_payment {
 
 
         $name = $data['name'];
+        $phone = $data['phone'];
+        $patient_id = $data['patient_id'];
+        $ipd_id = $data['ipd_id'];
         $amount_balance = $data['total'];
         $currency = $data['currency_name'];
 
@@ -36,7 +39,9 @@ class Paypal_payment {
             'cancelUrl' => base_url('patient/paypal/getsuccesspayment'),
             'returnUrl' => base_url('patient/paypal/getsuccesspayment'),
             'name' => $name,
-            'guardian_phone' => $data['guardian_phone'],
+            'phone' => $phone,
+            'patient_id' => $patient_id,
+            'ipd_id' => $ipd_id,
             'description' => $data['productinfo'],
             'amount' => number_format($amount_balance, 2, '.', ''),
             'currency' => $currency,

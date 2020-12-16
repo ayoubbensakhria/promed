@@ -85,12 +85,9 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                     <div class="box-header with-border">
                         <h3 class="box-title"><?php echo $this->lang->line('ambulance_call') . " " . $this->lang->line('report'); ?></h3>
                     </div>
-
                     <form role="form" action="<?php echo site_url('admin/vehicle/ambulancereport') ?>" method="post" class="">
                         <div class="box-body row">
-
                             <?php echo $this->customlib->getCSRF(); ?>
-
                             <div class="col-sm-6 col-md-4" >
                                 <div class="form-group">
                                     <label><?php echo $this->lang->line('search') . " " . $this->lang->line('type'); ?></label>
@@ -111,14 +108,14 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                             <div class="col-sm-6 col-md-4" id="fromdate" style="display: none">
                                 <div class="form-group">
                                     <label><?php echo $this->lang->line('date_from'); ?></label><small class="req"> *</small>
-                                    <input id="date_from" name="date_from" placeholder="" type="text" class="form-control date" value="<?php echo set_value('date_from', date($this->customlib->getSchoolDateFormat())); ?>" readonly="readonly" />
+                                    <input id="date_from" name="date_from" placeholder="" type="text" class="form-control date" value="<?php echo set_value('date_from', date($this->customlib->getSchoolDateFormat())); ?>"  />
                                     <span class="text-danger"><?php echo form_error('date_from'); ?></span>
                                 </div>
                             </div> 
                             <div class="col-sm-6 col-md-4" id="todate" style="display: none">
                                 <div class="form-group">
                                     <label><?php echo $this->lang->line('date_to'); ?></label><small class="req"> *</small>
-                                    <input id="date_to" name="date_to" placeholder="" type="text" class="form-control date" value="<?php echo set_value('date_to', date($this->customlib->getSchoolDateFormat())); ?>" readonly="readonly"/>
+                                    <input id="date_to" name="date_to" placeholder="" type="text" class="form-control date" value="<?php echo set_value('date_to', date($this->customlib->getSchoolDateFormat())); ?>" />
                                     <span class="text-danger"><?php echo form_error('date_to'); ?></span>
                                 </div>
                             </div> 
@@ -127,10 +124,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                     <button type="submit" name="search" value="search_filter" class="btn btn-primary btn-sm checkbox-toggle pull-right"><i class="fa fa-search"></i> <?php echo $this->lang->line('search'); ?></button>
                                 </div>
                             </div>
-
                     </form>
-
-
                     <div class="box border0 clear">
                         <div class="box-header ptbnull"></div>
                         <div class="box-body table-responsive">
@@ -159,10 +153,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                             $total += $data['amount'];
                                             ?>
                                             <tr class="">
-                                                <td>
-        <?php echo $data['patient_name'] ?>
-
-                                                </td> 
+                                                <td><?php echo $data['patient_name'] ?></td> 
                                                 <td><?php echo $data['contact_no'] ?></td>
                                                 <td><?php echo $data['vehicle_no'] ?></td>
                                                 <td><?php echo $data['vehicle_model']; ?></td>
@@ -185,18 +176,15 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                             </table>
                         </div>
                     </div>
-
                 </div>
             </div>  
         </div>   
-</div>  
+	</div>  
 </section>
 </div>
 
-
 <script type="text/javascript">
     $(document).ready(function (e) {
-
         showdate('<?php echo $search_type; ?>');
     });
 

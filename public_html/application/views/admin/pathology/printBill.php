@@ -30,128 +30,74 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                         <tr>
                             <td align="text-left"><h5><?php echo $this->lang->line('bill') . " #"; ?><?php echo $result["bill_no"] ?></h5>
                             </td>
-                            <td align="right"><h5><?php echo $this->lang->line('date') . " : "; ?><?php echo date($this->customlib->getSchoolDateFormat(true, true), strtotime($result['reporting_date'])) ?></h5>
+                            <td align="right"><h5><?php echo $this->lang->line('date') . " : "; ?><?php echo date($this->customlib->getSchoolDateFormat(true, false), strtotime($result['reporting_date'])) ?></h5>
                             </td>
                         </tr>
                     </table>
                     <hr style="height: 1px; clear: both;margin-bottom: 10px; margin-top: 10px">
                     <table class="printablea4" cellspacing="0" cellpadding="0" width="100%">
                         <tr>
-                            <th width="20%"><?php echo $this->lang->line('name'); ?></th>
-                            <td width="25%"><?php echo $result["patient_name"]; ?></td>
-                            <th width="25%"><?php echo $this->lang->line('doctor'); ?></th>
-                            <td width="30%" align="left"><?php echo $result["doctorname"]." ".$result["doctorsurname"]; ?></td>
-                        </tr>
-                        <tr>
-                            <th width="20%"><?php echo $this->lang->line('customer') . " " . $this->lang->line('type'); ?></th>
-                            <td width="25%"><?php echo $this->lang->line($result["customer_type"]); ?></td>
-                            <th width="25%"><?php echo $this->lang->line('opd_ipd_no'); ?></th>
-                            <td width="30%" align="left"><!--<?php echo $result['opd_ipd_no']; ?>--></td> 
-                        </tr> 
-                    </table>
-                    <hr style="height: 1px; clear: both;margin-bottom: 10px; margin-top: 10px">
-                    <table class="printablea4" id="testreport" width="100%">
-                        <tr>
-                            <th width="20%"><?php echo $this->lang->line('test') . " " . $this->lang->line('name'); ?></th> 
+                            <th width=""><?php echo $this->lang->line('name'); ?></th>
+                            <th width=""><?php echo $this->lang->line('doctor'); ?></th>
+                            <th width=""><?php echo $this->lang->line('test') . " " . $this->lang->line('name'); ?></th> 
                             <th><?php echo $this->lang->line('short') . " " . $this->lang->line('name'); ?></th>
-                            <th><?php echo $this->lang->line('pathology') . " " . $this->lang->line('report'); ?></th>
-
-                            <th><?php echo $this->lang->line('description'); ?></th>
-                            <th><?php echo $this->lang->line('total'); ?></th>
-
                         </tr>
+                        <tr>
+                            <td width=""><?php echo $result["patient_name"]; ?></td>
+                            <td width="" align=""><?php echo $result["doctorname"]." ".$result["doctorsurname"]; ?></td>
                         <?php
                         $j = 0;
                         foreach ($detail as $bill) {
                             ?>
-                            <tr>
-                                <td width="20%"><?php echo $bill["test_name"]; ?></td>
+                                <td width=""><?php echo $bill["test_name"]; ?></td>
                                 <td><?php echo $bill["short_name"]; ?></td>
-                                <td> <?php if (!empty($bill->pathology_report)) { ?>
-                                        <a href="<?php echo base_url(); ?>admin/pathology/download/<?php echo $detail->pathology_report; ?>" class="btn btn-default btn-xs"  data-toggle="tooltip" title="<?php echo $this->lang->line('download'); ?>">
-                                            <i class="fa fa-download"></i>
-                                        </a>
-                                    <?php } ?></td>
+                              <!--   <td> <?php if (!empty($bill['pathology_report'])){ ?>
+                                    <a <?php if($print != 'yes'){ ?> href="<?php echo base_url().'admin/pathology/download/'. $bill["pathology_report"]; ?>" <?php } ?> class="btn btn-default btn-xs"  data-toggle="tooltip" title="<?php echo $this->lang->line('download'); ?>"><i class="fa fa-download"></i></a>
+                                    <?php }  ?>
+                                </td> -->
+                               
+                        <?php
+                        $j++;
+                        }
+                        ?>
+                        </tr>
+                    </table>
+                    <hr style="height: 1px; clear: both;margin-bottom: 10px; margin-top: 10px">
+                    <table class="printablea4" id="testreport" width="100%">
+                        <tr>
+                            <th><?php echo $this->lang->line('description'); ?></th>
+                            <th class="pull-right"><?php echo $this->lang->line('total'); ?></th>
+                        </tr>
+                        <?php
+                        $i = 0;
+                        foreach ($detail as $bill) {
+                            ?>
+                            <tr>
                                 <td><?php echo $bill['description']; ?></td>
-                                <td><?php echo $currency_symbol . "" . $result["apply_charge"]; ?></td>
-    <!-- <td><?php echo $bill["quantity"]; ?></td>
-    <td align="right"><?php echo $bill["sale_price"]; ?></td>-->
+                                <td class="pull-right"><?php echo $currency_symbol . "" . $result["apply_charge"]; ?></td>
                             </tr>
                             <?php
-                            $j++;
+                            $i++;
                         }
                         ?>
 
                     </table> 
-                    <hr style="height: 1px; clear: both;margin-bottom: 10px; margin-top: 10px">
-
+                   
+                   <!--  <hr style="height: 1px; clear: both;margin-bottom: 10px; margin-top: 10px"> 
                     <table class="printablea4" width="100%" style="width:30%; float: right;">
-                        <?php if (!empty($result["total"])) { ?>
-                            <tr>
-
-                                <th><?php echo $this->lang->line('total') . " (" . $currency_symbol . ")"; ?></th>
-
-                                <td align="left"><?php echo $result["total"]; ?></td>
-                            </tr>
-                        <?php } ?>
-                        <?php if (!empty($result["discount"])) { ?>
-                            <tr>
-                                <th><?php
-                                    echo $this->lang->line('discount') . " (" . $currency_symbol . ")";
-                                    ;
-                                    ?></th>
-
-                                <td align="left"><?php echo $result["discount"]; ?></td>
-
-                            </tr>
-                        <?php } ?>
-                        <?php if (!empty($result["tax"])) { ?>
-                            <tr>
-                                <th><?php
-                                    echo $this->lang->line('tax') . " (" . $currency_symbol . ")";
-                                    ;
-                                    ?></th>
-
-                                <td align="left"><?php echo $result["tax"]; ?></td>
-
-                            </tr>
-                        <?php } ?>
-                        <?php
-                        if ((!empty($result["discount"])) && (!empty($result["tax"]))) {
-                            if (!empty($result["net_amount"])) {
-                                ?>
-                                <tr>
-                                    <th><?php
-                                        echo $this->lang->line('net_amount') . " (" . $currency_symbol . ")";
-                                        ;
-                                        ?></th>
-
-                                    <td align="left"><?php echo $result["net_amount"]; ?></td>
-
-                                </tr>
-                                <?php
-                            }
-                        }
-                        ?>
-                        <?php if (!empty($result["note"])) { ?>
-                            <tr>
-
-                                <th><?php echo $this->lang->line('note'); ?></th>
-
-                                <td align="left"><?php echo $result["note"]; ?></td>
-                            </tr>
-
-                        <?php } ?>
+                       
                         <?php if (($print) != 'yes') { ?>
                             <tr id="generated_by">
 
-                                <th><?php echo $this->lang->line('collected_by'); ?></th>
+                                <th><?php echo $this->lang->line('prepared_by'); ?></th>
 
                                 <td align="right"><?php echo $result["generated_byname"]; ?></td>
                             </tr>
                         <?php } ?>
-                    </table>
-                    <hr style="height: 1px; clear: both;margin-bottom: 10px; margin-top: 10px">    
+                    </table> -->
+                   <hr style="height: 1px; clear: both;margin-bottom: 10px; margin-top: 10px"> 
+                
+                    
                     <p><?php
                         if (!empty($print_details[0]['print_footer'])) {
                             echo $print_details[0]['print_footer'];
@@ -178,11 +124,11 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
             });
         }
     }
-    function printData(id) {
+    function printData(id,parameter_id) {
 
         var base_url = '<?php echo base_url() ?>';
         $.ajax({
-            url: base_url + 'admin/pathology/getBillDetails/' + id,
+            url: base_url + 'admin/pathology/getBillDetails/'  + id +'/'+parameter_id,
             type: 'POST',
             data: {id: id, print: 'yes'},
             success: function (result) {

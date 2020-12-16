@@ -24,8 +24,8 @@
                     <div class="box-header ptbnull">
                         <h3 class="box-title titlefix"><?php echo $this->lang->line('department'); ?> <?php echo $this->lang->line('list'); ?></h3>
                         <div class="box-tools pull-right">
-                            <?php if ($this->rbac->hasPrivilege('designation', 'can_add')) { ?>
-                                <a data-toggle="modal" data-target="#myModal" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i>  <?php echo $this->lang->line('add'); ?> <?php echo $this->lang->line('department'); ?></a>    
+                            <?php if ($this->rbac->hasPrivilege('department', 'can_add')) { ?>
+                                <a data-toggle="modal" data-target="#myModal" class="btn btn-primary btn-sm department"><i class="fa fa-plus"></i>  <?php echo $this->lang->line('add'); ?> <?php echo $this->lang->line('department'); ?></a>    
                             <?php } ?> 
                         </div>
                     </div>
@@ -361,4 +361,9 @@
     {
         delete_recordById('<?php echo base_url() ?>admin/department/departmentdelete/' + id, '<?php echo $this->lang->line('delete_message') ?>');
     }
+	
+	
+$(".department").click(function(){
+	$('#formadd').trigger("reset");
+});
 </script>

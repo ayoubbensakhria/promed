@@ -18,7 +18,6 @@ class Rolepermission_model extends CI_Model {
     public function getPermissionByRole($role_id) {
         $this->db->select('`roles_permissions`.*, permission_category.id as permission_category_id,permission_category.name as permission_category_name,permission_category.short_code as permission_category_code');
         $this->db->from('roles_permissions');
-
         $this->db->join('permission_category', 'permission_category.id=roles_permissions.perm_cat_id');
         $this->db->where('roles_permissions.role_id', $role_id);
         $query = $this->db->get();
@@ -26,12 +25,9 @@ class Rolepermission_model extends CI_Model {
     }
 
     public function getInsertBatch($insert_array, $role_id, $delete_array) {
-
-
         $this->db->trans_start();
         $this->db->trans_strict(FALSE);
         if (!empty($insert_array)) {
-
             $this->db->insert_batch('role_permissions', $insert_array);
         }
 
@@ -42,13 +38,10 @@ class Rolepermission_model extends CI_Model {
             $this->db->delete('role_permissions');
         }
         $this->db->trans_complete();
-
         if ($this->db->trans_status() === FALSE) {
-
             $this->db->trans_rollback();
             return FALSE;
         } else {
-
             $this->db->trans_commit();
             return TRUE;
         }
@@ -56,7 +49,6 @@ class Rolepermission_model extends CI_Model {
 
     public function getPermissionWithSelectedByRole($role_id) {
         $sql = "SELECT permissions.*, role_permissions.id as `role_permission_id`,IF(role_permissions.id IS NULL,0,1) AS role_permission_state FROM `permissions` LEFT JOIN role_permissions on permissions.id=role_permissions.permission_id and role_permissions.role_id =$role_id";
-
         $query = $this->db->query($sql);
         return $query->result();
     }

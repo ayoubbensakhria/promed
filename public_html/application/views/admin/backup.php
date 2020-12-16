@@ -1,5 +1,4 @@
 <div class="content-wrapper" style="min-height: 946px;">
-
     <!-- Main content -->
     <section class="content">
         <div class="row">
@@ -24,8 +23,6 @@
                         </div>
                     </div>
                     <div class="box-body">
-
-
                         <?php if ($this->session->flashdata('msg')) { ?>
                             <?php echo $this->session->flashdata('msg') ?>
                         <?php } ?>
@@ -53,7 +50,6 @@
                                                     </td>
                                                     <?php if ($this->rbac->hasPrivilege('restore', 'can_view')) { ?>
                                                         <td class="mailbox-name">
-
                                                             <form class="formrestore" action="<?php echo site_url('admin/admin/backup') ?>"  id="employeeform" name="employeeform" method="post" accept-charset="utf-8" role="form">
                                                                 <?php echo $this->customlib->getCSRF(); ?>
                                                                 <input type="hidden" name="filename" value="<?php echo $data; ?>">
@@ -68,7 +64,6 @@
                                                                 <button class="btn btn-primary btn-xs btn-danger" type="submit" name="backup" value="restore"><i class="fa fa-trash"></i>  <?php echo $this->lang->line('delete'); ?></button>
                                                             <?php } ?>
                                                         </form></td>
-
                                                 </tr>
                                                 <?php
                                                 $count++;
@@ -108,24 +103,20 @@
                                         echo $this->lang->line('generate');
                                     }
                                     ?></a>
-                            </div>   
-
+                            </div>
                         </div>
                         <div class="box-body cronkeyheight">
                             <div style="display:none" id="cronkey">
                                 <p class="hideeyep"><?php print_r($settinglist[0]['cron_secret_key']); ?></p>
                             </div>
                             <a class="hideeye" data-toggle="tooltip" title="<?php echo $this->lang->line('cron_secret_key') ?>" id="showbtn" onclick="showkey()" href="#"><i class="fa fa-eye"></i></a>
-
                         </div>
-
                     </div><!--./box box-warning-->
                 </div><!--./col-md-4-->
                 <!-- <div class="col-md-4"></div> -->
             <?php } ?>
-
         </div>
-</div>
+	</div>
 </div>
 </div>
 </div>
@@ -145,18 +136,14 @@
     });
 
     function showkey() {
-
         $("#cronkey").show();
         $("#showbtn").html("<i class='fa fa-eye-slash'></i>");
         $("#showbtn").attr("onclick", "hidekey()");
-
     }
 
     function hidekey() {
-
         $("#cronkey").hide();
         $("#showbtn").html("<i class='fa fa-eye'></i>");
         $("#showbtn").attr("onclick", "showkey()");
-
     }
 </script>

@@ -4,10 +4,8 @@ if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
 class ComplaintType_model extends CI_Model {
-
     public function __construct() {
         parent::__construct();
-        $this->current_session = $this->setting_model->getCurrentSession();
     }
 
     public function add($table, $data) {
@@ -43,5 +41,4 @@ class ComplaintType_model extends CI_Model {
         $this->db->where('id', $id);
         $this->db->delete($table);
     }
-
 }

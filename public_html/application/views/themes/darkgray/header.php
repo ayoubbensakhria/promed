@@ -16,7 +16,7 @@
 
                                             foreach ($banner_notices as $banner_notice_key => $banner_notice_value) {
                                                 ?>
-                                                <li><a href="<?php echo site_url('read/' . $banner_notice_value['slug']) ?>"><div class="date"><?php echo date('d', strtotime($banner_notice_value['publish_date'])); ?><span><?php echo date('F', strtotime($banner_notice_value['publish_date'])); ?></span></div><?php echo $banner_notice_value['title']; ?>
+                                                <li><a href="<?php echo site_url('read/' . $banner_notice_value['slug']) ?>"><div class="date"><?php echo date('d', strtotime($banner_notice_value['date'])); ?><span><?php echo date('F', strtotime($banner_notice_value['date'])); ?></span></div><?php echo $banner_notice_value['title']; ?>
                                                     </a></li>
                                                 <?php
                                             }
@@ -30,12 +30,7 @@
                             <?php
                         }
                         ?>
-
-
-
-
                     </div><!--./sidebar-->  
-
                 </div><!--./col-md-9--> 
                 <div class="col-md-3 col-sm-3">
                     <ul class="top-right">
@@ -58,7 +53,7 @@
                                 <span class="icon-bar"></span>
                                 <span class="icon-bar"></span>
                             </button>
-                            <a class="navbar-brand logo" href="<?php echo base_url(); ?>"><img src="<?php echo base_url($front_setting->logo); ?>" alt="Promed" width="150" /></a>
+                            <a class="navbar-brand logo" href="<?php echo base_url(); ?>"><img src="<?php echo base_url($front_setting->logo); ?>" alt=""/></a>
                         </div>
 
                         <div class="collapse navbar-collapse" id="navbar-collapse-3">

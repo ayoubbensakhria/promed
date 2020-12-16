@@ -21,7 +21,6 @@ class Mailer {
         $mail = new PHPMailer();
         $school_name = $this->sch_setting[0]['name'];
         if ($this->CI->mail_config->email_type == "smtp") {
-
             $mail->IsSMTP();
             $mail->SMTPAuth = true;
             $mail->SMTPSecure = $this->CI->mail_config->ssl_tls;

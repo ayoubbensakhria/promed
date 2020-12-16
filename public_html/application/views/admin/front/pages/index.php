@@ -1,13 +1,11 @@
 <style type="text/css">
-    .table-sortable tbody tr {
-        cursor: move;
+    .table-sortable tbody tr {cursor: move;}
+    @media (max-width: 767px) {
+        .box-tools button, .box-tools a {margin-top: 0px;}
     }
-
 </style>
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
-
-
     <!-- Main content -->
     <section class="content">
         <div class="row">
@@ -18,29 +16,35 @@
                 <div class="box box-primary" id="holist">
                     <div class="box-header ptbnull">
                         <h3 class="box-title titlefix"><?php echo $this->lang->line('page_list'); ?></h3>
-                        <?php
-                        if ($this->rbac->hasPrivilege('pages', 'can_add')) {
-                            ?>
-
                             <div class="box-tools pull-right">
-                                <div class="btn-group" style="margin-left:4px;">
+                                <?php
+                                 if ($this->rbac->hasPrivilege('pages', 'can_add')) {
+                                    ?>
+                                <div class="btn-group">
                                     <a href="<?php echo site_url('admin/front/page/create'); ?>" style="border-radius:2px 0px 0px 2px" class="btn btn-primary btn-sm"><?php echo $this->lang->line('add_page'); ?></a>
-                                    <button type="button" style="border-left: 1px solid #2e6da4;" class="btn btn-primary dropdown-toggle btn-sm" data-toggle="dropdown">
+                                    <button type="button" style="border-left: 1px solid #2e6da4; max-height: 25px;" class="btn btn-primary dropdown-toggle btn-sm" data-toggle="dropdown">
                                         <span class="caret"></span>
                                     </button>
                                     <ul class="dropdown-menu" role="menu">
-                                        <li><a href="<?php echo base_url(); ?>admin/front/events"><?php echo $this->lang->line('add') . " " . $this->lang->line('event'); ?></a></li>
+                                    <?php  if ($this->rbac->hasPrivilege('event', 'can_view')) { ?>
+                                    <li><a href="<?php echo base_url(); ?>admin/front/events"><?php echo $this->lang->line('add') . " " . $this->lang->line('event'); ?></a></li>
+                                    <?php } if ($this->rbac->hasPrivilege('gallery', 'can_view')) { ?>
                                         <li><a href="<?php echo base_url(); ?>admin/front/gallery"><?php echo $this->lang->line('add') . " " . $this->lang->line('gallery'); ?></a></li>
+                                    <?php } if ($this->rbac->hasPrivilege('notice', 'can_view')) { ?>
                                         <li><a href="<?php echo base_url(); ?>admin/front/notice"><?php echo $this->lang->line('add') . " " . $this->lang->line('notice'); ?></a></li>
+                                    <?php } ?>
                                     </ul>
                                 </div>
-
+                                <?php } if ($this->rbac->hasPrivilege('media_manager', 'can_view')) { ?>
                                 <a href="<?php echo site_url('admin/front/media'); ?>" class="btn btn-sm btn-primary"><i class="fa fa-reorder"></i> <?php echo $this->lang->line('media_manager'); ?></a>
+                                 <?php } if ($this->rbac->hasPrivilege('menus', 'can_view')) {?>
                                 <a href="<?php echo site_url('admin/front/menus'); ?>" class="btn btn-sm btn-primary"><i class="fa fa-reorder"></i> <?php echo $this->lang->line('menus'); ?></a>
+                                <?php } if ($this->rbac->hasPrivilege('banner_images', 'can_view')) { ?>
                                 <a href="<?php echo site_url('admin/front/banner'); ?>" class="btn btn-sm btn-primary"><i class="fa fa-reorder"></i> <?php echo $this->lang->line('banners'); ?></a>
+                                 <?php } ?>
 
                             </div>
-                        <?php } ?>
+                       
                     </div><!-- /.box-header -->
                     <div class="box-body">
                         <div class="mailbox-controls">

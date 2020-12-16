@@ -62,7 +62,7 @@ $(document).ready(function () {
  
                     $(win.document.body).find( 'table' )
                         .addClass( 'compact' )
-                        .css( 'font-size', 'inherit' );
+                        .css( 'font-size','inherit');
                 },
                     exportOptions: {
                         columns: ':visible'
@@ -79,7 +79,6 @@ $(document).ready(function () {
             ]
         });
     });
-
 
 /*--dropify--*/
 $(document).ready(function(){

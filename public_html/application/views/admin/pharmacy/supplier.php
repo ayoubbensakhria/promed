@@ -1,4 +1,4 @@
-<div class="content-wrapper" style="min-height: 946px;">  
+<div class="content-wrapper">  
 
     <!-- Main content -->
     <section class="content">
@@ -9,9 +9,7 @@
                 <div class="box border0">
                     <ul class="tablists">
                         <li><a href="<?php echo base_url(); ?>admin/medicinecategory/medicine" class="active"> <th><?php echo $this->lang->line('medicine') . " " . $this->lang->line('category'); ?></th></a></li>
-
                         <li><a href="<?php echo base_url(); ?>admin/supplier/supplier" class="active"> <th><?php echo $this->lang->line('supplier'); ?></th></a></li>
-
                     </ul>
                 </div>
             </div>

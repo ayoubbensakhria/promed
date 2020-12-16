@@ -13,7 +13,7 @@
                         <h3 class="box-title"><?php echo $this->lang->line('issue_item'); ?></h3>
                         <div class="box-tools pull-right">
                             <?php if ($this->rbac->hasPrivilege('issue_item', 'can_add')) { ?>
-                                <a href="<?php //echo site_url('admin/issueitem/create')     ?>" data-toggle="modal" data-target="#myModal" class="btn btn-primary btn-sm" ><i class="fa fa-plus"></i> <?php echo $this->lang->line('add_issue_item'); ?></a>
+                                <a href="<?php //echo site_url('admin/issueitem/create')     ?>" data-toggle="modal" data-target="#myModal" class="btn btn-primary btn-sm addissueitem" ><i class="fa fa-plus"></i> <?php echo $this->lang->line('add_issue_item'); ?></a>
                             <?php } ?>
                         </div>
                     </div><!-- /.box-header -->
@@ -65,8 +65,6 @@
                                                 <td class="mailbox-name">
                                                     <?php echo $item['item_category']; ?>
                                                 </td>
-
-
                                                 <td class="mailbox-name">
                                                     <?php
                                                     if ($item['return_date'] == "0000-00-00") {
@@ -88,22 +86,16 @@
                                                 <td class="mailbox-name"><?php
                                                     if ($item['is_returned'] == 1) {
                                                         ?>
-
-
                                                         <span class="label label-danger item_remove" data-item="<?php echo $item['id'] ?>" data-category="<?php echo $item['item_category'] ?>" data-item_name="<?php echo $item['item_name'] ?>" data-quantity="<?php echo $item['quantity'] ?>" data-toggle="modal" data-target="#confirm-delete"><?php echo $this->lang->line('click_to_return'); ?></span>
 
                                                         <?php
                                                     } else {
                                                         ?>
-
                                                         <span class="label label-success"><?php echo $this->lang->line('returned'); ?></span>
-
                                                         <?php
                                                     }
                                                     ?></td>
-
                                                 <td class="mailbox-date pull-right">
-
                                                     <?php if ($this->rbac->hasPrivilege('issue_item', 'can_delete')) { ?>
                                                         <a  class="btn btn-default btn-xs"  data-toggle="tooltip" title="<?php echo $this->lang->line('delete'); ?>" onclick="delete_recordById('<?php echo base_url(); ?>admin/issueitem/delete/<?php echo $item['id'] ?>', '<?php echo $this->lang->line('delete_message') ?>')">
                                                             <i class="fa fa-trash"></i>
@@ -181,6 +173,7 @@
         var $this = $('.btn-ok');
         $this.button('loading');
         var item_issue_id = $('#item_issue_id').val();
+		
         $.ajax(
                 {
                     url: "<?php echo site_url('admin/issueitem/returnItem') ?>",
@@ -270,25 +263,21 @@
                             <span class="text-danger"><?php echo form_error('Items'); ?></span>
 
                         </div>
-                        <!-- <div class="clearfix"></div> -->
                         <div class="form-group col-md-4 col-sm-4">
                             <label for="exampleInputEmail1"><?php echo $this->lang->line('issue_by'); ?></label><small class="req"> *</small>
                             <input id="issue_by" name="issue_by" placeholder="" type="text" class="form-control"  value="<?php echo $logUser['username']; ?>" />
                             <span class="text-danger"><?php echo form_error('issue_by'); ?></span>
-
                         </div>
                         <div class="form-group col-md-4 col-sm-4">
                             <label for="exampleInputEmail1"><?php echo $this->lang->line('issue_date'); ?></label><small class="req"> *</small>
                             <input id="issue_date" name="issue_date" placeholder="" type="text" class="form-control date"  value="<?php echo set_value('issue_date'); ?>" readonly />
                             <span class="text-danger"><?php echo form_error('issue_date'); ?></span>
                         </div>
-                        <!-- <div class="clearfix"></div> -->
                         <div class="form-group col-md-4 col-sm-4">
                             <label for="exampleInputEmail1"><?php echo $this->lang->line('return_date'); ?></label>
                             <input id="return_date" name="return_date" placeholder="" type="text" class="form-control date"  value="<?php echo set_value('return_date'); ?>" readonly/>
                             <span class="text-danger"><?php echo form_error('return_date'); ?></span>
                         </div>
-
                         <div class="form-group col-md-4 col-sm-4">
                             <label for="exampleInputEmail1"><?php echo $this->lang->line('note'); ?></label>
                             <textarea name="note" class="form-control" id="note"/><?php echo set_value('note'); ?></textarea>
@@ -474,5 +463,10 @@
             }
 
         });
-    }
+    }	
+	
+$(".addissueitem").click(function(){
+	$('#form1').trigger("reset");
+	$('#issue_to').val("");
+});
 </script>

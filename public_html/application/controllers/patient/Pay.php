@@ -15,7 +15,6 @@ class Pay extends Patient_Controller {
         $this->config->load("payroll");
         $this->load->library('Enc_lib');
         $this->load->library('Customlib');
-
         $this->patient_data = $this->session->userdata('patient');
         $this->payment_method = $this->paymentsetting_model->get();
         $this->pay_method = $this->paymentsetting_model->getActiveMethod();
@@ -25,7 +24,6 @@ class Pay extends Patient_Controller {
     }
 
     public function index() {
-
         $this->form_validation->set_error_delimiters('', '');
         $this->form_validation->set_rules(
                 'deposit_amount', $this->lang->line('amount'), array('required',
@@ -34,7 +32,6 @@ class Pay extends Patient_Controller {
         );
 
         $deposit_amount = $this->input->post("deposit_amount");
-
         if ($this->form_validation->run() == false) {
             $msg = array(
                 'deposit_amount' => form_error('deposit_amount'),
@@ -55,68 +52,112 @@ class Pay extends Patient_Controller {
         echo json_encode($array);
     }
 
-    public function billpayment() {
-
+    public function billpayment($type) {
         $data = array();
         if (!empty($this->pay_method)) {
-
             $payment_amount = $this->session->userdata('payment_amount');
             $record_id = $payment_amount['record_id'];
             $deposit_amount = $payment_amount['deposit_amount'];
-
             if ($this->pay_method->payment_type == "payu") {
+              if($type == 'opd'){
+                redirect(base_url("patient/payu/opdpay"));
+              }else{
                 redirect(base_url("patient/payu"));
+              }
             } elseif ($this->pay_method->payment_type == "stripe") {
+              if($type == 'opd'){
+                redirect(base_url("patient/stripe/opdpay"));
+              }else{
                 redirect(base_url("patient/stripe"));
+              }
             } elseif ($this->pay_method->payment_type == "ccavenue") {
+              if($type == 'opd'){
+                redirect(base_url("patient/ccavenue/opdpay"));
+              }else if($type == 'ipd'){
                 redirect(base_url("patient/ccavenue"));
+                 }
             } elseif ($this->pay_method->payment_type == "paypal") {
                 echo "string";
+              if($type == 'opd'){
+                redirect(base_url("patient/paypal/opdpay"));
+              }else if($type == 'ipd'){
                 redirect(base_url("patient/paypal"));
+              }
+            } elseif ($this->pay_method->payment_type == "instamojo") {
+                echo "string";
+                if($type == 'opd'){
+                redirect(base_url("patient/instamojo/opdpay"));
+              }else if($type == 'ipd'){
+                redirect(base_url("patient/instamojo"));
+                 }
+            } elseif ($this->pay_method->payment_type == "paystack") {
+                echo "string";
+                if($type == 'opd'){
+                redirect(base_url("patient/paystack/opdpay"));
+                  }else if($type == 'ipd'){
+                redirect(base_url("patient/paystack"));
+                }
+            }elseif ($this->pay_method->payment_type == "razorpay") {
+                echo "string";
+                if($type == 'opd'){
+                    redirect(base_url("patient/razorpay/opdpay"));
+                }else if($type == 'ipd'){
+                    redirect(base_url("patient/razorpay"));
+                }                
+            }elseif ($this->pay_method->payment_type == "paytm") {
+                echo "string";
+              if($type == 'opd'){
+                    redirect(base_url("patient/paytm/opdpay"));
+                }else if($type == 'ipd'){
+                      redirect(base_url("patient/paytm"));
+
+                }
+                }elseif ($this->pay_method->payment_type == "midtrans") {
+                echo "string";
+                if($type == 'opd'){
+                    redirect(base_url("patient/midtrans/opdpay"));
+                }else if($type == 'ipd'){                    
+                     redirect(base_url("patient/midtrans"));
+                }                
             }
         }
+    }    
+
+    public function calculate() {
+        $amount = 0;
+        $ipd_id = $this->input->post('ipdid');       
+        $patient_data = $this->patient_model->getPaymentDetailpatient($ipd_id);
+        $amount = ($patient_data->amount_due - $patient_data->amount_deposit);       
+        echo json_encode(array('amount' => $amount));
     }
 
-    // public function calculate() {
-    //     $amount = 0;
-    //     $patient_id = $this->input->post('id');
-    //     //$patient_data = $this->patient_model->getPaymentDetail($patient_id);
-    //     $patient_data = $this->patient_model->getPaymentDetail($patient_id);
-    //     $amount = ($patient_data->amount_due - $patient_data->amount_deposit);
-    //     echo json_encode(array('amount' => $amount));
-    // }
-
-     public function calculate() {
+    public function opdcalculate() {
         $amount = 0;
-        $ipd_id = $this->input->post('ipdid');
-        //$patient_data = $this->patient_model->getPaymentDetail($patient_id);
-        $patient_data = $this->patient_model->getPaymentDetailpatient($ipd_id);
+        $opd_id = $this->input->post('opdid');        
+        $patient_data = $this->patient_model->getOpdPaymentDetailpatient($opd_id);
         $amount = ($patient_data->amount_due - $patient_data->amount_deposit);
         echo json_encode(array('amount' => $amount));
     }
 
     public function paymentfailed() {
-
         $data = array();
         $data['title'] = 'Invoice';
-
         $setting_result = $this->setting_model->get();
-
         $data['settinglist'] = $setting_result;
         $this->load->view("layout/patient/header");
-
         $this->load->view('patient/paymentfailed', $data);
-
         $this->load->view("layout/patient/footer");
     }
 
-    public function successinvoice($invoice_id) {
-
+    public function successinvoice($invoice_id,$type='ipd') {
         $data['title'] = 'Invoice';
         $setting_result = $this->setting_model->get();
         $data['settinglist'] = $setting_result;
-        $studentfee = $this->payment_model->paymentByID($invoice_id);
-
+        if($type == 'opd'){
+			$studentfee = $this->payment_model->opdpaymentByID($invoice_id); 
+        }else{
+			$studentfee = $this->payment_model->paymentByID($invoice_id);
+        }       
         $record = $studentfee->paid_amount;
         $data['studentfee'] = $studentfee;
         $data['studentfee_detail'] = $record;
@@ -124,7 +165,5 @@ class Pay extends Patient_Controller {
         $this->load->view('patient/invoice', $data);
         $this->load->view('layout/patient/footer', $data);
     }
-
 }
-
 ?>

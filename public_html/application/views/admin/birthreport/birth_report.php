@@ -87,10 +87,9 @@ $genderList = $this->customlib->getGender();
                         </table>
                     </div>
                 </div>                                                    
-            </div>                                                                                                                                          
+            </div>                                                                                                      
         </div>  
     </section>
-
 </div>
 <div class="modal fade" id="callModal" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog modal-lg" role="document">
@@ -104,7 +103,6 @@ $genderList = $this->customlib->getGender();
                     <div class="col-lg-12 col-md-12 col-sm-12 paddlr">
                         <form  id="formcall" method="post" accept-charset="utf-8">
                             <div class="box-body">
-
                                 <div class="col-sm-3">                     
                                     <div class="form-group">
                                         <label for="exampleInputEmail1"><?php echo $this->lang->line('vehicle_model'); ?></label><small class="req"> *</small>
@@ -118,7 +116,6 @@ $genderList = $this->customlib->getGender();
                                         <span class="text-danger"><?php echo form_error('vehicle_no'); ?></span>
                                     </div>
                                 </div>
-
                                 <div class="col-sm-3">
                                     <div class="form-group">
                                         <label for="exampleInputEmail1"><?php echo $this->lang->line('driver_name'); ?></label>
@@ -179,7 +176,6 @@ $genderList = $this->customlib->getGender();
                     <div class="col-lg-12 col-md-12 col-sm-12 paddlr">
                         <form  id="formedit" method="post" accept-charset="utf-8">
                             <div class="box-body">
-
                                 <div class="col-sm-3">                     
                                     <div class="form-group">
                                         <label for="exampleInputEmail1"><?php echo $this->lang->line('vehicle_no'); ?></label><small class="req"> *</small>
@@ -190,11 +186,9 @@ $genderList = $this->customlib->getGender();
                                                 <option value="<?php echo $vehicle["id"] ?>"><?php echo $vehicle["vehicle_model"] . " - " . $vehicle["vehicle_no"] ?></option>
                                             <?php } ?>
                                         </select>
-
                                         <span class="text-danger"><?php echo form_error('vehicle_model'); ?></span>
                                     </div>
                                 </div>
-
                                 <div class="col-sm-3">
                                     <div class="form-group">
                                         <label for="exampleInputEmail1"><?php echo $this->lang->line('driver_name'); ?></label>
@@ -269,13 +263,9 @@ $genderList = $this->customlib->getGender();
 <script type="text/javascript">
     $(function () {
         $('#easySelectable').easySelectable();
-//stopPropagation();
     })
 </script>
 <script type="text/javascript">
-            /*
-             Author: mee4dy@gmail.com
-             */
                     (function ($) {
                         //selectable html elements
                         $.fn.easySelectable = function (options) {
@@ -373,7 +363,7 @@ $genderList = $this->customlib->getGender();
                             $("#formcallbtn").button('reset');
                         },
                         error: function () {
-                            //  alert("Fail")
+                            
                         }
                     });
                 }));
@@ -452,25 +442,17 @@ $genderList = $this->customlib->getGender();
                             $("#formeditbtn").button('reset');
                         },
                         error: function () {
-                            //  alert("Fail")
+							
                         }
                     });
                 }));
-            });
-
-            // $(document).ready(function (e) {
-            //     var date_format = '<?php echo $result = strtr($this->customlib->getSchoolDateFormat(), ['d' => 'DD', 'm' => 'MM', 'Y' => 'YYYY',]) ?>';
-            //     $('#report_dayssport_date,#report_date').datetimepicker();
-            // });
+            });            
 
             function holdModal(modalId) {
-
                 $('#' + modalId).modal({
                     backdrop: 'static',
                     keyboard: false,
                     show: true
                 });
-            }
-            // action="<?php //echo site_url('admin/vehicle/edit/' . $id)     ?>"
+            }            
 </script>
-

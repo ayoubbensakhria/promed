@@ -1,8 +1,6 @@
 <div class="content-wrapper" style="min-height: 348px;">  
-
     <section class="content">
         <div class="row">
-
             <div class="col-md-12">
                 <!-- general form elements -->
                 <div class="box box-primary">
@@ -11,7 +9,7 @@
                         <div class="box-tools pull-right">
                             <div class="box-tools pull-right">
                                 <?php if ($this->rbac->hasPrivilege('postal_dispatch', 'can_add')) { ?>
-                                    <a data-toggle="modal" data-target="#myModal" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> <?php echo $this->lang->line('add'); ?> <?php echo $this->lang->line('dispatch'); ?> </a> 
+                                    <a data-toggle="modal" data-target="#myModal" class="btn btn-primary btn-sm adddispatch"><i class="fa fa-plus"></i> <?php echo $this->lang->line('add'); ?> <?php echo $this->lang->line('dispatch'); ?> </a> 
                                 <?php } ?>
                             </div>
                         </div><!-- /.box-tools -->
@@ -38,7 +36,6 @@
                                         foreach ($DispatchList as $key => $value) {
                                             ?>
                                             <tr>
-
                                                 <td class="mailbox-name"><?php echo $value->to_title; ?></td>
                                                 <td class="mailbox-name"><?php echo $value->reference_no; ?></td>
                                                 <td class="mailbox-name"> <?php echo $value->from_title; ?></td>
@@ -124,8 +121,6 @@
                                     <span class="text-danger"><?php echo form_error('ref_no'); ?></span>
                                 </div>
                             </div>
-
-
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="pwd"><?php echo $this->lang->line('address'); ?></label>
@@ -139,8 +134,6 @@
                                     <textarea class="form-control" id="description" name="note" name="note" rows="3"><?php echo set_value('note'); ?></textarea>
                                 </div>
                             </div>
-
-
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="pwd"><?php echo $this->lang->line('from_title'); ?></label> 
@@ -155,12 +148,6 @@
                                     <span class="text-danger"><?php echo form_error('date'); ?></span>
                                 </div>
                             </div>
-
-
-
-
-
-
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="exampleInputFile"><?php echo $this->lang->line('attach_document'); ?></label>
@@ -168,7 +155,6 @@
                                     </div>
                                     <span class="text-danger"><?php echo form_error('file'); ?></span></div>
                             </div>
-
                         </div><!-- /.box-body -->
                     </div>
                 </div><!--./modal-body-->
@@ -176,18 +162,13 @@
                     <button type="submit" data-loading-text="<?php echo $this->lang->line('processing') ?>" id="formaddbtn" class="btn btn-info pull-right"><?php echo $this->lang->line('save'); ?></button>
                 </div>
             </form>
-
-
-
         </div>
-
     </div>
 </div>
 <!-- /.content-wrapper -->
 
 <div id="editmyModal" class="modal fade" role="dialog">
     <div class="modal-dialog">
-
         <!-- Modal content-->
         <div class="modal-content">
             <div class="modal-header modal-media-header">
@@ -197,27 +178,22 @@
             <div class="modal-body pt0 pb0">
                 <form id="editformadd"    method="post" accept-charset="utf-8" enctype="multipart/form-data" >
                     <div class="box-body">
-
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="pwd"><?php echo $this->lang->line('to_title'); ?></label>   <small class="req"> *</small> 
                                     <input type="text" id="efrom_title" class="form-control" value="<?php echo set_value('from_title'); ?>" name="to_title">
                                     <input type="hidden" name="id" id="id">
-
                                     <span class="text-danger"><?php echo form_error('from_title'); ?></span>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="exampleInputEmail1"><?php echo $this->lang->line('reference_no'); ?></label>
-
                                     <input type="text" id="ref_no" class="form-control" value="<?php echo set_value('ref_no'); ?>" name="ref_no">
                                     <span class="text-danger"><?php echo form_error('ref_no'); ?></span>
                                 </div>
                             </div>
-
-
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="pwd"><?php echo $this->lang->line('address'); ?></label>
@@ -231,8 +207,6 @@
                                     <textarea class="form-control" id="enote"  name="note" rows="3"><?php echo set_value('note'); ?></textarea>
                                 </div>
                             </div>
-
-
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="pwd"><?php echo $this->lang->line('from_title'); ?></label> 
@@ -247,12 +221,6 @@
                                     <span class="text-danger"><?php echo form_error('date'); ?></span>
                                 </div>
                             </div>
-
-
-
-
-
-
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="exampleInputFile"><?php echo $this->lang->line('attach_document'); ?></label>
@@ -260,19 +228,14 @@
                                     </div>
                                     <span class="text-danger"><?php echo form_error('file'); ?></span></div>
                             </div>
-
                         </div><!-- /.box-body -->
                     </div>
-
                     <div class="box-footer">
                         <button type="submit" id="editformaddbtn" data-loading-text="<?php echo $this->lang->line('processing') ?>" class="btn btn-info pull-right"><?php echo $this->lang->line('save'); ?></button>
                     </div>
                 </form>
-
-
             </div>
         </div>
-
     </div>
 </div>
 <script type="text/javascript">
@@ -411,4 +374,9 @@
 
         }));
     });
+	
+$(".adddispatch").click(function(){	
+	$('#formadd').trigger("reset");
+	$(".dropify-clear").trigger("click");
+});
 </script>

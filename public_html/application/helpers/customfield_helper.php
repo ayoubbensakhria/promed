@@ -353,7 +353,7 @@ if (!function_exists('display_custom_fields')) {
 
     function get_custom_table_values($table_id, $belongs_to) {
         $CI = &get_instance();
-        $sql = 'SELECT custom_field_values.*,custom_fields.name, custom_fields.id as cid,custom_fields.type,custom_fields.belong_to  FROM `custom_field_values` RIGHT JOIN custom_fields on custom_fields.id=custom_field_values.custom_field_id  and belong_table_id=' . $CI->db->escape($table_id) . ' WHERE custom_fields.belong_to=' . $CI->db->escape($belongs_to) . ' ORDER by custom_fields.id asc';
+        $sql = 'SELECT custom_field_values.*,custom_fields.name,custom_fields.visible_on_table, custom_fields.id as cid,custom_fields.type,custom_fields.belong_to  FROM `custom_field_values` RIGHT JOIN custom_fields on custom_fields.id=custom_field_values.custom_field_id  and belong_table_id=' . $CI->db->escape($table_id) . ' WHERE custom_fields.belong_to=' . $CI->db->escape($belongs_to) . ' ORDER by custom_fields.id asc';
 
         $query = $CI->db->query($sql);
         return $query->result();

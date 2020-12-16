@@ -75,6 +75,7 @@
                                             <?php
                                         }
                                         ?>
+										<span class="text-danger"><?php echo form_error('visible[]'); ?></span>
                                     </div>
                                 </div>
                             </div>                         

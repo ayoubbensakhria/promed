@@ -2,6 +2,9 @@
 
 class Bloodissue_model extends CI_Model {
 
+ var $column_order = array('blood_issue.bill_no','blood_issue.date_of_issue','patients.patient_name','blood_donor.blood_group','patients.gender','blood_donor.donor_name','blood_issue.bag_no','blood_issue.amount'); //set column field database for datatable orderable
+    var $column_search = array('blood_issue.bill_no','blood_issue.date_of_issue','patients.patient_name','blood_donor.blood_group','patients.gender','blood_donor.donor_name','blood_issue.bag_no','blood_issue.amount');
+
     public function add($bloodissue) {
         $this->db->insert('blood_issue', $bloodissue);
         return $this->db->insert_id();
@@ -16,14 +19,62 @@ class Bloodissue_model extends CI_Model {
         return $query->result_array();
     }
 
+     public function search_datatable() {
+
+           $this->db->select('blood_issue.*,patients.patient_name,patients.gender,blood_donor.donor_name,blood_donor.blood_group');
+        $this->db->join('patients', 'patients.id = blood_issue.recieve_to');
+        $this->db->join('blood_donor', 'blood_issue.donor_name = blood_donor.id');
+         if(!isset($_POST['order'])){
+         $this->db->order_by('blood_issue.id', 'desc');
+         }
+        if(!empty($_POST['search']['value']) ) {   // if there is a search parameter
+            $counter=true;
+            $this->db->group_start();  
+         foreach ($this->column_search as $colomn_key => $colomn_value) {
+         if($counter){
+              $this->db->like($colomn_value, $_POST['search']['value']);      
+              $counter=false;
+         }
+              $this->db->or_like($colomn_value, $_POST['search']['value']);
+        }
+        $this->db->group_end();           
+        }
+        $this->db->limit($_POST['length'],$_POST['start']);
+        if(isset($_POST['order'])){
+         $this->db->order_by($this->column_order[$_POST['order'][0]['column']],$_POST['order'][0]['dir']);
+        }
+        $query = $this->db->get('blood_issue');
+        return $query->result();
+        }
+
+      public function search_datatable_count() {        
+         $this->db->select('blood_issue.*,patients.patient_name,patients.gender,blood_donor.donor_name,blood_donor.blood_group');
+        $this->db->join('patients', 'patients.id = blood_issue.recieve_to');
+        $this->db->join('blood_donor', 'blood_issue.donor_name = blood_donor.id');
+        $this->db->order_by('blood_issue.id', 'desc');
+        if(!empty($_POST['search']['value']) ) {   // if there is a search parameter
+            $counter=true;
+            $this->db->group_start();  
+         foreach ($this->column_search as $colomn_key => $colomn_value) {
+         if($counter){
+              $this->db->like($colomn_value, $_POST['search']['value']);      
+              $counter=false;
+         }
+              $this->db->or_like($colomn_value, $_POST['search']['value']);
+        }
+        $this->db->group_end();           
+        }
+        $query = $this->db->from('blood_issue');
+        $total_result= $query->count_all_results();
+        return $total_result;
+    }
+
     public function getDetails($id) {
         $this->db->select('blood_issue.*,patients.patient_name,patients.gender,blood_donor.donor_name as donor,blood_donor.blood_group');
         $this->db->join('patients', 'patients.id = blood_issue.recieve_to');
         $this->db->join('blood_donor', 'blood_issue.donor_name = blood_donor.id');
         $this->db->where('patients.is_active', 'yes');
-
         $this->db->where('blood_issue.id', $id);
-
         $query = $this->db->get('blood_issue');
         return $query->row_array();
     }
@@ -34,8 +85,6 @@ class Bloodissue_model extends CI_Model {
         $this->db->join('staff', 'staff.id = blood_issue.generated_by');
         $this->db->join('patients', 'patients.id = blood_issue.recieve_to');
         $this->db->join('blood_donor', 'blood_donor.id = blood_issue.donor_name');
-
-
         $query = $this->db->get('blood_issue');
         return $query->row_array();
     }

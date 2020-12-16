@@ -4,7 +4,7 @@
     <!-- Main content -->
     <section class="content">
         <div class="row">
-            <?php if ($this->rbac->hasPrivilege('item', 'can_add')) { ?> 
+            <?php if ($this->rbac->hasPrivilege('item','can_view')) { ?> 
 
                 <div class="col-md-12">
                     <!-- general form elements -->
@@ -12,8 +12,9 @@
                         <div class="box-header ptbnull">
                             <h3 class="box-title titlefix"> <?php echo $this->lang->line('item_list'); ?></h3>
                             <div class="box-tools pull-right">
-                                <a href="<?php //echo site_url('admin/issueitem/create')     ?>" data-toggle="modal" data-target="#myModal" class="btn btn-primary btn-sm" ><i class="fa fa-plus"></i> <?php echo $this->lang->line('add_item'); ?></a>
-
+                                <?php if ($this->rbac->hasPrivilege('item','can_add')) { ?> 
+                                <a href="" data-toggle="modal" data-target="#myModal" class="btn btn-primary btn-sm additem" ><i class="fa fa-plus"></i> <?php echo $this->lang->line('add_item'); ?></a>
+                                <?php } ?>
 
                             </div><!-- /.box-tools -->
                         </div><!-- /.box-header -->
@@ -411,5 +412,8 @@
 
     });
 
+$(".additem").click(function(){
+	$('#form1').trigger("reset");
+});
 </script>
 

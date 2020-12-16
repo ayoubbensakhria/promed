@@ -17,7 +17,6 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
             <!-- left column -->
             <div class="col-md-12">
                 <div class="">
-
                     <table width="100%" class="printablea4">
                         <tr>
                             <td align="text-left"><h5><?php echo $this->lang->line('bill') . " #"; ?><?php echo $result["bill_no"] ?></h5>
@@ -44,32 +43,25 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                     <hr style="height: 1px; clear: both;margin-bottom: 10px; margin-top: 10px">
                     <table class="printablea4" id="testreport" width="100%">
                         <tr>
-
                             <th><?php echo $this->lang->line('amount'); ?></th>
-
                         </tr>
                         <?php
                         $j = 0;
                         foreach ($detail as $bill) {
                             ?>
                             <tr>
-
                                 <td><?php echo $bill["amount"]; ?></td>
                             </tr>
                             <?php
                             $j++;
                         }
                         ?>
-
                     </table> 
                     <hr style="height: 1px; clear: both;margin-bottom: 10px; margin-top: 10px">
-
                     <table class="printablea4" width="100%">
                         <?php if (!empty($result["total"])) { ?>
                             <tr>
-
                                 <th width="20%"><?php echo $this->lang->line('total') . " (" . $currency_symbol . ")"; ?></th>
-
                                 <td align="left" width="80%"><?php echo $result["total"]; ?></td>
                             </tr>
                         <?php } ?>
@@ -77,22 +69,16 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                             <tr>
                                 <th><?php
                                     echo $this->lang->line('discount') . " (" . $currency_symbol . ")";
-                                    ;
                                     ?></th>
-
                                 <td align="left"><?php echo $result["discount"]; ?></td>
-
                             </tr>
                         <?php } ?>
                         <?php if (!empty($result["tax"])) { ?>
                             <tr>
                                 <th><?php
-                                    echo $this->lang->line('tax') . " (" . $currency_symbol . ")";
-                                    ;
+                                    echo $this->lang->line('tax') . " (" . $currency_symbol . ")";                             
                                     ?></th>
-
                                 <td align="left"><?php echo $result["tax"]; ?></td>
-
                             </tr>
                         <?php } ?>
                         <?php
@@ -104,9 +90,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                         echo $this->lang->line('net_amount') . " (" . $currency_symbol . ")";
                                         ;
                                         ?></th>
-
                                     <td align="left"><?php echo $result["net_amount"]; ?></td>
-
                                 </tr>
                                 <?php
                             }
@@ -114,15 +98,12 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                         ?>
                         <?php if (!empty($result["note"])) { ?>
                             <tr>
-
                                 <th><?php echo $this->lang->line('note'); ?></th>
-
                                 <td align="left"><?php echo $result["note"]; ?></td>
                             </tr>
                         <?php } ?>
                     </table>
-                    <hr style="height: 1px; clear: both;margin-bottom: 10px; margin-top: 10px">    
-
+                    <hr style="height: 1px; clear: both;margin-bottom: 10px; margin-top: 10px">
                 </div>
             </div>
             <!--/.col (left) -->
@@ -144,15 +125,14 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
             });
         }
     }
+	
     function printData(id) {
-
         var base_url = '<?php echo base_url() ?>';
         $.ajax({
             url: base_url + 'admin/vehicle/getBillDetails/' + id,
             type: 'POST',
             data: {id: id, print: 'yes'},
             success: function (result) {
-                // $("#testdata").html(result);
                 popup(result);
             }
         });

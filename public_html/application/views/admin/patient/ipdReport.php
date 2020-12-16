@@ -1,78 +1,7 @@
 <?php
 $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
 ?>
-<style type="text/css">
-    /*REQUIRED*/
-    .carousel-row {
-        margin-bottom: 10px;
-    }
-    .slide-row {
-        padding: 0;
-        background-color: #ffffff;
-        min-height: 150px;
-        border: 1px solid #e7e7e7;
-        overflow: hidden;
-        height: auto;
-        position: relative;
-    }
-    .slide-carousel {
-        width: 20%;
-        float: left;
-        display: inline-block;
-    }
-    .slide-carousel .carousel-indicators {
-        margin-bottom: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, .5);
-    }
-    .slide-carousel .carousel-indicators li {
-        border-radius: 0;
-        width: 20px;
-        height: 6px;
-    }
-    .slide-carousel .carousel-indicators .active {
-        margin: 1px;
-    }
-    .slide-content {
-        position: absolute;
-        top: 0;
-        left: 20%;
-        display: block;
-        float: left;
-        width: 80%;
-        max-height: 76%;
-        padding: 1.5% 2% 2% 2%;
-        overflow-y: auto;
-    }
-    .slide-content h4 {
-        margin-bottom: 3px;
-        margin-top: 0;
-    }
-    .slide-footer {
-        position: absolute;
-        bottom: 0;
-        left: 20%;
-        width: 78%;
-        height: 20%;
-        margin: 1%;
-    }
-    /* Scrollbars */
-    .slide-content::-webkit-scrollbar {
-        width: 5px;
-    }
-    .slide-content::-webkit-scrollbar-thumb:vertical {
-        margin: 5px;
-        background-color: #999;
-        -webkit-border-radius: 5px;
-    }
-    .slide-content::-webkit-scrollbar-button:start:decrement,
-    .slide-content::-webkit-scrollbar-button:end:increment {
-        height: 5px;
-        display: block;
-    }
-</style>
-
-<div class="content-wrapper" style="min-height: 946px;">
+<div class="content-wrapper">
     <!-- Main content -->
     <section class="content">
         <div class="row">
@@ -81,13 +10,10 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                     <div class="box-header with-border">
                         <h3 class="box-title"><?php echo $this->lang->line('ipd') . " " . $this->lang->line('report'); ?></h3>
                     </div>
-
                     <form role="form" action="<?php echo site_url('admin/patient/ipdreport') ?>" method="post" class="">
                         <div class="box-body row">
-
                             <?php echo $this->customlib->getCSRF(); ?>
-
-                            <div class="col-sm-6 col-md-3" >
+                            <div class="col-sm-6 col-md-3">
                                 <div class="form-group">
                                     <label><?php echo $this->lang->line('search') . " " . $this->lang->line('type'); ?></label>
                                     <select class="form-control" name="search_type" onchange="showdate(this.value)">
@@ -99,12 +25,12 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                                 echo "selected";
                                             }
                                             ?>><?php echo $search ?></option>
-<?php } ?>
+                                        <?php } ?>
                                     </select>
                                     <span class="text-danger"><?php echo form_error('search_type'); ?></span>
                                 </div>
                             </div>
-                            <div class="col-sm-6 col-md-3"  >
+                            <div class="col-sm-6 col-md-3" >
                                 <div class="form-group">
                                     <label><?php echo $this->lang->line('doctor'); ?></label>
                                     <select class="form-control select2" <?php
@@ -125,7 +51,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                     <span class="text-danger"><?php echo form_error('doctor'); ?></span>
                                 </div>
                             </div>
-                             <div class="col-sm-6 col-md-3"  >
+                             <div class="col-sm-6 col-md-3">
                                 <div class="form-group">
                                     <label><?php echo $this->lang->line('patient')." ".$this->lang->line('status'); ?></label>
                                     <select class="form-control "  name="patient_status" style="width: 100%">
@@ -145,8 +71,26 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                     <span class="text-danger"><?php echo form_error('patient_status'); ?></span>
                                 </div>
                             </div>
+                        <!--div class="col-sm-6 col-md-3">
+                            <div class="row"> 
+                                <div class="col-sm-6 col-md-6" id="fromdate" style="display: none">
+                                    <div class="form-group">
+                                        <label><?php echo $this->lang->line('date_from'); ?></label><small class="req"> *</small>
+                                        <input id="date_from" name="date_from" placeholder="" type="text" class="form-control date" value="<?php echo set_value('date_from', date($this->customlib->getSchoolDateFormat())); ?>"  />
+                                        <span class="text-danger"><?php echo form_error('date_from'); ?></span>
+                                    </div>
+                                </div> 
+                                <div class="col-sm-6 col-md-6" id="todate" style="display: none">
+                                    <div class="form-group">
+                                        <label><?php echo $this->lang->line('date_to'); ?></label><small class="req"> *</small>
+                                        <input id="date_to" name="date_to" placeholder="" type="text" class="form-control date" value="<?php echo set_value('date_to', date($this->customlib->getSchoolDateFormat())); ?>"  />
+                                        <span class="text-danger"><?php echo form_error('date_to'); ?></span>
+                                    </div>
+                                </div> 
+                            </div>    
+                        </div-->
 
-                            <div class="col-sm-6 col-md-3" id="fromdate" style="display: none">
+                             <div class="col-sm-6 col-md-3" id="fromdate" style="display: none">
                                 <div class="form-group">
                                     <label><?php echo $this->lang->line('date_from'); ?></label><small class="req"> *</small>
                                     <input id="date_from" name="date_from" placeholder="" type="text" class="form-control date" value="<?php echo set_value('date_from', date($this->customlib->getSchoolDateFormat())); ?>"  />
@@ -160,7 +104,6 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                     <span class="text-danger"><?php echo form_error('date_to'); ?></span>
                                 </div>
                             </div> 
-                        
                          
 
                             <div class="form-group">
@@ -179,6 +122,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                 <thead>
                                     <tr>
                                         <th><?php echo $this->lang->line('date'); ?></th>
+                                        <th><?php echo $this->lang->line('discharged')." ".$this->lang->line('date'); ?></th>
                                         <th><?php echo $this->lang->line('ipd') . " " . $this->lang->line('no'); ?></th>
                                         <th><?php echo $this->lang->line('patient') . " " . $this->lang->line('id'); ?></th>
                                         <th><?php echo $this->lang->line('patient') . " " . $this->lang->line('name'); ?></th>
@@ -191,7 +135,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                         <th><?php echo $this->lang->line('refference'); ?></th>
                                         <th><?php echo $this->lang->line('consultant') . " " . $this->lang->line('doctor'); ?></th>
                                         <th><?php echo $this->lang->line('patient')." ".$this->lang->line('status') ?></th>
-                                        <th><?php echo $this->lang->line('charges') ?></th>
+                                        <th><?php echo $this->lang->line('charges')." (".$currency_symbol.")" ?></th>
                                         <th><?php echo $this->lang->line('payment') . " " . $this->lang->line('mode'); ?></th>
                                         <th class="text-right"><?php echo $this->lang->line('amount') . '(' . $currency_symbol . ')'; ?></th>
                                     </tr>
@@ -216,11 +160,13 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                             ?>
                                             <tr>
                                                 <td><?php echo date($this->customlib->getSchoolDateFormat(), strtotime($report['date'])) ?></td>
+                                                <?php if ($report['ipd_discharge'] == 'yes') { ?>
+                                                <td><?php echo date($this->customlib->getSchoolDateFormat(), strtotime($report['discharged_date'])) ?></td>
+                                                <?php }else{ ?><td></td><?php } ?>
                                                 <td><?php echo $report['ipd_no']; ?></td>
-
                                                 <td><?php echo $report['patient_unique_id']; ?></td>
                                                 <td>
-                                                    <a href="<?php echo base_url(); ?>admin/patient/ipdprofile/<?php echo $report['pid']; ?>"><?php echo $report['patient_name'] ?>
+                                                    <a href="<?php echo base_url(); ?>admin/patient/ipdprofile/<?php echo $report['pid']; ?>/<?php echo $report['id']; ?>"><?php echo $report['patient_name'] ?>
                                                     </a>
                                                 </td> 
                                                  <!-- <td><?php echo $report['patient_name']; ?></td> -->
@@ -233,7 +179,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                                 <td><?php echo $report['casualty']; ?></td>
                                                 <td><?php echo $report['refference']; ?></td>
                                                 <td><?php echo $report['name'] . " " . $report['surname']; ?></td>
-                                                 <td><?php echo $pstatus; ?></td>
+                                                <td><?php echo $pstatus; ?></td>
                                                 <td><?php echo $report['charges']; ?></td>
                                                 <td><?php echo $report['payment_mode']; ?></td>
                                                 <td class="text-right"><?php echo $payment; ?></td>
@@ -244,7 +190,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
     ?>
                                     </tbody>
                                     <tr class="box box-solid total-bg">
-                                        <td class="text-right" colspan='16'><?php echo $this->lang->line('total') . " :" . $currency_symbol . $total; ?>
+                                        <td class="text-right" colspan='17'><?php echo $this->lang->line('total') . " :" . $currency_symbol . $total; ?>
                                         </td>
                                     </tr> 
 <?php } ?>

@@ -5,7 +5,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#424242" />
-        <title>Smart Hospital : Hospital Management System</title>
+        <title>Promed DELUXE : Hospital Management System</title>
         <!--favican-->
         <link href="<?php echo base_url(); ?>backend/images/s-favican.png" rel="shortcut icon" type="image/x-icon">
         <!-- CSS -->
@@ -116,11 +116,7 @@
         <!-- Javascript -->
         <script src="<?php echo base_url(); ?>backend/usertemplate/assets/js/jquery-1.11.1.min.js"></script>
         <script src="<?php echo base_url(); ?>backend/usertemplate/assets/bootstrap/js/bootstrap.min.js"></script>
-        <script src="<?php echo base_url(); ?>backend/usertemplate/assets/js/jquery.backstretch.min.js"></script>
-        <!-- <script src="<?php echo base_url(); ?>backend/usertemplate/assets/js/scripts.js"></script> -->
-        <!--[if lt IE 10]>
-            <script src="<?php echo base_url(); ?>backend/usertemplate/assets/js/placeholder.js"></script>
-        <![endif]-->
+        <script src="<?php echo base_url(); ?>backend/usertemplate/assets/js/jquery.backstretch.min.js"></script>        
     </body>
 </html>
 <script type="text/javascript">

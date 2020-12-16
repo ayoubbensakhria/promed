@@ -24,13 +24,13 @@ class Payment_model extends CI_Model {
         return $query->result_array();
     }
 
-    public function opdPaymentDetails($id, $visitid) {
+    public function opdpaymentDetails($id, $ipdid='') {
         $query = $this->db->select('opd_payment.*,patients.id as pid,patients.note as pnote')
-                ->join("patients", "patients.id = opd_payment.patient_id")->where("opd_payment.patient_id", $id)->where("opd_payment.opd_id", $visitid)
+                ->join("patients", "patients.id = opd_payment.patient_id")->where("opd_payment.patient_id", $id)->where("opd_payment.opd_id", $ipdid)
                 ->get("opd_payment");
         return $query->result_array();
     }
-
+   
     public function opdPaymentDetailspat($id) {
         $query = $this->db->select('opd_payment.*,patients.id as pid,patients.note as pnote')
                 ->join("patients", "patients.id = opd_payment.patient_id")->where("opd_payment.patient_id", $id)
@@ -45,11 +45,18 @@ class Payment_model extends CI_Model {
         return $query->row();
     }
 
+    public function opdpaymentByID($id) {
+        $query = $this->db->select('opd_payment.*,patients.id as pid,patients.note as pnote')
+                ->join("patients", "patients.id = opd_payment.patient_id")->where("opd_payment.id", $id)
+                ->get("opd_payment");
+        return $query->row();
+    }
+
     public function getBalanceTotal($id, $ipdid='') {
         $query = $this->db->select("IFNULL(sum(balance_amount),'0') as balance_amount")->where("payment.patient_id", $id)->where("payment.ipd_id", $ipdid)->get("payment");
         return $query->row_array();
     }
-
+	
     public function getOPDBalanceTotal($id) {
         $query = $this->db->select("IFNULL(sum(balance_amount),'0') as balance_amount")->where("opd_payment.patient_id", $id)->get("opd_payment");
         return $query->row_array();
@@ -62,6 +69,11 @@ class Payment_model extends CI_Model {
 
     public function getOPDPaidTotal($id, $visitid) {
         $query = $this->db->select("IFNULL(sum(paid_amount), '0') as paid_amount")->where("opd_payment.patient_id", $id)->where("opd_payment.opd_id", $visitid)->get("opd_payment");
+        return $query->row_array();
+    }
+
+    public function getOPDbillpaid($id, $visitid) {
+        $query = $this->db->select("IFNULL(sum(net_amount), '0') as billpaid_amount")->where("opd_billing.patient_id", $id)->where("opd_billing.opd_id", $visitid)->get("opd_billing");
         return $query->row_array();
     }
 
@@ -95,7 +107,6 @@ class Payment_model extends CI_Model {
 
     public function valid_amount($amount) {
         if ($amount <= 0) {
-
             $this->form_validation->set_message('check_exists', 'The payment amount must be greater than 0');
             return FALSE;
         } else {
@@ -104,7 +115,18 @@ class Payment_model extends CI_Model {
     }
 
     public function addOPDPayment($data) {
-        $this->db->insert("opd_payment", $data);
+
+        if(isset($data["id"])){
+
+        $this->db->where("id",$data["id"])->update("opd_payment", $data);
+            
+        }else{
+            $this->db->insert("opd_payment", $data);
+         $insert_id = $this->db->insert_id();
+        return $insert_id;
+            
+        }
+        
     }
 
 }

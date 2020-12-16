@@ -1,6 +1,6 @@
 <footer class="main-footer">
     &copy;  <?php echo date('Y'); ?> 
-    <?php echo $this->customlib->getAppName(); ?> <?php echo $this->customlib->getAppVersion(); ?>
+    <?php echo $this->customlib->getAppName(); ?>
 </footer>
 <div class="control-sidebar-bg"></div>
 </div>
@@ -218,3 +218,36 @@ if ($this->session->flashdata('success_msg')) {
 
 
 </script>
+
+<?php
+if (isset($ipdnpres_data) && (!empty($ipdnpres_data))) {
+    if (isset($ipdnpres_data['ipdnpres_data']['patient_id'])) {
+        ?>
+        <script type="text/javascript">
+            var datetime_format = '<?php echo $result = strtr($this->customlib->getSchoolDateFormat(true, true), ['d' => 'dd', 'm' => 'MM', 'Y' => 'yyyy', 'H' => 'hh', 'i' => 'mm',]) ?>';
+
+            var ipdnpres_data = '<?php echo json_encode($ipdnpres_data['ipdnpres_data']) ?>';
+            var data = JSON.parse(ipdnpres_data);
+            var patientid = data.patient_id;
+            var ipdid = data.id;
+            var presid = data.presid
+            
+            view_prescription(presid, ipdid, 'yes');
+           // console.log(ipdid);
+        </script>
+    <?php } else {
+        ?> 
+        <script type="text/javascript">
+            var datetime_format = '<?php echo $result = strtr($this->customlib->getSchoolDateFormat(true, true), ['d' => 'dd', 'm' => 'MM', 'Y' => 'yyyy', 'H' => 'hh', 'i' => 'mm',]) ?>';
+
+            var ipdnpres_data = '<?php echo json_encode($ipdnpres_data['ipdnpres_data']) ?>';
+            var data = JSON.parse(ipdnpres_data);
+            var patientid = data.patient_id;
+            var ipdid = data.id;
+            var presid = data.presid
+            view_prescription(presid, ipdid, 'yes')
+        </script>
+    <?php }
+}
+?>
+

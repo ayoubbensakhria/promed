@@ -1,77 +1,7 @@
 <?php
 $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
 ?>
-<style type="text/css">
-    /*REQUIRED*/
-    .carousel-row {
-        margin-bottom: 10px;
-    }
-    .slide-row {
-        padding: 0;
-        background-color: #ffffff;
-        min-height: 150px;
-        border: 1px solid #e7e7e7;
-        overflow: hidden;
-        height: auto;
-        position: relative;
-    }
-    .slide-carousel {
-        width: 20%;
-        float: left;
-        display: inline-block;
-    }
-    .slide-carousel .carousel-indicators {
-        margin-bottom: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, .5);
-    }
-    .slide-carousel .carousel-indicators li {
-        border-radius: 0;
-        width: 20px;
-        height: 6px;
-    }
-    .slide-carousel .carousel-indicators .active {
-        margin: 1px;
-    }
-    .slide-content {
-        position: absolute;
-        top: 0;
-        left: 20%;
-        display: block;
-        float: left;
-        width: 80%;
-        max-height: 76%;
-        padding: 1.5% 2% 2% 2%;
-        overflow-y: auto;
-    }
-    .slide-content h4 {
-        margin-bottom: 3px;
-        margin-top: 0;
-    }
-    .slide-footer {
-        position: absolute;
-        bottom: 0;
-        left: 20%;
-        width: 78%;
-        height: 20%;
-        margin: 1%;
-    }
-    /* Scrollbars */
-    .slide-content::-webkit-scrollbar {
-        width: 5px;
-    }
-    .slide-content::-webkit-scrollbar-thumb:vertical {
-        margin: 5px;
-        background-color: #999;
-        -webkit-border-radius: 5px;
-    }
-    .slide-content::-webkit-scrollbar-button:start:decrement,
-    .slide-content::-webkit-scrollbar-button:end:increment {
-        height: 5px;
-        display: block;
-    }
-</style>
-<div class="content-wrapper" style="min-height: 946px;">
+<div class="content-wrapper">
     <!-- Main content -->
     <section class="content">
         <div class="row">
@@ -80,12 +10,9 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                     <div class="box-header with-border">
                         <h3 class="box-title"><?php echo $this->lang->line('appointment') . " " . $this->lang->line('report'); ?></h3>
                     </div>
-
                     <form role="form" action="<?php echo site_url('admin/appointment/appointmentreport') ?>" method="post" class="">
                         <div class="box-body row">
-
                             <?php echo $this->customlib->getCSRF(); ?>
-
                             <div class="col-sm-6 col-md-3" >
                                 <div class="form-group">
                                     <label><?php echo $this->lang->line('search') . " " . $this->lang->line('type'); ?></label>
@@ -103,10 +30,9 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                     <span class="text-danger"><?php echo form_error('search_type'); ?></span>
                                 </div>
                             </div>
-                            <div class="col-sm-6 col-md-3"  >
+                            <div class="col-sm-6 col-md-3">
                                 <div class="form-group">
                                     <label><?php echo $this->lang->line('doctor'); ?></label>
-
                                     <select class="form-control select2" <?php
                                     if ($disable_option == true) {
                                         echo "disabled";
@@ -145,8 +71,6 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                 </div>
                             </div>
                     </form>
-
-
                     <div class="box border0 clear">
                         <div class="box-header ptbnull"></div>
                         <div class="box-body table-responsive">
@@ -160,7 +84,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                         <th><?php echo $this->lang->line('gender'); ?></th>
                                         <th><?php echo $this->lang->line('doctor'); ?></th>
                                         <th><?php echo $this->lang->line('source'); ?></th>
-                                        <th><?php echo $this->lang->line('status'); ?></th>
+                                        <th class="text-right"><?php echo $this->lang->line('status'); ?></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -188,14 +112,13 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                                 <td><?php echo $appointment['gender']; ?></td>
                                                 <td><?php echo $appointment['name'] . " " . $appointment['surname']; ?></td>
                                                 <td><?php echo $appointment['source']; ?></td>
-                                                <td><small <?php echo $label ?> ><?php echo $this->lang->line($appointment['appointment_status']); ?></small></td>
+                                                <td class="text-right"><small <?php echo $label ?> ><?php echo $this->lang->line($appointment['appointment_status']); ?></small></td>
                                             </tr>
                                             <?php
                                             $count++;
                                         }
                                         ?>
                                     </tbody>
-
 <?php } ?>
                             </table>
                         </div>
@@ -208,7 +131,6 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
 </div>
 <script type="text/javascript">
     $(document).ready(function (e) {
-
         showdate('<?php echo $search_type; ?>');
         $(".select2").select2();
     });

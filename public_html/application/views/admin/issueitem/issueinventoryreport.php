@@ -71,7 +71,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                             </div>
                         </div>
                         <div class="table-responsive mailbox-messages">
-                            <div class="download_label"><?php echo $this->lang->line('issue') . " " . $this->lang->line('inventory') . ' ' . $this->lang->line('report'); ?></div>
+                            <div class="download_label"><?php echo $this->lang->line('inventory') . " " . $this->lang->line('issue') . ' ' . $this->lang->line('report'); ?></div>
                             <table class="table table-striped table-bordered table-hover example">
                                 <thead>
                                     <tr>
@@ -98,19 +98,6 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                                 <td class="mailbox-name">
                                                     <a href="#" data-toggle="popover" class="detail_popover"><?php echo $item['item_name'] ?></a>
 
-                                                    <div class="fee_detail_popover" style="display: none">
-                                                        <?php
-                                                        if ($item['note'] == "") {
-                                                            ?>
-                                                            <p class="text text-danger"><?php echo $this->lang->line('no_description'); ?></p>
-                                                            <?php
-                                                        } else {
-                                                            ?>
-                                                            <p class="text text-info"><?php echo $item['note']; ?></p>
-                                                            <?php
-                                                        }
-                                                        ?>
-                                                    </div>
                                                 </td>
                                                 <td class="mailbox-name">
                                                     <?php echo $item['item_category']; ?>
@@ -129,7 +116,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                                 </td>
                                                 <td class="mailbox-name">
                                                     <?php
-                                                    echo $item['name'] . " " . $item['surname'] . "(" . $item['employee_id'] . ")";
+                                                    echo $item['name']." ".$item['dname'] . " " . $item['surname'] . "(" . $item['employee_id'] . ")";
                                                     ;
                                                     ?>
                                                 </td>

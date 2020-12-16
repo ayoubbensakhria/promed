@@ -64,7 +64,6 @@
                                     <thead>
                                         <tr>
                                             <th><?php echo $this->lang->line('name'); ?></th>
-
                                             <th class="text-right"><?php echo $this->lang->line('action'); ?></th>
                                         </tr>
                                     </thead>
@@ -76,11 +75,8 @@
                                                 ?>
                                                 <tr>
                                                     <td><?php echo $permission['name']; ?></td>
-
-
                                                     <td class="pull-right">
                                                         <div class="material-switch">
-
                                                             <input id="student<?php echo $permission['id'] ?>" name="someSwitchOption001" type="checkbox" data-role="student" class="chk" data-rowid="<?php echo $permission['id'] ?>" value="checked" <?php if ($permission['is_active'] == 1) echo "checked='checked'"; ?> />
                                                             <label for="student<?php echo $permission['id'] ?>" class="label-success"></label>
                                                         </div>
@@ -96,9 +92,6 @@
                                 </table>
                             </div>
                             <!-- /.tab-pane -->
-
-
-                            <!-- /.tab-pane -->
                         </div>
                         <!-- /.tab-content -->
                     </div>  
@@ -107,7 +100,6 @@
         </div> 
     </section>
 </div>
-
 
 <script type="text/javascript">
     $(document).ready(function () {
@@ -122,24 +114,18 @@
                 } else {
                     var status = "1";
                     changeStatus(rowid, status, role);
-
-
                 }
             } else if (!confirm('<?php echo $this->lang->line('are_sure_deactive') ?>')) {
                 $(this).prop("checked", true);
             } else {
                 var status = "0";
                 changeStatus(rowid, status, role);
-
             }
         });
     });
 
     function changeStatus(rowid, status, role) {
-
-
         var base_url = '<?php echo base_url() ?>';
-
         $.ajax({
             type: "POST",
             url: base_url + "admin/module/changeStatus",
@@ -151,6 +137,4 @@
             }
         });
     }
-
-
 </script>

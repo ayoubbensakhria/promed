@@ -1,6 +1,4 @@
-
 <div class="content-wrapper" style="min-height: 946px;">
-
     <section class="content">
         <div class="box box-primary">  
             <div class="row">
@@ -91,9 +89,7 @@
                         </div><!--./chat-header-->
                         <div class="mobile" id="parentDiv">
                             <div class="chat-w">
-
                                 <ul class="chatmsg">
-
                                     <li>
                                         <div class="bubble2">I am looking for product manager roles in Bangalore.</div>
                                     </li>
@@ -120,9 +116,7 @@
                                         <div class="bubble">Perfect. Micro Calendar Invite.</div>
                                     </li>
                                 </ul>
-
                             </div>
-
                         </div>
                         <div class="row reply">
                             <div class="col-sm-1 col-xs-1 reply-emojis">
@@ -131,7 +125,6 @@
                             <div class="col-sm-10 col-xs-9 reply-main">
                                 <textarea class="form-control" rows="1" id="comment"></textarea>
                             </div>
-
                             <div class="col-sm-1 col-xs-1 reply-send">
                                 <i class="fa fa-send fa-2x" aria-hidden="true"></i>
                             </div>

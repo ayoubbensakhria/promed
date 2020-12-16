@@ -222,16 +222,16 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                 </div> 
                 <div class="">
                     <?php
-                    $date = $result["date"];
-                    $appointment_date = date("Y-m-d", strtotime($date));
+                    $date = $result["presdate"];
+                    $pres_date = date("Y-m-d", strtotime($date));
                     ?>
                     <table width="100%" class="printablea4">
                         <tr>
-                            <th><?php echo $this->lang->line('prescription'); ?> #<?php echo $result["id"] ?></th> <td></td>
+                            <th><?php echo $this->lang->line('prescription'); ?> #<?php echo $result["presid"] ?></th> <td></td>
                             <th class="text-right"></th> 
                             <th class="text-right"><?php echo $this->lang->line('date'); ?> : <?php
                                 if (!empty($result['date'])) {
-                                    echo date($this->customlib->getSchoolDateFormat(true, true), strtotime($appointment_date));
+                                    echo date($this->customlib->getSchoolDateFormat(true, false), strtotime($pres_date));
                                 }
                                 ?>
                             </th>
@@ -273,8 +273,8 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                         </tr>
                         <tr>
                             <th width="25%"><?php echo $this->lang->line("symptoms"); ?></th>
-                            <td width="25%"><?php echo $result["symptoms"] ?></td>
-                            <th><?php echo $this->lang->line('consultant'); ?> <?php echo $this->lang->line('doctor'); ?></th><td><?php echo $result["name"] . "" . $result["surname"] ?></td>
+                            <td width="25%"><?php echo nl2br($result['symptoms']); ?></td>
+                            <th><?php echo $this->lang->line('consultant'); ?> <?php echo $this->lang->line('doctor'); ?></th><td><?php echo $result["name"] . " " . $result["surname"] ?></td>
                         </tr>
                     </table>
                     <hr style="height: 1px; clear: both;margin-bottom: 10px; margin-top: 10px" />

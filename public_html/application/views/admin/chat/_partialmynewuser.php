@@ -25,8 +25,6 @@ if ($response_json) {
 
                                 echo ($user_value->user_details->user_type == "staff") ? " (Staff --r)" : " (Student --r)";
                                 ?></p>
-
-
                             <p class="preview">
                                 <?php
                                 if ($chat_user->id != $user_value->messages->chat_user_id) {
@@ -47,7 +45,6 @@ if ($response_json) {
                         <?php
                     }
                     ?>
-
                 </li>
                 <?php
             }

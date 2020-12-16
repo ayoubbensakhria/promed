@@ -9,7 +9,7 @@ class Schsettings extends Admin_Controller {
         parent::__construct();
         $this->load->library('upload');
     }
-
+ 
     function index() {
         if (!$this->rbac->hasPrivilege('general_setting', 'can_view')) {
             access_denied();
@@ -23,7 +23,7 @@ class Schsettings extends Admin_Controller {
         $timeFormat = $this->customlib->timeFormat();
         $timezoneList = $this->customlib->timezone_list();
         $data['title'] = 'Hospital Setting';
-        $language_result = $this->language_model->get();
+        $language_result        = $this->language_model->getEnable_languages();
         $month_list = $this->customlib->getMonthList();
         $data['languagelist'] = $language_result;
         $data['timezoneList'] = $timezoneList;
@@ -31,10 +31,8 @@ class Schsettings extends Admin_Controller {
         $data['monthList'] = $month_list;
         $dateFormat = $this->customlib->getDateFormat();
         $currency = $this->customlib->getCurrency();
-
         $data['dateFormatList'] = $dateFormat;
         $data['currencyList'] = $currency;
-
         $this->load->view('layout/header', $data);
         $this->load->view('setting/settingList', $data);
         $this->load->view('layout/footer', $data);
@@ -51,7 +49,6 @@ class Schsettings extends Admin_Controller {
             echo json_encode($array);
         } else {
             $id = $this->input->post('id');
-
             if (isset($_FILES["file"]) && !empty($_FILES['file']['name'])) {
                 $fileInfo = pathinfo($_FILES["file"]["name"]);
                 $img_name = $id . '.' . $fileInfo['extension'];
@@ -149,13 +146,11 @@ class Schsettings extends Admin_Controller {
     }
 
     function getSchsetting() {
-
         $data = $this->setting_model->getSetting();
         echo json_encode($data);
     }
 
     function ajax_schedit() {
-
         if (!$this->rbac->hasPrivilege('general_setting', 'can_edit')) {
             access_denied();
         }
@@ -214,6 +209,9 @@ class Schsettings extends Admin_Controller {
                 'credit_limit' => $this->input->post('credit_limit'),
                 'doctor_restriction' => $this->input->post('doctor_restriction_mode'),
                 'superadmin_restriction' => $this->input->post('superadmin_restriction_mode'),
+                'app_primary_color_code' => $this->input->post('sch_app_primary_color_code'),
+                'app_secondary_color_code' => $this->input->post('sch_app_secondary_color_code'),
+                'mobile_api_url' => $this->input->post('sch_mobile_api_url')
             );
             $this->setting_model->add($data);
             $this->load->helper('lang');

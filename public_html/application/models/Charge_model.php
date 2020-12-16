@@ -46,17 +46,13 @@ class Charge_model extends CI_Model {
             $this->db->where('tpa_doctorcharges.org_id', $organisation);
         }
         $query = $this->db->get('consult_charges');
-
         return $query->row_array();
     }
 
     public function get_chargedoctorfee() {
-
         $this->db->order_by('id', 'desc');
-
         $this->db->select('consult_charges.*,staff.name,staff.surname');
         $this->db->join('staff', 'consult_charges.doctor = staff.id ', 'INNER');
-
         $query = $this->db->get("consult_charges");
         return $query->result_array();
     }
@@ -79,7 +75,6 @@ class Charge_model extends CI_Model {
     }
 
     public function getOrganisationCharges($charge_id) {
-
         $query = $this->db->query("SELECT organisations_charges.id,organisations_charges.org_charge,organisations_charges.org_charge,organisation.organisation_name,organisation.id as org_id
 FROM organisations_charges
 RIGHT OUTER JOIN organisation ON organisations_charges.org_id = organisation.id AND organisations_charges.charge_id = '$charge_id'
@@ -88,7 +83,6 @@ ORDER BY organisation.id");
     }
 
     public function getOrganisationChargesTpadoctor($charge_id) {
-
         $query = $this->db->query("SELECT tpa_doctorcharges.id,tpa_doctorcharges.org_charge,organisation.organisation_name,organisation.id as org_id
 FROM tpa_doctorcharges
 RIGHT OUTER JOIN organisation ON tpa_doctorcharges.org_id = organisation.id AND tpa_doctorcharges.charge_id = '$charge_id'
@@ -97,7 +91,6 @@ ORDER BY organisation.id");
     }
 
     public function delete($id) {
-
         $query = $this->db->where('id', $id)
                 ->delete('charges');
         if ($id) {
@@ -107,7 +100,6 @@ ORDER BY organisation.id");
     }
 
     public function deletedoctorcharge($id) {
-
         $queery = $this->db->where('id', $id)
                 ->delete('consult_charges');
     }
@@ -143,7 +135,8 @@ ORDER BY organisation.id");
                 ->where('patient_charges.patient_id', $id)
                 ->where('patient_charges.ipd_id', $ipdid)
                 ->get('patient_charges');
-        return $query->result_array();
+
+        return $query->result_array();       
     }
 
     public function getOPDCharges($id, $visitid) {
@@ -162,14 +155,12 @@ ORDER BY organisation.id");
                 ->delete('patient_charges');
     }
 
-
     public function getchargeDetails($charge_category) {
         $query = $this->db->where("charge_category", $charge_category)->get("charges");
         return $query->result_array();
     }
 
     function check_data_exists($standard_charge, $id, $staff_id) {
-
         if ($staff_id != 0) {
             $data = array('id != ' => $staff_id, 'doctor' => $id);
             $query = $this->db->where($data)->get('consult_charges');
@@ -179,7 +170,6 @@ ORDER BY organisation.id");
                 return FALSE;
             }
         } else {
-
             $this->db->where('doctor', $id);
             $query = $this->db->get('consult_charges');
             if ($query->num_rows() > 0) {
@@ -194,14 +184,12 @@ ORDER BY organisation.id");
         $standard_charge = $this->input->post('standard_charge');
         $id = $this->input->post('doctor');
         $staff_id = $this->input->post('editid');
-
         if (!isset($id)) {
             $id = 0;
         }
         if (!isset($staff_id)) {
             $staff_id = 0;
         }
-
         if ($this->check_data_exists($standard_charge, $id, $staff_id)) {
             $this->form_validation->set_message('check_exists', 'Record already exists');
             return FALSE;
@@ -214,7 +202,5 @@ ORDER BY organisation.id");
         $query = $this->db->where('id', $id)
                 ->delete('opd_patient_charges');
     }
-
 }
-
 ?>

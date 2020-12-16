@@ -1,14 +1,4 @@
 <ul class="sessionul fixedmenu" style="display: none;">
-    <?php
-    // if ($this->rbac->hasPrivilege('quick_session_change', 'can_view')) {
-    ?>
-    <!-- <li class="removehover">
-        <a data-toggle="modal" data-target="#sessionModal"><?php echo $this->lang->line('current_session') . ": " . $this->setting_model->getCurrentSessionName(); ?><i class="fa fa-pencil pull-right"></i></a>
-
-
-    </li> -->
-    <?php //} ?>
-
     <li class="dropdown">
         <a class="dropdown-toggle drop5" data-toggle="dropdown" href="#" aria-expanded="false">
             <span><?php echo $this->lang->line('quick_links'); ?></span> <i class="glyphicon glyphicon-th pull-right"></i>

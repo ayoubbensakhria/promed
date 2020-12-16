@@ -15,7 +15,7 @@ class Room extends Admin_Controller {
         $this->session->set_userdata('sub_sidebar_menu', 'admin/setup/room');
         $this->session->set_userdata('sub_menu', 'bed');
         $data['roomtype_list'] = $this->Roomtype_Model->roomtypelist();
-        $data['floor_list'] = $this->Floor_Model->floor_list();
+        $data['floor_list'] = $this->floor_model->floor_list();
         $data['dept_list'] = $this->Ward_Model->getdepartment();
         $data['room_list'] = $this->Room_Model->roomlist();
         $this->load->view('layout/header');
@@ -50,21 +50,17 @@ class Room extends Admin_Controller {
             );
 
             $this->Room_Model->saveroom($room);
-
             $msg = "Room Added Successfully";
-
             $array = array('status' => 'success', 'error' => '', 'message' => $msg);
         }
         echo json_encode($array);
     }
 
     function getdata($id) {
-
         $data['roomtype_list'] = $this->Roomtype_Model->roomtypelist();
         $data['room_data'] = $this->Room_Model->roomlist($id);
-        $data['floor_list'] = $this->Floor_Model->floor_list();
+        $data['floor_list'] = $this->floor_model->floor_list();
         $data['dept_list'] = $this->Ward_Model->getdepartment();
-
         $this->load->view('setup/room/editroom', $data);
     }
 
@@ -98,14 +94,10 @@ class Room extends Admin_Controller {
             );
 
             $this->Room_Model->saveroom($room);
-
             $msg = "Room Updated Successfully";
-
             $array = array('status' => 'success', 'error' => '', 'message' => $msg);
         }
         echo json_encode($array);
     }
-
 }
-
 ?>

@@ -230,10 +230,10 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
 
                         <tr>
 
-                            <th><?php echo $this->lang->line('prescription'); ?> #<?php echo $result["id"] ?></th> <td></td>
+                            <th><?php echo $this->lang->line('prescription'); ?> #<?php echo $result["presid"] ?></th> <td></td>
                             <th class="text-right"></th> <th class="text-right"><?php echo $this->lang->line('date'); ?> : <?php
                                 if (!empty($result['appointment_date'])) {
-                                    echo date($this->customlib->getSchoolDateFormat(true, true), strtotime($appointment_date));
+                                    echo date($this->customlib->getSchoolDateFormat(), strtotime($appointment_date));
                                 }
                                 ?></th>
                         </tr>
@@ -260,12 +260,13 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                             <th width="25%"><?php echo $this->lang->line("gender"); ?></th>
                             <td><?php echo $result["gender"] ?></td>
                         </tr>
-                        <tr>
+                       <!--  <tr>
                             <th width="25%"><?php echo $this->lang->line("weight"); ?></th>
                             <td><?php echo $result["weight"] ?></td>
                             <th width="25%"><?php echo $this->lang->line("bp"); ?></th>
                             <td><?php echo $result["bp"] ?></td>
-                        </tr>
+                        </tr> -->
+                        
                         <tr>
                             <th width="25%"><?php echo $this->lang->line("phone"); ?></th>
                             <td width="25%"><?php echo $result["mobileno"] ?></td>   
@@ -274,7 +275,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                         </tr>
                         <tr>
                             <th width="25%"><?php echo $this->lang->line("symptoms"); ?></th>
-                            <td width="25%"><?php echo $result["symptoms"] ?></td>
+                            <td width="25%"><?php echo nl2br($result["symptoms"]) ; ?></td>
                             <th><?php echo $this->lang->line('consultant'); ?> <?php echo $this->lang->line('doctor'); ?></th><td><?php echo $result["name"] ?></td>
                         </tr>
                     </table>
@@ -329,7 +330,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                     <!--<div class="col-md-6">
                         <table class="totaltable table table-striped table-responsive">
                          <th><button class="btn btn-success" onclick="print('<?php //echo $id     ?>','<?php //echo $opdid     ?>')"><?php //echo $this->lang->line("print");     ?></button></th>
-                         <!-- <th><button class="btn btn-success" onclick="edit_prescription('<?php //echo $id     ?>','<?php //echo $opdid     ?>')">Edit</button></th> ->
+                          <th><button class="btn btn-success" onclick="edit_prescription('<?php //echo $id     ?>','<?php //echo $opdid     ?>')">Edit</button></th> ->
                         </table>
                      </div>-->
 

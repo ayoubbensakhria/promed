@@ -7,7 +7,7 @@ class Cms_menuitems_model extends CI_Model {
 
     public function __construct() {
         parent::__construct();
-        $this->current_session = $this->setting_model->getCurrentSession();
+      
     }
 
     /**
@@ -38,8 +38,6 @@ class Cms_menuitems_model extends CI_Model {
         }
         $query = $this->db->get();
         $result = $query->row_array();
-
-
         return $result;
     }
 
@@ -53,13 +51,10 @@ class Cms_menuitems_model extends CI_Model {
     }
 
     public function remove($id) {
-
-
         $this->db->trans_start();
         $this->db->where('id', $id);
         $this->db->delete('front_cms_menu_items');
         $this->db->trans_complete();
-
         if ($this->db->trans_status() === FALSE) {
             return false;
         } else {
@@ -92,10 +87,7 @@ class Cms_menuitems_model extends CI_Model {
         $this->db->order_by('parent_id ASC, weight ASC');
         $query = $this->db->get();
         $result = $query->result();
-
         foreach ($result as $r_key => $obj) {
-
-
             if ($obj->parent_id == 0) {
                 $parent_menu[$obj->id]['id'] = $obj->id;
                 $parent_menu[$obj->id]['parent'] = $obj->parent_id;
@@ -131,10 +123,7 @@ class Cms_menuitems_model extends CI_Model {
 
     function dyn_menu($parent_array, $sub_array, $qs_val = 'menu', $main_id = 'nav', $sub_id = 'subnav', $extra_style = 'foldout') {
         $array = array();
-
-
         foreach ($parent_array as $pkey => $pval) {
-
             $array[$pval['id']] = array(
                 'id' => $pval['id'],
                 'slug' => $pval['link'],
@@ -151,9 +140,7 @@ class Cms_menuitems_model extends CI_Model {
                 'submenus' => array()
             );
 
-
             foreach ($sub_array as $sval) {
-
                 if ($pkey == $sval['parent']) {
                     $array[$pval['id']]['submenus'][] = array(
                         'id' => $sval['id'],

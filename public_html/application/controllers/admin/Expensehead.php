@@ -24,26 +24,20 @@ class Expensehead extends Admin_Controller {
     }
 
     function add() {
-
         $this->form_validation->set_rules('expensehead', $this->lang->line('expense') . " " . $this->lang->line('head'), 'trim|required|xss_clean');
         if ($this->form_validation->run() == FALSE) {
-
             $msg = array(
                 'name' => form_error('expensehead'),
             );
-
             $array = array('status' => 'fail', 'error' => $msg, 'message' => '');
         } else {
-
             $data = array(
                 'exp_category' => $this->input->post('expensehead'),
                 'description' => $this->input->post('description'),
             );
             $this->expensehead_model->add($data);
-
             $array = array('status' => 'success', 'error' => '', 'message' => $this->lang->line('success_message'));
         }
-
         echo json_encode($array);
     }
 
@@ -126,21 +120,18 @@ class Expensehead extends Admin_Controller {
         $id = $this->input->post('exphead_id');
         $this->form_validation->set_rules('expensehead', $this->lang->line('expense') . " " . $this->lang->line('head'), 'trim|required|xss_clean');
         if ($this->form_validation->run() == FALSE) {
-
             $msg = array(
                 'name' => form_error('expensehead'),
             );
 
             $array = array('status' => 'fail', 'error' => $msg, 'message' => '');
         } else {
-
             $data = array(
                 'id' => $id,
                 'exp_category' => $this->input->post('expensehead'),
                 'description' => $this->input->post('description'),
             );
             $this->expensehead_model->add($data);
-
             $array = array('status' => 'success', 'error' => '', 'message' => $this->lang->line('update_message'));
         }
 

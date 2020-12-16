@@ -41,7 +41,6 @@
                                     <div class="form-group">
                                         <div class="col-sm-6">
                                             <button type="submit" name="search" value="search_full" class="btn btn-primary btn-sm checkbox-toggle"><i class="fa fa-search"></i> <?php echo $this->lang->line('search'); ?></button>
-
                                         </div>
                                     </div>
                                 </form>
@@ -73,7 +72,7 @@
                                         <tr>
                                             <th>#</th>
                                             <th><?php echo $this->lang->line('date'); ?></th>
-                                            <th><?php echo $this->lang->line('name'); ?></th>                                          
+                                            <th><?php echo $this->lang->line('name'); ?></th>                                 
                                             <th><?php echo $this->lang->line('amount'); ?></th>
                                         </tr>
                                     </thead>
@@ -98,7 +97,6 @@
                                                     <?php echo $value['note']; ?>
                                                 </td>
                                                 <td>
-
                                                     <?php echo $value['amount']; ?>
                                                 </td>
                                             </tr>
@@ -111,14 +109,12 @@
                                             <th>
                                                 <?php echo number_format($grand_total, 2, '.', ''); ?>
                                             </th>
-
                                         </tr>
                                     </tbody>
                                 </table>
                                 <?php
                             }
                             ?>
-
                         </div>
                         <div class="box-footer">
                             <div class="mailbox-controls"> 
@@ -135,7 +131,6 @@
     </section>
 </div>
 <script type="text/javascript">
-
     $(document).ready(function () {
         var date_format = '<?php echo $result = strtr($this->customlib->getSchoolDateFormat(), ['d' => 'dd', 'm' => 'mm', 'Y' => 'yyyy',]) ?>';
         $(".date").datepicker({
@@ -144,5 +139,4 @@
             todayHighlight: true
         });
     });
-
 </script>

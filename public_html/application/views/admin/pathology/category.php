@@ -7,7 +7,13 @@
             <div class="col-md-2">
                 <div class="box border0">
                     <ul class="tablists">
+                        <?php  if ($this->rbac->hasPrivilege('pathology_category', 'can_view')) { ?>
                         <li><a href="<?php echo base_url(); ?>admin/pathologycategory/addcategory" class="active"><?php echo $this->lang->line('pathology') . " " . $this->lang->line('category'); ?></a></li>
+                    <?php } if ($this->rbac->hasPrivilege('pathology_unit', 'can_view')) { ?>
+                        <li><a href="<?php echo base_url(); ?>admin/pathologycategory/unit" class=""><?php echo $this->lang->line('unit'); ?></a></li>
+                         <?php } if ($this->rbac->hasPrivilege('pathology_parameter', 'can_view')) { ?>
+                        <li><a href="<?php echo base_url(); ?>admin/pathologycategory/pathoparameter" class=""><?php echo $this->lang->line('pathology') . " " . $this->lang->line('parameter'); ?></a></li>
+                         <?php }  ?>
                     </ul>
                 </div>
             </div>
@@ -17,7 +23,7 @@
                         <h3 class="box-title titlefix"><?php echo $this->lang->line('pathology') . " " . $this->lang->line('category') . " " . $this->lang->line('list'); ?></h3>
                         <div class="box-tools pull-right">
                             <?php if ($this->rbac->hasPrivilege('pathology_category', 'can_add')) { ?>
-                                <a data-toggle="modal" data-target="#myModal" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i>  <?php echo $this->lang->line('add') . " " . $this->lang->line('pathology') . " " . $this->lang->line('category'); ?></a> 
+                                <a data-toggle="modal" data-target="#myModal" class="btn btn-primary btn-sm pathology"><i class="fa fa-plus"></i>  <?php echo $this->lang->line('add') . " " . $this->lang->line('pathology') . " " . $this->lang->line('category'); ?></a> 
                             <?php } ?>    
                         </div>
                     </div>
@@ -219,8 +225,9 @@
                 error: function () {}
             });
         }));
-    });
+    });	
+	
+$(".pathology").click(function(){
+	$('#formadd').trigger("reset");
+});
 </script>
-
-
-

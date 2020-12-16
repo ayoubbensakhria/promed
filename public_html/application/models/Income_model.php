@@ -7,7 +7,6 @@ class Income_model extends CI_Model {
 
     public function __construct() {
         parent::__construct();
-        $this->current_session = $this->setting_model->getCurrentSession();
     }
 
     /**
@@ -20,7 +19,6 @@ class Income_model extends CI_Model {
         if (!empty($text)) {
             $this->db->select('income.id,income.date,income.name,income.invoice_no,income.amount,income.documents,income.note,income_head.income_category,income.inc_head_id')->from('income');
             $this->db->join('income_head', 'income.inc_head_id = income_head.id');
-
             $this->db->like('income.name', $text);
             $query = $this->db->get();
             return $query->result_array();
@@ -53,16 +51,12 @@ class Income_model extends CI_Model {
 
     public function getTotal($search = '') {
         if (!empty($search)) {
-
             $this->db->where($search);
         }
-
         $this->db->select('sum(income.amount) as amount')->from('income');
         $this->db->join('income_head', 'income.inc_head_id = income_head.id');
         $query = $this->db->get();
-
         $result = $query->row_array();
-
         return $result["amount"];
     }
 
@@ -126,7 +120,6 @@ class Income_model extends CI_Model {
 
     public function getTotalExpenseBwdate($date_from, $date_to) {
         $query = 'SELECT sum(amount) as `amount` FROM `income` where date between ' . $this->db->escape($date_from) . ' and ' . $this->db->escape($date_to);
-
         $query = $this->db->query($query);
         return $query->row();
     }
@@ -143,45 +136,33 @@ class Income_model extends CI_Model {
             } else {
                 $from_date = $this->input->post('date_from');
                 $to_date = $this->input->post('date_to');
-
                 $date_from = date("Y-m-d", $this->customlib->datetostrtotime($from_date));
                 $date_to = date("Y-m-d", $this->customlib->datetostrtotime($to_date));
                 $start_date = $date_from;
                 $end_date = $date_to;
             }
         } else if ($search_type == 'today') {
-
             $today = strtotime('today');
-
             $first_date = date('Y-m-d', $today);
-
-
             $start_date = $first_date;
             $end_date = $first_date;
         } else if ($search_type == 'this_week') {
-
             $this_week_start = strtotime('-1 week monday');
             $this_week_end = strtotime('sunday');
-
             $first_date = date('Y-m-d', $this_week_start);
             $last_date = date('Y-m-d', $this_week_end);
-
             $start_date = $first_date;
             $end_date = $last_date;
         } else if ($search_type == 'last_week') {
-
             $last_week_start = strtotime('-2 week monday');
             $last_week_end = strtotime('-1 week sunday');
-
             $first_date = date('Y-m-d', $last_week_start);
             $last_date = date('Y-m-d', $last_week_end);
-
             $start_date = $first_date;
             $end_date = $last_date;
         } else if ($search_type == 'this_month') {
             $first_date = date('Y-m-01');
             $last_date = date('Y-m-t');
-
             $start_date = $first_date;
             $end_date = $last_date;
         } else if ($search_type == 'last_month') {
@@ -211,14 +192,12 @@ class Income_model extends CI_Model {
             $start_date = $first_date;
             $end_date = $last_date;
         } else if ($search_type == 'last_year') {
-
             $search_year = date('Y', strtotime("-1 year"));
             $first_date = '01-01-' . $search_year;
             $last_date = '31-12-' . $search_year;
             $start_date = date('Y-m-d', strtotime($first_date));
             $end_date = date('Y-m-d', strtotime($last_date));
         } else if ($search_type == 'this_year') {
-
             $search_year = date('Y');
             $first_date = '01-01-' . $search_year;
             $last_date = '31-12-' . $search_year;

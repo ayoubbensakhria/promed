@@ -15,7 +15,8 @@ class Vehicle extends Admin_Controller {
         $this->search_type = $this->config->item('search_type');
         $this->blood_group = $this->config->item('bloodgroup');
 
-        $this->charge_type = $this->config->item('charge_type');
+        //$this->charge_type = $this->config->item('charge_type');
+         $this->charge_type = $this->customlib->getChargeMaster();
         $data["charge_type"] = $this->charge_type;
         $this->patient_login_prefix = "pat";
     }

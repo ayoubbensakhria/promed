@@ -52,20 +52,16 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                     <td><?php echo $patient['credit_limit']; ?>
                                     </td>
                                     <th><?php echo $this->lang->line('opd_ipd_no'); ?></th>
-                                    <td><?php echo $patient['ipd_no']; ?>
+                                    <td><?php if(isset($patient['ipd_no'])){ echo $patient['ipd_no']; }else{ echo $patient["opd_no"]; } ?>
                                     </td>
                                 </tr>
-
                             </tbody>
                         </table>
-
                         <?php
                         $j = 0;
                         $total = 0;
                         foreach ($charges as $key => $charge) {
                             ?>
-
-
                             <?php
                             $total += $charge["apply_charge"];
                             ?>
@@ -76,64 +72,64 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                         ?>
                         <hr>
                         <div class="row">
-                            <div class=" col-md-offset-6 col-xs-6">
+                            <div class="col-md-offset-6 col-xs-6">
                                 <p class="lead"><?php echo $this->lang->line('amount'); ?></p>
-
                                 <div class="table-responsive">
                                     <table class="table">
                                         <tbody><tr>
                                                 <th style="width:50%"><?php echo $this->lang->line('balance') . " " . $this->lang->line('bill') . " " . $this->lang->line('amount') . " (" . $currency_symbol . ")"; ?></th>
-                                                <td><?php echo $total ?></td>
+                                                <td><?php //echo $balance_amount 
+                                                   if($total > ($paid_amount + $amount)){
+                                                $cal = $total - $paid_amount -$amount ;
+                                                echo $total - $paid_amount -$amount ;
+                                                }else{
+                                                    echo '0';}
+                                                 ?>
+                                             </td>
                                             </tr>
                                             <tr>
                                                 <th><?php echo $this->lang->line('add') . " " . $this->lang->line('amount') . " (" . $currency_symbol . ")"; ?></th>
                                                 <td><?php echo $amount ?></td>
                                             </tr>
-
                                         </tbody></table>
                                 </div>
-                                <form action="<?php echo $action; ?>" method="post"  name="payuForm" id="payuForm">
-
+                                <form action="<?php echo $action; ?>" method="post" name="payuForm" id="payuForm">
                                     <input type="hidden" name="key" value="<?php echo $MERCHANT_KEY ?>" />
                                     <input type="hidden" name="hash" value="<?php echo $hash ?>"/>
                                     <input type="hidden" name="txnid" value="<?php echo $txnid ?>" />
                                     <input type="hidden" name="amount" value="<?php echo set_value('amount', $amount) ?>" />
+                                    <input type="hidden" name="payment_type" value="<?php echo $payment_type; ?>">
                                     <input type="hidden" name="firstname" id="firstname" value="<?php echo set_value('firstname', $patient['patient_name']); ?>" />
                                     <textarea name="productinfo" style="display:none"><?php echo set_value('productinfo', $productinfo); ?></textarea>
                                     <input type="hidden" name="surl" value="<?php echo set_value('surl', $surl); ?>" size="64" />
                                     <input type="hidden" name="furl" value="<?php echo set_value('furl', $furl); ?>" size="64" />
                                     <input type="hidden" name="service_provider" value="payu_paisa" size="64" />
                                     <div class="row">
-                                        <div class="col-md-4">
-
+                                        <div class="col-md-4 col-lg-4">
                                             <div class="form-group">
                                                 <label for="email"><?php echo $this->lang->line('email'); ?> <small class="req"> *</small></label> 
-                                                <input type="text" class="form-control" name="email" id="email" value="<?php echo set_value('email', $patient['email']); ?>" />
+                                                <input type="text" class="form-control" name="email" id="email" value="<?php echo $patient['email']; ?>" />
                                                 <span class="text-danger"><?php echo form_error('email'); ?></span>
                                             </div>
 
                                             <div class="form-group">
                                                 <label for="pwd"><?php echo $this->lang->line('phone'); ?> <small class="req"> *</small></label>
-                                                <input type="text" class="form-control" name="phone" value="<?php echo set_value('phone', $patient['mobileno']); ?>" />
+                                                <input type="text" class="form-control" name="phone" value="<?php echo $patient['mobileno'] ?>" />
                                                 <span class="text-danger"><?php echo form_error('phone'); ?></span>
                                             </div>
-
                                         </div>
                                     </div>
 
                                     <?php if (!$hash) { ?>
-                                        <button type="submit"  class="btn btn-primary submit_button"><i class="fa fa fa-money"></i> <?php echo $this->lang->line('make_payment') ?></button>
+                                        <div class="text-right">
+                                            <button type="submit" class="btn btn-primary submit_button"><i class="fa fa fa-money"></i> <?php echo $this->lang->line('make_payment') ?></button>
+                                        </div> 
                                     <?php } ?>
                                 </form>
                             </div>
                         </div>
-
-
-
-
                     </div><!-- /.box-body -->
                 </div>
-
             </div><!--/.col (right) -->
         </div>   <!-- /.row -->
     </section><!-- /.content -->

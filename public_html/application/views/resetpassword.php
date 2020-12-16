@@ -25,7 +25,7 @@
         <style type="text/css">
 
             .inner-bg {padding: 10px 0 170px 0;}
-            body{background: #424242;}        
+           body{background: #424242;}        
             .discover{margin-top: -90px;position: relative;z-index: -1;}
             .form-bottom {box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.35); padding-bottom: 10px !important}
             .gradient{margin-top: 40px;text-align: right;padding: 10px;background: rgb(72,72,72);
@@ -41,7 +41,7 @@
                       background-clip: initial;
                       background-color: initial;
                       background: -webkit-linear-gradient(left, rgba(72,72,72,1) 1%,rgb(73, 73, 73) 44%,rgba(73,73,73,1) 100%);
-                      background: linear-gradient(to right, rgba(72, 72, 72, 0.23) 1%,rgba(37, 37, 37, 0.64) 44%,rgba(73, 73, 73, 0) 100%);
+                      background: linear-gradient(to right, rgba(72, 72, 72, 0.02) 1%,rgba(37, 37, 37, 0.67) 30%,rgba(73, 73, 73, 0) 100%);
                       filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#484848', endColorstr='#494949',GradientType=1 );}        
             @media (min-width: 320px) and (max-width: 991px){
                 .width100{width: 100% !important;display: block !important;
@@ -63,8 +63,7 @@
 
             input[type="text"]:focus, input[type="password"]:focus, textarea:focus, textarea.form-control:focus {border: 1px solid #424242;}
 
-            button.btn {height: 40px;line-height: 40px;}
-            .logowidth{padding-right: 120px;/* height: 50px;*/}        
+            button.btn {height: 40px;line-height: 40px;}      
             @media(max-width:767px){
                 .discover{margin-top: 10px}
                 .gradient {text-align: center;}
@@ -80,7 +79,7 @@
                       box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.5);overflow: auto;border-radius: 6px;}
 
 
-            label.radio-inline{font-size: 14px;}
+            label.radio-inline{font-size: 14px; line-height: 30px;}
             .radio-inline input[type=radio]{position: absolute; margin-top: 8px; outline: none;}
             .backstretch{position: relative;}
             .backstretch:after {
@@ -102,8 +101,8 @@
             <div class="inner-bg">
                 <div class="container">
                     <div class="row">
-                        <div class="col-sm-12 text">
-                            <div class="gradient">
+                        <div class="col-sm-8 col-sm-offset-2 text">
+                            
 
                                 <?php
                                 $logoresult = $this->customlib->getLogoImage();
@@ -122,15 +121,15 @@
                                     <img src="<?php echo $logo_image; ?>" class="logowidth">
                                 </div>
                                     <!--<img src="<?php echo base_url(); ?>backend/images/s_logo.png" class="logowidth">-->
-                            </div>
+                            
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-6 col-sm-12 form-box">
+                        <div class="col-sm-6 col-sm-offset-3 form-box">
+                          <div class="loginbg">  
                             <div class="form-top">
                                 <div class="form-top-left">
                                     <h3 class="font-white"><?php echo $this->lang->line('reset_password'); ?></h3>
-
                                 </div>
                                 <div class="form-top-right">
                                     <i class="fa fa-key"></i>
@@ -158,11 +157,12 @@
                                 </form>
                                 <a href="<?php echo site_url('site/userlogin') ?>" class="forgot"><i class="fa fa-key"></i> <?php echo $this->lang->line('user_login'); ?></a>
                             </div>
+                          </div>  
                         </div>
 
-                        <div class="col-md-6 col-sm-12 discover">
-                            <img src="<?php echo base_url(); ?>backend/usertemplate/assets/img/backgrounds/discover.png">
-                        </div>
+                        <!-- <div class="col-md-6 col-sm-12 discover">
+                            <img src="<?php //echo base_url(); ?>backend/usertemplate/assets/img/backgrounds/discover.png">
+                        </div> -->
                     </div>
                 </div>
             </div>

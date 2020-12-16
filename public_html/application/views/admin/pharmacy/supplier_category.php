@@ -13,7 +13,7 @@
                         <h3 class="box-title titlefix"><?php echo $this->lang->line('supplier') . " " . $this->lang->line('list'); ?></h3>
                         <div class="box-tools pull-right">
                             <?php if ($this->rbac->hasPrivilege('medicine_supplier', 'can_add')) { ?>
-                                <a data-toggle="modal" data-target="#myModal" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i>  <?php echo $this->lang->line('add'); ?> <?php echo $this->lang->line('supplier'); ?></a> 
+                                <a data-toggle="modal" data-target="#myModal" class="btn btn-primary btn-sm supplier"><i class="fa fa-plus"></i>  <?php echo $this->lang->line('add'); ?> <?php echo $this->lang->line('supplier'); ?></a> 
                             <?php } ?>    
                         </div>
                     </div>
@@ -22,7 +22,7 @@
                         </div>
                         <div class="table-responsive mailbox-messages">
                             <div class="download_label"><?php echo $this->lang->line('supplier') . " " . $this->lang->line('list'); ?></div>
-                            <table class="table table-striped table-bordered table-hover example" >
+                            <table class="table table-striped table-bordered table-hover example">
                                 <thead>
                                     <tr>
                                         <th><?php echo $this->lang->line('supplier') . " " . $this->lang->line('name'); ?></th>
@@ -268,7 +268,9 @@
 
 
     $(document).ready(function (e) {
+
         $('#formadd').on('submit', (function (e) {
+           
             $("#formaddbtn").button('loading');
             e.preventDefault();
             $.ajax({
@@ -365,12 +367,11 @@
 
                 }
             });
-
-
         }));
+	});
 
-    });
-
-
+$(".supplier").click(function(){
+	$('#formadd').trigger("reset");
+});
 </script>
 

@@ -3,97 +3,22 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
 $genderList = $this->customlib->getGender();
 $marital_status = $this->config->item('marital_status');
 $bloodgroup = $this->config->item('bloodgroup');
-//print_r($genderList);
-//exit();
 ?>
-<style type="text/css">
-    /*REQUIRED*/
-    .carousel-row {
-        margin-bottom: 10px;
-    }
-    .slide-row {
-        padding: 0;
-        background-color: #ffffff;
-        min-height: 150px;
-        border: 1px solid #e7e7e7;
-        overflow: hidden;
-        height: auto;
-        position: relative;
-    }
-    .slide-carousel {
-        width: 20%;
-        float: left;
-        display: inline-block;
-    }
-    .slide-carousel .carousel-indicators {
-        margin-bottom: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, .5);
-    }
-    .slide-carousel .carousel-indicators li {
-        border-radius: 0;
-        width: 20px;
-        height: 6px;
-    }
-    .slide-carousel .carousel-indicators .active {
-        margin: 1px;
-    }
-    .slide-content {
-        position: absolute;
-        top: 0;
-        left: 20%;
-        display: block;
-        float: left;
-        width: 80%;
-        max-height: 76%;
-        padding: 1.5% 2% 2% 2%;
-        overflow-y: auto;
-    }
-    .slide-content h4 {
-        margin-bottom: 3px;
-        margin-top: 0;
-    }
-    .slide-footer {
-        position: absolute;
-        bottom: 0;
-        left: 20%;
-        width: 78%;
-        height: 20%;
-        margin: 1%;
-    }
-    /* Scrollbars */
-    .slide-content::-webkit-scrollbar {
-        width: 5px;
-    }
-    .slide-content::-webkit-scrollbar-thumb:vertical {
-        margin: 5px;
-        background-color: #999;
-        -webkit-border-radius: 5px;
-    }
-    .slide-content::-webkit-scrollbar-button:start:decrement,
-    .slide-content::-webkit-scrollbar-button:end:increment {
-        height: 5px;
-        display: block;
-    }
-</style>
-
-<div class="content-wrapper" style="min-height: 946px;">
+<div class="content-wrapper">
     <!-- Main content -->
     <section class="content">
         <div class="row">
             <div class="col-md-12">
-                <div class="box box-info" style="padding:5px;">
+                <div class="box box-info">
                     <div class="box-header ptbnull">
-                        <div class="col-sm-4 col-xs-3">
                             <h3 class="box-title titlefix"> <?php echo form_error('Opd'); ?> 
                                 <?php
                                 echo $this->lang->line('patient') . " " . $this->lang->line('list') . " ";
                                 ?>
-                            </h3>
-                        </div> 
+                            </h3>                        
                         <div class="box-tools pull-right">
                             <?php if ($this->rbac->hasPrivilege('patient', 'can_add')) { ?>
-                                <a data-toggle="modal" onclick="holdModal('myModalpa')" id="addp" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i>  <?php echo $this->lang->line('add') . " " . $this->lang->line('new') . " " . $this->lang->line('patient') ?></a> 
+                                <a data-toggle="modal" onclick="holdModal('myModalpa')" id="addp" class="btn btn-primary btn-sm newpatient"><i class="fa fa-plus"></i>  <?php echo $this->lang->line('add') . " " . $this->lang->line('new') . " " . $this->lang->line('patient') ?></a> 
                                 <?php
                             }
                             if ($this->rbac->hasPrivilege('patient_import', 'can_view')) {
@@ -103,14 +28,12 @@ $bloodgroup = $this->config->item('bloodgroup');
                             <a  href="<?php echo base_url() ?>admin/admin/disablepatient" class="btn btn-primary btn-sm"><i class="fa fa-reorder"></i> <?php echo $this->lang->line('disabled') . " " . $this->lang->line('patient') . " " . $this->lang->line('list'); ?></a> 
                         </div>     
                     </div>
-
-                    <div class="box-body table-responsive">
+                    <div class="box-body">
                         <div class="download_label"><?php echo $this->lang->line('patient') . " " . $this->lang->line('list'); ?></div>
-                        <table class="table table-striped table-bordered table-hover example">
+                        <table class="table table-striped table-bordered table-hover test_ajax"  >
                             <thead>
                                 <tr>
-                                    <th><?php echo $this->lang->line('patient') . " " . $this->lang->line('id'); ?></th>
-                                   <!-- <th><?php echo $this->lang->line('patient') . " " . $this->lang->line('type'); ?></th>-->
+                                    <th><?php echo $this->lang->line('patient') . " " . $this->lang->line('id'); ?></th>      
                                     <th><?php echo $this->lang->line('patient') . " " . $this->lang->line('name'); ?></th>
                                     <th><?php echo $this->lang->line('age'); ?></th>
                                     <th><?php echo $this->lang->line('gender'); ?></th>
@@ -118,81 +41,12 @@ $bloodgroup = $this->config->item('bloodgroup');
                                     <th><?php echo $this->lang->line('guardian_name'); ?></th>
                                     <th><?php echo $this->lang->line('address'); ?></th>
                                     <th class=""><?php echo $this->lang->line('action'); ?></th>
-
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php
-                                if (empty($resultlist)) {
-                                    ?>
-                                    <?php
-                                } else {
+                            </tbody>
 
-                                    foreach ($resultlist as $report) {
-                                        //$patient_type = $report['patient_type'];
-                                        $url = '#';
-                                        //$patient= array();
-                                        $patient_type = $report['id'];
-                                        if ($report['age']) {
-                                            $age = $report['age'] . " ".$this->lang->line("years");
-                                        } else {
-                                            $age = "";
-                                        }
-
-                                        if ($report['month']) {
-                                            $month = ", ".$report['month'] . " ".$this->lang->line("month");
-                                        } else {
-                                            $month = "";
-                                        }
-
-                                        if ($patient_type) {
-                                            ?>      
-                                            <tr>
-                                                <!-- <td><?php echo date($this->customlib->getSchoolDateFormat(true, true), strtotime($report['appointment_date'])) ?></td> -->
-
-                                                <td><?php echo $report['patient_unique_id']; ?></td>
-                                                <td>
-                                                    <a href="#" data-toggle="modal"  onclick="getpatientData('<?php echo $report['id'] ?>')" data-target="" class="" title="" ><?php echo $report['patient_name'] ?>
-                                                    </a>
-                                                </td>
-                                                <td><?php echo $age . " " . $month; ?></td>
-                                                <td><?php echo $report['gender']; ?></td>
-                                                <td><?php echo $report['mobileno']; ?></td>
-                                                <td><?php echo $report['guardian_name']; ?></td>
-                                                <td><?php echo $report['address']; ?></td>
-                                                <td class="">
-                                                    <a href="#" data-toggle="modal"  onclick="getpatientData('<?php echo $report['id'] ?>')" data-target="" class="btn btn-default btn-xs" 
-                                                       title="<?php echo $this->lang->line('show'); ?>" >
-                                                        <i class="fa fa-reorder"></i>
-                                                    </a>
-                                                   
-                                                    <div class="btn-group" style="margin-left:2px;">
-                                                        <?php if (!empty($report['info'])) { ?>
-                                                            <a style="width: 20px;border-radius: 2px;" href="" style="" class="btn btn-default btn-xs" data-toggle="dropdown">
-                                                                <i class="fa fa-ellipsis-v"></i>
-                                                            </a>
-                                                            <ul class="dropdown-menu dropdown-menu2" role="menu">
-                                                                <?php
-                                                                foreach ($report['info'] as $key => $value) {
-                                                                    ?>
-                                                                    <li><a href="<?php echo $report['url'][$key] ?>" >
-                                                                            <?php echo $value; ?>
-                                                                        </a>
-                                                                    </li>
-                                                                <?php } ?>
-                                                            </ul>
-                                                        <?php } ?>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            <?php
-                                        }
-                                    }
-                                    
-                                    ?>
-                                </tbody>
-
-                            <?php } ?>
+                           
                         </table>
 
                     </div>
@@ -203,7 +57,7 @@ $bloodgroup = $this->config->item('bloodgroup');
     </section>
 </div>
 
-<div class="modal fade" id="myModal"  role="dialog" aria-labelledby="myModalLabel">
+<div class="modal fade" id="myModal" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content modal-media-content">
             <div class="modal-header modal-media-header">
@@ -211,7 +65,6 @@ $bloodgroup = $this->config->item('bloodgroup');
                 <div class="modalicon"> 
                     <div id='edit_delete' class="pt4">
                         <?php if ($this->rbac->hasPrivilege('revisit', 'can_edit')) { ?>
-
                             <a href="#"  data-toggle="tooltip" title="<?php echo $this->lang->line('edit'); ?>" ><i class="fa fa-pencil"></i></a>
                             <?php
                         }
@@ -222,11 +75,10 @@ $bloodgroup = $this->config->item('bloodgroup');
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-sm-4 col-xs-3">
+                    <div class="col-sm-4 col-xs-6">
                         <div class="form-group15">
                             <?php if ($this->rbac->hasPrivilege('patient', 'can_add')) { ?>
-                                <a data-toggle="modal" id="add" onclick="holdModal('myModalpa')" class="modalbtnpatient"><i class="fa fa-plus"></i>  <span><?php echo $this->lang->line('new') . " " . $this->lang->line('patient') ?></span></a> 
-
+                                <a data-toggle="modal" id="add" onclick="holdModal('myModalpa')" class="modalbtnpatient"><i class="fa fa-plus"></i>  <span><?php echo $this->lang->line('new') . " " . $this->lang->line('patient') ?></span></a>
                             <?php } ?> 
                         </div>
                     </div><!--./col-sm-4--> 
@@ -242,7 +94,6 @@ $bloodgroup = $this->config->item('bloodgroup');
                                 <div class="col-lg-12 col-md-12 col-sm-12">
                                     <div class="row ptt10">
                                         <div class="col-md-9 col-sm-9 col-xs-9" id="Myinfo">
-
                                             <ul class="singlelist">
                                                 <li class="singlelist24bold">
                                                     <span id="patient_name"></span></li>
@@ -269,8 +120,7 @@ $bloodgroup = $this->config->item('bloodgroup');
                                                 <li>
                                                     <i class="fas fa-hourglass-half" data-toggle="tooltip" data-placement="top" title="Age"></i>
                                                     <span id="age"></span>
-                                                </li>    
-
+                                                </li>
                                                 <li>
                                                     <i class="fa fa-phone-square" data-toggle="tooltip" data-placement="top" title="Phone"></i> 
                                                     <span id="contact"></span>
@@ -283,7 +133,6 @@ $bloodgroup = $this->config->item('bloodgroup');
                                                     <i class="fas fa-street-view" data-toggle="tooltip" data-placement="top" title="Address"></i>
                                                     <span id="address" ></span>
                                                 </li>
-
                                                 <li>
                                                     <b><?php echo $this->lang->line('any_known_allergies') ?> </b> 
                                                     <span id="allergies" ></span>
@@ -295,18 +144,14 @@ $bloodgroup = $this->config->item('bloodgroup');
                                             </ul>                               
                                         </div><!-- ./col-md-9 -->
                                         <div class="col-md-3 col-sm-3 col-xs-3"> 
-                                            <div class="pull-right">  
-
+                                            <div class="pull-right"> 
                                                 <?php $file = "uploads/patient_images/no_image.png"; ?>        
                                                 <img class="profile-user-img img-responsive" src="<?php echo base_url() . $file ?>" id="image" alt="User profile picture">
                                             </div>           
                                         </div><!-- ./col-md-3 --> 
                                     </div>
-
                                 </div><!--./col-md-8--> 
-
                             </div><!--./row--> 
- 
                         </form>                       
                     </div><!--./col-md-12-->       
                 </div><!--./row--> 
@@ -315,7 +160,6 @@ $bloodgroup = $this->config->item('bloodgroup');
     </div>    
 </div>
 
-
 <div class="modal fade" id="editModal"  role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content modal-media-content">
@@ -323,7 +167,6 @@ $bloodgroup = $this->config->item('bloodgroup');
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                 <h4 class="box-title"> <?php echo $this->lang->line('patient') . " " . $this->lang->line('information'); ?></h4> 
             </div><!--./modal-header-->
-
             <div class="modal-body pt0 pb0">
                 <div class="row">
                     <div class="col-lg-12 col-md-12 col-sm-12">
@@ -345,7 +188,6 @@ $bloodgroup = $this->config->item('bloodgroup');
                                                 <input type="text" name="guardian_name"  id="eguardian_name"placeholder="" value="" class="form-control">
                                             </div>
                                         </div>
-
                                         <div class="col-md-6 col-sm-12">  
                                             <div class="row">  
                                                 <div class="col-sm-3">
@@ -363,14 +205,12 @@ $bloodgroup = $this->config->item('bloodgroup');
                                                         </select>
                                                     </div>
                                                 </div>
-
                                                 <div class="col-sm-4">
                                                     <div class="form-group">
                                                         <label for="dob"><?php echo $this->lang->line('date_of_birth'); ?></label> 
                                                         <input type="text" name="dob" id="ebirth_date" placeholder="" class="form-control date" /><?php echo set_value('dob'); ?>
                                                     </div>
                                                 </div>
-
                                                 <div class="col-sm-5" id="calculate">
                                                     <div class="form-group">
                                                         <label><?php echo $this->lang->line('age') ?></label>
@@ -400,7 +240,6 @@ $bloodgroup = $this->config->item('bloodgroup');
                                                         <span class="text-danger"><?php echo form_error('blood_group'); ?></span>
                                                     </div>
                                                 </div>
-
                                                 <div class="col-sm-3">
                                                     <div class="form-group">
                                                         <label for="pwd"><?php echo $this->lang->line('marital_status'); ?></label>
@@ -412,8 +251,7 @@ $bloodgroup = $this->config->item('bloodgroup');
                                                             <?php } ?>
                                                         </select>
                                                     </div>
-                                                </div>   
-
+                                                </div>
                                                 <div class="col-sm-6">
                                                     <div class="form-group">
                                                         <label for="exampleInputFile">
@@ -421,48 +259,36 @@ $bloodgroup = $this->config->item('bloodgroup');
                                                         </label>
                                                         <div>
                                                             <input class="filestyle form-control-file" type='file' name='file' id="exampleInputFile" size='20' data-height="26" data-default-file="<?php echo base_url() ?>uploads/patient_images/no_image.png" >
-                                                            <!-- <img id="imagefile" width="20%" height="30%"/> -->
-
-                                                   <!--<input class="" src="" type='hidden' name='file' id="" size='20' >-->
                                                         </div>
                                                         <span class="text-danger"><?php echo form_error('file'); ?></span>
                                                     </div>
                                                 </div>
-
-
                                             </div> 
-                                        </div><!--./col-md-6-->      
-
-
+                                        </div><!--./col-md-6-->
                                         <div class="col-sm-3">
                                             <div class="form-group">
                                                 <label for="pwd"><?php echo $this->lang->line('phone'); ?></label>
                                                 <input id="emobileno" autocomplete="off" name="contact"  type="text" placeholder="" class="form-control"  value="<?php echo set_value('mobileno'); ?>" />
                                             </div>
                                         </div> 
-
                                         <div class="col-sm-3">
                                             <div class="form-group">
                                                 <label><?php echo $this->lang->line('email'); ?></label>
                                                 <input type="text" placeholder="" id="eemail" value="<?php echo set_value('email'); ?>" name="email" class="form-control">
                                             </div>
                                         </div>
-
                                         <div class="col-sm-6">
                                             <div class="form-group">
                                                 <label for="address"><?php echo $this->lang->line('address'); ?></label> 
                                                 <input name="address" id="eaddress" placeholder="" class="form-control" /><?php echo set_value('address'); ?>
                                             </div> 
                                         </div>
-
-
                                         <div class="col-sm-6">
                                             <div class="form-group">
                                                 <label for="pwd"><?php echo $this->lang->line('remarks'); ?></label> 
                                                 <textarea name="note" id="enote" class="form-control" ><?php echo set_value('note'); ?></textarea>
                                             </div>
                                         </div>
-
                                         <div class="col-sm-6">
                                             <div class="form-group">
                                                 <label for="email"><?php echo $this->lang->line('any_known_allergies'); ?></label> 
@@ -472,7 +298,6 @@ $bloodgroup = $this->config->item('bloodgroup');
                                     </div><!--./row--> 
                                 </div><!--./col-md-8--> 
                             </div><!--./row--> 
-
                             <div class="row">            
                                 <div class="box-footer">
                                     <div class="pull-right">
@@ -488,10 +313,8 @@ $bloodgroup = $this->config->item('bloodgroup');
     </div>    
 </div>
 
-<script type="text/javascript">
-   
+<script type="text/javascript">   
     function showdate(value) {
-
         if (value == 'period') {
             $('#fromdate').show();
             $('#todate').show();
@@ -502,15 +325,12 @@ $bloodgroup = $this->config->item('bloodgroup');
     }
 
     function holdModal(modalId) {
-
         $('#' + modalId).modal({
             backdrop: 'static',
             keyboard: false,
             show: true
         });
     }
-
-
 
     function getpatientData(id) {
         $.ajax({
@@ -521,11 +341,9 @@ $bloodgroup = $this->config->item('bloodgroup');
             success: function (data) {
                 if (data.is_active == 'yes') {
                     var link = "<?php if ($this->rbac->hasPrivilege('enabled_disabled', 'can_view')) { ?><a href='#' data-toggle='tooltip'  onclick='patient_deactive(" + id + ")' data-original-title='<?php echo $this->lang->line('disable'); ?>'><i class='fa fa-thumbs-o-down'></i></a><?php } ?>";
-
                 } else {
                     var link = "<?php if ($this->rbac->hasPrivilege('enabled_disabled', 'can_view')) { ?><a href='#' data-toggle='tooltip'  onclick='patient_active(" + id + ")' data-original-title='<?php echo $this->lang->line('enable'); ?>'><i class='fa fa-thumbs-o-up'></i></a> <?php } if ($this->rbac->hasPrivilege('patient', 'can_delete')) { ?><a href='#' data-toggle='tooltip'  onclick='delete_record(" + id + ")' data-original-title='<?php echo $this->lang->line('delete'); ?>'><i class='fa fa-trash'></i></a> <?php } ?>";
                 }
-
                 $("patientid").val(data.id);
                 $("#patient_name").html(data.patient_name);
                 $("#guardian").html(data.guardian_name);
@@ -557,23 +375,18 @@ $bloodgroup = $this->config->item('bloodgroup');
                     }
 
                     $("#age").html(age + "," + month + " " + dob);
-                    // console.log(data.dob);
                 }
 
                 $("#allergies").html(data.known_allergies);
                 $("#note").html(data.note);
                 $("#image").attr("src", '<?php echo base_url() ?>' + data.image);
                 $('#edit_delete').html("<?php if ($this->rbac->hasPrivilege('patient', 'can_edit')) { ?><a href='#' onclick='editRecord(" + id + ")' data-toggle='tooltip' title='<?php echo $this->lang->line('edit'); ?>' data-target='' data-toggle='modal'  data-original-title='<?php echo $this->lang->line('edit'); ?>'><i class='fa fa-pencil'></i></a><?php } ?> " + link + "");
-
                 holdModal('myModal');
-
             },
         });
     }
 
     function editRecord(id) {
-        // var $exampleDestroy =$('#edit_consdoctor').select2();
-        // alert("hello")
         $.ajax({
             url: '<?php echo base_url(); ?>admin/patient/getpatientDetails',
             type: "POST",
@@ -590,10 +403,8 @@ $bloodgroup = $this->config->item('bloodgroup');
                 $("#eage_month").val(data.month);
                 $("#ebirth_date").val(data.dob);
                 $("#enote").val(data.note);
-                //    $("#imagefile").attr("src",'<?php echo base_url() ?>'+data.image);
                 $("#exampleInputFile").attr("data-default-file", '<?php echo base_url() ?>' + data.image);
                 $(".dropify-render").find("img").attr("src", '<?php echo base_url() ?>' + data.image);
-                //$('input[id=imagef]').attr('data-default-file','<?php echo base_url() ?>'+data.image);
                 $("#eknown_allergies").val(data.known_allergies);
                 $('select[id="blood_groups"] option[value="' + data.blood_group + '"]').attr("selected", "selected");
                 $('select[id="egenders"] option[value="' + data.gender + '"]').attr("selected", "selected");
@@ -604,8 +415,6 @@ $bloodgroup = $this->config->item('bloodgroup');
             },
         });
     }
-
-
 
     $(document).ready(function (e) {
         $("#formeditpa").on('submit', (function (e) {
@@ -633,14 +442,12 @@ $bloodgroup = $this->config->item('bloodgroup');
                     $("#formeditpabtn").button('reset');
                 },
                 error: function () {
-                    //  alert("Fail")
+					
                 }
             });
         }));
     });
     function delete_record(id) {
-        //console.log(id);
-        //alert("delete")
         if (confirm(<?php echo "'" . $this->lang->line('delete_conform') . "'"; ?>)) {
             $.ajax({
                 url: '<?php echo base_url(); ?>admin/patient/deletePatient',
@@ -656,7 +463,6 @@ $bloodgroup = $this->config->item('bloodgroup');
     }
 
     function patient_deactive(id) {
-
         if (confirm(<?php echo "'" . $this->lang->line('are_you_sure_deactive_account') . "'"; ?>)) {
             $.ajax({
                 url: '<?php echo base_url(); ?>admin/patient/deactivePatient',
@@ -664,60 +470,17 @@ $bloodgroup = $this->config->item('bloodgroup');
                 data: {id: id},
                 dataType: 'json',
                 success: function (data) {
-                    successMsg(<?php echo "'" . $this->lang->line('deactive_message') . "'"; ?>);
-                    //window.location.reload(true);
-                    //$('#myModal').modal('hide');
+                    successMsg(<?php echo "'" . $this->lang->line('deactive_message') . "'"; ?>);                    
                     window.getpatientData(id);
-                    /*$(window).load(function(){
-                     $('#myModal').modal('show');
-                     });*/
                 }
             })
         }
     }
 
-    /*$(document).ready(function(){
-     $("#ebirth_date").change(function(){
-     var mdate = $("#ebirth_date").val().toString();
-     var yearThen = parseInt(mdate.substring(6,10), 10);
-     //console.log(yearThen);
-     var monthThen = parseInt(mdate.substring(0,2), 10);
-     //console.log(monthThen);
-     var dayThen = parseInt(mdate.substring(3,5), 10);
-     
-     var today = new Date();
-     var birthday = new Date(yearThen, monthThen-1, dayThen);
-     
-     var differenceInMilisecond = today.valueOf() - birthday.valueOf();
-     
-     var year_age = Math.floor(differenceInMilisecond / 31536000000);
-     var day_age = Math.floor((differenceInMilisecond % 31536000000) / 86400000);
-     
-     
-     var month_age = Math.floor(day_age/30);
-     
-     day_age = day_age % 30;
-     
-     if (isNaN(year_age) || isNaN(month_age) || isNaN(day_age)) {
-     $("#exact_age").text("Invalid birthday - Please try again!");
-     }
-     else {
-     $("#exact_age").html("You are<br/><span id=\"age\">" + year_age + " years " + month_age + " months " + day_age + " days</span> old");
-     
-     $("#eage_year").val(year_age);
-     $("#eage_month").val(month_age);
-     $("#eage_day").val(day_age);
-     
-     }
-     });
-     });*/
     function CalculateAgeInQCe(DOB, txtAge, Txndate) {
         if (DOB.value != '') {
-
             now = new Date(Txndate)
-
             var txtValue = DOB;
-
             if (txtValue != null)
                 dob = txtValue.split('/');
             if (dob.length === 3) {
@@ -730,62 +493,137 @@ $bloodgroup = $this->config->item('bloodgroup');
                 if (isNaN(age) || age < 0) {
                     // alert('Input date is incorrect!');
                 } else {
-
                     if (now.getMonth() > born.getMonth()) {
                         var calmonth = now.getMonth() - born.getMonth();
-
                     } else {
                         var calmonth = born.getMonth() - now.getMonth();
-
                     }
-                    //console.log(age);
-                    //console.log(now.getMonth());
-                    // console.log(calmonth);
                     $("#eage_year").val(age);
                     $("#eage_month").val(calmonth);
                     return age;
-                    //  document.getElementById(txtAge).value = age;
-                    // document.getElementById(txtAge).focus();
                 }
             }
         }
-
-        //$("#age_day").val(day_age);
     }
+	
     $(document).ready(function () {
         $("#ebirth_date").change(function () {
             var mdate = $("#ebirth_date").val().toString();
             var yearThen = parseInt(mdate.substring(6, 10), 10);
             var dayThen = parseInt(mdate.substring(0, 2), 10);
             var monthThen = parseInt(mdate.substring(3, 5), 10);
-
-            var DOB = dayThen + "/" + monthThen + "/" + yearThen;
-            //console.log(DOB);
+            var DOB = dayThen + "/" + monthThen + "/" + yearThen;           
             CalculateAgeInQCe(DOB, '', new Date());
         });
     });
 
-
-    function patient_active(id) {
-        //console.log(id);
+    function patient_active(id) {       
         if (confirm(<?php echo "'" . $this->lang->line('are_you_sure_active_account') . "'"; ?>)) {
             $.ajax({
                 url: '<?php echo base_url(); ?>admin/patient/activePatient',
                 type: "POST",
                 data: {activeid: id},
                 dataType: 'json',
-                success: function (data) {
-                    //console.log(data);
-                    successMsg(<?php echo "'" . $this->lang->line('active_message') . "'"; ?>);
-                    // window.location.reload(true);
-                    // $('#myModal').modal('hide');
-                    window.getpatientData(id);
-                    /* $(window).load(function(){
-                     $('#myModal').modal('show');
-                     });*/
+                success: function (data) {                    
+                    successMsg(<?php echo "'" . $this->lang->line('active_message') . "'"; ?>);                    
+                    window.getpatientData(id);                    
                 }
             })
         }
     }
+</script>
+<script type="text/javascript">
+    $(document).ready(function() {
+    $('.test_ajax').DataTable({
+        "processing": true,
+        "serverSide": true,
+        "ajax": {
+            "url": base_url+"admin/admin/patient_search",
+            "type": "POST"
+        },
+        responsive: 'true',
+            dom: "Bfrtip",
+         buttons: [
+
+                {
+                    extend: 'copyHtml5',
+                    text: '<i class="fa fa-files-o"></i>',
+                    titleAttr: 'Copy',
+                    title: $('.download_label').html(),
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                },
+
+                {
+                    extend: 'excelHtml5',
+                    text: '<i class="fa fa-file-excel-o"></i>',
+                    titleAttr: 'Excel',
+                   
+                    title: $('.download_label').html(),
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                },
+
+                {
+                    extend: 'csvHtml5',
+                    text: '<i class="fa fa-file-text-o"></i>',
+                    titleAttr: 'CSV',
+                    title: $('.download_label').html(),
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                },
+
+                {
+                    extend: 'pdfHtml5',
+                    text: '<i class="fa fa-file-pdf-o"></i>',
+                    titleAttr: 'PDF',
+                    title: $('.download_label').html(),
+                    exportOptions: {
+                        columns: ':visible'
+                        
+                    }
+                },
+
+                {
+                    extend: 'print',
+                    text: '<i class="fa fa-print"></i>',
+                    titleAttr: 'Print',
+                    title: $('.download_label').html(),
+                        customize: function ( win ) {
+                    $(win.document.body)
+                        .css( 'font-size', '10pt' );
+ 
+                    $(win.document.body).find( 'table' )
+                        .addClass( 'compact' )
+                        .css( 'font-size','inherit');
+                },
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                },
+
+                {
+                    extend: 'colvis',
+                    text: '<i class="fa fa-columns"></i>',
+                    titleAttr: 'Columns',
+                    title: $('.download_label').html(),
+                    postfixButtons: ['colvisRestore']
+                },
+            ]
+    });
+});
+
+$(".newpatient").click(function(){	
+	$('#formaddpa').trigger("reset");
+	$(".dropify-clear").trigger("click");
+});	
+
+$(".modalbtnpatient").click(function(){	
+	$('#formaddpa').trigger("reset");
+	$(".dropify-clear").trigger("click");
+});
 </script>
 <?php $this->load->view('admin/patient/patientaddmodal') ?>

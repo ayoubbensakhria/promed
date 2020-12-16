@@ -2,6 +2,9 @@
 
 class Operationtheatre_model extends CI_Model {
 
+ var $column_order = array('operation_theatre.bill_no','patients.patient_name','patients.patient_unique_id','patients.gender','patients.mobileno','operation_theatre.operation_name','operation_theatre.operation_type','staff.name','operation_theatre.date','operation_theatre.apply_charge'); //set column field database for datatable orderable
+    var $column_search = array('operation_theatre.bill_no','patients.patient_name','patients.patient_unique_id','patients.gender','patients.mobileno','operation_theatre.operation_name','operation_theatre.operation_type','staff.name','operation_theatre.date','operation_theatre.apply_charge');
+
     public function add_patient($patient_data) {
         $this->db->insert('patients', $patient_data);
         $Id = $this->db->insert_id();
@@ -31,12 +34,11 @@ class Operationtheatre_model extends CI_Model {
                 ->get("staff");
         $staff_result = $staff_query->row_array();
         $result["generated_byname"] = $staff_result["name"] . $staff_result["surname"];
-
         return $result;
     }
 
     public function getBillDetailsOt($id) {
-        $this->db->select('operation_theatre.*,patients.patient_name,staff.name as doctor_name');
+        $this->db->select('operation_theatre.*,patients.patient_name,staff.name as doctor_name,staff.surname as doctor_surname');
         $this->db->join('patients', 'patients.id = operation_theatre.patient_id');
         $this->db->join('staff', 'staff.id = operation_theatre.consultant_doctor', "inner");
         $this->db->where('operation_theatre.id', $id);
@@ -84,9 +86,7 @@ class Operationtheatre_model extends CI_Model {
         $this->db->where('patients.is_active', 'yes');
         $this->db->order_by('operation_theatre.id', 'desc');
         $this->db->limit($limit,$start);
-
         $query = $this->db->get();
-
         $result = $query->result_array();
         foreach ($result as $key => $value) {
             $generated_by = $value["generated_by"];
@@ -96,25 +96,102 @@ class Operationtheatre_model extends CI_Model {
             $staff_result = $staff_query->row_array();
             $result[$key]["generated_byname"] = $staff_result["name"] . $staff_result["surname"];
         }
-
         return $result;
     }
 
-    public function searchFullTextPat($patient_id) {
+     public function search_datatable() {
+            $userdata = $this->customlib->getUserData();
+        $doctor_restriction = $this->session->userdata['hospitaladmin']['doctor_restriction'];
+        if ($doctor_restriction == 'enabled') {
+            if ($userdata["role_id"] == 3) {
+                $this->db->where('operation_theatre.consultant_doctor', $userdata['id']);
+            }   
+        }
+        $this->db->select('operation_theatre.*,patients.id as pid,patients.patient_unique_id,patients.patient_name,patients.gender,patients.mobileno,staff.id as staff_id,staff.name,staff.surname,charges.id as cid,charges.charge_category,charges.code,charges.description,charges.standard_charge')->from('operation_theatre');
+        $this->db->join('patients', 'operation_theatre.patient_id=patients.id', "inner");
+        $this->db->join('staff', 'staff.id = operation_theatre.consultant_doctor', "inner");
+        $this->db->join('charges', 'operation_theatre.charge_id = charges.id');
+        $this->db->where('patients.is_active', 'yes');       
+        if(!isset($_POST['order'])){
+         $this->db->order_by('operation_theatre.id', 'desc');
+         }
+   
+        if(!empty($_POST['search']['value']) ) {   // if there is a search parameter
+            $counter=true;
+            $this->db->group_start();  
+         foreach ($this->column_search as $colomn_key => $colomn_value) {
+         if($counter){
+              $this->db->like($colomn_value, $_POST['search']['value']);      
+              $counter=false;
+         }
+              $this->db->or_like($colomn_value, $_POST['search']['value']);
+        }
+        $this->db->group_end();
+           
+        }
+        $this->db->limit($_POST['length'],$_POST['start']);
+        if (isset($_POST['order'])) {
 
+            $this->db->order_by($this->column_order[$_POST['order'][0]['column']],$_POST['order'][0]['dir']);
+        }
+         $query = $this->db->get();
+        $result = $query->result();
+        foreach ($result as $key => $value) {
+            $generated_by = $value->generated_by;
+            $staff_query = $this->db->select("staff.name,staff.surname")
+                    ->where("staff.id", $generated_by)
+                    ->get("staff");
+            $staff_result = $staff_query->row_array();
+            $result[$key]->generated_byname = $staff_result["name"] . $staff_result["surname"];
+        }
+
+        return $result;
+        }
+
+          public function search_datatable_count() {        
+            $userdata = $this->customlib->getUserData();
+        $doctor_restriction = $this->session->userdata['hospitaladmin']['doctor_restriction'];
+        if ($doctor_restriction == 'enabled') {
+            if ($userdata["role_id"] == 3) {
+                $this->db->where('operation_theatre.consultant_doctor', $userdata['id']);
+            }   
+        }
+        $this->db->select('operation_theatre.*,patients.id as pid,patients.patient_unique_id,patients.patient_name,patients.gender,patients.mobileno,staff.id as staff_id,staff.name,staff.surname,charges.id as cid,charges.charge_category,charges.code,charges.description,charges.standard_charge');
+        $this->db->join('patients', 'operation_theatre.patient_id=patients.id', "inner");
+        $this->db->join('staff', 'staff.id = operation_theatre.consultant_doctor', "inner");
+        $this->db->join('charges', 'operation_theatre.charge_id = charges.id');
+        $this->db->where('patients.is_active', 'yes');
+        $this->db->order_by('operation_theatre.id', 'desc');
+        if(!empty($_POST['search']['value']) ) {   // if there is a search parameter
+            $counter=true;
+            $this->db->group_start();  
+         foreach ($this->column_search as $colomn_key => $colomn_value) {
+         if($counter){
+              $this->db->like($colomn_value, $_POST['search']['value']);      
+              $counter=false;
+         }
+              $this->db->or_like($colomn_value, $_POST['search']['value']);
+        }
+        $this->db->group_end();
+           
+        }
+        $query = $this->db->from('operation_theatre');
+        $total_result= $query->count_all_results();
+        return $total_result;
+    }
+
+    public function searchFullTextPat($patient_id) {
         $this->db->select('operation_theatre.*,patients.gender,patients.mobileno,patients.patient_unique_id,patients.patient_name,staff.name,staff.surname');
         $this->db->join('patients', 'operation_theatre.patient_id = patients.id');
         $this->db->join('staff', "staff.id = operation_theatre.consultant_doctor");
-
         $this->db->where('operation_theatre.patient_id', $patient_id);
-
         $query = $this->db->get('operation_theatre');
         $result = $query->result_array();
         return $result;
     }
 
     public function getDetails($id) {
-        $this->db->select('operation_theatre.*,patients.id as pid,patients.patient_unique_id,patients.patient_name,patients.admission_date,patients.gender,patients.age,patients.month,patients.patient_type,patients.guardian_name,patients.mobileno,patients.guardian_address,patients.is_active,staff.name,staff.surname,charges.id as cid,charges.charge_category,charges.code,charges.standard_charge,charges.description,organisation.organisation_name')->from('operation_theatre');
+        $this->db->select('operation_theatre.*,patients.id as pid,patients.patient_unique_id,patients.patient_name,patients.admission_date,patients.gender,patients.age,patients.month,patients.patient_type,patients.guardian_name,patients.mobileno,patients.address,patients.is_active,staff.name,staff.surname,charges.id as cid,charges.charge_category,charges.code,charges.standard_charge,charges.description,organisation.organisation_name')->from('operation_theatre');
         $this->db->join('patients', 'operation_theatre.patient_id=patients.id', "inner");
         $this->db->join('staff', 'staff.id = operation_theatre.consultant_doctor', "inner");
         $this->db->join('organisation', 'organisation.id = patients.organisation', "left");
@@ -129,9 +206,7 @@ class Operationtheatre_model extends CI_Model {
     public function getotDetails($id, $patientid) {
         $this->db->select('operation_theatre.*,patients.id as pid,patients.patient_unique_id,patients.patient_name,patients.admission_date,patients.gender,patients.age,patients.month,patients.patient_type,patients.guardian_name,patients.mobileno,patients.guardian_address,patients.is_active')->from('operation_theatre');
         $this->db->join('patients', 'operation_theatre.patient_id=patients.id', "inner");
-
         $this->db->where('operation_theatre.id', $id);
-
         $query = $this->db->get();
         return $query->row_array();
     }
@@ -154,9 +229,13 @@ class Operationtheatre_model extends CI_Model {
         return $query->row_array();
     }
 
-    public function delete($id) {
-        $query = $this->db->where('patient_id', $id)
+    public function delete($id,$patient_id='') {
+        $query = $this->db->where('id', $id)
                 ->delete('operation_theatre');
+         if(!empty($patient_id)){
+            $this->db->where('patient_id', $patient_id)
+                ->delete('ot_consultant_register');
+         } 
     }
 
     public function add_ot_consultantInstruction($data) {
@@ -173,7 +252,6 @@ class Operationtheatre_model extends CI_Model {
         $result = $query->result();
         $i = 0;
         foreach ($result as $key => $value) {
-
             $result[$i]->consultant = 'yes';
             $userdata = $this->customlib->getUserData();
             $doctor_restriction = $this->session->userdata['hospitaladmin']['doctor_restriction'];
@@ -199,7 +277,6 @@ class Operationtheatre_model extends CI_Model {
         $this->db->order_by('ot_consultant_register.date');
         $query = $this->db->get('ot_consultant_register');
         $result = $query->result();
-
         return $result;
     }
 
@@ -213,7 +290,5 @@ class Operationtheatre_model extends CI_Model {
     public function deleteConsultant($id) {
         $this->db->where("id", $id)->delete("ot_consultant_register");
     }
-
 }
-
 ?>

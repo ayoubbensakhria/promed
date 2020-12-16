@@ -19,7 +19,6 @@ class Complaint extends Admin_Controller {
         $this->session->set_userdata('sub_menu', 'admin/complaint');
         $this->form_validation->set_rules('name', 'Complaint By', 'required');
 
-
         if ($this->form_validation->run() == FALSE) {
             $data['complaint_list'] = $this->complaint_model->complaint_list();
             $data['complaint_type'] = $this->complaint_model->getComplaintType();
@@ -41,7 +40,6 @@ class Complaint extends Admin_Controller {
                 'note' => $this->input->post('note')
             );
 
-
             $complaint_id = $this->complaint_model->add($complaint);
             if (isset($_FILES["file"]) && !empty($_FILES['file']['name'])) {
                 $fileInfo = pathinfo($_FILES["file"]["name"]);
@@ -56,8 +54,6 @@ class Complaint extends Admin_Controller {
     }
 
     function add() {
-
-
         $this->form_validation->set_rules('name', $this->lang->line('complain_by'), 'required');
         if ($this->form_validation->run() == FALSE) {
             $msg = array(
@@ -78,7 +74,6 @@ class Complaint extends Admin_Controller {
                 'note' => $this->input->post('note')
             );
 
-
             $complaint_id = $this->complaint_model->add($complaint);
             if (isset($_FILES["file"]) && !empty($_FILES['file']['name'])) {
                 $fileInfo = pathinfo($_FILES["file"]["name"]);
@@ -86,7 +81,6 @@ class Complaint extends Admin_Controller {
                 move_uploaded_file($_FILES["file"]["tmp_name"], "./uploads/front_office/complaints/" . $img_name);
                 $this->complaint_model->image_add($complaint_id, $img_name);
             }
-
             $array = array('status' => 'success', 'error' => '', 'message' => $this->lang->line('success_message'));
         }
         echo json_encode($array);
@@ -98,7 +92,6 @@ class Complaint extends Admin_Controller {
             access_denied();
         }
         $this->form_validation->set_rules('name', $this->lang->line('complain_by'), 'required');
-
 
         if ($this->form_validation->run() == FALSE) {
             $msg = array(
@@ -126,7 +119,6 @@ class Complaint extends Admin_Controller {
                 $this->complaint_model->image_add($id, $img_name);
             }
             $this->complaint_model->compalaint_update($id, $complaint);
-
             $array = array('status' => 'success', 'error' => '', 'message' => $this->lang->line('update_message'));
         }
         echo json_encode($array);
@@ -148,7 +140,6 @@ class Complaint extends Admin_Controller {
 
         $this->complaint_model->delete($id);
         $this->session->set_flashdata('msg', '<div class="alert alert-success"> Complaint deleted successfully</div>');
-
         redirect('admin/complaint');
     }
 
@@ -174,15 +165,11 @@ class Complaint extends Admin_Controller {
     }
 
     public function get_complaint($id) {
-
         $data = $this->complaint_model->complaint_list($id);
-
         $a = array(
             'datedd' => date($this->customlib->getSchoolDateFormat(), $this->customlib->dateyyyymmddTodateformat($data['date'])),
         );
-
         $result = array_merge($a, $data);
-
         echo json_encode($result);
     }
 

@@ -2,11 +2,8 @@
 
 class Pharmacy_model extends CI_Model {
 //---------------------------Server side code datatable--------------------------------------
-    var $column_order = array('medicine_name','medicine_company','medicine_composition','medicine_category','medicine_group','unit'); //set column field database for datatable orderable
+    var $column_order = array('medicine_name','medicine_company','medicine_composition','medicine_category','medicine_group','unit','total_qty'); //set column field database for datatable orderable
     var $column_search = array('medicine_name','medicine_company','medicine_composition','medicine_category','medicine_group','unit');
-
-
-
 
 //---------------------------Server side code datatable--------------------------------------
 
@@ -21,7 +18,6 @@ class Pharmacy_model extends CI_Model {
     }
 
     public function search_datatable() {
-
         $this->db->select('pharmacy.*,medicine_category.id as medicine_category_id,medicine_category.medicine_category,(SELECT sum(available_quantity) FROM `medicine_batch_details` WHERE pharmacy_id=pharmacy.id) as `total_qty`');
         $this->db->join('medicine_category', 'pharmacy.medicine_category_id = medicine_category.id', 'left');
         $this->db->where('`pharmacy`.`medicine_category_id`=`medicine_category`.`id`'); 
@@ -37,24 +33,20 @@ class Pharmacy_model extends CI_Model {
          }
               $this->db->or_like($colomn_value, $_POST['search']['value']);
         }
-        $this->db->group_end();
-           
+        $this->db->group_end();           
         }
-
-
         $this->db->limit($_POST['length'],$_POST['start']);
         $this->db->order_by($this->column_order[$_POST['order'][0]['column']],$_POST['order'][0]['dir']);
         $query = $this->db->get('pharmacy');
         return $query->result();
-    }
-        public function search_datatable_count() {
+        }        
         
+        public function search_datatable_count() {        
         $this->db->join('medicine_category', 'pharmacy.medicine_category_id = medicine_category.id', 'left');
         $this->db->where('`pharmacy`.`medicine_category_id`=`medicine_category`.`id`');
-        if(!empty($_POST['search']['value']) ) {   // if there is a search parameter
+        if(!empty($_POST['search']['value'])) {   // if there is a search parameter
             $counter=true;
-            $this->db->group_start();
-  
+            $this->db->group_start();  
          foreach ($this->column_search as $colomn_key => $colomn_value) {
          if($counter){
               $this->db->like($colomn_value, $_POST['search']['value']);      
@@ -65,13 +57,12 @@ class Pharmacy_model extends CI_Model {
         $this->db->group_end();
            
         }
-
         $query = $this->db->from('pharmacy');
-        $total_result= $query->count_all_results();
+        $total_result = $query->count_all_results();
         return $total_result;
     }
 
-       public function searchFullText() {
+    public function searchFullText() {
         $this->db->select('pharmacy.*,medicine_category.id as medicine_category_id,medicine_category.medicine_category');
         $this->db->join('medicine_category', 'pharmacy.medicine_category_id = medicine_category.id', 'left');
         $this->db->where('`pharmacy`.`medicine_category_id`=`medicine_category`.`id`');
@@ -80,17 +71,14 @@ class Pharmacy_model extends CI_Model {
         return $query->result_array();
     }
 
-     public function searchtestdata() {
-        $this->db->select('pharmacy.*');
-       
+    public function searchtestdata() {
+        $this->db->select('pharmacy.*');       
         $this->db->order_by('pharmacy.medicine_name');
         $query = $this->db->get('pharmacy');
         return $query->result_array();
     }
 
-
     function check_medicine_exists($medicine_name, $medicine_category_id) {
-
         $this->db->where(array('medicine_category_id' => $medicine_category_id, 'medicine_name' => $medicine_name));
         $query = $this->db->join("medicine_category", "medicine_category.id = pharmacy.medicine_category_id")->get('pharmacy');
         if ($query->num_rows() > 0) {
@@ -106,8 +94,6 @@ class Pharmacy_model extends CI_Model {
         $this->db->join('supplier_category', 'supplier_bill_basic.supplier_id=supplier_category.id');
         $this->db->join('medicine_category', 'supplier_bill_detail.medicine_category_id = medicine_category.id', 'left');
         $this->db->join('pharmacy', 'supplier_bill_detail.medicine_name = pharmacy.id', 'left');
-
-
         $query = $this->db->get('supplier_bill_detail');
         return $query->result_array();
     }
@@ -205,7 +191,6 @@ class Pharmacy_model extends CI_Model {
     }
 
     public function updateMedicineBatchDetail($data1) {
-
         $query = $this->db->where('id', $data1['id'])->update('medicine_batch_details', $data1);
         $this->db->last_query();
     }
@@ -259,12 +244,11 @@ class Pharmacy_model extends CI_Model {
         return $query->result_array();
     }
 
-    public function getBillBasicPat($patient_id) {
-
-        $this->db->select('pharmacy_bill_basic.*');
+   public function getBillBasicPat($patient_id) {
+        $this->db->select('pharmacy_bill_basic.*,patients.patient_name');
+        $this->db->join('patients','patients.id = pharmacy_bill_basic.patient_id');
         $this->db->where('patient_id', $patient_id);
         $query = $this->db->get('pharmacy_bill_basic');
-
         return $query->result_array();
     }
 
@@ -279,7 +263,6 @@ class Pharmacy_model extends CI_Model {
         $this->db->select('medicine_dosage.dosage,medicine_dosage.id');
         $this->db->where('medicine_dosage.medicine_category_id', $medicine_category_id);
         $query = $this->db->get('medicine_dosage');
-
         return $query->result_array();
     }
 
@@ -323,7 +306,8 @@ class Pharmacy_model extends CI_Model {
     }
 
     public function getBillDetailsPharma($id) {
-        $this->db->select('pharmacy_bill_basic.*');
+        $this->db->select('pharmacy_bill_basic.*,patients.patient_name');
+        $this->db->join('patients','patients.id = pharmacy_bill_basic.patient_id');
         $this->db->where('pharmacy_bill_basic.id', $id);
         $query = $this->db->get('pharmacy_bill_basic');
         return $query->row_array();
@@ -346,15 +330,13 @@ class Pharmacy_model extends CI_Model {
     }
      public function getQuantityedit($batch_no) {
         $query = $this->db->select('medicine_batch_details.id,medicine_batch_details.available_quantity,medicine_batch_details.quantity,medicine_batch_details.purchase_price,medicine_batch_details.sale_rate')
-                ->where('batch_no', $batch_no)
-                //->where('pharmacy_id', $med_id)
+                ->where('batch_no', $batch_no)               
                 ->get('medicine_batch_details');
         return $query->row_array();
     }
 
     public function checkvalid_medicine_exists($str) {
         $medicine_name = $this->input->post('medicine_name');
-
         if ($this->check_medicie_exists($medicine_name)) {
             $this->form_validation->set_message('check_exists', 'Record already exists');
             return FALSE;
@@ -416,7 +398,6 @@ class Pharmacy_model extends CI_Model {
 
     public function getBillNo() {
         $query = $this->db->select("max(id) as id")->get('pharmacy_bill_basic');
-
         return $query->row_array();
     }
 
@@ -428,7 +409,6 @@ class Pharmacy_model extends CI_Model {
     }
     public function getExpireDate($batch_no) {
         $query = $this->db->where("batch_no", $batch_no)
-                //->where("pharmacy_id",$med_id)
                 ->get('medicine_batch_details');
         return $query->row_array();
     }

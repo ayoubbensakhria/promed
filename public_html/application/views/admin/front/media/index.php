@@ -260,7 +260,7 @@
         });
 
     });
-    function load(page) {
+    function load(page) { 
         var keyword = $('.search_text').val();
         var file_type = $('.file_type').val();
         var is_gallery = 0;

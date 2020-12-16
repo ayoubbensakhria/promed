@@ -27,7 +27,6 @@ class Floor extends Admin_Controller {
                 )
         );
         if ($this->form_validation->run() == FALSE) {
-
             $msg = array(
                 'name' => form_error('name'),
             );
@@ -42,7 +41,6 @@ class Floor extends Admin_Controller {
             $msg = "Floor Added Successfully";
             $array = array('status' => 'success', 'error' => '', 'message' => $this->lang->line('success_message'));
         }
-
         echo json_encode($array);
     }
 
@@ -52,7 +50,6 @@ class Floor extends Admin_Controller {
     }
 
     function edit($id) {
-
         $this->form_validation->set_rules('name', $this->lang->line('name'), 'trim|required|xss_clean');
         if ($this->form_validation->run() == FALSE) {
             $msg = array(
@@ -70,14 +67,11 @@ class Floor extends Admin_Controller {
             $msg = "Floor Updated Successfully";
             $array = array('status' => 'success', 'error' => '', 'message' => $this->lang->line('update_message'));
         }
-
         echo json_encode($array);
     }
 
     function delete($id) {
-
         if (!empty($id)) {
-
             $this->floor_model->delete($id);
         }
     }

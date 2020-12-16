@@ -19,7 +19,7 @@ class Stripe_payment {
 
     public function payment($data) {
 
-        $fee_groups_feetype_id = $data['fee_groups_feetype_id'];
+        //$fee_groups_feetype_id = $data['fee_groups_feetype_id'];
         //$payment_details = $this->_CI->feegrouptype_model->getFeeGroupByID($fee_groups_feetype_id);
         $gateway = Omnipay::create('Stripe');
         $secret_key = $this->api_config->api_secret_key;

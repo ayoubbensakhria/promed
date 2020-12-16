@@ -80,7 +80,9 @@
                 <div class="row">
                     <form role="form"  id="addtodo_form" method="post" enctype="multipart/form-data" action="">
                         <div class="form-group col-md-12">
-                            <label for="exampleInputEmail1"><?php echo $this->lang->line('title'); ?></label>
+                            <label for="exampleInputEmail1"><?php echo $this->lang->line('title'); ?></label>    
+                            <small class="req"> *</small>
+    
                             <input class="form-control" name="task_title"  id="task-title"> 
                             <span class="text-danger"><?php echo form_error('title'); ?></span>
 

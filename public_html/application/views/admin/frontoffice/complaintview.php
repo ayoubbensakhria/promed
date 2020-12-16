@@ -12,7 +12,7 @@
                         <div class="box-tools pull-right">
                             <div class="box-tools pull-right">
                                 <?php if ($this->rbac->hasPrivilege('complain', 'can_add')) { ?>
-                                    <a data-toggle="modal" data-target="#myModal" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> <?php echo $this->lang->line('add'); ?> <?php echo $this->lang->line('complain'); ?> </a> 
+                                    <a data-toggle="modal" data-target="#myModal" class="btn btn-primary btn-sm complain"><i class="fa fa-plus"></i> <?php echo $this->lang->line('add'); ?> <?php echo $this->lang->line('complain'); ?> </a> 
                                 <?php } ?>
 
                             </div>
@@ -505,4 +505,8 @@
 
         }));
     });
+
+$(".complain").click(function(){	
+	$('#formadd').trigger("reset");
+});		
 </script>

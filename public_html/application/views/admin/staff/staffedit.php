@@ -13,8 +13,6 @@
                             <div class="tshadow mb25 bozero">    
 
                                 <h4 class="pagetitleh2"><?php echo $this->lang->line('basic_information'); ?> </h4>
-
-
                                 <div class="around10">
                                     <?php if ($this->session->flashdata('msg')) { ?>
                                         <?php echo $this->session->flashdata('msg') ?>
@@ -92,7 +90,7 @@
 
                                         <div class="col-md-3">
                                             <div class="form-group">
-                                                <label for="exampleInputEmail1"><?php echo $this->lang->line('first_name'); ?></label><small class="req"> *</small>
+                                                <label for="exampleInputEmail1"><?php echo $this->lang->line('staff_first_name'); ?></label><small class="req"> *</small>
                                                 <input id="firstname" name="name" placeholder="" type="text" class="form-control"  value="<?php echo $staff["name"] ?>" />
                                                 <span class="text-danger"><?php echo form_error('name'); ?></span>
                                             </div>
@@ -100,7 +98,7 @@
 
                                         <div class="col-md-3">
                                             <div class="form-group">
-                                                <label for="exampleInputEmail1"><?php echo $this->lang->line('last_name'); ?></label>
+                                                <label for="exampleInputEmail1"><?php echo $this->lang->line('staff_last_name'); ?></label>
                                                 <input id="surname" name="surname" placeholder="" type="text" class="form-control"  value="<?php echo $staff["surname"] ?>" />
                                                 <span class="text-danger"><?php echo form_error('surname'); ?></span>
                                             </div>
@@ -108,7 +106,7 @@
 
                                         <div class="col-md-3">
                                             <div class="form-group">
-                                                <label for="exampleInputEmail1"><?php echo $this->lang->line('father_name'); ?></label>
+                                                <label for="exampleInputEmail1"><?php echo $this->lang->line('staff_father_name'); ?></label>
                                                 <input id="father_name" name="father_name" placeholder="" type="text" class="form-control"  value="<?php echo $staff["father_name"] ?>" />
                                                 <span class="text-danger"><?php echo form_error('father_name'); ?></span>
                                             </div>
@@ -116,7 +114,7 @@
 
                                         <div class="col-md-3">
                                             <div class="form-group">
-                                                <label for="exampleInputEmail1"><?php echo $this->lang->line('mother_name'); ?></label>
+                                                <label for="exampleInputEmail1"><?php echo $this->lang->line('staff_mother_name'); ?></label>
                                                 <input id="mother_name" name="mother_name" placeholder="" type="text" class="form-control"  value="<?php echo $staff["mother_name"] ?>" />
                                                 <span class="text-danger"><?php echo form_error('mother_name'); ?></span>
                                             </div>
@@ -125,7 +123,7 @@
                                     <div class="row">
                                         <div class="col-md-3">
                                             <div class="form-group">
-                                                <label for="exampleInputFile"> <?php echo $this->lang->line('gender'); ?></label>
+                                                <label for="exampleInputFile"> <?php echo $this->lang->line('staff_gender'); ?></label>
                                                 <select class="form-control" name="gender">
                                                     <option value=""><?php echo $this->lang->line('select'); ?></option>
                                                     <?php
@@ -141,7 +139,7 @@
                                         </div>
                                         <div class="col-md-3">
                                             <div class="form-group">
-                                                <label for="exampleInputEmail1"><?php echo $this->lang->line('marital_status'); ?></label>
+                                                <label for="exampleInputEmail1"><?php echo $this->lang->line('staff_marital_status'); ?></label>
                                                 <select class="form-control" name="marital_status">
                                                     <option value=""><?php echo $this->lang->line('select'); ?></option>
                                                     <?php foreach ($marital_status as $makey => $mavalue) {
@@ -159,7 +157,7 @@
                                         </div>
                                         <div class="col-md-3">
                                             <div class="form-group">
-                                                <label for="exampleInputEmail1"><?php echo $this->lang->line('blood_group'); ?></label>
+                                                <label for="exampleInputEmail1"><?php echo $this->lang->line('staff_blood_group'); ?></label>
                                                 <select class="form-control" name="blood_group">
                                                     <option value=""><?php echo $this->lang->line('select'); ?></option>
                                                     <?php foreach ($bloodgroup as $bgkey => $bgvalue) {
@@ -173,12 +171,12 @@
                                                     <?php } ?>
 
                                                 </select>
-                                                <span class="text-danger"><?php echo form_error('marital_status'); ?></span>
+                                                <span class="text-danger"><?php echo form_error('blood_group'); ?></span>
                                             </div>
                                         </div>
                                         <div class="col-md-3">
                                             <div class="form-group">
-                                                <label for="exampleInputEmail1"><?php echo $this->lang->line('date_of_birth'); ?></label><small class="req"> *</small>
+                                                <label for="exampleInputEmail1"><?php echo $this->lang->line('staff_date_of_birth'); ?></label><small class="req"> *</small>
                                                 <input id="dob" name="dob" placeholder="" type="text" class="form-control date"  value="<?php
                                                 if (!empty($staff["dob"])) {
                                                     echo date($this->customlib->getSchoolDateFormat(), strtotime($staff["dob"]));
@@ -204,7 +202,7 @@
                                         </div>
                                         <div class="col-md-3">
                                             <div class="form-group">
-                                                <label for="exampleInputEmail1"><?php echo $this->lang->line('phone'); ?></label>
+                                                <label for="exampleInputEmail1"><?php echo $this->lang->line('staff_phone'); ?></label>
                                                 <input id="mobileno" name="contactno" placeholder="" type="text" class="form-control"  value="<?php echo $staff["contact_no"] ?>" />
                                                 <input id="editid" name="editid" placeholder="" type="hidden" class="form-control"  value="<?php echo $staff["id"]; ?>" />
 
@@ -214,7 +212,7 @@
 
                                         <div class="col-md-3">
                                             <div class="form-group">
-                                                <label for="exampleInputEmail1"><?php echo $this->lang->line('email'); ?></label><small class="req"> *</small>
+                                                <label for="exampleInputEmail1"><?php echo $this->lang->line('staff_email'); ?></label><small class="req"> *</small>
                                                 <input id="email" name="email" placeholder="" type="text" class="form-control"  value="<?php echo $staff["email"] ?>" />
                                                 <span class="text-danger"><?php echo form_error('email'); ?></span>
                                             </div>
@@ -223,7 +221,7 @@
 
                                         <div class="col-md-3">
                                             <div class="form-group">
-                                                <label for="exampleInputFile"><?php echo $this->lang->line('photo'); ?></label>
+                                                <label for="exampleInputFile"><?php echo $this->lang->line('staff_photo'); ?></label>
                                                 <div><input class="filestyle form-control" type='file' name='file' id="file" size='20' />
                                                 </div>
                                                 <span class="text-danger"><?php echo form_error('file'); ?></span></div>

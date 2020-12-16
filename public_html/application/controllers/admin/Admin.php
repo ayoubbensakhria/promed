@@ -24,13 +24,11 @@ class Admin extends Admin_Controller {
     }
 
     function getUserImage() {
-
         $id = $this->session->userdata["hospitaladmin"]["id"];
         $result = $this->staff_model->get($id);
     }
 
     function updatePurchaseCode() {
-
         $this->form_validation->set_rules('email', 'Email', 'required|valid_email|trim|xss_clean');
         $this->form_validation->set_rules('envato_market_purchase_code', 'Purchase Code', 'required|trim|xss_clean');
 
@@ -40,8 +38,6 @@ class Admin extends Admin_Controller {
                 'envato_market_purchase_code' => form_error('envato_market_purchase_code'),
             );
             $array = array('status' => '2', 'error' => $data);
-
-
             return $this->output
                             ->set_content_type('application/json')
                             ->set_status_header(200)
@@ -194,7 +190,6 @@ class Admin extends Admin_Controller {
                 'password' => $this->enc_lib->passHashEnc($this->input->post('new_pass'))
             );
             $check = $this->enc_lib->passHashDyc($this->input->post('current_pass'), $userdata["password"]);
-
             $query1 = $this->admin_model->checkOldPass($data_array);
 
             if ($query1) {
@@ -260,21 +255,114 @@ class Admin extends Admin_Controller {
         $userdata = $this->customlib->getUserData();
         $resultlist = $this->patient_model->searchAll($search_text);
         $data['resultlist'] = $resultlist;
-
         $this->load->view('layout/header', $data);
-        $this->load->view('admin/search', $data);
+        if(!empty($search_text)){
+            $this->load->view('admin/search_result', $data);
+        }else{
+             $this->load->view('admin/search', $data);
+        }
         $this->load->view('layout/footer', $data);
     }
 
-    function disablepatient() {
 
+    // function search_result() {
+    //     if (!$this->rbac->hasPrivilege('patient', 'can_view')) {
+    //         access_denied();
+    //     }
+    //     $this->session->set_userdata('top_menu', 'setup');
+    //     $this->session->set_userdata('sub_menu', 'setup/patient');
+    //     $data['title'] = 'Search';
+    //     $search_text = $this->input->post('search_text');
+    //     $data['search_text'] = trim($this->input->post('search_text'));
+    //     $userdata = $this->customlib->getUserData();
+    //     $resultlist = $this->patient_model->searchAll($search_text);
+    //     $data['resultlist'] = $resultlist;
+    //     $this->load->view('layout/header', $data);
+    //     if(!empty($search_text)){
+    //         $this->load->view('admin/search_result', $data);
+    //     }else{
+    //          $this->load->view('admin/search', $data);
+    //     }
+
+    //     $this->load->view('layout/footer', $data);
+    // }
+
+
+    public function patient_search(){
+            $draw = $_POST['draw'];
+            $row = $_POST['start'];
+            $rowperpage = $_POST['length']; // Rows display per page
+            $columnIndex = $_POST['order'][0]['column']; // Column index
+            $columnName = $_POST['columns'][$columnIndex]['data']; // Column name
+            $columnSortOrder = $_POST['order'][0]['dir']; // asc or desc
+            $where_condition=array();
+            if(!empty($_POST['search']['value']) ) {
+                $where_condition=array('search'=>$_POST['search']['value']);
+            }
+            $resultlist = $this->patient_model->searchpatient_datatable($where_condition);
+            $total_result = $this->patient_model->searchpatient_datatable_count($where_condition);
+            $data = array();
+
+            foreach ($resultlist as $result_key => $result_value) { 
+               $url = '#';
+                if ($result_value->age) {
+                    $age = $result_value->age. " ".$this->lang->line("years");
+                } else {
+                    $age =  " 0 ".$this->lang->line("years");
+                    }
+                if ($result_value->month) {
+                      $month = ", ".$result_value->month . " ".$this->lang->line("month");
+                } else {
+                    $month =", ". " 0 ".$this->lang->line("month");
+                     }               
+               
+                $action="<a href='#' onclick='getpatientData(".$result_value->id.")' class='btn btn-default btn-xs'  data-toggle='modal' title='". $this->lang->line('show')."'><i class='fa fa-reorder'></i></a>";  
+                 
+                 $action.="<div class='btn-group' style='margin-left:2px;'>";
+                     if (!empty($result_value->info)) { 
+                        $action.="<a href='#' style='width: 20px;border-radius: 2px;' class='btn btn-default btn-xs'  data-toggle='dropdown' title='". $this->lang->line('show')."'><i class='fa fa-ellipsis-v'></i></a>";
+                        $action.="<ul class='dropdown-menu dropdown-menu2' role='menu'>";
+                                foreach ($result_value->info as $key => $value) {                                 
+
+                                        $action .= "<li>"."<a href='".$result_value->url[$key]."' class='btn btn-default btn-xs'  data-toggle='' title=''>".$value."</a>"."</li>";   
+                                    } 
+                        $action.="</ul>";
+                     }
+                        
+                 $action.="</div>";
+
+                $first_action ="<a href='#' onclick='getpatientData(".$result_value->id.")' class='btn btn-default btn-xs'  data-toggle='modal' title=''>" ;  
+            $nestedData=array();  
+            $nestedData[]=$result_value->patient_unique_id;
+            $nestedData[]= $first_action.$result_value->patient_name."</a>";
+            $nestedData[]=$age.' '.$month;
+            $nestedData[]=$result_value->gender;
+            $nestedData[]=$result_value->mobileno;
+            $nestedData[]=$result_value->guardian_name;
+            $nestedData[]=$result_value->address;
+            $nestedData[]=$action;
+            $data[] = $nestedData;
+          
+            }
+
+            $json_data = array(
+                "draw"            => intval($draw),   // for every request/draw by clientside , they send a number as a parameter, when they recieve a response/data they first check the draw number, so we are sending same number in draw. 
+                "recordsTotal"    => intval($total_result),  // total number of records
+                "recordsFiltered" => intval($total_result), // total number of records after searching, if there is no searching then totalFiltered = totalData
+                "data"            => $data   // total data array
+                );
+
+    echo json_encode($json_data);  // send data as json format
+
+    }
+
+    function disablepatient() {
         $data['title'] = 'Search';
         $search_text = $this->input->post('search_text');
         $data['search_text'] = trim($this->input->post('search_text'));
         $userdata = $this->customlib->getUserData();
         $resultlist = $this->patient_model->searchAlldisable($search_text);
         $data['resultlist'] = $resultlist;
-
         $this->load->view('layout/header', $data);
         $this->load->view('admin/searchdisablepatient', $data);
         $this->load->view('layout/footer', $data);
@@ -318,10 +406,7 @@ class Admin extends Admin_Controller {
             while ($st_date <= $ed_date) {
                 $date = date('Y-m-d', $st_date);
                 foreach ($feecollection_array as $key => $value) {
-
                     if ($value['date'] == $date) {
-
-
                         $return_amount = $return_amount + $value['amount'] + $value['amount_fine'];
                     }
                 }
@@ -341,8 +426,6 @@ class Admin extends Admin_Controller {
         } else {
             $endmonth = $startmonth - 1;
         }
-
-
         return array($startmonth, $endmonth);
     }
 
@@ -389,26 +472,19 @@ class Admin extends Admin_Controller {
     }
 
     function addCronsecretkey($id) {
-
-
         $key = $this->generate_key(25);
-
         $data = array('cron_secret_key' => $key);
-
         $this->setting_model->add_cronsecretkey($data, $id);
-
         redirect('admin/admin/backup');
     }
 
     public function dashboard() {
         $this->session->set_userdata('top_menu', '');
         $this->session->set_userdata('sub_menu', '');
-
         $role = $this->customlib->getStaffRole();
         $role_id = json_decode($role)->id;
-        $staffid = $this->customlib->getStaffID();
-        $notifications = $this->notification_model->getUnreadStaffNotification($staffid, $role_id);
-
+        $staffid = $this->customlib->getStaffID();       
+        $notifications = $this->notification_model->getUnreadStaffNotification($staffid, $role_id);       
         $data['notifications'] = $notifications;
         $systemnotifications = $this->notification_model->getUnreadNotification();
         $data['systemnotifications'] = $systemnotifications;
@@ -438,7 +514,6 @@ class Admin extends Admin_Controller {
         $data["roles"] = $count_roles;
         $expense = $this->expense_model->getTotalExpenseBwdate(date('Y-m-01'), date('Y-m-t'));
         $data["expense"] = $expense;
-
         $start_month = strtotime($year_str_month);
         $start = strtotime($year_str_month);
         $end = strtotime($year_end_month);
@@ -446,10 +521,8 @@ class Admin extends Admin_Controller {
         $s = array();
         $ex = array();
         $total_month = array();
-
         $start_session_month = strtotime($year_str_month);
         while ($start_month <= $end) {
-
             $total_month[] = $this->lang->line(date('M', $start_month));
             $month_start = date('Y-m-d', $start_month);
             $month_end = date("Y-m-t", $start_month);
@@ -461,28 +534,19 @@ class Admin extends Admin_Controller {
             } else {
                 $s[] = "0.00";
             }
-
-
             $expense_monthly = $this->expense_model->getTotalExpenseBwdate($month_start, $month_end);
-
             if (!empty($expense_monthly)) {
                 $amt = 0;
                 $ex[] = $amt + $expense_monthly->amount;
             }
-
             $start_month = strtotime("+1 month", $start_month);
         }
-
-
         $data['yearly_collection'] = $s;
         $data['yearly_expense'] = $ex;
-
         $data['total_month'] = $total_month;
-
         $event_colors = array("#03a9f4", "#c53da9", "#757575", "#8e24aa", "#d81b60", "#7cb342", "#fb8c00", "#fb3b3b");
         $data["event_colors"] = $event_colors;
         $userdata = $this->customlib->getUserData();
-
         $data["role"] = $userdata["user_type"];
         $search = array('date >=' => date('Y-m-01'), 'date <=' => date("Y-m-t"));
 
@@ -501,9 +565,9 @@ class Admin extends Admin_Controller {
         $module = array('OPD', 'IPD', 'pharmacy', 'pathology', 'radiology', 'operation_theatre', 'blood_bank', 'ambulance', 'income');
 
         $tot_data = array_sum($parameter);
-
         $jsonarr = array();
         $i = 0;
+   
         foreach ($parameter as $key => $value) {
             $data[$key . "_income"] = number_format($value, 2);
             if (($this->module_lib->hasActive($module[$i]))) {
@@ -513,7 +577,6 @@ class Admin extends Admin_Controller {
                     $jsonarr['label'][] = $label[$i];
                 } else {
                     $jsonarr['value'][] = 0;
-
                     $jsonarr['label'][] = $label[$i];
                 }
             }
@@ -526,12 +589,10 @@ class Admin extends Admin_Controller {
             $i++;
         }
         $data['jsonarr'] = $jsonarr;
-
         $this->load->view('layout/header', $data);
         $this->load->view('admin/dashboard', $data);
         $this->load->view('layout/footer', $data);
     }
-
 }
 
 ?>

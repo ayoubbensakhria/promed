@@ -17,7 +17,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
             <!-- left column -->
             <div class="col-md-12">
                 <div class="">
-                    <!--<?php if (!empty($print_details[0]['print_header'])) { ?>
+                    <?php if (!empty($print_details[0]['print_header'])) { ?>
                                 <div class="pprinta4">
                                     <img src="<?php
                         if (!empty($print_details[0]['print_header'])) {
@@ -25,12 +25,12 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                         }
                         ?>" class="img-responsive" style="height:100px; width: 100%;">
                                 </div>
-                    <?php } ?>-->
+                    <?php } ?>
                     <table width="100%" class="printablea4">
                         <tr>
                             <td align="text-left"><h5><?php echo $this->lang->line('bill') . " #"; ?><?php echo $result["bill_no"] ?></h5>
                             </td>
-                            <td align="right"><h5><?php echo $this->lang->line('date') . " : "; ?><?php echo date($this->customlib->getSchoolDateFormat(true, true), strtotime($result['date'])) ?></h5>
+                            <td align="right"><h5><?php echo $this->lang->line('date') . " : "; ?><?php echo date($this->customlib->getSchoolDateFormat(true, false), strtotime($result['date'])) ?></h5>
                             </td>
                         </tr>
                     </table>
@@ -46,7 +46,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                             <th width="20%"><?php echo $this->lang->line('operation') . " " . $this->lang->line('type'); ?></th>
                             <td width="25%"><?php echo $result["operation_type"]; ?></td>
                             <th width="25%"><?php echo $this->lang->line('doctor'); ?></th>
-                            <td width="30%" align="left"><?php echo $result['doctor_name']; ?></td> 
+                            <td width="30%" align="left"><?php echo $result['doctor_name']." ".$result['doctor_surname']; ?></td> 
                         </tr> 
                     </table>
                     <hr style="height: 1px; clear: both;margin-bottom: 10px; margin-top: 10px">
@@ -62,7 +62,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                             ?>
                             <tr>
 
-                                <td><?php echo $bill["apply_charge"]; ?></td>
+                                <td><?php echo $currency_symbol."".$bill["apply_charge"]; ?></td>
                             </tr>
                             <?php
                             $j++;

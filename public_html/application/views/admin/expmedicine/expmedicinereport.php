@@ -163,7 +163,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                                 <td><?php echo $data['medicine_company'] ?></td>
                                                 <td><?php echo $data['medicine_category'] ?></td>
                                                 <td><?php echo $data['medicine_group'] ?></td>
-                                                <td><?php echo $data['supplier'] ?></td>
+                                                <td><?php echo $data['supplier_name'] ?></td>
                                                 <td><?php echo $data['expiry_date'] ?></td>
                                                 <td><?php echo $data['available_quantity'] ?></td>
                            <!-- <td class="text-right"><?php echo $data['amount']; ?></td>-->

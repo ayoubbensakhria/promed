@@ -15,8 +15,13 @@ class Prescription extends Admin_Controller {
     }
 
     function getPrescription($id, $opdid, $visitid = '') {
+       if ($visitid > 0) {
+        $result = $this->prescription_model->getvisit($visitid);
+       }else{
         $result = $this->prescription_model->get($id);
-
+       }
+        
+        $result['opd_id'];
         $prescription_list = $this->prescription_model->getPrescriptionByOPD($result['opd_id'], $visitid);
         $data["print_details"] = $this->printing_model->get('', 'opdpre');
         $data["result"] = $result;
@@ -52,7 +57,6 @@ class Prescription extends Admin_Controller {
     function getIPDPrescription($id, $ipdid, $visitid = '') {
         $result = $this->prescription_model->getIPD($id);
         $prescription_list = $this->prescription_model->getPrescriptionByIPD($id,$ipdid, $visitid);
-
         $data["print_details"] = $this->printing_model->get('', 'ipdpres');
         $data["result"] = $result;
         $data["id"] = $id;
@@ -70,13 +74,17 @@ class Prescription extends Admin_Controller {
         $data['medicineCategory'] = $this->medicine_category_model->getMedicineCategory();
         $data['medicineName'] = $this->pharmacy_model->getMedicineName();
         $data['dosage'] = $this->medicine_dosage_model->getMedicineDosage();
-        $result = $this->prescription_model->get($id);
+        if ($visitid > 0) {
+            $result = $this->prescription_model->getvisit($visitid);
+        }else{
+            $result = $this->prescription_model->get($id);   
+        }
         $prescription_list = $this->prescription_model->getPrescriptionByOPD($opdid, $visitid);
+        $data['roles'] = $this->role_model->get();
         $data["result"] = $result;
         $data["id"] = $id;
         $data["opdid"] = $opdid;
         $data["prescription_list"] = $prescription_list;
-
         $this->load->view("admin/patient/edit_prescription", $data);
     }
 
@@ -86,17 +94,22 @@ class Prescription extends Admin_Controller {
         $data['dosage'] = $this->medicine_dosage_model->getMedicineDosage();
         $result = $this->prescription_model->getIPD($id);
         $prescription_list = $this->prescription_model->getPrescriptionByIPD($id,$ipdid, $visitid);
+        $data['roles'] = $this->role_model->get();
         $data["result"] = $result;
         $data["id"] = $id;
         $data["ipdid"] = $ipdid;
         $data["prescription_list"] = $prescription_list;
-
         $this->load->view("admin/patient/edit_ipdprescription", $data);
     }
 
-    public function deletePrescription($id, $opdid) {
+    public function deletePrescription($id, $opdid,$visitid='') {
         if (!empty($opdid)) {
-            $this->prescription_model->deletePrescription($opdid);
+            if ($visitid > 0) {
+                $this->prescription_model->deletePrescription($opdid,$visitid);
+            }else{
+                $this->prescription_model->deletePrescription($opdid);
+            }
+            
             $json = array('status' => 'success', 'error' => '', 'msg' => 'Record deleted');
             echo json_encode($json);
         }

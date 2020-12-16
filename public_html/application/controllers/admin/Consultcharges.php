@@ -39,7 +39,7 @@ class Consultcharges extends Admin_Controller {
         $this->form_validation->set_rules('doctor', $this->lang->line('doctor'), 'required|callback_rolekey_exists');
         $this->form_validation->set_rules('standard_charge', $this->lang->line('standard') . " " . $this->lang->line('charge'), 'required');
         $this->form_validation->set_rules(
-                'doctor', $this->lang->line('doctor') . " " . $this->lang->line('id'), array('required',
+                'doctor', $this->lang->line('doctor')   , array('required',
             array('check_exists', array($this->charge_model, 'valid_doctor_id'))
                 )
         );
@@ -56,15 +56,12 @@ class Consultcharges extends Admin_Controller {
                 'standard_charge' => $this->input->post('standard_charge'),
             );
             $insert_id = $this->charge_model->addconsultcharges($data);
-
             $schedule_charge = $this->input->post('schedule_charge');
-
             $i = 0;
             if (!empty($schedule_charge)) {
                 foreach ($schedule_charge as $key => $value) {
                     $schedule_charge_id = $this->input->post("schedule_charge_id");
                     $schedule_data = array(
-                        // 'charge_type' => $this->input->post('charge_type'),
                         'charge_id' => $insert_id,
                         'org_id' => $schedule_charge_id[$i],
                         'org_charge' => $value,
@@ -72,10 +69,8 @@ class Consultcharges extends Admin_Controller {
                     $i++;
                     $insert_data[] = $schedule_data;
                 }
-
                 $this->tpa_model->addcharge($insert_data);
             }
-
             $json_array = array('status' => 'success', 'error' => '', 'message' => $this->lang->line('success_message'));
         }
         echo json_encode($json_array);
@@ -124,7 +119,6 @@ class Consultcharges extends Admin_Controller {
         $data["result"] = $result;
         $allCharge = $this->charge_model->getOrganisationChargesTpadoctor($id);
         $data["allCharge"] = $allCharge;
-
         $this->load->view('admin/consultcharges/schedulechargeEdit', $data);
     }
 
@@ -133,10 +127,8 @@ class Consultcharges extends Admin_Controller {
             access_denied();
         }
 
-
         $this->form_validation->set_rules('standard_charge', $this->lang->line('standard') . " " . $this->lang->line('charge'), 'required');
         $this->form_validation->set_rules('doctor', $this->lang->line('doctor'), 'required');
-
         if ($this->form_validation->run() == false) {
             $msg = array(
                 'charge' => form_error('standard_charge'),
@@ -180,7 +172,6 @@ class Consultcharges extends Admin_Controller {
             }
             $json_array = array('status' => 'success', 'error' => '', 'message' => 'Record Added Successfully');
         }
-
         echo json_encode($json_array);
     }
 
@@ -212,7 +203,6 @@ class Consultcharges extends Admin_Controller {
     }
 
     public function getchargeDetails() {
-
         $charge_category = $this->input->post("charge_category");
         $result = $this->charge_model->getchargeDetails($charge_category);
         echo json_encode($result);

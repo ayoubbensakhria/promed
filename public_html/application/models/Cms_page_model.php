@@ -7,7 +7,6 @@ class Cms_page_model extends CI_Model {
 
     public function __construct() {
         parent::__construct();
-        $this->current_session = $this->setting_model->getCurrentSession();
         $this->load->config('ci-blog');
     }
 
@@ -92,7 +91,6 @@ class Cms_page_model extends CI_Model {
     public function valid_check_exists($str) {
         $url = $this->input->post('url');
         $id = $this->input->post('id');
-
         if (!isset($id)) {
             $id = 0;
         }

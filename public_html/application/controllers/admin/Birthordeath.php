@@ -10,11 +10,8 @@ class Birthordeath extends Admin_Controller {
         $this->config->load("payroll");
         $this->config->load("image_valid");
         $this->load->library('form_validation');
-
         $this->load->library('Customlib');
-
         $this->load->helper('customfield_helper');
-
         $this->search_type = $this->config->item('search_type');
     }
 
@@ -23,14 +20,11 @@ class Birthordeath extends Admin_Controller {
             access_denied();
         }
         
-        $resultlist = $this->birthordeath_model->getBirthDetails();
-        $data["resultlist"] = $resultlist;
         $this->session->set_userdata('top_menu', 'birthordeath');
         $this->session->set_userdata('sub_menu', 'birthordeath/index');
         $this->load->helper('customfield_helper');
         $patients = $this->patient_model->getPatientListall();
         $data["patients"] = $patients;
-
         $this->load->view("layout/header");
         $this->load->view("admin/birthordeath/birthReport", $data);
         $this->load->view("layout/footer");
@@ -41,17 +35,11 @@ class Birthordeath extends Admin_Controller {
             access_denied();
         }
         $id = $this->input->post("id");
-
         $this->load->helper('customfield_helper');
         $cutom_fields_data = get_custom_table_values($id, 'birth_report');
-
-
         $birthrecord = $this->birthordeath_model->getDetails($id);
         $birthrecord["birth_date"] = date($this->customlib->getSchoolDateFormat(true, true), strtotime($birthrecord['birth_date']));
         $birthrecord['field_data'] = $cutom_fields_data;
-
-        // echo "<pre>";
-        //print_r($birthrecord);
         echo json_encode($birthrecord);
     }
 
@@ -112,12 +100,9 @@ class Birthordeath extends Admin_Controller {
 
         $this->session->set_userdata('top_menu', 'Reports');
         $this->session->set_userdata('sub_menu', 'admin/birthordeath/deathreport');
-
         $select = 'death_report.*,patients.patient_name,patients.gender as genderdeath';
         $join = array('JOIN patients ON death_report.patient = patients.id');
         $table_name = "death_report";
-
-
         $search_type = $this->input->post("search_type");
         if (isset($search_type)) {
             $search_type = $this->input->post("search_type");
@@ -126,11 +111,9 @@ class Birthordeath extends Admin_Controller {
         }
 
         if (empty($search_type)) {
-
             $search_type = "";
             $resultlist = $this->report_model->getReport($select, $join, $table_name);
         } else {
-
             $search_table = "death_report";
             $search_column = "created_at";
             $resultlist = $this->report_model->searchReport($select, $join, $table_name, $search_type, $search_table, $search_column);
@@ -139,7 +122,6 @@ class Birthordeath extends Admin_Controller {
         $data["searchlist"] = $this->search_type;
         $data["search_type"] = $search_type;
         $data["listCall"] = $resultlist;
-
         $this->load->view('layout/header');
         $this->load->view('admin/deathreport/deathreport.php', $data);
         $this->load->view('layout/footer');
@@ -152,11 +134,9 @@ class Birthordeath extends Admin_Controller {
 
         $this->session->set_userdata('top_menu', 'Reports');
         $this->session->set_userdata('sub_menu', 'admin/birthordeath/birthreport');
-
         $select = 'birth_report.*,patients.patient_name';
         $join = array('JOIN patients ON birth_report.mother_name = patients.id');
         $table_name = "birth_report";
-
 
         $search_type = $this->input->post("search_type");
         if (isset($search_type)) {
@@ -166,11 +146,9 @@ class Birthordeath extends Admin_Controller {
         }
 
         if (empty($search_type)) {
-
             $search_type = "";
             $resultlist = $this->report_model->getReport($select, $join, $table_name);
         } else {
-
             $search_table = "birth_report";
             $search_column = "created_at";
             $resultlist = $this->report_model->searchReport($select, $join, $table_name, $search_type, $search_table, $search_column);
@@ -179,7 +157,6 @@ class Birthordeath extends Admin_Controller {
         $data["searchlist"] = $this->search_type;
         $data["search_type"] = $search_type;
         $data["listCall"] = $resultlist;
-
         $this->load->view('layout/header');
         $this->load->view('admin/birthreport/birthreport.php', $data);
         $this->load->view('layout/footer');
@@ -248,6 +225,7 @@ class Birthordeath extends Admin_Controller {
 
             $custom_field_post = $this->input->post("custom_fields[death_report]");
             $custom_value_array = array();
+            if(!empty($custom_field_post)){
             foreach ($custom_field_post as $key => $value) {
                 $check_field_type = $this->input->post("custom_fields[death_report][" . $key . "]");
                 $field_value = is_array($check_field_type) ? implode(",", $check_field_type) : $check_field_type;
@@ -258,10 +236,9 @@ class Birthordeath extends Admin_Controller {
                 );
                 $custom_value_array[] = $array_custom;
             }
+        }
             $deathdate = $this->input->post('death_date');
-
             $death_date = date('Y-m-d H:i:s', $this->customlib->datetostrtotime($deathdate));
-
             $death_data = array(
                 'opdipd_no' => $this->input->post('opdipd_no'),
                 'patient' => $this->input->post('patient'),
@@ -271,7 +248,7 @@ class Birthordeath extends Admin_Controller {
                 'is_active' => 'yes',
             );
             $insert_id = $this->birthordeath_model->addDeathdata($death_data);
-            if ($insert_id) {
+            if (!empty($custom_value_array)) {
                 $this->customfield_model->insertRecord($custom_value_array, $insert_id);
             }
             $array = array('status' => 'success', 'error' => '', 'message' => $this->lang->line('success_message'));
@@ -292,11 +269,9 @@ class Birthordeath extends Admin_Controller {
         }
         $this->form_validation->set_rules('child_name', $this->lang->line('child') . " " . $this->lang->line('Name'), 'trim|required|xss_clean');
         $this->form_validation->set_rules('mother_name', $this->lang->line('mother') . " " . $this->lang->line('Name'), 'required');
-
         $this->form_validation->set_rules('birth_date', $this->lang->line('birth') . " " . $this->lang->line('date'), 'trim|required|xss_clean');
         $this->form_validation->set_rules('gender', $this->lang->line('gender'), 'trim|required|xss_clean');
         $this->form_validation->set_rules('weight', $this->lang->line('weight'), 'trim|required|xss_clean');
-
         $this->form_validation->set_rules('first_img', $this->lang->line('image'), 'callback_handle_upload');
         $this->form_validation->set_rules('second_img', $this->lang->line('image'), 'callback_check_upload');
         $this->form_validation->set_rules('child_img', $this->lang->line('image'), 'callback_handle_upload');
@@ -329,10 +304,7 @@ class Birthordeath extends Admin_Controller {
             }
 
             $birthdate = $this->input->post('birth_date');
-
             $birth_date = date('Y-m-d H:i:s', $this->customlib->datetostrtotime($birthdate));
-            // $birth_date = date($this->customlib->getSchoolDateFormat(true,true),strtotime($birthdate));
-
             $ref_year = date('Y', strtotime($birthdate));
 
             $birth_data = array(
@@ -348,12 +320,7 @@ class Birthordeath extends Admin_Controller {
                 'address' => $this->input->post('address'),
                 'is_active' => 'yes',
             );
-            // print_r($birth_data);
-            // exit();
             $insert_id = $this->birthordeath_model->addBirthdata($birth_data);
-
-
-
             if (!empty($insert_id)) {
                 $refno = "BR" . $ref_year . $insert_id;
             } else {
@@ -377,7 +344,6 @@ class Birthordeath extends Admin_Controller {
                     $mother_pic = 'uploads/birth_image/' . $insert_id . '/' . $filename;
                     move_uploaded_file($_FILES["first_img"]["tmp_name"], $img_name);
                 } else {
-
                     $mother_pic = "uploads/patient_images/no_image.png";
                 }
 
@@ -393,7 +359,6 @@ class Birthordeath extends Admin_Controller {
                     $father_pic = 'uploads/birth_image/' . $insert_id . '/' . $filename;
                     move_uploaded_file($_FILES["second_img"]["tmp_name"], $img_name);
                 } else {
-
                     $father_pic = "uploads/patient_images/no_image.png";
                 }
 
@@ -409,7 +374,6 @@ class Birthordeath extends Admin_Controller {
                     $child_pic = 'uploads/birth_image/' . $insert_id . '/' . $filename;
                     move_uploaded_file($_FILES["child_img"]["tmp_name"], $img_name);
                 } else {
-
                     $child_pic = "uploads/patient_images/no_image.png";
                 }
 
@@ -425,12 +389,10 @@ class Birthordeath extends Admin_Controller {
                     $document = 'uploads/birth_image/' . $insert_id . '/' . $filename;
                     move_uploaded_file($_FILES["document"]["tmp_name"], $img_name);
                 } else {
-
                     $document = "";
                 }
 
                 $data_img = array('id' => $insert_id, 'mother_pic' => $mother_pic, 'father_pic' => $father_pic, 'document' => $document, 'child_pic' => $child_pic);
-
                 $this->birthordeath_model->addBirthdata($data_img);
             }
 
@@ -440,21 +402,16 @@ class Birthordeath extends Admin_Controller {
     }
 
     public function download($file) {
-
         $this->load->helper('download');
         $filepath = base_url() . $file . "/birth_image/" . $this->uri->segment(6) . "/" . $this->uri->segment(7);
         $data = file_get_contents($filepath);
         $name = $this->uri->segment(7);
-
         force_download($name, $data);
     }
 
     public function image_upload() {
-
         $image_validate = $this->config->item('image_validate');
-
         if (isset($_FILES["file"]) && !empty($_FILES['file']['name'])) {
-
             $file_type = $_FILES["file"]['type'];
             $file_size = $_FILES["file"]["size"];
             $file_name = $_FILES["file"]["name"];
@@ -462,7 +419,6 @@ class Birthordeath extends Admin_Controller {
             $ext = pathinfo($file_name, PATHINFO_EXTENSION);
             $allowed_mime_type = $image_validate['allowed_mime_type'];
             if ($files = @getimagesize($_FILES['file']['tmp_name'])) {
-
                 if (!in_array($files['mime'], $allowed_mime_type)) {
                     $this->form_validation->set_message('image_upload', 'Error While Uploading patient Image');
                     return false;
@@ -480,18 +436,14 @@ class Birthordeath extends Admin_Controller {
                 $this->form_validation->set_message('image_upload', "File Type / Extension Error Uploading Image");
                 return false;
             }
-
             return true;
         }
         return true;
     }
 
     public function handle_upload() {
-
         $image_validate = $this->config->item('image_validate');
-
         if (isset($_FILES["first_img"]) && !empty($_FILES['first_img']['name'])) {
-
             $file_type = $_FILES["first_img"]['type'];
             $file_size = $_FILES["first_img"]["size"];
             $file_name = $_FILES["first_img"]["name"];
@@ -524,11 +476,8 @@ class Birthordeath extends Admin_Controller {
     }
 
     public function check_upload() {
-
         $image_validate = $this->config->item('image_validate');
-
         if (isset($_FILES["second_img"]) && !empty($_FILES['second_img']['name'])) {
-
             $file_type = $_FILES["second_img"]['type'];
             $file_size = $_FILES["second_img"]["size"];
             $file_name = $_FILES["second_img"]["name"];
@@ -536,7 +485,6 @@ class Birthordeath extends Admin_Controller {
             $ext = pathinfo($file_name, PATHINFO_EXTENSION);
             $allowed_mime_type = $image_validate['allowed_mime_type'];
             if ($files = @getimagesize($_FILES['second_img']['tmp_name'])) {
-
                 if (!in_array($files['mime'], $allowed_mime_type)) {
                     $this->form_validation->set_message('check_upload', 'File type Error While Uploading Father Image');
                     return false;
@@ -570,7 +518,6 @@ class Birthordeath extends Admin_Controller {
         $this->form_validation->set_rules('birth_date', $this->lang->line('birth') . " " . $this->lang->line('date'), 'trim|required|xss_clean');
         $this->form_validation->set_rules('gender', $this->lang->line('gender'), 'trim|required|xss_clean');
         $this->form_validation->set_rules('weight', $this->lang->line('weight'), 'trim|required|xss_clean');
-
         $this->form_validation->set_rules('mother_pic', $this->lang->line('image'), 'callback_handle_upload');
         $this->form_validation->set_rules('father_pic', $this->lang->line('image'), 'callback_check_upload');
         $this->form_validation->set_rules('child_img', $this->lang->line('image'), 'callback_handle_upload');
@@ -594,8 +541,6 @@ class Birthordeath extends Admin_Controller {
             $custom_field_id = $this->input->post("custom_field_id");
             $custom_fieldvalue_array = $this->input->post("custom_field_value");
             $ddata = array();
-
-            // $custom_field_post = $this->input->post("custom_fields[students]");
             $custom_value_array = array();
             if (!empty($custom_field_id)) {
                 foreach ($custom_field_id as $key => $value) {
@@ -612,10 +557,7 @@ class Birthordeath extends Admin_Controller {
                 $this->customfield_model->updateRecord($custom_value_array, $id, 'birth_report');
             }
             $birthdate = $this->input->post('birth_date');
-
             $birth_date = date('Y-m-d H:i:s', $this->customlib->datetostrtotime($birthdate));
-
-
             $birth_data = array(
                 'id' => $id,
                 'opd_ipd_no' => $this->input->post('opd_ipd_no'),
@@ -632,7 +574,6 @@ class Birthordeath extends Admin_Controller {
             $insert_id = $this->birthordeath_model->addBirthdata($birth_data);
             if (!empty($id)) {
 
-
                 if (isset($_FILES["mother_pic"]) && !empty($_FILES['mother_pic']['name'])) {
                     $uploaddir = './uploads/birth_image/' . $insert_id . '/';
                     if (!is_dir($uploaddir) && !mkdir($uploaddir)) {
@@ -644,7 +585,6 @@ class Birthordeath extends Admin_Controller {
                     $img_name = $uploaddir . $filename;
                     $mother_pic = 'uploads/birth_image/' . $filename;
                     move_uploaded_file($_FILES["mother_pic"]["tmp_name"], $img_name);
-
                       $data_img = array('id' => $id, 'mother_pic' => $mother_pic);
                       $this->birthordeath_model->addBirthdata($data_img);
                 }
@@ -692,11 +632,7 @@ class Birthordeath extends Admin_Controller {
                     move_uploaded_file($_FILES["document"]["tmp_name"], $img_name);
                        $data_img = array('id' => $id,  'document' => $document);
                         $this->birthordeath_model->addBirthdata($data_img);
-                } 
-
-             
-
-               
+                }                
             }
             $json_array = array('status' => 'success', 'error' => '', 'message' => 'Record Added Successfully');
         }
@@ -755,13 +691,11 @@ class Birthordeath extends Admin_Controller {
                     );
                     $custom_value_array[] = $array_custom;
                 }
-
                 $this->customfield_model->updateRecord($custom_value_array, $id, 'death_report');
             }
 
             $deathdate = $this->input->post('death_date');
             $death_date = date('Y-m-d H:i:s', $this->customlib->datetostrtotime($deathdate));
-
 
             $death_data = array(
                 'id' => $id,
@@ -775,10 +709,6 @@ class Birthordeath extends Admin_Controller {
                 'death_report' => $this->input->post('death_report'),
                 'is_active' => 'yes',
             );
-
-
-            // print_r($death_data);
-            //  exit();
             $this->birthordeath_model->addDeathdata($death_data);
             $array = array('status' => 'success', 'error' => '', 'message' => "Record Updated Successfully");
             if (isset($_FILES["file"]) && !empty($_FILES['file']['name'])) {

@@ -16,9 +16,6 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                         <h3 class="box-title">Payment Details</h3>
 
                     </div><!-- /.box-header -->
-
-
-
                     <div class="box-body">
                         <table class="table table-striped mb0 font13">
                             <tbody>
@@ -44,7 +41,11 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                 <tr>
                                     <th><?php echo $this->lang->line('age'); ?></th>
                                     <td>
-                                        <?php echo $patient['age'] . " years " . $patient['month'] . " months"; ?>
+
+                                        <?php if ($patient['age'] != '') { 
+                                            echo $patient['age'] . " years " . $patient['month'] . " months"; 
+                                        }
+                                        ?>
                                     </td>
                                     <th><?php echo $this->lang->line('guardian_name'); ?></th>
                                     <td><?php echo $patient['guardian_name']; ?>
@@ -55,8 +56,8 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                     <td><?php echo $patient['credit_limit']; ?>
                                     </td>
                                     <th><?php echo $this->lang->line('opd_ipd_no'); ?></th>
-                                   <!--  <td><?php echo $patient['ipd_no']; ?>
-                                    </td> -->
+                                     <td><?php if(isset($patient['ipd_no'])) { echo $patient['ipd_no']; }else{ echo $patient['opd_no'];  } ?>
+                                    </td> 
                                 </tr>
 
                             </tbody>
@@ -85,7 +86,15 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                     <table class="table">
                                         <tbody><tr>
                                                 <th style="width:50%"><?php echo $this->lang->line('balance') . " " . $this->lang->line('bill') . " " . $this->lang->line('amount') . " (" . $currency_symbol . ")"; ?></th>
-                                                <td><?php echo $total ?></td>
+                                                <td><?php 
+                                                if($total > ($paid_amount + $amount)){
+                                                $cal = $total - $paid_amount -$amount ;
+                                                echo $total - $paid_amount -$amount ;
+                                                }else{
+                                                    echo 0 ;
+                                                }
+                                                 ?></td>
+                                                
                                             </tr>
                                             <tr>
                                                 <th><?php echo $this->lang->line('add') . " " . $this->lang->line('amount') . " (" . $currency_symbol . ")" ?></th>
@@ -98,8 +107,6 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                             </div>
                         </div>
 
-
-
                         <?php echo validation_errors(); ?>
                         <form class="paddtlrb" action="<?php echo site_url('patient/stripe/complete'); ?>" method="POST">
                         <!--data-description="<?php echo $payment_details; ?>"-->
@@ -108,7 +115,6 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                 data-key="<?php echo $api_publishable_key; ?>"
                                 data-amount="<?php echo ($amount * 100); ?>"
                                 data-name="<?php echo $hospital_name; ?>"
-                                
                                 data-image="<?php echo base_url('uploads/hospital_content/logo/' . $image); ?>"
                                 data-locale="auto"
                                 data-zip-code="true"
@@ -117,6 +123,8 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                             </script>
 
                             <input type="hidden" name="total" value="<?php echo $amount; ?>">
+                            <input type="hidden" name="payment_type" value="<?php echo $payment_type; ?>">
+                            
                         </form>
 
                     </div><!-- /.box-body -->

@@ -85,12 +85,9 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                     <div class="box-header with-border">
                         <h3 class="box-title"><?php echo $this->lang->line('death') . " " . $this->lang->line('report'); ?></h3>
                     </div>
-
                     <form role="form" action="<?php echo site_url('admin/birthordeath/deathreport') ?>" method="post" class="">
                         <div class="box-body row">
-
                             <?php echo $this->customlib->getCSRF(); ?>
-
                             <div class="col-sm-6 col-md-4" >
                                 <div class="form-group">
                                     <label><?php echo $this->lang->line('search') . " " . $this->lang->line('type'); ?></label>
@@ -128,14 +125,13 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                     <button type="submit" name="search" value="search_filter" class="btn btn-primary btn-sm checkbox-toggle pull-right"><i class="fa fa-search"></i> <?php echo $this->lang->line('search'); ?></button>
                                 </div>
                             </div>
-
                     </form>
 
 
                     <div class="box border0 clear">
                         <div class="box-header ptbnull"></div>
                         <div class="box-body table-responsive">
-                            <div class="download_label"><?php echo $this->lang->line('birth') . " " . $this->lang->line('report'); ?></div>
+                            <div class="download_label"><?php echo $this->lang->line('death') . " " . $this->lang->line('report'); ?></div>
                             <table class="table table-striped table-bordered table-hover example">
                                 <thead>
                                     <tr>
@@ -157,7 +153,7 @@ $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
                                             ?>
                                             <tr class="">
                                                 <td><?php echo $data['opdipd_no'] ?></td>
-                                                <td><?php echo $data['death_date'] ?></td>
+                                                <td><?php echo date($this->customlib->getSchoolDateFormat(true, true), strtotime($data['death_date'])); ?></td>
                                                 <td><?php echo $data['patient_name']; ?></td>
                                                 <td><?php echo $data['genderdeath']; ?></td> 
                                                 <td> <?php echo date($this->customlib->getSchoolDateFormat(true, true), strtotime($data['created_at'])); ?></td>

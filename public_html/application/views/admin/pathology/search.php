@@ -2,13 +2,6 @@
 $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
 $genderList = $this->customlib->getGender();
 ?>
-<style type="text/css">
-    #easySelectable {/*display: flex; flex-wrap: wrap;*/}
-    #easySelectable li {}
-    #easySelectable li.es-selected {background: #2196F3; color: #fff;}
-    .easySelectable {-webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;}
-</style>
-
 <div class="content-wrapper">
     <!-- Main content -->
     <section class="content">
@@ -19,16 +12,16 @@ $genderList = $this->customlib->getGender();
                         <h3 class="box-title titlefix"><?php echo $this->lang->line('pathology') . " " . $this->lang->line('test'); ?></h3>
                         <div class="box-tools pull-right">
                             <?php if ($this->rbac->hasPrivilege('pathology test', 'can_add')) { ?>   
-                                <a data-toggle="modal" onclick="holdModal('addTestReportModal')" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> <?php echo $this->lang->line('add') . " " . $this->lang->line('pathology') . " " . $this->lang->line('test'); ?></a> 
+                                <a data-toggle="modal" onclick="holdModal('addTestReportModal')" class="btn btn-primary btn-sm pathology"><i class="fa fa-plus"></i> <?php echo $this->lang->line('add') . " " . $this->lang->line('pathology') . " " . $this->lang->line('test'); ?></a> 
                             <?php } ?>
-                            <?php if ($this->rbac->hasPrivilege('pathology test', 'can_view')) { ?>   
+                            <?php if ($this->rbac->hasPrivilege('add_patho_patient_test_report', 'can_view')) { ?>   
                                 <a href="<?php echo base_url(); ?>admin/pathology/getTestReportBatch" class="btn btn-primary btn-sm"><i class="fa fa-reorder"></i> <?php echo $this->lang->line('test') . " " . $this->lang->line('report'); ?></a> 
                             <?php } ?>
                         </div>
                     </div><!-- /.box-header -->
                     <div class="box-body">
                         <div class="download_label"><?php echo $this->lang->line('pathology') . " " . $this->lang->line('test'); ?></div>
-                        <table class="table table-striped table-bordered table-hover example" cellspacing="0" width="100%">
+                        <table class="table table-striped table-bordered table-hover test_ajax" cellspacing="0" width="100%">
                             <thead>
                                 <tr>
                                     <th><?php echo $this->lang->line('test') . " " . $this->lang->line('name'); ?></th>
@@ -38,11 +31,11 @@ $genderList = $this->customlib->getGender();
                                     <th><?php echo $this->lang->line('sub') . " " . $this->lang->line('category'); ?></th>
                                     <th><?php echo $this->lang->line('method'); ?></th>
                                     <th><?php echo $this->lang->line('report') . " " . $this->lang->line('days'); ?></th>
-                                    <th class="text-right" ><?php echo $this->lang->line('charge') . " (" . $currency_symbol . ")"; ?></th>
+                                    <th class="text-right" ><?php echo $this->lang->line('charge') . " (" . $currency_symbol .")"; ?></th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php
+                              <!--   <?php
                                 if (empty($resultlist)) {
                                     ?>
                                             
@@ -83,7 +76,7 @@ $genderList = $this->customlib->getGender();
                                         $count++;
                                     }
                                 }
-                                ?>
+                                ?> -->
                             </tbody>
 
                         </table>
@@ -104,9 +97,7 @@ $genderList = $this->customlib->getGender();
                 <div class="modal-body pt0 pb0">
                     <div class="row">
                         <div class="col-lg-12 col-md-12 col-sm-12">
-
                             <div class="row">
-
                                 <div class="col-sm-3">
                                     <div class="form-group">
                                         <label><?php echo $this->lang->line('test') . " " . $this->lang->line('name'); ?></label>
@@ -147,15 +138,7 @@ $genderList = $this->customlib->getGender();
                                         </div>
                                         <span class="text-danger"><?php echo form_error('pathology_category_id'); ?></span>
                                     </div>
-                                </div>      
-                                <div class="col-sm-3">
-                                    <div class="form-group">
-                                        <label><?php echo $this->lang->line('unit'); ?></label>
-
-                                        <input type="text" name="unit" class="form-control">
-                                        <span class="text-danger"><?php echo form_error('unit'); ?></span>
-                                    </div>
-                                </div> 
+                                </div>                           
                                 <div class="col-sm-3">
                                     <div class="form-group">
                                         <label><?php echo $this->lang->line('sub') . " " . $this->lang->line('category'); ?></label>
@@ -165,7 +148,6 @@ $genderList = $this->customlib->getGender();
                                 <div class="col-sm-3">
                                     <div class="form-group">
                                         <label for="Method"><?php echo $this->lang->line('method'); ?></label>
-
                                         <input name="method" type="text" class="form-control" />
                                     </div>
                                 </div>
@@ -220,14 +202,47 @@ $genderList = $this->customlib->getGender();
                             </div><!--./row-->   
                         </div><!--./col-md-12-->       
                     </div><!--./row--> 
-                </div>  
-                <div class="box-footer">
-                    <div class="pull-right">
-                        <button type="submit" id="formaddbtn" data-loading-text="<?php echo $this->lang->line('processing') ?>" class="btn btn-info pull-right"><?php echo $this->lang->line('save'); ?> </button>
+                </div> 
 
-                    </div>
+            <div class="divider"></div>
 
-                </div>
+                                <div class="col-md-12" style="clear:both;">
+                                    <div class="">
+                                        <table class="table table-striped table-bordered table-hover" id="tableID">
+                                            <thead>
+                                                <tr style="font-size: 13px">
+                                                    <th><?php echo $this->lang->line('test') . " " .$this->lang->line('parameter') . " " . $this->lang->line('name'); ?><small class="req" style="color:red;"> *</small></th>
+                                                    <th><?php echo $this->lang->line('refference') . " " . $this->lang->line('range'); ?></th>
+                                                    <th><?php echo $this->lang->line('unit') ; ?><small class="req" style="color:red;"> *</small></th>
+                                                </tr>
+                                            </thead>
+                                            <tr id="row0">
+                                                <td width="35%">
+                                                <select class="form-control select2" style="width:100%" onchange="getparameterdetails(this.value, 0)" id="parameter_name0" name='parameter_name[]'>
+                                                       <option value="<?php echo set_value('pathology_parameter_id'); ?>"><?php echo $this->lang->line('select') ?></option>
+                                                        <?php foreach ($parametername as $dkey => $dvalue) {
+                                                            ?>
+                                                            <option value="<?php echo $dvalue["id"]; ?>"><?php echo $dvalue["parameter_name"] ?></option>   
+                                                        <?php } ?> 
+                                                    </select>
+                                                    <span class="text-danger"><?php echo form_error('parameter_name[]'); ?></span>
+                                                </td>
+                                                <td width="30%">
+                                                    <input type="text" readonly="" name="reference_range[]"  id="reference_range0" class="form-control">
+                                                </td>
+                                                <td width="30%">
+                                                    <input type="text" readonly="" name="patho_unit[]"  id="patho_unit0" class="form-control">
+                                                </td>
+                                                <td><button type="button" onclick="addMore()" style="color: #2196f3" class="closebtn"><i class="fa fa-plus"></i></button></td>
+                                            </tr>
+                                        </table>
+                                    </div>  
+                                </div><!--./col-md-12--> 
+                            <div class="box-footer">
+                                <div class="pull-right">
+                                    <button type="submit" id="formaddbtn" data-loading-text="<?php echo $this->lang->line('processing') ?>" class="btn btn-info pull-right"><?php echo $this->lang->line('save'); ?> </button>
+                                </div>
+                            </div>
             </form>
         </div>
     </div>    
@@ -241,11 +256,10 @@ $genderList = $this->customlib->getGender();
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                 <h4 class="box-title"><?php echo $this->lang->line('edit') . " " . $this->lang->line('test') . " " . $this->lang->line('information'); ?></h4> 
             </div>
-            <div 
-                class="modal-body pt0 pb0">
+             <form  id="formedit" accept-charset="utf-8"  method="post" class="ptt10">
+            <div class="modal-body pt0 pb0">
                 <div class="row">
                     <div class="col-lg-12 col-md-12 col-sm-12">
-                        <form  id="formedit" accept-charset="utf-8"  method="post" class="ptt10">
                             <div class="row">
                                 <input type="hidden" name="id" id="id" value="<?php echo set_value('id'); ?>">
                                 <div class="col-sm-3">
@@ -288,15 +302,9 @@ $genderList = $this->customlib->getGender();
                                             </select>
                                         </div>
                                     </div>
-                                </div>      
-                                <div class="col-sm-3">
-                                    <div class="form-group">
-                                        <label><?php echo $this->lang->line('unit'); ?></label>
+                                </div>  
 
-                                        <input type="text" name="unit" id="unit" class="form-control" value="<?php echo set_value('unit'); ?>">
-                                        <span class="text-danger"><?php echo form_error('unit'); ?></span>
-                                    </div>
-                                </div> 
+                              
                                 <div class="col-sm-3">
                                     <div class="form-group">
                                         <label><?php echo $this->lang->line('sub') . " " . $this->lang->line('category'); ?></label>
@@ -356,18 +364,22 @@ $genderList = $this->customlib->getGender();
                                         <span class="text-danger"><?php echo form_error('code'); ?></span>
                                     </div>
                                 </div> 
-
+                                <div class="divider"></div>
+                                 <div class="" id="edit_parameter_details">
+                                 </div> 
                             </div><!--./row-->   
 
-                    </div><!--./col-md-12-->       
-                </div><!--./row--> 
+                    </div><!--./col-md-12-->   
+                    
+                </div><!--./row-->
             </div>
             <div class="box-footer">
                 <div class="pull-right">
                     <button type="submit" id="formeditbtn" data-loading-text="<?php echo $this->lang->line('processing') ?>" class="btn btn-info pull-right" >Save</button>
-                    </form>  
+                   
                 </div>
             </div>
+             </form>  
         </div>
     </div>    
 </div>
@@ -379,10 +391,10 @@ $genderList = $this->customlib->getGender();
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                 <div class="modalicon"> 
                     <div id='edit_delete'>
-                        <?php if($this->rbac->hasPrivilege('pathology test','can_add')){ ?>
+                        <?php if ($this->rbac->hasPrivilege('pathology test','can_add')){ ?>
                         <a href="#"  data-target="#editModal" data-toggle="modal" title="" data-original-title="Edit"><i class="fa fa-pencil"></i></a>
                     <?php } 
-                    if($this->rbac->hasPrivilege('pathology test','can_delete')){
+                    if ($this->rbac->hasPrivilege('pathology test','can_delete')){
                     ?>
                         <a href="#" data-toggle="tooltip" title="" data-original-title="Delete"><i class="fa fa-trash"></i></a>
                     <?php } ?>
@@ -390,11 +402,9 @@ $genderList = $this->customlib->getGender();
                 </div>
                 <h4 class="box-title"><?php echo $this->lang->line('test') . " " . $this->lang->line('information'); ?></h4> 
             </div>
-            <form id="view" accept-charset="utf-8" method="get" class="">    
+          <!--   <form id="view" accept-charset="utf-8" method="get" class=""> -->    
                 <div class="modal-body pt0 pb0">
                     <div class="">
-
-
                         <div class="table-responsive">
                             <table class="table mb0 tablelr0space table-striped table-bordered examples">
                                 <tr>
@@ -411,13 +421,7 @@ $genderList = $this->customlib->getGender();
                                     <td width="35%"><span id="pathology_category_ids"></span>
                                     </td>
                                 </tr>
-                                <tr>
-                                    <th width="15%"><?php echo $this->lang->line('unit') ?></th>
-                                    <td width="35%"><span id='units'></span></td>
-                                    <th width="15%"><?php echo $this->lang->line('sub') . " " . $this->lang->line('category'); ?></th>
-                                    <td width="35%"><span id="sub_categorys"></span>
-                                    </td>
-                                </tr>
+
                                 <tr>
                                     <th width="15%"><?php echo $this->lang->line('report') . " " . $this->lang->line('days'); ?></th>
                                     <td width="35%"><span id='report_dayss'></span></td>
@@ -433,27 +437,37 @@ $genderList = $this->customlib->getGender();
                                     </td>
                                 </tr>
                                 <tr>
+                                    <th width="15%"><?php echo $this->lang->line('sub') . " " . $this->lang->line('category'); ?></th>
+                                    <td width="35%"><span id="sub_categorys"></span>
+                                    </td>
                                     <th width="15%"><?php echo $this->lang->line('standard') . " " . $this->lang->line('charge'); ?></th>
                                     <td width="35%"><span id='stdcharge'></span></td>
-                                    </td>
+                                   
+                                    <!-- <th width="15%"><?php echo $this->lang->line('parameter') . " " . $this->lang->line('name'); ?></th>
+                                    <td width="35%"><span id="pathology_parameter_ids"></span>
+                                    </td> -->
                                 </tr>
                             </table>
+                             <div class="" id="parameterview">
+                            </div>
                         </div>
+                         
                     </div><!--./row--> 
+                               
                 </div>    
-            </form>    
+           <!--  </form>     -->
         </div>
     </div>    
 </div>
 
 
-<div class="modal fade" id="myModal"  role="dialog" aria-labelledby="myModalLabel">
+<div class="modal fade" id="myModal" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content modal-media-content">
             <div class="modal-header modal-media-header">
                 <button type="button" class="close pt4" data-dismiss="modal">&times;</button>
                 <div class="row">
-                    <div class="col-sm-6 col-xs-8">
+                    <div class="col-sm-6 col-xs-6">
                         <div class="form-group15">
                             <div>
                                 <select onchange="get_PatientDetails(this.value)" style="width:100%" class="form-control select2"  name='patient_id' id="addpatient_id" >
@@ -471,7 +485,7 @@ $genderList = $this->customlib->getGender();
                             <span class="text-danger"><?php echo form_error('refference'); ?></span>
                         </div>
                     </div><!--./col-sm-8-->
-                    <div class="col-sm-4 col-xs-3">
+                    <div class="col-sm-4 col-xs-5">
                         <div class="form-group15">
                             <?php if ($this->rbac->hasPrivilege('pathology test', 'can_add')) { ?>
                                 <a data-toggle="modal" id="add" onclick="holdModal('myModalpa')" class="modalbtnpatient"><i class="fa fa-plus"></i>  <span><?php echo $this->lang->line('new') . " " . $this->lang->line('patient') ?></span></a> 
@@ -487,11 +501,11 @@ $genderList = $this->customlib->getGender();
                     <div class="col-lg-12 col-md-12 col-sm-12">
                         <form id="formbatch" accept-charset="utf-8" enctype="multipart/form-data" method="post"  action="">
                             <div class="row row-eq">
-
                                 <div class="col-lg-6 col-md-6 col-sm-6">
                                     <div id="ajax_load"></div>
                                     <div class="row ptt10" id="patientDetails" style="display:none">
                                         <input type="hidden" name="pathology_id" id="patho_id" >
+                                        <input type="hidden" name="patho_parameter_id" id="patho_parameter_id" >
                                         <input type="hidden" name="patient_id" id="patho_patientid" >
                                         <div class="col-md-9 col-sm-9 col-xs-9">
 
@@ -584,7 +598,7 @@ $genderList = $this->customlib->getGender();
                                         <div class="col-sm-6">
                                             <div class="form-group">
                                                 <label><?php echo $this->lang->line('test') . " " . $this->lang->line('report'); ?></label>
-                                <input type="file" name="pathology_report" class="filestyle form-control" data-height="40" />
+                            <input type="file" name="pathology_report" class="filestyle form-control" data-height="40" />
                                                 <span class="text-danger"><?php echo form_error('pathology_report'); ?></span>
                                             </div>
                                         </div> 
@@ -685,6 +699,13 @@ $genderList = $this->customlib->getGender();
     /* $('#myModal').on('hidden.bs.modal', function (e) {
      $(this).find('#formadd')[0].reset();
      });*/
+    function holdModal(modalId) {
+        $('#' + modalId).modal({
+            backdrop: 'static',
+            keyboard: false,
+            show: true
+        });
+    }
 
     $(document).ready(function (e) {
 
@@ -696,10 +717,16 @@ $genderList = $this->customlib->getGender();
             $.each(str, function (i, val) {
                 postData.append(val.name, val.value);
             });
+
+              var input = document.querySelector('input[type=file]'),
+                      file = input.files[0];
+                       postData.append("pathology_report", file);
             //  $("#"+form).submit();
 
             $("#formbatchbtn").button('loading');
             e.preventDefault();
+            var patho_parameter_id = $("#patho_parameter_id").val();
+            var patho_pathology_id = $("#patho_id").val();
             $.ajax({
                 url: '<?php echo base_url(); ?>admin/pathology/testReportBatch',
                 type: "POST",
@@ -716,10 +743,9 @@ $genderList = $this->customlib->getGender();
                         });
                         errorMsg(message);
                     } else {
-
+//console.log(data);
                         successMsg(data.message);
-                        printData(data.id);
-
+                        printData(data.id,patho_pathology_id);
                         // window.location.reload(true);
                     }
                     $("#formbatchbtn").button('reset');
@@ -733,11 +759,11 @@ $genderList = $this->customlib->getGender();
         }));
     });
 
-    function printData(id) {
+    function printData(id,parameter_id) {
         //alert(id);
         var base_url = '<?php echo base_url() ?>';
         $.ajax({
-            url: base_url + 'admin/pathology/getBillDetails/' + id,
+            url: base_url + 'admin/pathology/getBillDetails/' + id +'/'+parameter_id,
             type: 'POST',
             data: {id: id, print: 'yes'},
             success: function (result) {
@@ -923,6 +949,47 @@ $genderList = $this->customlib->getGender();
         }));
     });
 
+
+     function addMore() {
+        var table = document.getElementById("tableID");
+        var table_len = (table.rows.length);
+        var id = parseInt(table_len - 1);
+        var div = "<td width='35%'><select class='form-control select2' name='parameter_name[]' onchange='getparameterdetails(this.value," + id + ")'><option value='<?php echo set_value('parameter_name'); ?>'><?php echo $this->lang->line('select') ?></option><?php foreach ($parametername as $dkey => $dvalue) { ?><option value='<?php echo $dvalue["id"]; ?>'><?php echo $dvalue["parameter_name"] ?></option><?php } ?></select></td><td width='30%'><input type='text' name='reference_range[]' readonly id='reference_range" + id + "' class='form-control'></td><td width='30%'><input type='text' name='patho_unit[]' readonly id='patho_unit" + id + "' class='form-control'></td>";
+
+        var row = table.insertRow(table_len).outerHTML = "<tr id='row" + id + "'>" + div + "<td><button type='button' onclick='delete_row(" + id + ")' class='closebtn'><i class='fa fa-remove'></i></button></td></tr>";
+        $('.select2').select2();
+    }
+
+   
+
+   
+    function delete_row(id) {
+        var table = document.getElementById("tableID");
+        var rowCount = table.rows.length;
+        $("#row" + id).remove();
+    }
+
+
+   
+
+    function getparameterdetails(parameter_id,id) {
+       // var medicine = $("#parameter_name" + id).val();
+        $.ajax({
+            type: "POST",
+            url: base_url + "admin/pathology/getparameterdetails",
+            data: {'id': parameter_id },
+            dataType: 'json',
+            success: function (res) {
+                if (res != null) {
+                    $('#reference_range' + id).val(res.reference_range);
+                    $('#patho_unit' + id).val(res.unit_name);
+                    // getQuantity(id);
+                }
+            }
+        });
+    }
+
+
     function get_PatientDetails(id) {
 
         // $("#patientDetails").html("<?php echo $this->lang->line('loading') ?>");
@@ -1030,33 +1097,7 @@ $genderList = $this->customlib->getGender();
         }));
     });
 
-    function getRecord(id) {
-        $('#myModaledit').modal();
-        $.ajax({
-            url: '<?php echo base_url(); ?>admin/pathology/getDetails',
-            type: "POST",
-            data: {pathology_id: id},
-            dataType: 'json',
-            success: function (data) {
-                $("#id").val(data.id);
-                $("#test_name").val(data.test_name);
-                $("#short_name").val(data.short_name);
-                $("#test_type").val(data.test_type);
-                $("#unit").val(data.unit);
-                $("#sub_category").val(data.sub_category);
-                $("#report_days").val(data.report_days);
-                $("#edit_charge_category").val(data.charge_category);
-                editchargecode(data.charge_category, data.charge_id);
-                $("#method").val(data.method);
-                $("#edit_standard_charge").val(data.standard_charge);
-                $("#updateid").val(id);
-                $('select[id="pathology_category_id"] option[value="' + data.pathology_category_id + '"]').attr("selected", "selected");
-                $('select[id="charge_category_id"] option[value="' + data.charge_category_id + '"]').attr("selected", "selected");
-                $("#pathology_category_id").select2().select2('val', data.pathology_category_id);
-                $("#viewModal").modal('hide');
-            },
-        })
-    }
+
 
     function getchargecode(charge_category) {
         var div_data = "";
@@ -1087,6 +1128,8 @@ $genderList = $this->customlib->getGender();
         });
     }
 
+
+
     function editchargecode(charge_category, charge_id) {
         var div_data = "";
         $('#edit_code').html("<option value='l'><?php echo $this->lang->line('loading') ?></option>");
@@ -1111,6 +1154,10 @@ $genderList = $this->customlib->getGender();
         });
     }
 
+
+    
+   
+
     function getPatientIdName(opd_ipd_no) {
         $('#patient_id').val("");
         $('#patient_name').val("");
@@ -1129,7 +1176,19 @@ $genderList = $this->customlib->getGender();
     }
 
 
-    function viewDetail(id) {
+    function viewDetail(id,value) {
+
+        $.ajax({
+                    url: '<?php echo base_url(); ?>admin/pathology/parameterview/' + id +'/'+ value,
+                        success: function (res) {
+                            $("#parameterview").html(res);
+                            holdModal('viewModal');
+                        },
+                        error: function () {
+                            alert("Fail")
+                        }
+                    });
+        
         $.ajax({
             url: '<?php echo base_url(); ?>admin/pathology/getDetails',
             type: "POST",
@@ -1140,6 +1199,7 @@ $genderList = $this->customlib->getGender();
                 $("#short_names").html(data.short_name);
                 $("#test_types").html(data.test_type);
                 $("#pathology_category_ids").html(data.category_name);
+                $("#pathology_parameter_ids").html(data.parameter_name);
                 $("#units").html(data.unit);
                 $("#sub_categorys").html(data.sub_category);
                 $("#report_dayss").html(data.report_days);
@@ -1148,11 +1208,59 @@ $genderList = $this->customlib->getGender();
                 $("#codes").html(data.code);
                 $("#description").html(" (" + data.description + ")");
                 $("#stdcharge").html('<?php echo $currency_symbol; ?>' + data.standard_charge);
-                $('#edit_delete').html("<?php if($this->rbac->hasPrivilege('pathology test','can_edit')){ ?><a href='#'' onclick='getRecord(" + id + ")' data-target='#myModaledit' data-toggle='tooltip'  data-original-title='<?php echo $this->lang->line('edit'); ?>'><i class='fa fa-pencil'></i></a><?php } if($this->rbac->hasPrivilege('pathhology test','can_delete')){ 
+                $('#edit_delete').html("<?php if ($this->rbac->hasPrivilege('pathology test','can_edit')){ ?><a href='#'' onclick='getRecord(" + id + ")' data-target='#myModaledit' data-toggle='tooltip'  data-original-title='<?php echo $this->lang->line('edit'); ?>'><i class='fa fa-pencil'></i></a><?php } if ($this->rbac->hasPrivilege('pathology test','can_delete')){ 
                     ?><a onclick='delete_record(" + id + ")'  href='#'  data-toggle='tooltip'  data-original-title='<?php echo $this->lang->line('delete'); ?>'><i class='fa fa-trash'></i></a><?php } ?>");
-                holdModal('viewModal');
+                 holdModal('viewModal');
             },
         });
+
+    }
+
+     function getRecord(id) {
+        $('#myModaledit').modal();
+        $("#viewModal").modal('hide');
+         //$( "#edit_parameter_details" ).css( "border", "3px solid red" );
+        $.ajax({
+            url: '<?php echo base_url(); ?>admin/pathology/getDetails',
+            type: "POST",
+            data: {pathology_id: id},
+            dataType: 'json',
+            success: function (data) {
+                $("#id").val(data.id);
+                $("#test_name").val(data.test_name);
+                $("#short_name").val(data.short_name);
+                $("#test_type").val(data.test_type);
+                $("#unit").val(data.unit);
+                $("#sub_category").val(data.sub_category);
+                $("#report_days").val(data.report_days);
+                $("#edit_charge_category").val(data.charge_category);
+                editchargecode(data.charge_category, data.charge_id);
+                $("#method").val(data.method);
+                $("#edit_standard_charge").val(data.standard_charge);
+                $("#updateid").val(id);
+                $('select[id="pathology_category_id"] option[value="' + data.pathology_category_id + '"]').attr("selected", "selected");
+               // $('select[id="pathology_parameter_ids"] option[value="' + data.pathology_parameter_id + '"]').attr("selected", "selected");
+                $('select[id="charge_category_id"] option[value="' + data.charge_category_id + '"]').attr("selected", "selected");
+                $("#pathology_category_id").select2().select2('val', data.pathology_category_id);
+                //$("#pathology_parameter_ids").select2().select2('val', data.pathology_parameter_id);
+                
+                
+                
+            },
+            
+        })
+
+         $.ajax({
+                url: '<?php echo base_url(); ?>admin/pathology/editparameter/' + id,
+                    success: function (res) {
+                        //$('#viewModal').modal('hide');
+                        $("#edit_parameter_details").html(res);
+                        holdModal('myModaledit');
+                    },
+                    error: function () {
+                        alert("Fail")
+                    }
+                });
     }
 
     function delete_record(id) {
@@ -1170,7 +1278,7 @@ $genderList = $this->customlib->getGender();
         }
     }
 
-    function addTestReport(id) {
+    function addTestReport(id,parameter_id='') {
         $.ajax({
             url: '<?php echo base_url(); ?>admin/pathology/getPathology',
             type: "POST",
@@ -1178,6 +1286,7 @@ $genderList = $this->customlib->getGender();
             dataType: 'json',
             success: function (data) {
                 $("#patho_id").val(id);
+                $("#patho_parameter_id").val(parameter_id);
                 $("#charge_category_html").val(data.charge_category);
                 $("#code_html").val(data.code);
                 $("#charge_html").val(data.standard_charge);
@@ -1218,14 +1327,9 @@ $genderList = $this->customlib->getGender();
             });
         }));
     });
-    function holdModal(modalId) {
-        $('#' + modalId).modal({
-            backdrop: 'static',
-            keyboard: false,
-            show: true
-        });
-    }
-    function getchargeDetails(id, htmlid) {
+  
+     function getchargeDetails(id, htmlid) {
+       if(id != ""){
 
         $('#' + htmlid).val("");
         $.ajax({
@@ -1235,11 +1339,103 @@ $genderList = $this->customlib->getGender();
             dataType: 'json',
             success: function (res)
             {
-
+               // console.log(res)
                 $('#' + htmlid).val(res.standard_charge);
             }
-        })
+        });
+       }
+
     }
+  
+</script>
+
+
+<script type="text/javascript">
+    $(document).ready(function() {
+    $('.test_ajax').DataTable({
+        "processing": true,
+        "serverSide": true,
+        "createdRow": function( row, data, dataIndex ) {
+            $(row).children(':nth-child(8)').addClass('pull-right');
+        },
+        "ajax": {
+            "url": base_url+"admin/searchdatatable/pathology_search",
+            "type": "POST"
+        },
+           responsive: 'true',
+            dom: "Bfrtip",
+         buttons: [
+
+                {
+                    extend: 'copyHtml5',
+                    text: '<i class="fa fa-files-o"></i>',
+                    titleAttr: 'Copy',
+                    title: $('.download_label').html(),
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                },
+
+                {
+                    extend: 'excelHtml5',
+                    text: '<i class="fa fa-file-excel-o"></i>',
+                    titleAttr: 'Excel',
+                   
+                    title: $('.download_label').html(),
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                },
+
+                {
+                    extend: 'csvHtml5',
+                    text: '<i class="fa fa-file-text-o"></i>',
+                    titleAttr: 'CSV',
+                    title: $('.download_label').html(),
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                },
+
+                {
+                    extend: 'pdfHtml5',
+                    text: '<i class="fa fa-file-pdf-o"></i>',
+                    titleAttr: 'PDF',
+                    title: $('.download_label').html(),
+                    exportOptions: {
+                        columns: ':visible'
+                        
+                    }
+                },
+
+                {
+                    extend: 'print',
+                    text: '<i class="fa fa-print"></i>',
+                    titleAttr: 'Print',
+                    title: $('.download_label').html(),
+                        customize: function ( win ) {
+                    $(win.document.body)
+                        .css( 'font-size', '10pt' );
+ 
+                    $(win.document.body).find( 'table' )
+                        .addClass( 'compact' )
+                        .css( 'font-size','inherit');
+                },
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                },
+
+                {
+                    extend: 'colvis',
+                    text: '<i class="fa fa-columns"></i>',
+                    titleAttr: 'Columns',
+                    title: $('.download_label').html(),
+                    postfixButtons: ['colvisRestore']
+                },
+            ]
+    });
+});
 </script>
 
 <script type="text/javascript">
@@ -1251,5 +1447,27 @@ $genderList = $this->customlib->getGender();
             $("#opd_ipd_no").hide();
         }
     }
+	
+$(".pathology").click(function(){
+	$('#formadd').trigger("reset");
+	$('#select2-parameter_name0-container').html("");
+	var table = document.getElementById("tableID");
+    var table_len = (table.rows.length);	
+	for (i = 1; i < table_len; i++) {			
+		delete_row(i);
+	}
+});
+
+function addpatientreport(){	
+	$('#formbatch').trigger("reset");
+	$("#patientDetails").hide();
+	$('#select2-addpatient_id-container').html("");
+	$(".dropify-clear").trigger("click");
+}	
+
+$(".modalbtnpatient").click(function(){	
+	$('#formaddpa').trigger("reset");
+	$(".dropify-clear").trigger("click");
+});	
 </script>
 <?php $this->load->view('admin/patient/patientaddmodal') ?>

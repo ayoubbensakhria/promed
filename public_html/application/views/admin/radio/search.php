@@ -2,12 +2,7 @@
 $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
 $genderList = $this->customlib->getGender();
 ?>
-<style type="text/css">
-    #easySelectable {/*display: flex; flex-wrap: wrap;*/}
-    #easySelectable li {}
-    #easySelectable li.es-selected {background: #2196F3; color: #fff;}
-    .easySelectable {-webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;}
-</style>
+
 <div class="content-wrapper">
     <!-- Main content -->
     <section class="content">
@@ -18,16 +13,16 @@ $genderList = $this->customlib->getGender();
                         <h3 class="box-title titlefix"><?php echo $this->lang->line('radiology') . " " . $this->lang->line('test'); ?></h3>
                         <div class="box-tools pull-right">
                             <?php if ($this->rbac->hasPrivilege('radiology test', 'can_add')) { ?>   
-                                <a data-toggle="modal" onclick="holdModal('addTestReportModal')" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> <?php echo $this->lang->line('add') . " " . $this->lang->line('radiology') . " " . $this->lang->line('test'); ?></a> 
+                                <a data-toggle="modal" onclick="holdModal('addTestReportModal')" class="btn btn-primary btn-sm radiology"><i class="fa fa-plus"></i> <?php echo $this->lang->line('add') . " " . $this->lang->line('radiology') . " " . $this->lang->line('test'); ?></a> 
                             <?php } ?>
-                            <?php if ($this->rbac->hasPrivilege('add_radio_patient_test_reprt', 'can_view')) { ?>  
+                            <?php if ($this->rbac->hasPrivilege('add_radio_patient_test_report', 'can_view')) { ?>  
                                 <a href="<?php echo base_url(); ?>admin/radio/getTestReportBatch" class="btn btn-primary btn-sm"><i class="fa fa-reorder"></i> <?php echo $this->lang->line('test') . " " . $this->lang->line('report'); ?></a> 
                             <?php } ?>
                         </div>
                     </div><!-- /.box-header -->
                     <div class="box-body">
                         <div class="download_label"><?php echo $this->lang->line('radiology') . " " . $this->lang->line('test'); ?></div>
-                        <table class="table table-striped table-bordered table-hover example" cellspacing="0" width="100%">
+                        <table class="table table-striped table-bordered table-hover test_ajax" cellspacing="0" width="100%">
                             <thead>
                                 <tr>
                                     <th><?php echo $this->lang->line('test') . " " . $this->lang->line('name'); ?></th>
@@ -40,12 +35,10 @@ $genderList = $this->customlib->getGender();
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php
+                              <!--   <?php
                                 if (empty($resultlist)) {
                                     ?>
-                                              <!-- <tr>
-                                                <td colspan="12" class="text-danger text-center"><?php //echo $this->lang->line('no_record_found');     ?></td>
-                                              </tr> -->
+                                        
                                     <?php
                                 } else {
                                     $count = 1;
@@ -56,7 +49,7 @@ $genderList = $this->customlib->getGender();
                                                 <a  href="#" 
                                                     onclick="viewDetail('<?php echo $student['id'] ?>')"><?php echo $student['test_name']; ?></a> 
                                                 <div class="rowoptionview">
-                                                    <?php if ($this->rbac->hasPrivilege('add_radio_patient_test_reprt', 'can_add')) { ?>
+                                                    <?php if ($this->rbac->hasPrivilege('add_radio_patient_test_report', 'can_add')) { ?>
                                                         <a href="#" onclick="addTestReport('<?php echo $student['id'] ?>')" class="btn btn-default btn-xs"  data-toggle="tooltip" title="<?php echo $this->lang->line('add_patient_report'); ?>">
                                                             <i class="fa fa-plus-square" aria-hidden="true"></i>
                                                         </a>  
@@ -82,7 +75,7 @@ $genderList = $this->customlib->getGender();
                                         $count++;
                                     }
                                 }
-                                ?>
+                                ?> -->
                             </tbody>
                         </table>
                     </div>
@@ -98,12 +91,11 @@ $genderList = $this->customlib->getGender();
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                 <h4 class="box-title"><?php echo $this->lang->line('add') . " " . $this->lang->line('test') . " " . $this->lang->line('details'); ?></h4> 
             </div>
+             <form id="formadd" accept-charset="utf-8"  method="post" class="ptt10" >
             <div class="modal-body pt0 pb0">
                 <div class="row">
                     <div class="col-lg-12 col-md-12 col-sm-12">
-                        <form id="formadd" accept-charset="utf-8"  method="post" class="ptt10" >
                             <div class="row">
-
                                 <div class="col-sm-3">
                                     <div class="form-group">
                                         <label><?php echo $this->lang->line('test') . " " . $this->lang->line('name'); ?></label>
@@ -181,7 +173,7 @@ $genderList = $this->customlib->getGender();
                                         <label for="exampleInputFile"><?php echo $this->lang->line('code'); ?></label>
                                         <small class="req">*</small> 
                                         <div>
-                                            <select class="form-control select2" name='code' style="width: 100%" onchange="getchargeDetails(this.value)" id="code" >
+                                            <select class="form-control select2" name='code' style="width: 100%" onchange="getchargeDetails(this.value,'standard_charge')" id="code" >
                                                 <option value=""><?php echo $this->lang->line('select') ?></option>
                                             </select>
                                         </div>
@@ -194,7 +186,7 @@ $genderList = $this->customlib->getGender();
                                         <label for="exampleInputFile"><?php echo $this->lang->line('standard') . " " . $this->lang->line('charge'); ?></label><?php echo ' (' . $currency_symbol . ')'; ?>
                                         <small class="req">*</small> 
                                         <div>
-                                            <input class="form-control" name='standard_charge' id="standard_charge" readonly="true">
+                                            <input class="form-control"  name='standard_charge' id="standard_charge" readonly="true">
 
                                         </div>
                                         <span class="text-danger"><?php echo form_error('code'); ?></span>
@@ -207,12 +199,49 @@ $genderList = $this->customlib->getGender();
                     </div><!--./col-md-12-->       
                 </div><!--./row--> 
             </div>
-            <div class="box-footer">
-                <div class="pull-right">
-                    <button type="submit" data-loading-text="<?php echo $this->lang->line('processing') ?>" id="formaddbtn" class="btn btn-info pull-right"><?php echo $this->lang->line('save'); ?></button>
-                    </form>
+             <div class="divider"></div>
+             <div class="col-md-12" style="clear:both;">
+                                    <div class="">
+                                        <table class="table table-striped table-bordered table-hover" id="tableID">
+                                            <thead>
+                                                <tr style="font-size: 13px">
+                                                    <th><?php echo $this->lang->line('test') . " " .$this->lang->line('parameter') . " " . $this->lang->line('name'); ?><small class="req" style="color:red;"> *</small></th>
+                                                    <th><?php echo $this->lang->line('refference') . " " . $this->lang->line('range'); ?></th>
+                                                    <th><?php echo $this->lang->line('unit') ; ?><small class="req" style="color:red;"> *</small></th>
+                                                </tr>
+                                            </thead>
+                                            <tr id="row0">
+                                                <td width="35%">
+                                                    <select class="form-control select2" style="width:100%" onchange="getparameterdetails(this.value, 0)" id="parameter_name0" name='parameter_name[]'>
+                                                       <option value="<?php echo set_value('radiology_parameter_id'); ?>"><?php echo $this->lang->line('select') ?></option>
+                                                        <?php foreach ($parametername as $dkey => $dvalue) {
+                                                            ?>
+                                                            <option value="<?php echo $dvalue["id"]; ?>"><?php echo $dvalue["parameter_name"] ?></option>   
+                                                        <?php } ?> 
+                                               
+                                                       <!--  <option value=""><?php echo $this->lang->line('select') ?>
+                                                        </option> -->
+                                                    </select>
+                                                    <span class="text-danger"><?php echo form_error('parameter_name[]'); ?></span>
+                                                </td>
+                                                <td width="30%">
+                                                    <input type="text" readonly="" name="reference_range[]"  id="reference_range0" class="form-control">
+                                                </td>
+                                                <td width="30%">
+                                                    <input type="text" readonly="" name="radio_unit[]"  id="radio_unit0" class="form-control">
+                                                </td>
+                                                <td><button type="button" onclick="addMore()" style="color: #2196f3" class="closebtn"><i class="fa fa-plus"></i></button></td>
+                                            </tr>
+                                        </table>
+                                    </div>  
+                                </div><!--./col-md-12--> 
+                <div class="box-footer">
+                    <div class="pull-right">
+                        <button type="submit" data-loading-text="<?php echo $this->lang->line('processing') ?>" id="formaddbtn" class="btn btn-info pull-right"><?php echo $this->lang->line('save'); ?></button>
+                        
+                    </div>
                 </div>
-            </div>
+            </form>
         </div>
     </div>    
 </div>
@@ -227,8 +256,6 @@ $genderList = $this->customlib->getGender();
             <form  id="formedit" accept-charset="utf-8"  method="post" class="">    
                 <div class="modal-body pt0 pb0">
                     <div class="ptt10">
-
-
                         <div class="row">
                             <input type="hidden" name="id" id="id" value="<?php echo set_value('id'); ?>">
                             <div class="col-sm-3">
@@ -304,7 +331,7 @@ $genderList = $this->customlib->getGender();
                                     <label for="exampleInputFile"><?php echo $this->lang->line('code') ?></label>
                                     <small class="req">*</small> 
                                     <div>
-                                        <select class="form-control select2" style="width: 100%" name='charge_category_id' id="edit_code" >
+                                        <select class="form-control select2" style="width: 100%" name='charge_category_id' id="edit_code" onchange="getchargeDetails(this.value,'edit_standard_charge')" >
                                             <option value="<?php echo set_value('charge_category_id'); ?>"><?php echo $this->lang->line('select') ?></option>
                                         </select>
                                     </div>
@@ -325,13 +352,15 @@ $genderList = $this->customlib->getGender();
 
                         </div><!--./row-->   
 
+                            <div class="divider"></div>
+                                <div class="" id="edit_parameter_details">
+                                </div> 
 
                     </div><!--./row--> 
                 </div> 
                 <div class="box-footer">
                     <div class="pull-right ">
                         <button type="submit" data-loading-text="<?php echo $this->lang->line('processing') ?>" id="formeditbtn" class="btn btn-info pull-right" ><?php echo $this->lang->line('save') ?></button>
-
                     </div>
                 </div>
             </form>
@@ -357,8 +386,6 @@ $genderList = $this->customlib->getGender();
             <form id="view" accept-charset="utf-8" method="get" class="">    
                 <div class="modal-body pt0 pb0">
                     <div class="ptt10">
-
-
                         <div class="table-responsive">
                             <table class="table mb0 table-striped table-bordered examples ">
                                 <tr>
@@ -394,7 +421,8 @@ $genderList = $this->customlib->getGender();
                                     </td>
                                 </tr>
                             </table>
-
+                                <div class="" id="parameterview">
+                                </div>
                         </div>
 
                     </div><!--./row--> 
@@ -411,7 +439,7 @@ $genderList = $this->customlib->getGender();
             <div class="modal-header modal-media-header">
                 <button type="button" class="close pt4" data-dismiss="modal">&times;</button>
                 <div class="row">
-                    <div class="col-sm-6 col-xs-8">
+                    <div class="col-sm-6 col-xs-6">
                         <div class="form-group15">
                           <div>
                                 <select onchange="get_PatientDetails(this.value)" style="width:100%" class="form-control select2"  name='patient_id' id="addpatient_id" >
@@ -429,7 +457,7 @@ $genderList = $this->customlib->getGender();
                             <span class="text-danger"><?php echo form_error('refference'); ?></span>
                         </div>
                     </div><!--./col-sm-8-->
-                    <div class="col-sm-4 col-xs-3">
+                    <div class="col-sm-4 col-xs-5">
                         <div class="form-group15">
                             <?php if ($this->rbac->hasPrivilege('patient', 'can_add')) { ?>
                                 <a data-toggle="modal" id="add" onclick="holdModal('myModalpa')" class="modalbtnpatient"><i class="fa fa-plus"></i>  <span><?php echo $this->lang->line('new') . " " . $this->lang->line('patient') ?></span></a> 
@@ -539,8 +567,7 @@ $genderList = $this->customlib->getGender();
                                     <div class="col-sm-6">
                                         <div class="form-group">
                                             <label><?php echo $this->lang->line('test') . " " . $this->lang->line('report'); ?></label>
-                                            <input type="file" class="filestyle form-control" data-height="40" 
-                                                   name="radiology_report">
+                                            <input type="file" class="filestyle form-control" data-height="40" name="radiology_report">
                                             <span class="text-danger"><?php echo form_error('radiology_report'); ?></span>
                                         </div>
                                     </div> 
@@ -621,16 +648,23 @@ $genderList = $this->customlib->getGender();
 
 
 <script type="text/javascript">
-    $(function () {
+   
+// $('#easySelectable').bind('click', function (e) { e.stopPropagation() })
+
+ function holdModal(modalId) {
+                $('#' + modalId).modal({
+                    backdrop: 'static',
+                    keyboard: false,
+                    show: true
+                });
+            }
+
+ $(function () {
         $('#easySelectable').easySelectable();
 //stopPropagation();
     })
-// $('#easySelectable').bind('click', function (e) { e.stopPropagation() })
 
-
-
-
-
+    
 
 </script>
 
@@ -710,7 +744,6 @@ $genderList = $this->customlib->getGender();
 </script>
 <script type="text/javascript">
 
-
             $(document).ready(function (e) {
 
                 $(".printsavebtn").on('click', (function (e) {
@@ -721,6 +754,11 @@ $genderList = $this->customlib->getGender();
                     $.each(str, function (i, val) {
                         postData.append(val.name, val.value);
                     });
+
+                    var input = document.querySelector('input[type=file]'),
+                      file = input.files[0];
+                       postData.append("radiology_report", file);
+                    //console.log(postData);
                     //  $("#"+form).submit();
 
                     $("#formbatchbtn").button('loading');
@@ -743,8 +781,9 @@ $genderList = $this->customlib->getGender();
                             } else {
                                 //var insertid = insert_id;
                                 //console.log(insert_id);
+                                var radioid = $("#radio_id").val();
                                 successMsg(data.message);
-                                printData(data.id);
+                                printData(data.id,radioid);
 
                                 // window.location.reload(true);
                             }
@@ -754,16 +793,16 @@ $genderList = $this->customlib->getGender();
                             //  alert("Fail")
                         }
                     });
-
+        
 
                 }));
             });
 
-            function printData(id) {
+            function printData(id,radioid) {
                 //alert(id);
                 var base_url = '<?php echo base_url() ?>';
                 $.ajax({
-                    url: base_url + 'admin/radio/getBillDetails/' + id,
+                    url: base_url + 'admin/radio/getBillDetails/' + id +'/'+radioid,
                     type: 'POST',
                     data: {id: id, print: 'yes'},
                     success: function (result) {
@@ -812,6 +851,7 @@ $genderList = $this->customlib->getGender();
 
                 return true;
             }
+
 
             function get_PatientDetails(id) {
                 // $("#patientDetails").html("<?php echo $this->lang->line('loading') ?>");
@@ -886,6 +926,7 @@ $genderList = $this->customlib->getGender();
                 });
             }
 
+          
 
             $(document).ready(function (e) {
                 $("#formadd").on('submit', (function (e) {
@@ -919,38 +960,8 @@ $genderList = $this->customlib->getGender();
                 }));
             });
 
-            function getchargeDetails(id) {
+        
 
-                $('#standard_charge').val("");
-                $.ajax({
-                    url: '<?php echo base_url(); ?>admin/charges/getDetails',
-                    type: "POST",
-                    data: {charges_id: id},
-                    dataType: 'json',
-                    success: function (res)
-                    {
-                        $('#standard_charge').val(res.standard_charge);
-                    }
-                })
-            }
-
-            /*  function getPatientIdName(opd_ipd_no) {
-             $('#patient_id').val("");
-             $('#patient_name').val("");
-             var opd_ipd_patient_type = $("#customer_type").val();
-             $.ajax({
-             url: '<?php echo base_url(); ?>admin/patient/getPatientType',
-             type: "POST",
-             data: {opd_ipd_patient_type: opd_ipd_patient_type, opd_ipd_no: opd_ipd_no},
-             dataType: 'json',
-             success: function (data) {
-             $('#patient_id').val(data.patient_id);
-             $('#patient_name').val(data.patient_name);
-             //$('#consultant_doctor').val(data.doctorname + ' ' +data.surname);
-             }
-             });
-             }
-             */
 
             $(document).ready(function (e) {
                 $("#formedit").on('submit', (function (e) {
@@ -1002,7 +1013,7 @@ $genderList = $this->customlib->getGender();
                         $("#edit_standard_charge").val(data.standard_charge);
                         editchargecode(data.charge_category, data.charge_id);
                         $("#updateid").val(id);
-                        console.log(data);
+                        //console.log(data);
                         $('select[id="radiology_category_id"] option[value="' + data.radiology_category_id + '"]').attr("selected", "selected");
                         $('select[id="charge_category_id"] option[value="' + data.charge_category_id + '"]').attr("selected", "selected");
                         $("#viewModal").modal('hide');
@@ -1011,6 +1022,17 @@ $genderList = $this->customlib->getGender();
                         holdModal('myModaledit');
                     },
                 })
+                $.ajax({
+                url: '<?php echo base_url(); ?>admin/radio/editparameter/' + id,
+                    success: function (res) {
+                        
+                        $("#edit_parameter_details").html(res);
+                        holdModal('myModaledit');
+                    },
+                    error: function () {
+                        alert("Fail")
+                    }
+                });
             }
 
             $(function () {
@@ -1032,6 +1054,9 @@ $genderList = $this->customlib->getGender();
                     })
                 }
             }
+
+
+          
 
             function editchargecode(charge_category, charge_id) {
                 var div_data = "";
@@ -1107,6 +1132,18 @@ $genderList = $this->customlib->getGender();
                         holdModal('viewModal');
                     },
                 });
+                 $.ajax({
+                url: '<?php echo base_url(); ?>admin/radio/parameterview/' + id,
+                    success: function (res) {
+                        //console.log(res)
+                        $("#parameterview").html(res);
+                        holdModal('viewModal');
+                    },
+                    error: function () {
+                        alert("Fail")
+                    }
+                });
+             
             }
             function addTestReport(id) {
                 $.ajax({
@@ -1125,6 +1162,7 @@ $genderList = $this->customlib->getGender();
                 })
             }
 
+        
             $(document).ready(function (e) {
                 $("#formbatch").on('submit', (function (e) {
                     $("#formbatchbtn").button('loading');
@@ -1157,13 +1195,6 @@ $genderList = $this->customlib->getGender();
                 }));
             });
 
-            function holdModal(modalId) {
-                $('#' + modalId).modal({
-                    backdrop: 'static',
-                    keyboard: false,
-                    show: true
-                });
-            }
             function showtextbox(value) {
                 if (value != 'direct') {
                     $("#opd_ipd_no").show();
@@ -1171,6 +1202,166 @@ $genderList = $this->customlib->getGender();
                     $("#opd_ipd_no").hide();
                 }
             }
+            
+            function addMore() {
+      
+                    var table = document.getElementById("tableID");
+                    var table_len = (table.rows.length);
+                    var id = parseInt(table_len - 1);
+                    var div = "<td width='35%'><select class='form-control select2' name='parameter_name[]' onchange='getparameterdetails(this.value," + id + ")'><option value='<?php echo set_value('parameter_name'); ?>'><?php echo $this->lang->line('select') ?></option><?php foreach ($parametername as $dkey => $dvalue) { ?><option value='<?php echo $dvalue["id"]; ?>'><?php echo $dvalue["parameter_name"] ?></option><?php } ?></select></td><td width='30%'><input type='text' name='reference_range[]' readonly id='reference_range" + id + "' class='form-control'></td><td width='30%'><input type='text' name='radio_unit[]' readonly id='radio_unit" + id + "' class='form-control'></td>";
+                    console.log(div);
+                    var row = table.insertRow(table_len).outerHTML = "<tr id='row" + id + "'>" + div + "<td><button type='button' onclick='delete_row(" + id + ")' class='closebtn'><i class='fa fa-remove'></i></button></td></tr>";
+                    $('.select2').select2();
+                }
+
+                function delete_row(id) {
+                    var table = document.getElementById("tableID");
+                    var rowCount = table.rows.length;
+                    $("#row" + id).remove();
+                }
+
+                  function getparameterdetails(parameter_id,id) {
+               // var medicine = $("#parameter_name" + id).val();
+                $.ajax({
+                    type: "POST",
+                    url: base_url + "admin/radio/getparameterdetails",
+                    data: {'id': parameter_id },
+                    dataType: 'json',
+                    success: function (res) {
+                        if (res != null) {
+                            $('#reference_range' + id).val(res.reference_range);
+                            $('#radio_unit' + id).val(res.unit_name);
+                            // getQuantity(id);
+                        }
+                    }
+                });
+            }
+
+               function getchargeDetails(id, htmlid) {
+
+                $('#' + htmlid).val("");
+                $.ajax({
+                    url: '<?php echo base_url(); ?>admin/charges/getDetails',
+                    type: "POST",
+                    data: {charges_id: id, organisation: ''},
+                    dataType: 'json',
+                    success: function (res)
+                    {
+                        $('#' + htmlid).val(res.standard_charge);
+                    }
+                })
+            }
+
+
+
+</script>
+<script type="text/javascript">
+    $(document).ready(function() {
+    $('.test_ajax').DataTable({
+        "processing": true,
+        "serverSide": true,
+        "createdRow": function( row, data, dataIndex ) {
+            $(row).children(':nth-child(7)').addClass('pull-right');
+        },
+        "ajax": {
+            "url": base_url+"admin/searchdatatable/radiology_search",
+            "type": "POST"
+        },
+           responsive: 'true',
+            dom: "Bfrtip",
+         buttons: [
+
+                {
+                    extend: 'copyHtml5',
+                    text: '<i class="fa fa-files-o"></i>',
+                    titleAttr: 'Copy',
+                    title: $('.download_label').html(),
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                },
+
+                {
+                    extend: 'excelHtml5',
+                    text: '<i class="fa fa-file-excel-o"></i>',
+                    titleAttr: 'Excel',
+                   
+                    title: $('.download_label').html(),
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                },
+
+                {
+                    extend: 'csvHtml5',
+                    text: '<i class="fa fa-file-text-o"></i>',
+                    titleAttr: 'CSV',
+                    title: $('.download_label').html(),
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                },
+
+                {
+                    extend: 'pdfHtml5',
+                    text: '<i class="fa fa-file-pdf-o"></i>',
+                    titleAttr: 'PDF',
+                    title: $('.download_label').html(),
+                    exportOptions: {
+                        columns: ':visible'
+                        
+                    }
+                },
+
+                {
+                    extend: 'print',
+                    text: '<i class="fa fa-print"></i>',
+                    titleAttr: 'Print',
+                    title: $('.download_label').html(),
+                        customize: function ( win ) {
+                    $(win.document.body)
+                        .css( 'font-size', '10pt' );
+ 
+                    $(win.document.body).find( 'table' )
+                        .addClass( 'compact' )
+                        .css( 'font-size','inherit');
+                },
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                },
+
+                {
+                    extend: 'colvis',
+                    text: '<i class="fa fa-columns"></i>',
+                    titleAttr: 'Columns',
+                    title: $('.download_label').html(),
+                    postfixButtons: ['colvisRestore']
+                },
+            ]
+    });
+});
+
+$(".radiology").click(function(){
+	$('#formadd').trigger("reset");
+	var table = document.getElementById("tableID");
+    var table_len = (table.rows.length);	
+	for (i = 1; i < table_len; i++) {			
+		delete_row(i);
+	}
+});
+
+function addpatientreport(){	
+	$('#formbatch').trigger("reset");
+	$("#patientDetails").hide();
+	$('#select2-addpatient_id-container').html("");
+	$(".dropify-clear").trigger("click");
+}
+
+$(".modalbtnpatient").click(function(){	
+	$('#formaddpa').trigger("reset");
+	$(".dropify-clear").trigger("click");
+});	
 </script>
 
 <?php $this->load->view('admin/patient/patientaddmodal') ?>

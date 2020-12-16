@@ -76,7 +76,6 @@ class Itemcategory extends Admin_Controller {
                 'description' => $this->input->post('description'),
             );
             $this->itemcategory_model->add($data);
-
             $array = array('status' => 'success', 'error' => '', 'message' => $this->lang->line('success_message'));
         }
 
@@ -103,7 +102,6 @@ class Itemcategory extends Admin_Controller {
                 'description' => $this->input->post('description'),
             );
             $this->itemcategory_model->add($data);
-
             $array = array('status' => 'success', 'error' => '', 'message' => $this->lang->line('update_message'));
         }
 

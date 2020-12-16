@@ -10,7 +10,7 @@ class Emailconfig extends Admin_Controller {
     }
 
     function index() {
-        if (!$this->rbac->hasPrivilege('email_setting', 'can_edit')) {
+        if (!$this->rbac->hasPrivilege('email_setting', 'can_view')) {
             access_denied();
         }
         $data = array();
@@ -31,7 +31,6 @@ class Emailconfig extends Admin_Controller {
             $emaillist->ssl_tls = "";
         }
         $data['emaillist'] = $emaillist;
-
         $this->form_validation->set_rules('email_type', $this->lang->line('email') . " " . $this->lang->line('type'), 'required');
         if ($this->input->post('email_type') == "smtp") {
             $this->form_validation->set_rules('smtp_username', $this->lang->line('smtp_username'), 'required');

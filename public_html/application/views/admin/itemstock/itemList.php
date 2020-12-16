@@ -9,14 +9,15 @@
                 <div class="box box-primary">
                     <div class="box-header ptbnull">
                         <h3 class="box-title titlefix"> <?php echo $this->lang->line('item_stock_list'); ?></h3>
-                        <div class="box-tools pull-right"><?php if ($this->rbac->hasPrivilege('item_stock', 'can_add')) { ?>
-                                <a data-toggle="modal" data-target="#myModal" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> <?php echo $this->lang->line('add_item_stock'); ?></a>
+                        <div class="box-tools pull-right">
+                            <?php if ($this->rbac->hasPrivilege('item_stock', 'can_add')) { ?>
+                                <a data-toggle="modal" data-target="#myModal" class="btn btn-primary btn-sm additemstock"><i class="fa fa-plus"></i> <?php echo $this->lang->line('add_item_stock'); ?></a>
                             <?php } ?>
-                            <?php if ($this->rbac->hasPrivilege('issue_item', 'can_add')) { ?>
+                            <?php if ($this->rbac->hasPrivilege('issue_item', 'can_view')) { ?>
                                 <a href="<?php echo base_url(); ?>admin/issueitem" class="btn btn-primary btn-sm"><i class="fa fa-reorder"></i> <?php echo $this->lang->line('issue_item'); ?> </a>  
                                 <?php
                             }
-                            if ($this->rbac->hasPrivilege('item', 'can_add')) {
+                            if ($this->rbac->hasPrivilege('item', 'can_view')) {
                                 ?>
                                 <a href="<?php echo base_url(); ?>admin/item" class="btn btn-primary btn-sm"><i class="fa fa-reorder"></i> <?php echo $this->lang->line('item'); ?> </a> 
                             <?php } ?>
@@ -32,9 +33,10 @@
                                         <th><?php echo $this->lang->line('category'); ?></th>
                                         <th><?php echo $this->lang->line('supplier'); ?></th>
                                         <th><?php echo $this->lang->line('store'); ?></th>
-                                        <th><?php echo $this->lang->line('quantity'); ?></th>
-                                        <th><?php echo $this->lang->line('purchase') . " " . $this->lang->line('price'); ?></th>
                                         <th><?php echo $this->lang->line('date'); ?></th>
+                                        <th class="text-right"><?php echo $this->lang->line('total')." ".$this->lang->line('quantity'); ?></th>
+                                        <th class="text-right"><?php echo $this->lang->line('purchase') . " " . $this->lang->line('price')." (".$currency_symbol.")"; ?></th>
+                                       
                                         <th class="text-right"><?php echo $this->lang->line('action'); ?></th>
                                     </tr>
                                 </thead>
@@ -46,8 +48,6 @@
                                         <?php
                                     } else {
                                         foreach ($itemlist as $items) {
-
-                                            //print_r($items);
                                             ?>
                                             <tr>
                                                 <td class="mailbox-name">
@@ -81,25 +81,21 @@
                                                     <?php echo $items['item_store']; ?>
 
                                                 </td>
-
-                                                <td class="mailbox-name">
-                                                    <?php echo $items['quantity']; ?>
-
-                                                </td>
-                                                <td class="mailbox-name">
-                                                    <?php echo $items['purchase_price']; ?>
-
-                                                </td>
-                                                <td class="mailbox-name">
+                                                 <td class="mailbox-name">
                                                     <?php echo date($this->customlib->getSchoolDateFormat(), $this->customlib->dateyyyymmddTodateformat($items['date'])); ?>
 
                                                 </td>
+                                                <td class="mailbox-name text-right">
+                                                    <?php echo $items['quantity']; ?>
 
+                                                </td>
+                                                <td class="mailbox-name text-right">
+                                                    <?php echo $items['purchase_price']; ?>
 
+                                                </td>
+                                               
 
-
-
-                                                <td class="mailbox-date pull-right"">
+                                                <td class="mailbox-date pull-right">
                                                     <?php if ($items['attachment']) {
                                                         ?>
                                                         <a href="<?php echo base_url(); ?>admin/itemstock/download/<?php echo $items['attachment'] ?>" class="btn btn-default btn-xs"  data-toggle="tooltip" title="<?php echo $this->lang->line('download'); ?>">
@@ -192,7 +188,7 @@
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="exampleInputEmail1"><?php echo $this->lang->line('supplier'); ?></label>
+                                <label for="exampleInputEmail1"><?php echo $this->lang->line('supplier'); ?></label><small class="req"> *</small>
 
                                 <select  id="supplier_id" name="supplier_id" class="form-control" >
                                     <option value=""><?php echo $this->lang->line('select'); ?></option>
@@ -260,7 +256,7 @@
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label for="exampleInputEmail1"><?php echo $this->lang->line('date'); ?></label>
-                                <input id="date" name="date" placeholder="" type="text" class="form-control"  value="<?php echo set_value('date'); ?>" readonly="readonly" />
+                                <input id="date" name="date" placeholder="" type="text" class="form-control"  value="<?php echo date($this->customlib->getSchoolDateFormat()); ?>" readonly="readonly" />
                                 <span class="text-danger"><?php echo form_error('date'); ?></span>
                             </div>
                         </div>
@@ -334,7 +330,7 @@
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="exampleInputEmail1"><?php echo $this->lang->line('supplier'); ?></label>
+                                <label for="exampleInputEmail1"><?php echo $this->lang->line('supplier'); ?></label><small class="req"> *</small>
 
                                 <select  id="editsupplier_id" name="supplier_id" class="form-control" >
                                     <option value=""><?php echo $this->lang->line('select'); ?></option>
@@ -611,14 +607,15 @@
             type: "POST",
             dataType: "json",
             success: function (res) {
-                var date_format = '<?php echo $result = strtr($this->customlib->getSchoolDateFormat(), ['d' => 'dd', 'm' => 'mm', 'Y' => 'yyyy',]) ?>';
+               // var date_format = '<?php echo $result = strtr($this->customlib->getSchoolDateFormat(), ['d' => 'dd', 'm' => 'mm', 'Y' => 'yyyy',]) ?>';
                 $("#edititem_category_id").val(res.item_category_id);
                 $("#edititem_id").val(res.item_id);
                 $("#editsupplier_id").val(res.supplier_id);
                 $("#editstore_id").val(res.store_id);
                 $("#editquantity").val(res.quantity);
-                var dt = new Date(res.date).toString(date_format);
-                $("#editdate").val(dt);
+               // var dt = new Date(res.date).toString(date_format);
+                $("#editdate").val(res.date);
+                //console.log(res.date);
                 $("#epurchase_price").val(res.purchase_price);
                 $("#editdescription").text(res.description);
                 $("#itemstockid").val(res.id);
@@ -628,5 +625,10 @@
                 // $('#editstok').html(res);
             }
         });
-    }
+    }	
+	
+$(".additemstock").click(function(){
+	$('#form1').trigger("reset");
+	$(".dropify-clear").trigger("click");
+});
 </script>

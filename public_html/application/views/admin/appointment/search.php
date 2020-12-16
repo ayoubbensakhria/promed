@@ -2,14 +2,6 @@
 $currency_symbol = $this->customlib->getSchoolCurrencyFormat();
 $genderList = $this->customlib->getGender();
 ?>
-<style type="text/css">
-    #easySelectable {/*display: flex; flex-wrap: wrap;*/}
-    #easySelectable li {}
-    #easySelectable li.es-selected {background: #2196F3; color: #fff;}
-    .easySelectable {-webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;}
-    .table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th {
-        padding: 5px 0;}
-    </style>
     <div class="content-wrapper">
     <!-- Main content -->
     <section class="content">
@@ -20,159 +12,61 @@ $genderList = $this->customlib->getGender();
                         <h3 class="box-title titlefix"><?php echo $this->lang->line('appointment') . " " . $this->lang->line('details'); ?></h3>
                         <div class="box-tools pull-right">
                             <?php if ($this->rbac->hasPrivilege('appointment', 'can_add')) { ?>
-                                <a data-toggle="modal" data-target="#myModal" class="btn btn-primary btn-sm"> <i class="fa fa-plus"></i> <?php echo $this->lang->line('add') . " " . $this->lang->line('appointment'); ?></a>
+                                <a data-toggle="modal" data-target="#myModal" class="btn btn-primary btn-sm addappointment"> <i class="fa fa-plus"></i> <?php echo $this->lang->line('add') . " " . $this->lang->line('appointment'); ?></a>
                             <?php } ?> 
-                            <?php if ($this->rbac->hasPrivilege('visitor_book', 'can_add')) { ?>
+                            <?php if ($this->rbac->hasPrivilege('visitor_book', 'can_view')) { ?>
                                 <a  href="<?php echo base_url(); ?>admin/visitors" class="btn btn-primary btn-sm"><i class="fa fa-reorder"></i> <?php echo $this->lang->line('visitor_book'); ?></a>
                             <?php } ?> 
-                            <?php if ($this->rbac->hasPrivilege('phone_call_log', 'can_add')) { ?>
+                            <?php if ($this->rbac->hasPrivilege('phone_call_log', 'can_view')) { ?>
                                 <a  href="<?php echo base_url(); ?>admin/generalcall" class="btn btn-primary btn-sm"><i class="fa fa-reorder"></i> <?php echo $this->lang->line('phone_call_log'); ?></a> 
-                            <?php } if (($this->rbac->hasPrivilege('postal_dispatch', 'can_add')) || ($this->rbac->hasPrivilege('postal_receive', 'can_add'))) { ?>
+                            <?php } if (($this->rbac->hasPrivilege('postal_dispatch', 'can_view')) || ($this->rbac->hasPrivilege('postal_receive', 'can_view'))) { ?>
                                 <button type="button" class="btn btn-primary btn-sm dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown">
                                     <i class="fa fa-reorder"></i> <?php echo $this->lang->line('postal'); ?> <span class="caret"></span>
                                 </button>
-
                                 <ul class="dropdown-menu multi-level pull-right width300" role="menu" aria-labelledby="dropdownMenu1" id="easySelectable">
-                                    <?php if ($this->rbac->hasPrivilege('postal_receive', 'can_add')) { ?>
+                                    <?php if ($this->rbac->hasPrivilege('postal_receive', 'can_view')) { ?>
                                         <li><a href="<?php echo base_url(); ?>admin/receive"><?php echo $this->lang->line('receive'); ?></a></li> 
-                                    <?php } if ($this->rbac->hasPrivilege('postal_dispatch', 'can_add')) { ?>
+                                    <?php } if ($this->rbac->hasPrivilege('postal_dispatch', 'can_view')) { ?>
                                         <li><a href="<?php echo base_url(); ?>admin/dispatch"><?php echo $this->lang->line('dispatch'); ?></a></li> 
                                     <?php } ?>   
                                 </ul>
-
-                            <?php } if ($this->rbac->hasPrivilege('complain', 'can_add')) { ?>
+                            <?php } if ($this->rbac->hasPrivilege('complain', 'can_view')) { ?>
                                 <a  href="<?php echo base_url(); ?>admin/complaint" class="btn btn-primary btn-sm"><i class="fa fa-reorder"></i> <?php echo $this->lang->line('complain'); ?></a> 
                             <?php } ?>
                         </div>
                     </div><!-- /.box-header -->
                     <div class="box-body">
                         <div class="download_label"><?php echo $this->lang->line('appointed_patient_list'); ?></div>
-                        <table class="table table-striped table-bordered table-hover example" cellspacing="0" width="100%">
+                        <table class="table table-striped table-bordered table-hover test_ajax" cellspacing="0" width="100%">
                             <thead>
                                 <tr>
                                     <th><?php echo $this->lang->line('patient') . " " . $this->lang->line('name'); ?></th>
                                     <th><?php echo $this->lang->line('appointment') . " " . $this->lang->line('no'); ?></th>
-
                                     <th><?php echo $this->lang->line('date'); ?></th>
-                                    <th><?php echo $this->lang->line('phone'); ?></th>
+                                    <th width="10%"><?php echo $this->lang->line('phone'); ?></th>
                                     <th><?php echo $this->lang->line('gender'); ?></th>
                                     <th><?php echo $this->lang->line('doctor'); ?></th>
                                     <th><?php echo $this->lang->line('source'); ?></th>
+                                    <th><?php echo $this->lang->line('priority'); ?></th>
+                                    <th><?php echo $this->lang->line('live')." ".$this->lang->line('consultant'); ?></th>
                                     <th><?php echo $this->lang->line('status'); ?></th>
-
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php
-                                if (empty($resultlist)) {
-                                    ?>
-                                    <?php
-                                } else {
-                                    $count = 1;
-                                    $label = " ";
-                                    foreach ($resultlist as $appointment) {
-                                        if ($appointment["appointment_status"] == "approved") {
-                                            $label = "class='label label-success'";
-                                        } else if ($appointment["appointment_status"] == "pending") {
-                                            $label = "class='label label-warning'";
-                                        } else if ($appointment["appointment_status"] == "cancel") {
-                                            $label = "class='label label-danger'";
-                                        }
-                                        ?>
-                                        <tr class="">
-
-                                            <td>
-                                                <a href="#" 
-                                                   onclick="viewDetail('<?php echo $appointment['id'] ?>')"
-
-                                                   data-target="#viewModal"  >
-                                                       <?php echo $appointment['patient_name']; ?>
-                                                </a> 
-                                                <div class="rowoptionview">
-                                                    <?php
-                                                    if ($appointment['appointment_status'] == 'pending') {
-                                                        if ($this->rbac->hasPrivilege('appointment_approve', 'can_view')) {
-                                                            ?>
-                                                            <a href="<?php echo base_url(); ?>admin/appointment/status/<?php echo $appointment['id']; ?>" class="btn btn-default btn-xs" data-toggle="tooltip" title="" onclick="return confirm('<?php echo $this->lang->line('approve') . " " . $this->lang->line('appointment'); ?>');" data-original-title="<?php echo $this->lang->line('approve') . " " . $this->lang->line('appointment'); ?>">
-
-                                                                <i class="fa fa-check" aria-hidden="true"></i>
-                                                                <?php
-                                                            }
-                                                        }
-                                                        ?>
-
-                                                        <?php
-                                                        if ($appointment['appointment_status'] == 'approved' and $appointment['is_opd'] != 'yes') {
-                                                            if ($this->rbac->hasPrivilege('appointment_approve', 'can_view')) {
-                                                                if ($this->rbac->hasPrivilege('move_patient_in_opd', 'can_view')) {
-                                                                    ?>
-                                                                    <a href="<?php echo base_url(); ?>admin/appointment/moveopd/<?php echo $appointment['id']; ?>" class="btn btn-default btn-xs" data-toggle="tooltip" title="" onclick="return confirm('<?php echo $this->lang->line('move') . " " . $this->lang->line('to') . " " . $this->lang->line('patient') . " " . $this->lang->line('in') . " " . $this->lang->line('opd'); ?>');" data-original-title="<?php echo $this->lang->line('move') . " " . $this->lang->line('to') . " " . $this->lang->line('patient') . " " . $this->lang->line('in') . " " . $this->lang->line('opd'); ?>">
-
-                                                                        <i class="fas fa-share-square" aria-hidden="true"></i>
-                                                                        <?php
-                                                                    }
-                                                                }
-                                                            }
-                                                            ?>
-                                                            <?php
-                                                            if ($appointment['appointment_status'] == 'approved' and $appointment['is_ipd'] != 'yes') {
-                                                                if ($this->rbac->hasPrivilege('appointment_approve', 'can_view')) {
-                                                                    if ($this->rbac->hasPrivilege('move_patient_in_ipd', 'can_view')) {
-                                                                        ?>
-                                                                        <a href="<?php echo base_url(); ?>admin/appointment/moveipd/<?php echo $appointment['id']; ?>" class="btn btn-default btn-xs" data-toggle="tooltip" title="" onclick="return confirm('<?php echo $this->lang->line('move') . " " . $this->lang->line('to') . " " . $this->lang->line('patient') . " " . $this->lang->line('in') . " " . $this->lang->line('ipd'); ?>');" data-original-title="<?php echo $this->lang->line('move') . " " . $this->lang->line('to') . " " . $this->lang->line('patient') . " " . $this->lang->line('in') . " " . $this->lang->line('ipd'); ?>">
-
-                                                                            <i class="fas fa-share-square" aria-hidden="true"></i>
-                                                                            <?php
-                                                                        }
-                                                                    }
-                                                                }
-                                                                ?>
-                                                                <a href="#" 
-                                                                   onclick="viewDetail('<?php echo $appointment['id'] ?>')"
-                                                                   class="btn btn-default btn-xs"  data-toggle="tooltip"
-                                                                   data-target="#viewModal" title="<?php echo $this->lang->line('show'); ?>" >
-                                                                    <i class="fa fa-reorder"></i>
-                                                                </a>
-
-
-                                                                </div>  
-                                                                </td>
-                                                                <td><?php
-                                                                    if ($appointment['appointment_status'] == 'approved') {
-                                                                        echo $appointment['appointment_no'];
-                                                                    } else {
-                                                                        echo $this->lang->line($appointment['appointment_status']);
-                                                                        
-                                                                    }
-                                                                    ?></td>
-
-                                                                <td><?php echo date($this->customlib->getSchoolDateFormat(true, true), strtotime($appointment['date'])) ?></td>
-                                                                <td><?php echo $appointment['mobileno']; ?></td>
-                                                                <td><?php echo $appointment['gender']; ?></td>
-                                                                <td><?php echo $appointment['name'] . " " . $appointment['surname']; ?></td>
-                                                                <td><?php echo $appointment['source']; ?></td>
-                                                                <td><small <?php echo $label ?> ><?php echo $this->lang->line($appointment['appointment_status']); ?></small></td>
-
-                                                                </tr>
-                                                                <?php
-                                                                $count++;
-                                                            }
-                                                        }
-                                                        ?>
+                              
                                                         </tbody>
                                                         </table>
                                                         </div>
                                                         </div>                                                    
-                                                        </div>                                                                                                                                          
+                                                        </div>                                                            
                                                         </div>  
                                                         </section>
                                                         </div>
-                                                        <div class="modal fade" id="myModal"  role="dialog" aria-labelledby="myModalLabel">
+                                                    <div class="modal fade" id="myModal"  role="dialog" aria-labelledby="myModalLabel">
                                                             <div class="modal-dialog modal-lg" role="document">
                                                                 <div class="modal-content modal-media-content">
                                                                     <div class="modal-header modal-media-header">
                                                                         <button type="button" class="close pt4" data-dismiss="modal">&times;</button>
-
                                                                         <div class="row">
                                                                             <div class="col-sm-6 col-xs-6">
                                                                                 <div class="form-group15">
@@ -192,64 +86,55 @@ $genderList = $this->customlib->getGender();
                                                                                     <span class="text-danger"><?php echo form_error('refference'); ?></span>
                                                                                 </div>
                                                                             </div><!--./col-sm-8-->
-
                                                                         </div><!-- ./row -->  
                                                                     </div>
-                                                                    <form id="formadd" accept-charset="utf-8"  method="post" class="ptt10">
-                                                                        <div class="modal-body pt0 pb0">
-                                                                            <div class="row">
-                                                                                <div class="col-lg-12 col-md-12 col-sm-12">
-
-                                                                                    <input type="hidden" name="patient_id" id="patientid" class="form-control">
-                                                                                    <div class="row">
-                                                                                        <div class="col-sm-4">
-                                                                                            <div class="form-group">
-                                                                                                <label><?php echo $this->lang->line('date'); ?></label>
-                                                                                                <small class="req"> *</small> 
-                                                                                                <input type="text" id="date" name="date" class="form-control datetime">
-                                                                                                <span class="text-danger"><?php echo form_error('date'); ?></span>
-                                                                                            </div>
-                                                                                        </div> 
-
-
-                                                                                        <div class="col-sm-4">
-                                                                                            <div class="form-group">
-                                                                                                <label><?php echo $this->lang->line('patient') . " " . $this->lang->line('name'); ?></label>
-                                                                                                <small class="req">*</small> 
-                                                                                                <input type="text" name="patient_name" id="patient_name" class="form-control">
-                                                                                                <span class="text-danger"><?php echo form_error('patient_name'); ?></span>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                        <div class="col-md-4">
-                                                                                            <div class="form-group">
-                                                                                                <label> <?php echo $this->lang->line('gender'); ?></label>
-                                                                                                <select class="form-control" id="gender" name="gender">
-                                                                                                    <option value="<?php echo set_value('gender'); ?>"><?php echo $this->lang->line('select'); ?></option>
-                                                                                                    <?php
-                                                                                                    foreach ($genderList as $key => $value) {
-                                                                                                        ?>
-                                                                                                        <option value="<?php echo $key; ?>" <?php if (set_value('gender') == $key) echo "selected"; ?>><?php echo $value; ?></option>
-                                                                                                        <?php
-                                                                                                    }
-                                                                                                    ?>
-                                                                                                </select>
-                                                                                                <span class="text-danger"><?php echo form_error('gender'); ?></span>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                        <div class="col-sm-4">
-                                                                                            <div class="form-group">
-                                                                                                <label><?php echo $this->lang->line('email'); ?></label>
-                                                                                                <input type="text" name="email" id="email"  class="form-control">
-                                                                                            </div>
-                                                                                        </div>
-                                                                                        <div class="col-sm-4">
-                                                                                            <div class="form-group">
-                                                                                                <label><?php echo $this->lang->line('phone'); ?></label>
-                                                                                                <small class="req">*</small> 
-                                                                                                <input type="text" name="mobileno" id="phone" class="form-control">
-                                                                                                <span class="text-danger"><?php echo form_error('mobileno'); ?></span>
-                                                                                            </div>
-                                                                                        </div>
+                        <form id="formadd" accept-charset="utf-8"  method="post" class="ptt10">
+                            <div class="modal-body pt0 pb0">
+                                <div class="row">
+                                    <div class="col-lg-12 col-md-12 col-sm-12">
+                                 <input type="hidden" name="patient_id" id="patientid" class="form-control">
+                                    <div class="row">
+                                              <div class="col-sm-4">
+                                                     <div class="form-group">
+                                          <label><?php echo $this->lang->line('date'); ?></label>
+                                                      <small class="req"> *</small> 
+                                          <input type="text" id="date" name="date" class="form-control datetime">
+                                  <span class="text-danger"><?php echo form_error('date'); ?></span>
+                                          </div>
+                                         </div>
+                                       <div class="col-sm-4">
+                                     <div class="form-group">
+                             <label><?php echo $this->lang->line('patient') . " " . $this->lang->line('name'); ?></label>    
+                                     <small class="req">*</small> 
+                               <input type="text" name="patient_name" id="patient_name" class="form-control">
+                                        <span class="text-danger"><?php echo form_error('patient_name'); ?></span>
+                                               </div>
+                                         </div>
+                                             <div class="col-md-4">
+                                         <div class="form-group">
+                                       <label> <?php echo $this->lang->line('gender'); ?></label>
+                                   <select class="form-control" style="width: 100%" id="gender" name="gender">
+                                    <option value=""><?php echo $this->lang->line('select') ?></option>
+                                    <option value="Male"><?php echo $this->lang->line('male') ?></option>
+                                    <option value="Female"><?php echo $this->lang->line('female') ?></option>
+                                    </select>
+                           <span class="text-danger"><?php echo form_error('gender'); ?></span>
+                                 </div>
+                             </div>
+                          <div class="col-sm-4">
+                            <div class="form-group">
+                         <label><?php echo $this->lang->line('email'); ?></label>
+                          <input type="text" name="email" id="email"  class="form-control">
+                                          </div>
+                                     </div>
+                               <div class="col-sm-4">
+                               <div class="form-group">
+                              <label><?php echo $this->lang->line('phone'); ?></label>
+                            <small class="req">*</small> 
+                         <input type="text" name="mobileno" id="phone" class="form-control">
+                         <span class="text-danger"><?php echo form_error('mobileno'); ?></span>
+                              </div>
+                                </div>
                                                                                         <div class="col-sm-4">
                                                                                             <div class="form-group">
                                                                                                 <label for="exampleInputFile"><?php echo $this->lang->line('doctor'); ?></label>
@@ -259,24 +144,40 @@ $genderList = $this->customlib->getGender();
                                                                                                     if ((isset($disable_option)) && ($disable_option == true)) {
                                                                                                         echo 'disabled';
                                                                                                     }
-                                                                                                    ?> name='doctor' style="width:100%" >
+                                                                                                    ?> name='doctor' id="doctorid" style="width:100%" >
                                                                                                         <option value="<?php echo set_value('doctor'); ?>"><?php echo $this->lang->line('select') ?></option>
                                                                                                         <?php foreach ($doctors as $dkey => $dvalue) {
                                                                                                             ?>
-                                                                                                            <option value="<?php echo $dvalue["id"]; ?>" <?php
-                                                                                                                    if ($doctor_select == $dvalue['id']) {
-                                                                                                                        echo 'selected';
-                                                                                                                    }
-                                                                                                                    ?>><?php echo $dvalue["name"] . " " . $dvalue["surname"] ?></option>   
+                                                                                                   <option value="<?php echo $dvalue["id"]; ?>" <?php
+                                                                                                        if ($doctor_select == $dvalue['id']) {
+                                                                                                              echo 'selected';
+                                                                                                         }
+                                                                                      ?>><?php echo $dvalue["name"] . " " . $dvalue["surname"] ?></option>   
 <?php } ?>
                                                                                                     </select>
+                                                                                                    <input type="hidden" name="doctorid" id="doctorinputid">
                                                                                                 </div>
                                                                                                 <span class="text-danger"><?php echo form_error('doctor'); ?></span>
                                                                                             </div>
                                                                                         </div> 
-                                                                                        <div class="col-sm-8">
-                                                                                            <div class="form-group">
-                                                                                                <label for="message"><?php echo $this->lang->line('message'); ?></label> 
+                            <div class="col-sm-4">
+                                 <div class="form-group">
+                                 <label for="exampleInputFile"><?php echo $this->lang->line('appointment')." ".$this->lang->line('priority'); ?></label>
+                                        <small class="req"> *</small> 
+                                         <div>
+                                            <select class="form-control select2"  name='priority' style="width:100%" >
+                                           <!--  <option value="<?php echo set_value('priority'); ?>"><?php echo $this->lang->line('select') ?></option> -->
+                                            <?php foreach ($appoint_priority_list as $dkey => $dvalue) {
+                                                ?>
+                                                <option value="<?php echo $dvalue["id"]; ?>"> <?php echo $dvalue["appoint_priority"] ; ?></option>   
+                                        <?php } ?>                                        
+                                        </select>
+                                    </div><span class="text-danger"><?php echo form_error('doctor'); ?></span>
+                                </div>
+                            </div> 
+                                        <div class="col-sm-8">
+                                            <div class="form-group">
+                                            <label for="message"><?php echo $this->lang->line('message'); ?></label> 
                                                                                                 <small class="req">*</small> 
                                                                                                 <textarea name="message" id="note" class="form-control" ></textarea>
                                                                                                 <span class="text-danger"><?php echo form_error('message'); ?>
@@ -286,7 +187,6 @@ $genderList = $this->customlib->getGender();
                                                                                         <div class="col-sm-4">
                                                                                             <div class="form-group">
                                                                                                 <label for="appointment_status"><?php echo $this->lang->line('status'); ?></label>
-
                                                                                                 <select name="appointment_status" class="form-control">
 <?php foreach ($appointment_status as $appointment_status_key => $appointment_status_value) {
     ?>
@@ -295,7 +195,19 @@ $genderList = $this->customlib->getGender();
                                                                                                 </select>
                                                                                             </div>
                                                                                             <span class="text-danger"><?php echo form_error('appointment_status'); ?></span>
-                                                                                        </div>  
+                                                                                        </div> 
+                            <div class="col-sm-4">
+                                 <div class="form-group">
+                                 <label for="exampleInputFile"><?php echo $this->lang->line('live')." ".$this->lang->line('consultant')." (".$this->lang->line('on')." ".$this->lang->line('video')." ".$this->lang->line('conference').")"; ?></label>
+                                        <small class="req">*</small> 
+                                         <div>
+                                            <select class="form-control"  name='live_consult' style="width:100%" >
+                                                <option value="<?php echo $this->lang->line('no') ?>"><?php echo $this->lang->line('no'); ?></option>   
+                                                <option value="<?php echo $this->lang->line('yes') ?>"><?php echo $this->lang->line('yes'); ?></option>   
+                                            </select>
+                                    </div><span class="text-danger"><?php echo form_error('live_consult'); ?></span>
+                                </div>
+                            </div>  
                                                                                     </div><!--./row-->   
                                                                                 </div><!--./col-md-12-->       
                                                                             </div><!--./row--> 
@@ -317,129 +229,149 @@ $genderList = $this->customlib->getGender();
                                                                         <button type="button" class="close pt4" data-dismiss="modal">&times;</button>
                                                                         <div class="row">
                                                                             <div class="col-sm-6 col-xs-8">
-                                                                                <div class="form-group15">                                     
-                                                                                    <div>
-<select onchange="get_ePatientDetails(this.value)" class="form-control select2" <?php
-if ($disable_option == true) {
-    echo "disabled";
-}
-?> style="width:100%" id="eaddpatient_id" name='' >
-<option value=""><?php echo $this->lang->line('select'); ?></option>
-<?php foreach ($patients as $dkey => $dvalue) { ?>
-<option value="<?php echo $dvalue["id"]; ?>" <?php
-if ((isset($patient_select)) && ($patient_select == $dvalue["id"])) {
-echo "selected";
-}
-?>><?php echo $dvalue["patient_name"] . " (" . $dvalue["patient_unique_id"] . ")" ?>
-</option>   
-<?php } ?>
-</select>
-</div>
-<span class="text-danger"><?php echo form_error('refference'); ?></span>
-</div>
-</div><!--./col-sm-6 col-xs-8 -->
-
-</div><!--./row-->
-</div>
-<form id="formedit" accept-charset="utf-8"  method="post" class="ptt10">
-<div class="modal-body pt0 pb0">
-<div class="row">
-<div class="col-lg-12 col-md-12 col-sm-12">
-<div class="row">
-<input type="hidden" name="id" id="id" value="<?php echo set_value('id'); ?>">
-<div class="col-sm-4">
-<div class="form-group">
-<label><?php echo $this->lang->line('date') ?></label>
-<small class="req"> *</small> 
-<input type="text" id="dates" name="date" class="form-control datetime" value="<?php echo set_value('dates'); ?>">
-<span class="text-danger"><?php echo form_error('date'); ?></span>
-</div>
-</div>
-
-<input type="hidden" name="patient_id" id="edit_patient_id" class="form-control" value="<?php echo set_value('patient_id'); ?>">
-<div class="col-sm-4">
-<div class="form-group">
-<label><?php echo $this->lang->line('patient') . " " . $this->lang->line('name'); ?></label>
-<small class="req"> *</small> 
-<input type="text" name="patient_name" id="edit_patient_name" class="form-control" value="<?php echo set_value('patient_name'); ?>">
-<span class="text-danger"><?php echo form_error('patient_name'); ?></span>
-</div>
-</div>
-<div class="col-md-4">
-<div class="form-group">
-<label> <?php echo $this->lang->line('gender'); ?></label>
-<select class="form-control" id="edit_gender" name="gender">
-<option value="<?php echo set_value('gender'); ?>"><?php echo $this->lang->line('select'); ?></option>
-<?php
-foreach ($genderList as $key => $value) {
-                                                                                                        ?>
-<option value="<?php echo $key; ?>" <?php if (set_value('gender') == $key) echo "selected"; ?>><?php echo $value; ?></option>
-    <?php
-}
-?>
-</select>
-</div>
-</div>
-<div class="col-sm-4">
-<div class="form-group">
-<label><?php echo $this->lang->line('email'); ?></label>
-<input type="text" name="email" id="edit_email" class="form-control" value="<?php echo set_value('email'); ?>">
-</div>
-</div>
-<div class="col-sm-4">
-<div class="form-group">
-<label><?php echo $this->lang->line('phone'); ?></label>
-<small class="req">*</small> 
-<input type="text" name="mobileno" id="edit_phone" class="form-control" value="<?php echo set_value('mobileno'); ?>">
-<span class="text-danger"><?php echo form_error('mobileno'); ?></span>
-</div>
-</div>
-<div class="col-sm-4">
-<div class="form-group">
-<label for="exampleInputFile">
-<?php echo $this->lang->line('doctor'); ?></label>
-<small class="req"> *</small> 
-<div>
-<select class="form-control select2" name='doctor' style="width:100%" id="doctor" >
-<option value="<?php echo set_value('doctor'); ?>"><?php echo $this->lang->line('select') ?></option>
-<?php foreach ($doctors as $dkey => $dvalue) {
-    ?>
-<option value="<?php echo $dvalue["id"]; ?>"><?php echo $dvalue["name"] . " " . $dvalue["surname"] ?></option>   
-<?php } ?>
-</select>
-</div>
-</div>
-</div> 
-<div class="col-sm-8">
-<div class="form-group">
-<label for="message"><?php echo $this->lang->line('message'); ?></label> 
-<small class="req"> *</small> 
-<textarea name="message" id="message" class="form-control" ><?php echo set_value('message'); ?></textarea>
-<span class="text-danger"><?php echo form_error('message'); ?></span>
-</div> 
-</div>
-<div class="col-sm-4">
-<div class="form-group">
-<label for="appointment_status"><?php echo $this->lang->line('status'); ?></label> 
-<select name="appointment_status" class="form-control" id="appointment_status">
-<?php foreach ($appointment_status as $appointment_status_key => $appointment_status_value) {
-    ?>
-<option value="<?php echo $appointment_status_key ?>"><?php echo $appointment_status_value ?></option>
-<?php } ?>
-</select>
-</div>
-</div>    
-</div><!--./row-->   
-
-</div><!--./col-md-12-->       
-
+                                                                                <div class="form-group15">                     
+                                                                                            <div>
+        <select onchange="get_ePatientDetails(this.value)" class="form-control select2"<?php
+        if ($disable_option == true) {
+            echo "disabled";
+        }
+        ?> style="width:100%" id="eaddpatient_id" name='' >
+        <option value=""><?php echo $this->lang->line('select'); ?></option>
+        <?php foreach ($patients as $dkey => $dvalue) { ?>
+        <option value="<?php echo $dvalue["id"]; ?>" <?php
+        if ((isset($patient_select)) && ($patient_select == $dvalue["id"])) {
+        echo "selected";
+        }
+        ?>><?php echo $dvalue["patient_name"] . " (" . $dvalue["patient_unique_id"] . ")" ?>
+        </option>   
+        <?php } ?>
+        </select>
+        </div>
+        <span class="text-danger"><?php echo form_error('refference'); ?></span>
+        </div>
+        </div><!--./col-sm-6 col-xs-8 -->
+        </div><!--./row-->
+        </div>
+        <form id="formedit" accept-charset="utf-8"  method="post" class="ptt10">
+        <div class="modal-body pt0 pb0">
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-sm-12">
+                    <div class="row">
+                    <input type="hidden" name="id" id="id" value="<?php echo set_value('id'); ?>">
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                        <label><?php echo $this->lang->line('date') ?></label>
+                        <small class="req"> *</small> 
+                        <input type="text" id="dates" name="date" class="form-control datetime" value="<?php echo set_value('dates'); ?>">
+                        <span class="text-danger"><?php echo form_error('date'); ?></span>
+                        </div>
+                    </div>
+                <input type="hidden" name="patient_id" id="edit_patient_id" class="form-control" value="<?php echo set_value('patient_id'); ?>">
+                <input type="hidden" name="appointment_no" id="edit_appointment_no" class="form-control" value="<?php echo set_value('patient_id'); ?>">
+                <div class="col-sm-4">
+                    <div class="form-group">
+                    <label><?php echo $this->lang->line('patient') . " " . $this->lang->line('name'); ?></label>
+                    <small class="req"> *</small> 
+                    <input type="text" name="patient_name" id="edit_patient_name" class="form-control" value="<?php echo set_value('patient_name'); ?>">
+                    <span class="text-danger"><?php echo form_error('patient_name'); ?></span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                    <label> <?php echo $this->lang->line('gender'); ?></label>
+                    <select class="form-control" id="edit_gender" name="gender">
+                    <option value="<?php echo set_value('gender'); ?>"><?php echo $this->lang->line('select'); ?></option>
+                    <?php
+                    foreach ($genderList as $key => $value) {
+						?>
+                    <option value="<?php echo $key; ?>" <?php if (set_value('gender') == $key) echo "selected"; ?>><?php echo $value; ?></option>
+                        <?php
+                    }
+                    ?>
+                    </select>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                    <label><?php echo $this->lang->line('email'); ?></label>
+                    <input type="text" name="email" id="edit_email" class="form-control" value="<?php echo set_value('email'); ?>">
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                    <label><?php echo $this->lang->line('phone'); ?></label>
+                    <small class="req">*</small> 
+                    <input type="text" name="mobileno" id="edit_phone" class="form-control" value="<?php echo set_value('mobileno'); ?>">
+                    <span class="text-danger"><?php echo form_error('mobileno'); ?></span>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                    <label for="exampleInputFile">
+                    <?php echo $this->lang->line('doctor'); ?></label>
+                    <small class="req"> *</small> 
+                    <div>
+                    <select class="form-control select2" name='doctor' style="width:100%" id="doctor" >
+                    <option value="<?php echo set_value('doctor'); ?>"><?php echo $this->lang->line('select') ?></option>
+                    <?php foreach ($doctors as $dkey => $dvalue) {
+                        ?>
+                    <option value="<?php echo $dvalue["id"]; ?>"><?php echo $dvalue["name"] . " " . $dvalue["surname"] ?></option>   
+                    <?php } ?>
+                    </select>
+                    </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-group">
+                    <label for="exampleInputFile">
+                    <?php echo $this->lang->line('priority'); ?></label>
+                    <small class="req"> *</small> 
+                        <div>
+                            <select class="form-control select2" name='priority' style="width:100%" id="edit_appoint_priority" >
+                            <?php foreach ($appoint_priority_list as $dkey => $dvalue) {
+                                ?>
+                            <option value="<?php echo $dvalue["id"]; ?>"><?php echo $dvalue["appoint_priority"] ; ?></option>  
+                            <?php } ?>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                    <div class="col-sm-8">
+                        <div class="form-group">
+                            <label for="message"><?php echo $this->lang->line('message'); ?></label> 
+                            <small class="req"> *</small> 
+                            <textarea name="message" id="message" class="form-control" ><?php echo set_value('message'); ?></textarea>
+                            <span class="text-danger"><?php echo form_error('message'); ?></span>
+                        </div> 
+                    </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label for="appointment_status"><?php echo $this->lang->line('status'); ?></label> 
+                                    <select name="appointment_status" class="form-control" id="appointment_status">
+                                    <?php foreach ($appointment_status as $appointment_status_key => $appointment_status_value) {
+                                        ?>
+                                    <option value="<?php echo $appointment_status_key ?>"><?php echo $appointment_status_value ?></option>
+                                    <?php } ?>
+                                    </select>
+                            </div>
+                        </div> 
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    <label><?php echo $this->lang->line('live')." ".$this->lang->line('consultant')." (".$this->lang->line('on')." ".$this->lang->line('video')." ".$this->lang->line('conference').")"; ?></label> 
+                                    <select name="live_consult" class="form-control" id="edit_liveconsult">
+                                        <option value="<?php echo $this->lang->line('yes') ?>"><?php echo $this->lang->line('yes') ?></option>
+                                        <option value="<?php echo $this->lang->line('no') ?>" selected><?php echo $this->lang->line('no') ?></option>
+                                    </select>
+                                </div> 
+                            </div>   
+</div><!--./row-->  
+</div><!--./col-md-12--> 
 </div><!--./row--> 
 
                                                                         </div><!--./modal-body-->
                                                                         <div class="box-footer">
                                                                             <div class="pull-right">
                                                                                 <button type="submit" id="formeditbtn" data-loading-text="<?php echo $this->lang->line('processing') ?>" class="btn btn-info" ><?php echo $this->lang->line('save'); ?></button>
-
                                                                             </div>
                                                                         </div>
                                                                     </form> 
@@ -491,9 +423,15 @@ foreach ($genderList as $key => $value) {
                                                                                                 </td>
                                                                                             </tr>
                                                                                             <tr>
+                                                                                                <th width="15%"><?php echo $this->lang->line('live_consult'); ?></th>
+                                                                                                <td width="35%"><span id="liveconsult"></span>
+                                                                                                </td>
                                                                                                 <th width="15%"><?php echo $this->lang->line('status'); ?></th>
                                                                                                 <td width="35%"><span id='status' style="text-transform: capitalize;"></span></td>
-
+                                                                                            </tr>
+                                                                                            <tr>
+                                                                                                <th width="15%"><?php echo $this->lang->line('priority'); ?></th>
+                                                                                                <td width="35%"><span id='appointpriority'></span></td>
                                                                                             </tr>
                                                                                         </table>
                                                                                     </div>
@@ -501,12 +439,7 @@ foreach ($genderList as $key => $value) {
                                                                             </div><!--./col-md-12-->       
                                                                         </div><!--./row--> 
                                                                     </div>
-                                                                    <!--<div class="box-footer">
-                                                                        <div class="pull-right paddA10">
-                                                                            <a  onclick="saveEnquiry()" class="btn btn-info pull-right"><?php //echo $this->lang->line('save');     ?></a> 
-                                                                        </div>-->
                                                                 </div>
-
                                                             </div>
                                                         </div>    
                                                         </div>
@@ -516,12 +449,8 @@ foreach ($genderList as $key => $value) {
 
                                                             })
                                                         </script>
-
-
                                                         <script type="text/javascript">
-
                                                             $(function () {
-
                                                                 $('.select2').select2()
                                                             });
 
@@ -534,7 +463,6 @@ foreach ($genderList as $key => $value) {
                                                             }
 
                                                             (function ($) {
-
                                                                 //selectable html elements
                                                                 $.fn.easySelectable = function (options) {
                                                                     var el = $(this);
@@ -603,10 +531,11 @@ foreach ($genderList as $key => $value) {
                                                                 };
                                                             })(jQuery);
                                                         </script>
-
                                                         <script type="text/javascript">
                                                             $(document).ready(function (e) {
                                                                 $("#formadd").on('submit', (function (e) {
+                                                                  var did = $("#doctorid").val();
+                                                                  $("#doctorinputid").val(did);                                
                                                                     $("#formaddbtn").button('loading');
                                                                     e.preventDefault();
                                                                     $.ajax({
@@ -631,7 +560,7 @@ foreach ($genderList as $key => $value) {
                                                                             $("#formaddbtn").button('reset');
                                                                         },
                                                                         error: function () {
-                                                                            //  alert("Fail")
+                                                                            
                                                                         }
                                                                     });
                                                                 }));
@@ -662,28 +591,22 @@ foreach ($genderList as $key => $value) {
                                                                             $("#formeditbtn").button('reset');
                                                                         },
                                                                         error: function () {
-                                                                            //  alert("Fail")
+                                                                            
                                                                         }
                                                                     });
                                                                 }));
                                                             });
 
-                                                            /**/
-
-
                                                             function get_PatientDetails(id) {
                                                                 $("#patient_name").html("patient_name");
-                                                                //$("#schedule_charge").html("schedule_charge");
-
+                                                                $('#gender option').removeAttr('selected');
                                                                 $.ajax({
                                                                     url: '<?php echo base_url(); ?>admin/patient/patientDetails',
                                                                     type: "POST",
                                                                     data: {id: id},
                                                                     dataType: 'json',
                                                                     success: function (res) {
-                                                                        console.log(res);
                                                                         if (res) {
-                                                                            //$('#patient_unique_id').val(res.patient_unique_id);
                                                                             $('#patient_name').val(res.patient_name);
                                                                             $('#patientid').val(res.id);
                                                                             $('#guardian_name').html(res.guardian_name);
@@ -694,23 +617,16 @@ foreach ($genderList as $key => $value) {
                                                                             $("#month").html(res.month);
                                                                             $("#symptoms").html(res.symptoms);
                                                                             $("#known_allergies").html(res.known_allergies);
-                                                                            $("#address").html(res.address);
-                                                                           // $("#note").val(res.note);
+                                                                            $("#address").html(res.address);                   
                                                                             $("#height").html(res.height);
-                                                                            $("#weight").html(res.weight);
-                                                                            //$("#genders").html(res.gender);
+                                                                            $("#weight").html(res.weight);                    
                                                                             $("#marital_status").html(res.marital_status);
-                                                                            //$("#blood_group").html(res.gender);
-                                                                            $('select[id="gender"] option[value="' + res.gender + '"]').attr("selected", "selected");
-                                                                            //$('select[id="marital_status"] option[value="' + res.marital_status + '"]').attr("selected", "selected");
-                                                                            // $('select[id="blood_group"] option[value="' + res.blood_group + '"]').attr("selected", "selected");
+                                                                            $('#gender option[value="'+res.gender+'"]').attr("selected","selected");                            
                                                                         } else {
                                                                             $('#patient_name').val('');
                                                                             $('#phone').val("");
                                                                             $('#email').val("");
-                                                                            $("#note").val("");
-                                                                            $("#gender").val("")
-                                                                            //$('select[id="gender"] option[value="' '"]').attr("selected", "selected");
+                                                                            $("#note").val("");                                           
                                                                         }
                                                                     }
                                                                 });
@@ -720,15 +636,19 @@ foreach ($genderList as $key => $value) {
                                                                 $("#viewModal").modal('hide');
                                                                 $('#myModaledit').modal('show');
                                                                 $.ajax({
-                                                                    url: '<?php echo base_url(); ?>admin/appointment/getDetails',
+                                                                    url: '<?php echo base_url(); ?>admin/appointment/getDetailsAppointment',
                                                                     type: "POST",
                                                                     data: {appointment_id: id},
                                                                     dataType: 'json',
                                                                     success: function (data) {
+                                                                        console.log(data)
                                                                         $("#id").val(data.id);
                                                                         $("#dates").val(data.date);
                                                                         $("#edit_patient_id").val(data.patient_id);
                                                                         $("#edit_patient_name").val(data.patient_name);
+                                                                        $("#edit_appointment_no").val(data.appointment_no);
+                                                                        $("#edit_appoint_priority").val(data.priority);
+                                                                        $("#edit_liveconsult").val(data.live_consult);
                                                                         $("#edit_gender").val(data.gender);
                                                                         $("#edit_email").val(data.email);
                                                                         $("#edit_phone").val(data.mobileno);
@@ -740,33 +660,25 @@ foreach ($genderList as $key => $value) {
                                                                         $('select[id="edit_gender"] option[value="' + data.gender + '"]').attr("selected", "selected");
                                                                         $('select[id="doctor"] option[value="' + data.doctor + '"]').attr("selected", "selected");
                                                                         $('select[id="appointment_status"] option[value="' + data.appointment_status + '"]').attr("selected", "selected");
+                                                                        $('select[id="edit_appoint_priority"] option[value="' + data.priority + '"]').attr("selected", "selected");
 
                                                                     },
                                                                 })
                                                             }
-                                                            function get_ePatientDetails(id) {
-
-
+															
+                                                            function get_ePatientDetails(id) {                                                            
                                                                 $.ajax({
                                                                     url: '<?php echo base_url(); ?>admin/patient/patientDetails',
                                                                     type: "POST",
                                                                     data: {id: id},
                                                                     dataType: 'json',
                                                                     success: function (res) {
-                                                                       // console.log(res);
+                                                                        console.log(res);
 
                                                                         if (res['id']>0) {
                                                                             $("#edit_patient_name").val(res.patient_name);
                                                                             $("#edit_patient_id").val(res.id);
-                                                                            $("#edit_gender").val(res.gender);
-                                                                            $("#edit_email").val(res.email);
-                                                                            $("#edit_phone").val(res.mobileno);
-                                                                            //$("#edit_phone").val(res.mobileno);
-                                                                            $('#eemail').val(res.email);
-                                                                            $('select[id="edit_gender"] option[value="' + res.gender + '"]').attr("selected", "selected");
-
                                                                         } else {
-
 
                                                                         }
                                                                     }
@@ -774,9 +686,8 @@ foreach ($genderList as $key => $value) {
                                                             }
                                                             function viewDetail(id) {
                                                                 $('#viewModal').modal('show');
-
                                                                 $.ajax({
-                                                                    url: '<?php echo base_url(); ?>admin/appointment/getDetails',
+                                                                    url: '<?php echo base_url(); ?>admin/appointment/getDetailsAppointment',
                                                                     type: "POST",
                                                                     data: {appointment_id: id},
                                                                     dataType: 'json',
@@ -787,9 +698,11 @@ foreach ($genderList as $key => $value) {
                                                                         $("#patient_names").html(data.patient_name);
                                                                         $("#genders").html(data.gender);
                                                                         $("#emails").html(data.email);
+                                                                        $("#appointpriority").html(data.appoint_priority);
                                                                         $("#phones").html(data.mobileno);
                                                                         $("#doctors").html(data.name + " " + data.surname);
                                                                         $("#messages").html(data.message);
+                                                                        $("#liveconsult").html(data.live_consult);
 
                                                                         var label = "";
                                                                         if (data.appointment_status == "approved") {
@@ -801,9 +714,7 @@ foreach ($genderList as $key => $value) {
                                                                         }
 
                                                                         $("#status").html("<small " + label + " >" + data.appointment_status + "</small>");
-
-                                                                        $("#edit_delete").html("<a href='#'' onclick='getRecord(" + id + ")' data-target='#editModal' data-toggle='tooltip'  data-original-title='<?php echo $this->lang->line('edit'); ?>'><i class='fa fa-pencil'></i></a><a href='#' data-toggle='tooltip'  onclick='delete_record(" + id + ")' data-original-title='<?php echo $this->lang->line('delete'); ?>'><i class='fa fa-trash'></i></a>");
-
+                                                                        $("#edit_delete").html("<?php if ($this->rbac->hasPrivilege('appointment', 'can_edit')) { ?><a href='#'' onclick='getRecord(" + id + ")' data-target='#editModal' data-toggle='tooltip'  data-original-title='<?php echo $this->lang->line('edit'); ?>'><i class='fa fa-pencil'></i></a><?php } if ($this->rbac->hasPrivilege('appointment', 'can_delete')) { ?><a href='#' data-toggle='tooltip'  onclick='delete_record(" + id + ")' data-original-title='<?php echo $this->lang->line('delete'); ?>'><i class='fa fa-trash'></i></a><?php } ?>");
                                                                     },
                                                                 });
                                                             }
@@ -823,22 +734,103 @@ foreach ($genderList as $key => $value) {
                                                                         }
                                                                     })
                                                                 }
-
                                                             }
-                                                            function getpatientDetails() {
-                                                                var id = $("#patient_id").val();
-                                                                $.ajax({
-                                                                    url: '<?php echo base_url(); ?>admin/appointment/getpatientDetails',
-                                                                    type: "POST",
-                                                                    data: {patient_id: id},
-                                                                    dataType: 'json',
-                                                                    success: function (data) {
-                                                                        console.log(data)
-                                                                        $("#patient_name").val(data.patient_name);
-                                                                        $("#gender").val(data.gender);
-                                                                        $("#email").val(data.email);
-                                                                        $("#phone").val(data.mobileno);
-                                                                    }
-                                                                })
-                                                            }
+                                                            
                                                         </script>
+<script type="text/javascript">
+    function askconfirm() {       
+        if (confirm('approve appointment')){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    $(document).ready(function() {
+    $('.test_ajax').DataTable({
+        "processing": true,
+        "serverSide": true,
+        "ajax": {
+            "url": base_url+"admin/appointment/appointment_search",
+            "type": "POST"
+        },
+           responsive: 'true',
+            dom: "Bfrtip",
+         buttons: [
+
+                {
+                    extend: 'copyHtml5',
+                    text: '<i class="fa fa-files-o"></i>',
+                    titleAttr: 'Copy',
+                    title: $('.download_label').html(),
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                },
+
+                {
+                    extend: 'excelHtml5',
+                    text: '<i class="fa fa-file-excel-o"></i>',
+                    titleAttr: 'Excel',
+                   
+                    title: $('.download_label').html(),
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                },
+
+                {
+                    extend: 'csvHtml5',
+                    text: '<i class="fa fa-file-text-o"></i>',
+                    titleAttr: 'CSV',
+                    title: $('.download_label').html(),
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                },
+
+                {
+                    extend: 'pdfHtml5',
+                    text: '<i class="fa fa-file-pdf-o"></i>',
+                    titleAttr: 'PDF',
+                    title: $('.download_label').html(),
+                    exportOptions: {
+                        columns: ':visible'
+                        
+                    }
+                },
+
+                {
+                    extend: 'print',
+                    text: '<i class="fa fa-print"></i>',
+                    titleAttr: 'Print',
+                    title: $('.download_label').html(),
+                        customize: function ( win ) {
+                    $(win.document.body)
+                        .css( 'font-size', '10pt');
+ 
+                    $(win.document.body).find( 'table' )
+                        .addClass('compact')
+                        .css('font-size','inherit');
+                },
+                    exportOptions: {
+                        columns: ':visible'
+                    }
+                },
+
+                {
+                    extend: 'colvis',
+                    text: '<i class="fa fa-columns"></i>',
+                    titleAttr: 'Columns',
+                    title: $('.download_label').html(),
+                    postfixButtons:['colvisRestore']
+                },
+            ]
+    });
+});
+
+$(".addappointment").click(function(){	
+	$('#select2-add_patient_report_id-container').html("");
+	$('#formadd').trigger("reset");
+});
+</script>

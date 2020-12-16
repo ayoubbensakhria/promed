@@ -1,7 +1,6 @@
 <?php
 $response_json = isJSON($userList);
 if ($response_json) {
-
     $userList = (json_decode($userList));
     if (!empty($userList)) {
         foreach ($userList->chat_users as $user_key => $user_value) {
@@ -22,11 +21,8 @@ if ($response_json) {
                             <p class="name">
                                 <?php
                                 echo $user_value->user_details->name;
-
                                 echo ($user_value->user_details->user_type == "staff") ? " (Staff --r)" : " (Student --r)";
                                 ?></p>
-
-
                             <p class="preview">
                                 <?php
                                 if ($chat_user->id != $user_value->messages->chat_user_id) {
@@ -47,7 +43,6 @@ if ($response_json) {
                         <?php
                     }
                     ?>
-
                 </li>
                 <?php
             }

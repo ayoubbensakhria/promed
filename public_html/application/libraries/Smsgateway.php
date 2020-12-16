@@ -93,6 +93,84 @@ class Smsgateway {
         return true;
     }
 
+    function sentLiveconsultSMS($id, $send_to, $conference_id) {
+        $sms_detail = $this->_CI->smsconfig_model->getActiveSMS();
+
+        $msg = $this->getPatientLiveconsultContent($id,$conference_id);
+        if (!empty($sms_detail)) {
+            if ($sms_detail->type == 'clickatell') {
+
+                $params = array(
+                    'apiToken' => $sms_detail->api_id
+                );
+                $this->_CI->load->library('clickatell', $params);
+                try {
+                    $result = $this->_CI->clickatell->sendMessage(['to' => [$send_to], 'content' => $msg]);
+                    foreach ($result['messages'] as $message) {
+                        
+                    }
+                    return true;
+                } catch (Exception $e) {
+                    return true;
+                }
+            } else if ($sms_detail->type == 'twilio') {
+
+                $params = array(
+                    'mode' => 'sandbox',
+                    'account_sid' => $sms_detail->api_id,
+                    'auth_token' => $sms_detail->password,
+                    'api_version' => '2010-04-01',
+                    'number' => $sms_detail->contact,
+                );
+
+                $this->_CI->load->library('twilio', $params);
+
+                $from = $sms_detail->contact;
+                $to = $send_to;
+                $message = $msg;
+                $response = $this->_CI->twilio->sms($from, $to, $message);
+
+
+                if ($response->IsError)
+                    return true;
+                else
+                    return true;
+            }else if ($sms_detail->type == 'msg_nineone') {
+                $params = array(
+                    'authkey' => $sms_detail->authkey,
+                    'senderid' => $sms_detail->senderid
+                );
+                $this->_CI->load->library('msgnineone', $params);
+                $this->_CI->msgnineone->sendSMS($send_to, $msg);
+            } else if ($sms_detail->type == 'smscountry') {
+                $params = array(
+                    'username' => $sms_detail->username,
+                    'sernderid' => $sms_detail->senderid,
+                    'password' => $sms_detail->password
+                );
+                $this->_CI->load->library('smscountry', $params);
+                $this->_CI->smscountry->sendSMS($send_to, $msg);
+            } else if ($sms_detail->type == 'text_local') {
+                $to = $send_to;
+                $params = array(
+                    'username' => $sms_detail->username,
+                    'hash' => $sms_detail->password,
+                );
+                $this->_CI->load->library('textlocalsms', $params);
+                $this->_CI->textlocalsms->sendSms(array($to), $msg, $sms_detail->senderid);
+            } else if ($sms_detail->type == 'custom') {
+                $this->_CI->load->library('customsms');
+                $from = $sms_detail->contact;
+                $to = $send_to;
+                $message = $msg;
+                $this->_CI->customsms->sendSMS($to, $message);
+            } else {
+                
+            }
+        }
+        return true;
+    }
+
     function sentRegisterSMS($id, $send_to, $ptypeno) {
         $sms_detail = $this->_CI->smsconfig_model->getActiveSMS();
 
@@ -568,7 +646,94 @@ class Smsgateway {
         return true;
     }
 
+
+    function sentOnlineMeetingStaffSMS($detail) {
+
+        $sms_detail = $this->_CI->smsconfig_model->getActiveSMS();
+        if (!empty($sms_detail)) {
+
+            foreach ($detail as $staff_key => $staff_value) {
+                $send_to = $staff_key;
+                if ($send_to != "") {
+                    $msg = $this->getOnlineMeetingStaffContent($staff_value);
+
+                    $subject = "Online Meeting";
+                    if ($sms_detail->type == 'clickatell') {
+                        $params = array(
+                            'apiToken' => $sms_detail->api_id,
+                        );
+                        $this->_CI->load->library('clickatell', $params);
+
+                        try {
+                            $result = $this->_CI->clickatell->sendMessage(['to' => [$send_to], 'content' => $msg]);
+                            foreach ($result['messages'] as $message) {
+                                
+                            }
+                            return true;
+                        } catch (Exception $e) {
+                            return false;
+                        }
+                    } else if ($sms_detail->type == 'twilio') {
+
+                        $params = array(
+                            'mode' => 'sandbox',
+                            'account_sid' => $sms_detail->api_id,
+                            'auth_token' => $sms_detail->password,
+                            'api_version' => '2010-04-01',
+                            'number' => $sms_detail->contact,
+                        );
+
+                        $this->_CI->load->library('twilio', $params);
+
+                        $from = $sms_detail->contact;
+                        $to = $send_to;
+                        $message = $msg;
+                        $response = $this->_CI->twilio->sms($from, $to, $message);
+
+                        if ($response->IsError) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    } else if ($sms_detail->type == 'msg_nineone') {
+
+                        $params = array(
+                            'authkey' => $sms_detail->authkey,
+                            'senderid' => $sms_detail->senderid,
+                        );
+                        $this->_CI->load->library('msgnineone', $params);
+                        $this->_CI->msgnineone->sendSMS($send_to, $msg);
+                    } else if ($sms_detail->type == 'smscountry') {
+                        $params = array(
+                            'username' => $sms_detail->username,
+                            'sernderid' => $sms_detail->senderid,
+                            'password' => $sms_detail->password,
+                        );
+                        $this->_CI->load->library('smscountry', $params);
+                        $this->_CI->smscountry->sendSMS($send_to, $msg);
+                    } else if ($sms_detail->type == 'text_local') {
+                        $params = array(
+                            'username' => $sms_detail->username,
+                            'hash' => $sms_detail->password,
+                        );
+                        $this->_CI->load->library('textlocalsms', $params);
+                        $this->_CI->textlocalsms->sendSms(array($send_to), $msg, $sms_detail->senderid);
+                    } else if ($sms_detail->type == 'custom') {
+                        $this->_CI->load->library('customsms');
+                        $from = $sms_detail->contact;
+                        $to = $send_to;
+                        $message = $msg;
+                        $this->_CI->customsms->sendSMS($to, $message);
+                    } else {
+                        
+                    }
+                }
+            }
+        }
+    }
+
     function sendLoginCredential($chk_mail_sms, $sender_details) {
+
         $sms_detail = $this->_CI->smsconfig_model->getActiveSMS();
         $msg = $this->getLoginCredentialContent($sender_details['credential_for'], $sender_details);
         $send_to = $sender_details['contact_no'];
@@ -645,8 +810,15 @@ class Smsgateway {
         return true;
     }
 
+    public function getOnlineMeetingStaffContent($staff_detail) {
+
+        $msg   = "Dear staff, your live meeting ". $staff_detail['title']." has been scheduled on ".date($this->_CI->customlib->getSchoolDateFormat(true, true), strtotime($staff_detail['date']))." for the duration of ".$staff_detail['duration']." minute, please do not share the link to any body.";
+     
+        return $msg;
+    }
+
     public function getStudentRegistrationContent($id) {
-        $session_name = $this->_CI->setting_model->getCurrentSessionName();
+        //$session_name = $this->_CI->setting_model->getCurrentSessionName();
         $student = $this->_CI->student_model->get($id);
         $msg = "Dear " . $student['firstname'] . " " . $student['lastname'] .
                 ", your admission is confirm in Class: " . $student['class'] .
@@ -667,12 +839,21 @@ class Smsgateway {
         $hospital_details = $this->_CI->setting_model->getHospitalDetails();
         $hospital_name = $hospital_details["name"];
         $msg = "Dear " . $patient["patient_name"] . ", your " . $patient_type . " registration is successful at " . $hospital_name . " with Patient Id: " . $patient["patient_unique_id"] . " and " . $patient_type . " No: " . $patient_no;
-        // $msg = 'Dear test, your OPD registration is successful at Smart Hospital with Patient Id: 7653 and OPD No: 4342';
+        // $msg = 'Dear test, your OPD registration is successful at Promed DELUXE with Patient Id: 7653 and OPD No: 4342';
         return $msg;
     }
 
+    public function getPatientLiveconsultContent($id, $conference_id) {
+        
+       $conference = $this->_CI->conference_model->getconference($conference_id);
+       
+        $msg   = "Dear patient, your live consultaion ". $conference->title." has been scheduled on ". date($this->_CI->customlib->getSchoolDateFormat(true, true), strtotime($conference->date)) ." for the duration of ".$conference->duration." minute, please do not share the link to any body.";
+        return $msg;
+    }
+
+
     public function getPatientDischargedContent($id, $ipdid) {
-        $session_name = $this->_CI->setting_model->getCurrentSessionName();
+//        $session_name = $this->_CI->setting_model->getCurrentSessionName();
         $patient = $this->_CI->patient_model->patientProfile($id, $ipdid);
         $payment = $this->_CI->payment_model->getPaidTotal($id, $ipdid);
         $paid_amount = $payment['paid_amount'];
@@ -705,19 +886,16 @@ class Smsgateway {
     public function getAddFeeContent($invoice_id, $sub_invoice_id) {
         $currency_symbol = $this->sch_setting[0]['currency_symbol'];
         $school_name = $this->sch_setting[0]['name'];
-
-
         $fee = $this->_CI->studentfeemaster_model->getFeeByInvoice($invoice_id, $sub_invoice_id);
         $a = json_decode($fee->amount_detail);
         $record = $a->{$sub_invoice_id};
         $fee_amount = number_format((($record->amount + $record->amount_fine) - $record->amount_discount), 2, '.', ',');
         $msg = "Fees received for " . $fee->firstname . " " . $fee->lastname . ". Fees Amount " . $currency_symbol . $fee_amount . "/- Received by " . $school_name;
-
-
         return $msg;
     }
 
     public function getLoginCredentialContent($credential_for, $sender_details) {
+
         if ($credential_for == "student") {
             $student = $this->_CI->student_model->get($sender_details['id']);
             $msg = "Hello " . $student['firstname'] . " " . $student['lastname'] .
@@ -735,7 +913,8 @@ class Smsgateway {
             $accountant = $this->_CI->accountant_model->get($sender_details['id']);
             $msg = "Hello " . $accountant['name'] . ", your login details for Url: " . site_url('site/userlogin') . " Username: " . $sender_details['username'] . "\n Password: " . $sender_details['password'];
         } elseif ($credential_for == "patient") {
-            $patient = $this->_CI->patient_model->patientProfile($sender_details['id']);
+            $patient = $this->_CI->patient_model->patientProfileDetails($sender_details['id']);
+            
             $msg = "Hello " . $patient['patient_name'] . ", your login details for Url: " . site_url('site/userlogin') . " Username: " . $sender_details['username'] . "\n Password: " . $sender_details['password'];
         } elseif ($credential_for == "staff") {
             $staff = $this->_CI->staff_model->get($sender_details['id']);

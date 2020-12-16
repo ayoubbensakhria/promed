@@ -1,6 +1,11 @@
 <link rel="stylesheet" href="<?php echo base_url(); ?>backend/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
 <script src="<?php echo base_url(); ?>backend/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"></script>
 <!-- Content Wrapper. Contains page content -->
+<style type="text/css">
+    @media (max-width: 767px) {
+  .box-header.with-border {padding-bottom: 8px; }
+}
+</style>
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->
 
@@ -32,6 +37,7 @@
                                 foreach ($notificationlist as $key => $notification) {
                                     $role_name = $notification["role_name"];
                                     ?>
+                                                 
                                     <div class="panel box box-primary">
                                         <div class="box-header with-border">
                                             <h4 class="box-title">
@@ -39,18 +45,19 @@
                                                     <?php echo $notification['title']; ?>
                                                 </a>
                                             </h4>
-                                            <div class="pull-right">
+                                            <div class="pull-right pt5">
                                                 <?php if (($this->rbac->hasPrivilege('notice_board', 'can_edit')) || ($notification["created_id"] == $user_id)) { ?>
-                                                    <a href="<?php echo base_url() ?>admin/notification/edit/<?php echo $notification['id'] ?>" class="btn btn-default btn-xs" data-toggle="tooltip" title="<?php echo $this->lang->line('edit'); ?>" data-original-title="<?php echo $this->lang->line('add'); ?>">
+                                                    <a href="<?php echo base_url() ?>admin/notification/edit/<?php echo $notification['id'] ?>" class="btn btn-default btn-xs" data-toggle="tooltip" title="<?php echo $this->lang->line('edit'); ?>" data-original-title="<?php echo $this->lang->line('edit'); ?>">
                                                         <i class="fa fa-pencil"></i>
                                                     </a>
                                                     &nbsp; <?php } if (($this->rbac->hasPrivilege('notice_board', 'can_delete')) || ($notification["created_id"] == $user_id)) { ?>                                            
-                                                    <a onclick="delete_recordById('<?php echo base_url() ?>admin/notification/delete/<?php echo $notification['id'] ?>', '<?php echo $this->lang->line('delete_message'); ?>')"  class="btn btn-default btn-xs" data-toggle="tooltip" title="<?php echo $this->lang->line('delete'); ?>" data-original-title="<?php echo $this->lang->line('add'); ?>">
+                                                    <a onclick="delete_recordById('<?php echo base_url() ?>admin/notification/delete/<?php echo $notification['id'] ?>', '<?php echo $this->lang->line('delete_message'); ?>')"  class="btn btn-default btn-xs" data-toggle="tooltip" title="<?php echo $this->lang->line('delete'); ?>" data-original-title="<?php echo $this->lang->line('delete'); ?>">
                                                         <i class="fa fa-trash"></i>
                                                     </a>
                                                 <?php } ?>
                                             </div>
                                         </div>
+                                       
                                         <div id="collapse<?php echo $notification['id']; ?>" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;">
                                             <div class="box-body">
                                                 <div class="row">
@@ -84,10 +91,12 @@
                                                 </div>
                                             </div>
                                         </div>
+                                       
                                     </div>
 
                                     <?php
-                                }
+                                
+                            }
                             }
                             ?>
                         </div>

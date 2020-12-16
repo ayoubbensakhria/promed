@@ -1,5 +1,4 @@
 <?php
-//print_r("Hello");
 if ($page_form) {
     if (!empty($form)) {
         //build start form

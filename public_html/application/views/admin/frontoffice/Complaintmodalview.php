@@ -1,5 +1,4 @@
 <table class="table table-striped bordergray">
-    <?php // print_r($complaint_data); ?>
     <tr>
         <th><?php echo $this->lang->line('complain'); ?> #</th>
         <td><?php print_r($complaint_data['id']); ?></td>

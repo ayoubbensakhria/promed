@@ -11,7 +11,6 @@ class Welcome extends Front_Controller
         $this->load->config('form-builder');
         $this->load->library(array('mailer', 'form_builder'));
         $this->config->load("mailsms");
-        //$this->complaint_model = $this->config->item('complaint_model');
         $this->notification = $this->config->item('notification');
         $this->notificationurl = $this->config->item('notification_url');
         $this->patient_notificationurl = $this->config->item('patient_notification_url');
@@ -29,7 +28,6 @@ class Welcome extends Front_Controller
 
     public function index()
     {
-
         $setting                     = $this->frontcms_setting_model->get();
         $this->data['active_menu']   = 'home';
         $this->data['page_side_bar'] = $setting->is_active_sidebar;
@@ -52,7 +50,6 @@ class Welcome extends Front_Controller
         $this->data['page']          = array('title' => '', 'meta_title' => '', 'meta_keyword' => '', 'meta_description' => '');
         $doctors                     = $this->staff_model->getEmployeeByRoleID(3);
         $this->data["doctors"]       = $doctors;
-
         $this->form_validation->set_rules('date', 'Date', 'required');
         $this->form_validation->set_rules('patient_type', 'Type', 'required');
         $this->form_validation->set_rules('patient_name', 'Name', 'required');
@@ -61,21 +58,16 @@ class Welcome extends Front_Controller
         $this->form_validation->set_rules('phone', 'Phone', 'required');
         $this->form_validation->set_rules('message', 'Message', 'required');
         if ($this->input->post('patient_type') == "old patient") {
-
             $this->form_validation->set_rules('patient_id', 'Patient ID', 'required');
         }
 
         if ($this->form_validation->run() == false) {
-
             $this->load_theme_form('form/appointment');
         } else {
             $patient_id   = $this->input->post('patient_id');
             $patient_name = $this->input->post('patient_name');
-            // $patientid = $this->input->post('pid');
-
             $appointment = array(
                 'date'               => date("Y-m-d H:i:s", strtotime($this->input->post('date'))),
-
                 'patient_name'       => $patient_name,
                 'gender'             => $this->input->post('gender'),
                 'email'              => $this->input->post('email'),
@@ -90,12 +82,10 @@ class Welcome extends Front_Controller
                 $appointment['patient_id'] = $this->input->post('customer_id');
             }
             $insert_id = $this->appointment_model->add($appointment);
-
             $this->notificationurl = $this->config->item('notification_url');
             $notificationurl       = $this->notificationurl;
             $url_link              = $notificationurl["appointment"];
             $url                   = base_url() . $url_link . '/' . $insert_id;
-
             if ($insert_id) {
                 $this->appointmentCreateNotification($this->input->post('customer_id'), $patient_name, $url);
             }
@@ -106,7 +96,6 @@ class Welcome extends Front_Controller
 
     public function appointmentCreateNotification($patient_id = '', $patient_name = '', $url)
     {
-
         $notification      = $this->notification;
         $notification_desc = $notification["appointment_created"];
         $patient_url       = $this->patient_notificationurl['appointment'];
@@ -158,7 +147,6 @@ class Welcome extends Front_Controller
         if (!$page) {
             $this->data['page'] = $this->cms_page_model->getBySlug('404-page');
         } else {
-
             $this->data['page'] = $this->cms_page_model->getBySlug($slug);
         }
 
@@ -181,27 +169,18 @@ class Welcome extends Front_Controller
             $this->ajax_pagination->initialize($config);
             //get the posts data
             $this->data['page']['category_content'][$first_key] = $this->cms_program_model->getByCategory($content_array[$first_key], array('limit' => $this->perPage));
-
-            //   print_r($this->data['page']['category_content'][$first_key]);
-            // exit;
             $this->data['page_content_type'] = $content_array[$first_key];
-
             //load the view
         }
         $this->data['page_form'] = false;
-
         if (strpos($page['description'], '[form-builder:') !== false) {
             $this->data['page_form'] = true;
             $start                   = '[form-builder:';
             $end                     = ']';
-
             $form_name = $this->customlib->getFormString($page['description'], $start, $end);
-
             $form = $this->config->item($form_name);
-
             $this->data['form_name'] = $form_name;
             $this->data['form']      = $form;
-
             if (!empty($form)) {
                 foreach ($form as $form_key => $form_value) {
                     if (isset($form_value['validation'])) {
@@ -213,7 +192,6 @@ class Welcome extends Front_Controller
 
                 } else {
                     $setting = $this->frontcms_setting_model->get();
-
                     $response_message = $form['email_title']['mail_response'];
                     $record           = $this->input->post();
 
@@ -252,7 +230,6 @@ class Welcome extends Front_Controller
                         $mail_body .= "<br/>";
                     }
                     if (!empty($setting) && $setting->contact_us_email != "") {
-
                         $this->mailer->send_mail($setting->contact_us_email, $email_subject, $mail_body);
                     }
 
@@ -261,7 +238,6 @@ class Welcome extends Front_Controller
                 }
             }
         }
-
         $this->load_theme('pages/page');
     }
 

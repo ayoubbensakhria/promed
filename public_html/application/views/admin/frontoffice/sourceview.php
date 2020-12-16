@@ -1,6 +1,4 @@
-
 <div class="content-wrapper" style="min-height: 348px;">  
-
     <section class="content">
         <div class="row">
             <div class="col-md-2">
@@ -9,7 +7,7 @@
                         <li><a href="<?php echo site_url('admin/visitorspurpose') ?>"><?php echo $this->lang->line('purpose'); ?></a></li>
                         <li><a href="<?php echo site_url('admin/complainttype') ?>"><?php echo $this->lang->line('complain_type'); ?></a></li>
                         <li><a href="<?php echo site_url('admin/source') ?>" class="active"><?php echo $this->lang->line('source'); ?></a></li>
-
+                          <li><a href="<?php echo site_url('admin/appointpriority') ?>"><?php echo $this->lang->line('appointment')." ".$this->lang->line('priority'); ?></a></li>
                     </ul>
                 </div>
             </div><!--./col-md-3--> 
@@ -21,7 +19,9 @@
                     <div class="box-header ptbnull">
                         <h3 class="box-title titlefix"><?php echo $this->lang->line('source'); ?></h3>
                         <div class="box-tools pull-right">
-                            <a data-toggle="modal" data-target="#myModal" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i>  <?php echo $this->lang->line('add'); ?> <?php echo $this->lang->line('source'); ?></a>     
+                            <?php if ($this->rbac->hasPrivilege('setup_front_office', 'can_add')) { ?>
+                            <a data-toggle="modal" data-target="#myModal" class="btn btn-primary btn-sm addsource"><i class="fa fa-plus"></i>  <?php echo $this->lang->line('add'); ?> <?php echo $this->lang->line('source'); ?></a>  
+                            <?php } ?>   
                         </div>
                     </div><!-- /.box-header -->
                     <div class="box-body">
@@ -31,8 +31,6 @@
                                 <thead>
                                     <tr>                                    
                                         <th><?php echo $this->lang->line('source'); ?></th>
-
-
                                         <th class="text-right"><?php echo $this->lang->line('action'); ?></th>
                                     </tr>
                                 </thead>
@@ -43,13 +41,10 @@
                                         <?php
                                     } else {
                                         foreach ($source_list as $key => $value) {
-                                            //print_r($value);
                                             ?>
                                             <tr>
-
                                                 <td class="mailbox-name">
                                                     <a href="#" data-toggle="popover" class="detail_popover"><?php echo $value['source'] ?></a>
-
                                                     <div class="fee_detail_popover" style="display: none">
                                                         <?php
                                                         if ($value['description'] == "") {
@@ -63,19 +58,18 @@
                                                         }
                                                         ?>
                                                     </div></td>
-
-
-                                                <td class="mailbox-date pull-right" "="">
-                                                    <?php if ($this->rbac->hasPrivilege('setup_font_office', 'can_edit')) { ?>
+                                                <td class="mailbox-date pull-right">
+                                                   <?php if ($this->rbac->hasPrivilege('setup_front_office', 'can_edit')) { ?>
                                                         <a data-target="#editmyModal" onclick="get(<?php echo $value['id']; ?>)"  class="btn btn-default btn-xs" data-toggle="tooltip" title="" data-original-title="<?php echo $this->lang->line('edit'); ?>">
                                                             <i class="fa fa-pencil"></i>
                                                         </a>
-                                                    <?php } if ($this->rbac->hasPrivilege('setup_font_office', 'can_delete')) { ?>
+                                                   <?php } ?>
+                                                    <?php if ($this->rbac->hasPrivilege('setup_front_office', 'can_delete')) { ?>
                                                         <a  class="btn btn-default btn-xs" data-toggle="tooltip" title="" onclick="delete_recordById('<?php echo base_url(); ?>admin/source/delete/<?php echo $value['id']; ?>', '<?php echo $this->lang->line('delete_message') ?>')" data-original-title="<?php echo $this->lang->line('delete') ?>">
                                                             <i class="fa fa-trash"></i>
                                                         </a>
-
                                                     <?php } ?>
+                                                   
                                                 </td>
 
 
@@ -267,13 +261,8 @@
 
                 }
             });
-
-
         }));
-
     });
-
-
 </script>
 <script>
 
@@ -288,4 +277,8 @@
             }
         });
     });
+	
+$(".addsource").click(function(){
+	$('#formadd').trigger("reset");	
+});
 </script>

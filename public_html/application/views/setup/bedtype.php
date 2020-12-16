@@ -1,4 +1,4 @@
-<div class="content-wrapper" style="min-height: 348px;">  
+<div class="content-wrapper" style="min-height: 348px;"> 
 
     <section class="content">
         <div class="row">
@@ -14,7 +14,7 @@
                         <h3 class="box-title titlefix"><?php echo $this->lang->line('bed') . " " . $this->lang->line('type') . " " . $this->lang->line('list'); ?></h3>
                         <div class="box-tools pull-right">
                             <?php if ($this->rbac->hasPrivilege('bed', 'can_add')) { ?>
-                                <a data-toggle="modal" data-target="#myModal" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> <?php echo $this->lang->line('add'); ?></a>
+                                <a data-toggle="modal" data-target="#myModal" class="btn btn-primary btn-sm addbed"><i class="fa fa-plus"></i> <?php echo $this->lang->line('add'); ?></a>
                             <?php } ?> 
                         </div><!-- /.box-tools -->
                     </div>
@@ -86,7 +86,7 @@
                     <div class="row">
                         <div class="col-sm-12">
                             <div class="form-group">
-                                <label for="exampleInputEmail1"><?php echo $this->lang->line('name'); ?></label>
+                                <label for="exampleInputEmail1"><?php echo $this->lang->line('name'); ?></label><small class="req"> *</small> 
                                 <input id="invoice_no" name="name" placeholder="" type="text" class="form-control"  value="<?php echo set_value('name'); ?>" />
 
                             </div>
@@ -180,15 +180,17 @@
     });
 
     function edit(id) {
-        $('#editmyModal').modal('show');
-        //alert(id);
+        $('#editmyModal').modal('show');        
         $.ajax({
             url: '<?php echo base_url(); ?>admin/setup/bedtype/getdata/' + id,
-            success: function (data) {
-                //alert(data);
+            success: function (data) {               
                 $('#edit_bedtypedata').html(data);
             },
 
         });
     }
+	
+$(".addbed").click(function(){
+	$('#addbedtype').trigger("reset");	
+});
 </script>
