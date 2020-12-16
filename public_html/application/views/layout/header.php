@@ -87,8 +87,8 @@
                         <p class="palert">Alerte ! Vous utilisez une version d'essai de <strong>Promed DELUXE 3.0</strong> . Veuillez nous contacter pour acheter une licence.</p>
                     </div></div>
             </div>
-            <?php
-        }*/
+            <?php*/
+        }
         ?>
         <script type="text/javascript">
 
